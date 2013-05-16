@@ -136,7 +136,7 @@ public class AddressFetcher extends BaseFetcher
 		}
 	}
 	
-	public void performGeocode(String locationName, Uri dataUri) throws Exception
+	public synchronized void performGeocode(String locationName, Uri dataUri) throws Exception
 	{
 		boolean hasCachedResult = false;
 		Cursor cursor = null;
@@ -208,7 +208,7 @@ public class AddressFetcher extends BaseFetcher
 		int count = resultObj.length();
 		int countOfEntries = 0;
 		String startsWith = searchTerm.substring(0, 2).toLowerCase();
-		for (int i = 0; i < count && countOfEntries < 4; i++)
+		for (int i = 0; i < count && countOfEntries < 10; i++)
 		{
 			Address address = new Address(Locale.getDefault());
 			JSONObject addressObj = resultObj.getJSONObject(i);
