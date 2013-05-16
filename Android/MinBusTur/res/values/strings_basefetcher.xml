@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="search_failed_404">Ingen resultater</string>
+    <string name="search_failed_401">Du har ikke adgang til data</string>
+    <string name="search_failed_500">Data er ikke tilgængeligt.\nPrøv igen senere</string>
+    <string name="search_failed_503">Data er ikke tilgængeligt.\nPrøv igen senere</string>
+    <string name="time_out">Ingen netværks forbindelse</string>
+    <string name="no_network_connection_toast">Ingen netværksforbindelse</string>
+    <string name="cache_unavailable">SD kort er ikke tilgængeligt</string>
+
+</resources>

@@ -1,0 +1,95 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/bg_pattern"
+    android:padding="8dp" >
+
+    <TextView
+        android:id="@+id/textViewRouteTitleLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Titel" />
+
+    <EditText
+        android:id="@+id/editTextTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/textViewRouteTitleLabel"
+        android:hint="Titel på rute"
+        android:imeOptions="actionNext"
+        android:inputType="textCapWords"
+        android:singleLine="true"
+        android:textSize="16sp" />
+
+    <TextView
+        android:id="@+id/textViewFromLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/editTextTitle"
+        android:layout_marginTop="20dp"
+        android:text="Fra" />
+
+    <EditText
+        android:id="@+id/editTextFromTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/textViewFromLabel"
+        android:hint="Titel på startsted"
+        android:imeOptions="actionNext"
+        android:inputType="textCapWords"
+        android:singleLine="true"
+        android:textSize="16sp" />
+
+    <AutoCompleteTextView
+        android:id="@+id/autoCompleteTextViewFrom"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/editTextFromTitle"
+        android:hint="startadresse"
+        android:imeOptions="actionNext"
+        android:singleLine="true"
+        android:textSize="16sp" />
+
+    <TextView
+        android:id="@+id/textViewToLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/autoCompleteTextViewFrom"
+        android:layout_marginTop="20dp"
+        android:text="Til" />
+
+    <EditText
+        android:id="@+id/editTextToTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/textViewToLabel"
+        android:hint="Titel på slutsted"
+        android:imeOptions="actionNext"
+        android:inputType="textCapWords"
+        android:singleLine="true"
+        android:textSize="16sp" />
+
+    <AutoCompleteTextView
+        android:id="@+id/autoCompleteTextViewTo"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/editTextToTitle"
+        android:hint="Slutadresse"
+        android:imeOptions="actionSearch"
+        android:singleLine="true"
+        android:textSize="16sp" />
+
+    <TextView
+        android:id="@+id/btnFindRoute"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_below="@+id/autoCompleteTextViewTo"
+        android:layout_marginTop="20dp"
+        android:background="@drawable/btn_bus"
+        android:drawableLeft="@android:drawable/ic_menu_directions"
+        android:gravity="center"
+        android:text="Find rute" />
+
+</RelativeLayout>

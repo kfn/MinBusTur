@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.miracleas.minbustur"
+    android:versionCode="1"
+    android:versionName="1.0" >
+
+    <uses-sdk
+        android:minSdkVersion="8"
+        android:targetSdkVersion="17" />
+    
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+     <uses-permission android:name="android.permission.INTERNET" />
+
+    <application
+        android:allowBackup="true"
+        android:icon="@drawable/ic_launcher"
+        android:label="@string/app_name"
+        android:theme="@style/AppTheme" >
+        <activity
+            android:name="com.miracleas.minbustur.CreateRouteActivity"
+            android:label="@string/route_creation" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <provider
+            android:name="com.miracleas.minbustur.provider.MinBusTurProvider"
+            android:authorities="com.miracleas.minbustur.provider.MinBusTurProvider"        
+            android:exported="false" />
+        
+        <service
+    		android:name="com.miracleas.minbustur.service.ReceiveTransitionsIntentService"
+    		android:label="@string/app_name"
+    		android:exported="false">
+		</service>
+    </application>
+
+</manifest>
