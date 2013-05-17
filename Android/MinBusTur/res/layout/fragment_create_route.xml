@@ -30,8 +30,8 @@
         android:layout_marginTop="20dp"
         android:text="Fra" />
 
-    <EditText
-        android:id="@+id/editTextFromTitle"
+    <AutoCompleteTextView
+        android:id="@+id/autoCompleteTextViewFromTitle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/textViewFromLabel"
@@ -40,16 +40,42 @@
         android:inputType="textCapWords"
         android:singleLine="true"
         android:textSize="16sp" />
+    
+    <ProgressBar
+        android:id="@+id/progressBarFromTitle"
+        style="?android:attr/progressBarStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/autoCompleteTextViewFromTitle"
+        android:layout_alignParentRight="true"
+        android:layout_marginBottom="10dp"
+        android:layout_marginLeft="18dp"
+        android:layout_marginRight="10dp"
+        android:background="@color/black_transparent"
+        android:visibility="gone" />
 
     <AutoCompleteTextView
         android:id="@+id/autoCompleteTextViewFrom"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/editTextFromTitle"
+        android:layout_below="@+id/autoCompleteTextViewFromTitle"
         android:hint="startadresse"
         android:imeOptions="actionNext"
         android:singleLine="true"
         android:textSize="16sp" />
+
+    <ProgressBar
+        android:id="@+id/progressBarFromAddress"
+        style="?android:attr/progressBarStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/autoCompleteTextViewFrom"
+        android:layout_alignParentRight="true"
+        android:layout_marginBottom="10dp"
+        android:layout_marginLeft="18dp"
+        android:layout_marginRight="10dp"
+        android:background="@color/black_transparent"
+        android:visibility="gone" />
 
     <TextView
         android:id="@+id/textViewToLabel"
@@ -59,8 +85,8 @@
         android:layout_marginTop="20dp"
         android:text="Til" />
 
-    <EditText
-        android:id="@+id/editTextToTitle"
+    <AutoCompleteTextView
+        android:id="@+id/autoCompleteTextViewToTitle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/textViewToLabel"
@@ -69,16 +95,42 @@
         android:inputType="textCapWords"
         android:singleLine="true"
         android:textSize="16sp" />
+    
+    <ProgressBar
+        android:id="@+id/progressBarToTitle"
+        style="?android:attr/progressBarStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/autoCompleteTextViewToTitle"
+        android:layout_alignParentRight="true"
+        android:layout_marginBottom="10dp"
+        android:layout_marginLeft="18dp"
+        android:layout_marginRight="10dp"
+        android:background="@color/black_transparent"
+        android:visibility="gone" />
 
     <AutoCompleteTextView
         android:id="@+id/autoCompleteTextViewTo"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/editTextToTitle"
+        android:layout_below="@+id/autoCompleteTextViewToTitle"
         android:hint="Slutadresse"
         android:imeOptions="actionSearch"
         android:singleLine="true"
         android:textSize="16sp" />
+
+    <ProgressBar
+        android:id="@+id/progressBarToAddress"
+        style="?android:attr/progressBarStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/autoCompleteTextViewTo"
+        android:layout_alignParentRight="true"
+        android:layout_marginBottom="10dp"
+        android:layout_marginLeft="18dp"
+        android:layout_marginRight="10dp"
+        android:background="@color/black_transparent"
+        android:visibility="gone" />
 
     <TextView
         android:id="@+id/btnFindRoute"

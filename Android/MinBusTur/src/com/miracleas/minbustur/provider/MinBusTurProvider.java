@@ -27,16 +27,17 @@ public class MinBusTurProvider extends ContentProvider
 	private static final String tag = MinBusTurProvider.class.getName();
 
 	// Provide a mechanism to identify all the incoming uri patterns.
-	protected static final UriMatcher sUriMatcher;
-	protected static final int INCOMING_ADDRESS_COLLECTION_URI_INDICATOR = 1;
-	protected static final int INCOMING_SINGLE_ADDRESS_URI_INDICATOR = 2;
-	protected static final int INCOMING_ADDRESS_SEARCH_URI_INDICATOR = 3;
-	protected static final int INCOMING_ROUTE_COLLECTION_URI_INDICATOR = 4;
-	protected static final int INCOMING_SINGLE_ROUTE_URI_INDICATOR = 5;
-	protected static final int INCOMING_WAYPOINT_COLLECTION_URI_INDICATOR = 6;
-	protected static final int INCOMING_SINGLE_WAYPOINT_URI_INDICATOR = 7;
-	protected static final int INCOMING_WAYPOINT_IMG_COLLECTION_URI_INDICATOR = 8;
-	protected static final int INCOMING_SINGLE_WAYPOINT_IMG_URI_INDICATOR = 9;
+	private static final UriMatcher sUriMatcher;
+	private static final int INCOMING_ADDRESS_COLLECTION_URI_INDICATOR = 1;
+	private static final int INCOMING_SINGLE_ADDRESS_URI_INDICATOR = 2;
+	private static final int INCOMING_ADDRESS_SEARCH_URI_INDICATOR = 3;
+	private static final int INCOMING_ROUTE_COLLECTION_URI_INDICATOR = 4;
+	private static final int INCOMING_SINGLE_ROUTE_URI_INDICATOR = 5;
+	private static final int INCOMING_WAYPOINT_COLLECTION_URI_INDICATOR = 6;
+	private static final int INCOMING_SINGLE_WAYPOINT_URI_INDICATOR = 7;
+	private static final int INCOMING_WAYPOINT_IMG_COLLECTION_URI_INDICATOR = 8;
+	private static final int INCOMING_SINGLE_WAYPOINT_IMG_URI_INDICATOR = 9;
+	
 
 	static
 	{
@@ -50,6 +51,7 @@ public class MinBusTurProvider extends ContentProvider
 		sUriMatcher.addURI(RouteWaypointMetaData.AUTHORITY, RouteWaypointMetaData.COLLECTION_TYPE + "/#", INCOMING_SINGLE_WAYPOINT_URI_INDICATOR);
 		sUriMatcher.addURI(RouteWaypointImageMetaData.AUTHORITY, RouteWaypointImageMetaData.COLLECTION_TYPE, INCOMING_WAYPOINT_IMG_COLLECTION_URI_INDICATOR);
 		sUriMatcher.addURI(RouteWaypointImageMetaData.AUTHORITY, RouteWaypointImageMetaData.COLLECTION_TYPE + "/#", INCOMING_SINGLE_WAYPOINT_IMG_URI_INDICATOR);
+		
 	}
 
 	/**

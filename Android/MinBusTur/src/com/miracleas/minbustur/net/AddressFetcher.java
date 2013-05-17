@@ -177,6 +177,7 @@ public class AddressFetcher extends BaseFetcher
 			int count = mContentResolver.applyBatch(AddressProviderMetaData.AUTHORITY, mDbOperations).length;
 			Log.d(tag, "applyBatch: "+count);
 			mContentResolver.notifyChange(uri, null);
+			mDbOperations.clear();
 		}
 	}
 
