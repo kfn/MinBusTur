@@ -16,19 +16,24 @@ import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 
 import com.miracleas.minbustur.R;
+import com.miracleas.minbustur.provider.AddressProviderMetaData;
 
 import android.content.ContentProviderOperation;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.OperationApplicationException;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.Uri;
+import android.os.RemoteException;
 import android.support.v4.content.LocalBroadcastManager;
 import android.text.format.DateUtils;
 import android.util.Log;
 
 public abstract class BaseFetcher
 {
+	public static final String tag = BaseFetcher.class.getName();
 	public static final String CONTENT_TYPE = "Content-Type";
 	public static final String CONTENT_TYPE_JSON = "application/json";
 	public static final String CONTENT_TYPE_XML = "application/xml";
@@ -40,6 +45,8 @@ public abstract class BaseFetcher
 	public static final String BROADCAST_UNAUTHORIZED_BOOLEAN = "BROADCAST_UNAUTHORIZED_BOOLEAN";
 	public static final String LOADING_DATA = "LOADING_DATA";
 	public static final String ARGS_FORCE_UPDATE = "ARGS_FORCE_UPDATE";
+	
+	public static final String BASE_URL = "http://www.rejseplanen.dk";
 
 	protected Context mContext = null;
 	protected ContentResolver mContentResolver = null;
@@ -53,6 +60,7 @@ public abstract class BaseFetcher
 	private boolean mConnectionError = false;
 	private StringBuilder mBodyBuilder = null;
 	protected ArrayList<ContentProviderOperation> mDbOperations;
+	protected Uri mUriNotify;
 	
 
 	public BaseFetcher(Context c, Intent intent)
@@ -121,6 +129,20 @@ public abstract class BaseFetcher
 		end();
 		return started;
 	}
+	
+	protected void saveData(String authority) throws RemoteException, OperationApplicationException
+	{
+		if(!mDbOperations.isEmpty())
+		{
+			int count = mContentResolver.applyBatch(authority, mDbOperations).length;
+			Log.d(tag, "applyBatch: "+count);
+			if(mUriNotify!=null)
+			{
+				mContentResolver.notifyChange(mUriNotify, null);
+			}			
+			mDbOperations.clear();
+		}
+	}
 
 	abstract boolean start();
 
@@ -179,6 +201,8 @@ public abstract class BaseFetcher
 		urlConnection.setConnectTimeout(TIME_OUT);
 		urlConnection.setReadTimeout(TIME_OUT);
 		urlConnection.addRequestProperty(CONTENT_TYPE, MIME_FORM_ENCODED);
+		urlConnection.setRequestProperty("Accept-Encoding", "gzip, deflate");
+		urlConnection.setRequestProperty("Accept", "*/*");		
 		return urlConnection;
 	}
 	protected HttpURLConnection initPostHttpURLConnection(String url) throws IOException

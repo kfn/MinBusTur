@@ -1,19 +1,12 @@
 package com.miracleas.minbustur;
 
-import java.io.ByteArrayOutputStream;
-import java.io.InputStream;
-import java.util.ArrayList;
+import java.io.UnsupportedEncodingException;
 
 import android.annotation.SuppressLint;
 import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.Context;
-import android.content.Intent;
 import android.database.Cursor;
-import android.database.sqlite.SQLiteQueryBuilder;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -21,74 +14,35 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.provider.ContactsContract;
 import android.provider.ContactsContract.Contacts;
-import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v4.util.LruCache;
 import android.support.v4.widget.CursorAdapter;
-import android.text.Editable;
 import android.text.TextUtils;
-import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.View.OnFocusChangeListener;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
-import android.widget.AdapterView.OnItemSelectedListener;
-import android.widget.AutoCompleteTextView;
-import android.widget.EditText;
-import android.widget.ImageView;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.actionbarsherlock.app.SherlockFragment;
+import com.miracleas.minbustur.model.AddressSearch;
+import com.miracleas.minbustur.model.TripRequest;
 import com.miracleas.minbustur.net.AddressFetcher;
+import com.miracleas.minbustur.net.TripFetcher;
 import com.miracleas.minbustur.provider.AddressProviderMetaData;
 
-public class CreateRouteFragment extends SherlockFragment implements TextWatcher, LoaderCallbacks<Cursor>, OnItemSelectedListener, OnItemClickListener, OnFocusChangeListener
+public class CreateRouteFragment extends CreateRouteFragmentBase 
 {
 	public static final String tag = CreateRouteFragment.class.getName();
-	private AutoCompleteTextView mAutoCompleteTextViewFromAddress;
-	private AutoCompleteTextView mAutoCompleteTextViewToAddress;
-	private AutoCompleteTextView mAutoCompleteTextViewToTitle = null;
-	private AutoCompleteTextView mAutoCompleteTextViewFromTitle = null;
-
 	private AutoCompleteAddressAdapter mAutoCompleteAdapterFrom = null;
 	private AutoCompleteAddressAdapter mAutoCompleteAdapterTo = null;
 	private AutoCompleteContactsAdapter mAutoCompleteContactsAdapterTo = null;
 	private AutoCompleteContactsAdapter mAutoCompleteContactsAdapterFrom = null;
-
-	private static final int THRESHOLD = 2;
-	private static final int LOADER_ADDRESS_FROM = 1;
-	private static final int LOADER_ADDRESS_TO = 2;
-	private static final int LOADER_TITLE_TO = 3;
-	private static final int LOADER_TITLE_FROM = 4;
-	private static final String[] PROJECTION = { AddressProviderMetaData.TableMetaData._ID, AddressProviderMetaData.TableMetaData.address, AddressProviderMetaData.TableMetaData.lat, AddressProviderMetaData.TableMetaData.lng };
-	private static final String[] PROJECTION_CONTACTS = new String[] { ContactsContract.Contacts._ID, ContactsContract.Contacts.DISPLAY_NAME };
-
-	private AddressFetcher mAddressFetcher = null;
-	private String mPreviousEnteredAddressFrom = null;
-	private String mPreviousEnteredAddressTo = null;
-	private String mPreviousEnteredContactFrom = null;
-	private String mPreviousEnteredContactTo = null;
-	private Handler mHandler = null;
 	private LoadAddressesRun mLoadAddressesRun = null;
 	private LoadContactRun mLoadContactRun = null;
-	private int mActiveLoader = LOADER_ADDRESS_FROM;
-	private Uri mDataUri = null;
-
-	private ProgressBar mProgressBarToAddress = null;
-	private ProgressBar mProgressBarFromAddress = null;
-	private ProgressBar mProgressBarFromTitle = null;
-	private ProgressBar mProgressBarToTitle = null;
-
-	private static LruCache<Long, Drawable> cache;
-	private ArrayList<Long> id_list = new ArrayList<Long>();
-	private Drawable mBitmapDrawableDummy = null;
-
-	private int mLoadCount = 0;
+	private LoadTrips mLoadTrips = null;
+	private TripFetcher mTripFetcher = null;
 
 	public static CreateRouteFragment createInstance()
 	{
@@ -102,12 +56,7 @@ public class CreateRouteFragment extends SherlockFragment implements TextWatcher
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
 	{
-		View rootView = inflater.inflate(R.layout.fragment_create_route, container, false);
-		mAutoCompleteTextViewToTitle = (AutoCompleteTextView) rootView.findViewById(R.id.autoCompleteTextViewToTitle);
-		mAutoCompleteTextViewFromTitle = (AutoCompleteTextView) rootView.findViewById(R.id.autoCompleteTextViewFromTitle);
-		mAutoCompleteTextViewFromAddress = (AutoCompleteTextView) rootView.findViewById(R.id.autoCompleteTextViewFrom);
-		mAutoCompleteTextViewToAddress = (AutoCompleteTextView) rootView.findViewById(R.id.autoCompleteTextViewTo);
-
+		View rootView = super.onCreateView(inflater, container, savedInstanceState);
 		mAutoCompleteAdapterFrom = new AutoCompleteAddressAdapter(getActivity(), null, 0);
 		mAutoCompleteTextViewFromAddress.setAdapter(mAutoCompleteAdapterFrom);
 		mAutoCompleteAdapterTo = new AutoCompleteAddressAdapter(getActivity(), null, 0);
@@ -116,27 +65,9 @@ public class CreateRouteFragment extends SherlockFragment implements TextWatcher
 		mAutoCompleteContactsAdapterFrom = new AutoCompleteContactsAdapter(getActivity(), null, 0);
 		mAutoCompleteTextViewToTitle.setAdapter(mAutoCompleteContactsAdapterTo);
 		mAutoCompleteTextViewFromTitle.setAdapter(mAutoCompleteContactsAdapterFrom);
-
-		initAutoComplete(mAutoCompleteTextViewToTitle);
-		initAutoComplete(mAutoCompleteTextViewFromTitle);
-		initAutoComplete(mAutoCompleteTextViewFromAddress);
-		initAutoComplete(mAutoCompleteTextViewToAddress);
-
-		mProgressBarToAddress = (ProgressBar) rootView.findViewById(R.id.progressBarToAddress);
-		mProgressBarFromAddress = (ProgressBar) rootView.findViewById(R.id.progressBarFromAddress);
-		mProgressBarFromTitle = (ProgressBar) rootView.findViewById(R.id.progressBarFromTitle);
-		mProgressBarToTitle = (ProgressBar) rootView.findViewById(R.id.progressBarToTitle);
 		return rootView;
 	}
 
-	private void initAutoComplete(AutoCompleteTextView a)
-	{
-		a.addTextChangedListener(this);
-		a.setOnItemSelectedListener(this);
-		a.setThreshold(THRESHOLD);
-		a.setOnItemClickListener(this);
-		a.setOnFocusChangeListener(this);
-	}
 
 	/**
 	 * Mandatory empty constructor for the fragment manager to instantiate the
@@ -155,40 +86,13 @@ public class CreateRouteFragment extends SherlockFragment implements TextWatcher
 		mHandler = new Handler();
 		mLoadAddressesRun = new LoadAddressesRun(null);
 		mLoadContactRun = new LoadContactRun(null);
-		mAddressFetcher = new AddressFetcher(getActivity());
+		mDataUri = Uri.withAppendedPath(AddressProviderMetaData.TableMetaData.CONTENT_URI, "search");
+		mAddressFetcher = new AddressFetcher(getActivity(), mDataUri);
 		Bundle args = new Bundle();
 		args.putString(AddressProviderMetaData.TableMetaData.address, "a");
 		args.putString(ContactsContract.Contacts.DISPLAY_NAME, "abc");
-		mDataUri = Uri.withAppendedPath(AddressProviderMetaData.TableMetaData.CONTENT_URI, "search");
-		getSherlockActivity().getSupportLoaderManager().initLoader(LOADER_ADDRESS_FROM, args, this);
-		getSherlockActivity().getSupportLoaderManager().initLoader(LOADER_TITLE_FROM, args, this);
-		// getSherlockActivity().getSupportLoaderManager().initLoader(LOADER_ADDRESS_TO,
-		// args, this);
 	}
 
-	public void onDestroy()
-	{
-		super.onDestroy();
-	}
-
-	public void onSaveInstanceState(Bundle outState)
-	{
-		super.onSaveInstanceState(outState);
-	}
-
-	@Override
-	public void afterTextChanged(Editable s)
-	{
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void beforeTextChanged(CharSequence s, int start, int count, int after)
-	{
-		// TODO Auto-generated method stub
-
-	}
 
 	@Override
 	public void onTextChanged(CharSequence s, int start, int before, int count)
@@ -200,7 +104,7 @@ public class CreateRouteFragment extends SherlockFragment implements TextWatcher
 			{
 				mHandler.removeCallbacks(mLoadAddressesRun);
 				mLoadAddressesRun = new LoadAddressesRun(value);
-				mHandler.postDelayed(mLoadAddressesRun, 2000);
+				mHandler.postDelayed(mLoadAddressesRun, 500);
 			} else
 			{
 				mHandler.removeCallbacks(mLoadContactRun);
@@ -233,13 +137,6 @@ public class CreateRouteFragment extends SherlockFragment implements TextWatcher
 	@Override
 	public void onLoadFinished(Loader<Cursor> loader, Cursor newCursor)
 	{
-		/*
-		 * if (mActiveLoader == LOADER_ADDRESS_FROM) { Log.d(tag,
-		 * "onLoadFinished: LOADER_ADDRESS_TO"); } else if (mActiveLoader ==
-		 * LOADER_ADDRESS_TO) { Log.d(tag, "onLoadFinished: LOADER_ADDRESS_TO");
-		 * }
-		 */
-
 		getAdapter().swapCursor(newCursor);
 		if (newCursor != null && newCursor.getCount() > 0)
 		{
@@ -283,6 +180,16 @@ public class CreateRouteFragment extends SherlockFragment implements TextWatcher
 			String text = a.getAddress(position);
 			String lat = a.getLat(position);
 			String lng = a.getLng(position);
+			if(mActiveLoader == LOADER_ADDRESS_FROM)
+			{
+				mSelectedFromLatitude = lat;
+				mSelectedFromLongitude = lng;
+			}
+			else if(mActiveLoader == LOADER_ADDRESS_TO)
+			{
+				mSelectedToLatitude = lat;
+				mSelectedToLongitude = lng;
+			}
 			setPreviousEnteredText(text);
 			setSelectedValue(text);
 		}
@@ -297,12 +204,6 @@ public class CreateRouteFragment extends SherlockFragment implements TextWatcher
 
 	}
 
-	@Override
-	public void onNothingSelected(AdapterView<?> arg0)
-	{
-		// TODO Auto-generated method stub
-
-	}
 
 	private void loadAddress(String query)
 	{
@@ -313,7 +214,15 @@ public class CreateRouteFragment extends SherlockFragment implements TextWatcher
 		Bundle args = new Bundle();
 		args.putString(AddressProviderMetaData.TableMetaData.address, query);
 		getProgressBar().setVisibility(View.VISIBLE);
-		getSherlockActivity().getSupportLoaderManager().restartLoader(mActiveLoader, args, this);
+		if(getSherlockActivity().getSupportLoaderManager().getLoader(mActiveLoader)==null)
+		{
+			getSherlockActivity().getSupportLoaderManager().initLoader(mActiveLoader, args, this);
+		}
+		else
+		{
+			getSherlockActivity().getSupportLoaderManager().restartLoader(mActiveLoader, args, this);
+		}
+		
 	}
 
 	private class LoadAddresses extends AsyncTask<String, Void, Void>
@@ -324,7 +233,7 @@ public class CreateRouteFragment extends SherlockFragment implements TextWatcher
 		{
 			try
 			{
-				mAddressFetcher.performGeocode(params[0], mDataUri);
+				mAddressFetcher.performGeocode(params[0]); //mDataUri
 			} catch (Exception e)
 			{
 				// TODO Auto-generated catch block
@@ -351,6 +260,7 @@ public class CreateRouteFragment extends SherlockFragment implements TextWatcher
 		private int iAddress;
 		private int iLat;
 		private int iLng;
+		private int iType;
 		private LayoutInflater mInf = null;
 
 		public AutoCompleteAddressAdapter(Context context, Cursor c, int flags)
@@ -364,7 +274,26 @@ public class CreateRouteFragment extends SherlockFragment implements TextWatcher
 		{
 			TextView tv = (TextView) v;
 			tv.setText(cursor.getString(iAddress));
-
+			int icon = getIcon(cursor.getInt(iType));
+			if(icon!=-1)
+			{
+				tv.setCompoundDrawablesWithIntrinsicBounds(icon, 0, 0, 0);
+			}
+			
+		}
+		
+		private int getIcon(int type)
+		{
+			switch(type)
+			{
+			case AddressSearch.TYPE_ADRESSE:
+				return R.drawable.ic_menu_home;
+			case AddressSearch.TYPE_STATION_STOP:
+				return R.drawable.ic_menu_myplaces;
+			default:
+				return -1;
+			
+			}
 		}
 
 		@Override
@@ -380,6 +309,7 @@ public class CreateRouteFragment extends SherlockFragment implements TextWatcher
 				iAddress = newCursor.getColumnIndex(AddressProviderMetaData.TableMetaData.address);
 				iLat = newCursor.getColumnIndex(AddressProviderMetaData.TableMetaData.lat);
 				iLng = newCursor.getColumnIndex(AddressProviderMetaData.TableMetaData.lng);
+				iType = newCursor.getColumnIndex(AddressProviderMetaData.TableMetaData.type);
 			}
 			return super.swapCursor(newCursor);
 		}
@@ -424,7 +354,15 @@ public class CreateRouteFragment extends SherlockFragment implements TextWatcher
 		Log.d(tag, "lockup for: " + query);
 		Bundle args = new Bundle();
 		args.putString(ContactsContract.Contacts.DISPLAY_NAME, query);
-		getSherlockActivity().getSupportLoaderManager().restartLoader(mActiveLoader, args, this);
+		if(getSherlockActivity().getSupportLoaderManager().getLoader(mActiveLoader)==null)
+		{
+			getSherlockActivity().getSupportLoaderManager().initLoader(mActiveLoader, args, this);
+		}
+		else
+		{
+			getSherlockActivity().getSupportLoaderManager().restartLoader(mActiveLoader, args, this);
+		}
+		
 	}
 
 	private class AutoCompleteContactsAdapter extends CursorAdapter
@@ -529,121 +467,7 @@ public class CreateRouteFragment extends SherlockFragment implements TextWatcher
 		return null;
 	}
 
-	private String getPreviousEnteredText()
-	{
-		if (mActiveLoader == LOADER_ADDRESS_FROM)
-		{
-			return mPreviousEnteredAddressFrom;
-		} else if (mActiveLoader == LOADER_ADDRESS_TO)
-		{
-			return mPreviousEnteredAddressTo;
-		} else if (mActiveLoader == LOADER_TITLE_FROM)
-		{
-			return mPreviousEnteredContactFrom;
-		} else if (mActiveLoader == LOADER_TITLE_TO)
-		{
-			return mPreviousEnteredContactTo;
-		}
-		return "";
-	}
 
-	private void setPreviousEnteredText(String text)
-	{
-		if (mActiveLoader == LOADER_ADDRESS_FROM)
-		{
-			mPreviousEnteredAddressFrom = text;
-		} else if (mActiveLoader == LOADER_ADDRESS_TO)
-		{
-			mPreviousEnteredAddressTo = text;
-		} else if (mActiveLoader == LOADER_TITLE_FROM)
-		{
-			mPreviousEnteredContactFrom = text;
-		} else if (mActiveLoader == LOADER_TITLE_TO)
-		{
-			mPreviousEnteredContactTo = text;
-		}
-	}
-
-	private void setSelectedValue(String text)
-	{
-		if (mActiveLoader == LOADER_ADDRESS_FROM)
-		{
-			mAutoCompleteTextViewFromAddress.setText(text);
-		} else if (mActiveLoader == LOADER_ADDRESS_TO)
-		{
-			mAutoCompleteTextViewToAddress.setText(text);
-		} else if (mActiveLoader == LOADER_TITLE_FROM)
-		{
-			mAutoCompleteTextViewFromTitle.setText(text);
-		} else if (mActiveLoader == LOADER_TITLE_TO)
-		{
-			mAutoCompleteTextViewToTitle.setText(text);
-		}
-	}
-
-	private AutoCompleteTextView getAutoCompleteTextView()
-	{
-		if (mActiveLoader == LOADER_ADDRESS_FROM)
-		{
-			return mAutoCompleteTextViewFromAddress;
-		} else if (mActiveLoader == LOADER_ADDRESS_TO)
-		{
-			return mAutoCompleteTextViewToAddress;
-		} else if (mActiveLoader == LOADER_TITLE_FROM)
-		{
-			return mAutoCompleteTextViewFromTitle;
-		} else if (mActiveLoader == LOADER_TITLE_TO)
-		{
-			return mAutoCompleteTextViewToTitle;
-		}
-		return null;
-	}
-
-	private ProgressBar getProgressBar()
-	{
-		if (mActiveLoader == LOADER_ADDRESS_FROM)
-		{
-			return mProgressBarFromAddress;
-		} else if (mActiveLoader == LOADER_ADDRESS_TO)
-		{
-			return mProgressBarToAddress;
-		} else if (mActiveLoader == LOADER_TITLE_FROM)
-		{
-			return mProgressBarFromTitle;
-		} else if (mActiveLoader == LOADER_TITLE_TO)
-		{
-			return mProgressBarToTitle;
-		}
-		return null;
-	}
-
-	@Override
-	public void onFocusChange(View v, boolean hasFocus)
-	{
-		int id = v.getId();
-		switch (id)
-		{
-		case R.id.autoCompleteTextViewToTitle:
-			mActiveLoader = LOADER_TITLE_TO;
-			break;
-		case R.id.autoCompleteTextViewFromTitle:
-			mActiveLoader = LOADER_TITLE_FROM;
-			break;
-		case R.id.autoCompleteTextViewFrom:
-			mActiveLoader = LOADER_ADDRESS_FROM;
-			break;
-		case R.id.autoCompleteTextViewTo:
-			mActiveLoader = LOADER_ADDRESS_TO;
-			break;
-		default:
-			break;
-		}
-	}
-
-	private boolean isAddressMode()
-	{
-		return mActiveLoader == LOADER_ADDRESS_FROM || mActiveLoader == LOADER_ADDRESS_TO;
-	}
 
 	private class LoadAddressesRun implements Runnable
 	{
@@ -675,79 +499,6 @@ public class CreateRouteFragment extends SherlockFragment implements TextWatcher
 		{
 			loadContact(mQuery);
 		}
-	}
-
-	private class ImageLoader extends AsyncTask<Void, Void, Drawable>
-	{
-		private TextView mView;
-		private Uri mUri;
-		private Object tag;
-		private long position;
-
-		public ImageLoader(TextView view, Uri uri, long position)
-		{
-
-			if (view == null)
-			{
-				throw new IllegalArgumentException("View Cannot be null");
-			}
-			if (uri == null)
-			{
-				throw new IllegalArgumentException("Uri cant be null");
-			}
-			mView = view;
-			tag = mView.getTag();
-			this.position = position;
-			mUri = uri;
-		}
-
-		protected Drawable doInBackground(Void... args)
-		{
-			Bitmap bitmap;
-			// Load image from the Content Provider
-			InputStream in = ContactsContract.Contacts.openContactPhotoInputStream(getActivity().getContentResolver(), mUri);
-			bitmap = BitmapFactory.decodeStream(in);
-			return new BitmapDrawable(getResources(), bitmap);
-		}
-
-		protected void onPostExecute(Drawable bitmap)
-		{
-			if (bitmap == null || bitmap.getIntrinsicHeight()==0)
-			{
-				bitmap = mBitmapDrawableDummy;
-			}
-			// If is in somewhere else, do not temper
-			Long viewTag = (Long) mView.getTag();
-			if (!viewTag.equals(tag))
-				return;
-			// If no image was there and do not put it to cache
-			if (bitmap != null)
-			{
-				mView.setCompoundDrawablesWithIntrinsicBounds(bitmap, null, null, null);
-				addBitmapToCache(position, bitmap);
-				return;
-			} else
-			{
-
-			}
-			// Otherwise, welcome to cache
-			return;
-		}
-	}
-
-	/** Add image to cache */
-	private void addBitmapToCache(Long key, Drawable bitmap)
-	{
-		if (getBitmapFromCache(key) == null)
-		{
-			cache.put(key, bitmap);
-		}
-	}
-
-	/** Retrive image from cache */
-	private Drawable getBitmapFromCache(Long key)
-	{
-		return cache.get(key);
 	}
 	
 	private void loadContactAddress(long id)
@@ -793,5 +544,70 @@ public class CreateRouteFragment extends SherlockFragment implements TextWatcher
 				mAutoCompleteTextViewToAddress.setText(address);
 			}
 		}
+	}
+	private void loadTrips()
+	{
+		if(mLoadTrips==null || mLoadTrips.getStatus()==AsyncTask.Status.FINISHED)
+		{
+			if(mTripFetcher==null)
+			{
+				mTripFetcher = new TripFetcher(getActivity(), null, null);
+			}
+			mLoadTrips = new LoadTrips();
+			mLoadTrips.execute(null,null,null);
+		}
+	}
+	private class LoadTrips extends AsyncTask<String, Void, Void>
+	{
+		private TripRequest mTripRequest = null;
+		@Override
+		public void onPreExecute()
+		{
+			mTripRequest = new TripRequest();
+			try
+			{
+				mTripRequest.setOriginCoordName(mAutoCompleteTextViewFromAddress.getText().toString());
+				mTripRequest.setOriginCoordX(mSelectedFromLatitude);
+				mTripRequest.setOriginCoordY(mSelectedFromLongitude);
+				mTripRequest.setDestCoordName(mAutoCompleteTextViewToAddress.getText().toString());
+				mTripRequest.setDestCoordX(mSelectedToLatitude);
+				mTripRequest.setDestCoordY(mSelectedToLongitude);
+			} catch (UnsupportedEncodingException e)
+			{
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		
+		@Override
+		protected Void doInBackground(String... params)
+		{
+			
+			try
+			{
+				mTripFetcher.tripSearch(mTripRequest);
+			} catch (Exception e)
+			{
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
+			return null;
+		}
+
+		protected void onPostExecute(Void result)
+		{
+							
+		}
+	}
+
+	@Override
+	public void onClick(View v)
+	{
+		if(v.getId()==R.id.btnFindRoute)
+		{
+			loadTrips();
+		}
+		
 	}
 }

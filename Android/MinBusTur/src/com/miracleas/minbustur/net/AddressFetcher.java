@@ -32,6 +32,7 @@ import android.util.Log;
 
 import com.miracleas.minbustur.CreateRouteFragment;
 import com.miracleas.minbustur.R;
+import com.miracleas.minbustur.model.AddressSearch;
 import com.miracleas.minbustur.provider.AddressProviderMetaData;
 
 public class AddressFetcher extends BaseFetcher
@@ -40,13 +41,19 @@ public class AddressFetcher extends BaseFetcher
 	private static final String[] PROJECTION = {AddressProviderMetaData.TableMetaData._ID};
 	private String sort = null;
 	private String selection;
-	public static final String URL = "http://<baseurl>/location?input=user%20input";
+	public static final String URL = BASE_URL + "/mn?start=1&iER=yes&getstop=1&REQ0JourneyStopsS0A=255&js=true&S="; //jyllands?
+	private String mSearchTerm;
+	private long mUpdated = 0;
+	private Uri mUriNotify = null;
+	private boolean mUseGoogle = false;
 	
-	public AddressFetcher(Context c)
+	public AddressFetcher(Context c, Uri notifyUri)
 	{
 		super(c, null);
 		sort = AddressProviderMetaData.TableMetaData._ID +" LIMIT 1";
 		selection = AddressProviderMetaData.TableMetaData.searchTerm + "=?";
+		mUpdated = System.currentTimeMillis();
+		mUriNotify = notifyUri;
 	}
 
 	@Override
@@ -68,21 +75,67 @@ public class AddressFetcher extends BaseFetcher
 		
 	}
 	
-	private void fetchFromWebService(String userInput) throws Exception
+	
+	public synchronized void performGeocode(String locationName) throws Exception
 	{
-		broadcastLoading();
-		HttpURLConnection urlConnection = initHttpURLConnection(URL+userInput);
+		mSearchTerm = locationName;
+		boolean hasCachedResult = false;
+		Cursor cursor = null;
+		try
+		{	
+			String[] selectionArgs = {locationName};
+			cursor = mContentResolver.query(AddressProviderMetaData.TableMetaData.CONTENT_URI, PROJECTION, selection, selectionArgs, sort);
+			hasCachedResult = cursor.getCount()>0;
+		}
+		finally
+		{
+			if(cursor!=null)
+			{
+				cursor.close();
+			}
+		}				
+		if(!hasCachedResult)
+		{
+			if(mUseGoogle)
+			{
+				JSONObject obj = getLocationInfo(locationName);
+				try
+				{
+					getAddresses(obj, locationName);
+					saveData(AddressProviderMetaData.AUTHORITY);
+				}
+				catch (JSONException e)
+				{
+					e.printStackTrace();
+					throw new Exception(mContext.getString(R.string.geocoding_service_not_available));
+				}
+			}
+			else
+			{
+				rejseplanenAddressSearch(locationName);
+			}						
+		}
+	}
+	
+	private void rejseplanenAddressSearch(String userInput) throws Exception
+	{
+		HttpURLConnection urlConnection = initHttpURLConnection(URL+URLEncoder.encode(userInput, HTTP.UTF_8)+"?");
+		//urlConnection.addRequestProperty("Content-Length", userInput.length()+"");
+		urlConnection.setRequestProperty("Accept-Encoding", "gzip, deflate");
+		urlConnection.setRequestProperty("Accept", "*/*");
+		
 		try
 		{
 			int repsonseCode = urlConnection.getResponseCode();
 			if (repsonseCode == HttpURLConnection.HTTP_OK)
 			{
-				long currentTime = System.currentTimeMillis();								
-				InputStream input = urlConnection.getInputStream(); //fetchFromAssets();		
-				parse(input, currentTime);
+				mUpdated = System.currentTimeMillis();								
+				InputStream input = urlConnection.getInputStream(); //fetchFromAssets();
+				String s = Utils.convertStreamToString(input, HTTP.ISO_8859_1).replace("SLs.sls=", "");
+				parse(s);
 				if (!mDbOperations.isEmpty())
 				{
-					
+					saveData(AddressProviderMetaData.AUTHORITY);
 				}
 
 			} else if (repsonseCode == 404)
@@ -106,79 +159,35 @@ public class AddressFetcher extends BaseFetcher
 
 	}
 	
-	protected void parse(InputStream in, long currentTime) throws XmlPullParserException, IOException
+	private void parse(String in) throws IOException, JSONException
 	{
-		XmlPullParserFactory factory = XmlPullParserFactory.newInstance();
-		factory.setNamespaceAware(true);
-		XmlPullParser xpp = factory.newPullParser();
-
-		xpp.setInput(in, null);
-		int eventType = xpp.getEventType();
-		String buildDate = "";
-		boolean buildDateSet = false;
-		while (eventType != XmlPullParser.END_DOCUMENT)
+		JSONObject obj = new JSONObject(in);
+		JSONArray suggestions = obj.getJSONArray("suggestions");
+		for(int i = 0; i < suggestions.length(); i++)
 		{
-			
-			if (!buildDateSet && eventType == XmlPullParser.START_TAG && xpp.getName().equals("lastBuildDate"))
-			{
-				buildDate = safeNextText(xpp);
-				buildDateSet = true;
-			}	
-			if (eventType == XmlPullParser.START_TAG && xpp.getName().equals("koncerter"))
-			{
-				while (!(eventType == XmlPullParser.END_TAG && xpp.getName().equals("koncerter")))
-				{
-					
-					eventType = xpp.next();
-				}
-			}						
-			eventType = xpp.next();
+			AddressSearch current = new AddressSearch();
+			JSONObject s = suggestions.getJSONObject(i);
+			current.address = s.getString("value");
+			current.id = s.getString("id");
+			current.latitude = s.getString("xcoord"); //((double)s.getInt("xcoord") / 1000000d)+ "";
+			current.longitude = s.getString("ycoord"); //((double)s.getInt("ycoord") / 1000000d)+ "";
+			current.type = s.getString("type");
+			current.typeStr = s.getString("typeStr");
+			saveAddress(current);
 		}
 	}
 	
-	public synchronized void performGeocode(String locationName, Uri dataUri) throws Exception
+	private void saveAddress(AddressSearch s)
 	{
-		boolean hasCachedResult = false;
-		Cursor cursor = null;
-		try
-		{	
-			String[] selectionArgs = {locationName};
-			cursor = mContentResolver.query(AddressProviderMetaData.TableMetaData.CONTENT_URI, PROJECTION, selection, selectionArgs, sort);
-			hasCachedResult = cursor.getCount()>0;
-		}
-		finally
-		{
-			if(cursor!=null)
-			{
-				cursor.close();
-			}
-		}				
-		if(!hasCachedResult)
-		{
-			JSONObject obj = getLocationInfo(locationName);
-			try
-			{
-				getAddresses(obj, locationName);
-				saveData(dataUri);
-			}
-			catch (JSONException e)
-			{
-				e.printStackTrace();
-				throw new Exception(mContext.getString(R.string.geocoding_service_not_available));
-			}
-			
-		}
-	}
-	
-	private void saveData(Uri uri) throws RemoteException, OperationApplicationException
-	{
-		if(!mDbOperations.isEmpty())
-		{
-			int count = mContentResolver.applyBatch(AddressProviderMetaData.AUTHORITY, mDbOperations).length;
-			Log.d(tag, "applyBatch: "+count);
-			mContentResolver.notifyChange(uri, null);
-			mDbOperations.clear();
-		}
+		ContentProviderOperation.Builder b = ContentProviderOperation.newInsert(AddressProviderMetaData.TableMetaData.CONTENT_URI);
+		ContentProviderOperation operation = 
+		b.withValue(AddressProviderMetaData.TableMetaData.address, s.address).
+		withValue(AddressProviderMetaData.TableMetaData.lat, s.latitude).
+		withValue(AddressProviderMetaData.TableMetaData.lng, s.longitude).
+		withValue(AddressProviderMetaData.TableMetaData.type, s.type).
+		withValue(AddressProviderMetaData.TableMetaData.updated, mUpdated).
+		withValue(AddressProviderMetaData.TableMetaData.searchTerm, mSearchTerm).build();
+		mDbOperations.add(operation);
 	}
 
 	private JSONObject getLocationInfo(String address) throws Exception
@@ -205,7 +214,7 @@ public class AddressFetcher extends BaseFetcher
 		Log.d(tag, "getAddresses: "+searchTerm);
 		JSONArray resultObj = jsonObject.getJSONArray("results");
 		List<Address> addresses = new ArrayList<Address>(resultObj.length());
-		long updated = System.currentTimeMillis();
+		mUpdated = System.currentTimeMillis();
 		int count = resultObj.length();
 		int countOfEntries = 0;
 		String startsWith = searchTerm.substring(0, 2).toLowerCase();
@@ -243,8 +252,8 @@ public class AddressFetcher extends BaseFetcher
 					cv.put(AddressProviderMetaData.TableMetaData.address, strAddress);
 					cv.put(AddressProviderMetaData.TableMetaData.lat, location.getDouble("lat"));
 					cv.put(AddressProviderMetaData.TableMetaData.lng, location.getDouble("lng"));
-					cv.put(AddressProviderMetaData.TableMetaData.searchTerm, searchTerm);
-					cv.put(AddressProviderMetaData.TableMetaData.updated, updated);
+					cv.put(AddressProviderMetaData.TableMetaData.searchTerm, mSearchTerm);
+					cv.put(AddressProviderMetaData.TableMetaData.updated, mUpdated);
 					ContentProviderOperation.Builder b = ContentProviderOperation.newInsert(AddressProviderMetaData.TableMetaData.CONTENT_URI);
 					mDbOperations.add(b.withValues(cv).build());
 					Log.d(tag, "add: "+strAddress);
