@@ -19,8 +19,10 @@ public class AddressProviderMetaData
 	public static String getTableSchema()
 	{
 		return TableMetaData._ID + " INTEGER PRIMARY KEY AUTOINCREMENT," +
-				TableMetaData.type + " INTEGER," 
+				TableMetaData.type + " TEXT," 
+				+ TableMetaData.type_int + " INTEGER," 
 				+ TableMetaData.address + " TEXT," 
+				+ TableMetaData.id + " TEXT," 
 				+ TableMetaData.lat + " TEXT," 
 				+ TableMetaData.lng + " TEXT,"
 				+ TableMetaData.searchTerm + " TEXT,"
@@ -41,10 +43,12 @@ public class AddressProviderMetaData
 		public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd." + PACKAGE_NAME + ITEM_TYPE;
 
 		public static final String type = "type";
-		public static final String address = "address";
-		public static final String lat = "lat";
-		public static final String lng = "lng";
+		public static final String type_int = "type_int";
+		public static final String address = "name";
+		public static final String lat = "x";
+		public static final String lng = "y";
 		public static final String searchTerm = "searchTerm";
+		public static final String id = "id";
 		public static final String updated = "updated";
 
 	}

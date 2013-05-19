@@ -8,8 +8,8 @@ public class TripMetaData
 	public static final String PROVIDER_NAME = "MinBusTurProvider";
 	public static final String PACKAGE_NAME = "com.miracleas.minbustur.provider.";
 	public static final String AUTHORITY = PACKAGE_NAME + PROVIDER_NAME;
-	public static final String COLLECTION_TYPE = "addresses";
-	public static final String ITEM_TYPE = "address";
+	public static final String COLLECTION_TYPE = "trips";
+	public static final String ITEM_TYPE = "trip";
 	public static final String TABLE_NAME = TripMetaData.COLLECTION_TYPE;
 
 	private TripMetaData()
@@ -19,11 +19,10 @@ public class TripMetaData
 	public static String getTableSchema()
 	{
 		return TableMetaData._ID + " INTEGER PRIMARY KEY AUTOINCREMENT," +
-				TableMetaData.type + " INTEGER," 
-				+ TableMetaData.address + " TEXT," 
-				+ TableMetaData.lat + " TEXT," 
-				+ TableMetaData.lng + " TEXT,"
-				+ TableMetaData.searchTerm + " TEXT,"
+				TableMetaData.DURATION + " LONG," 
+				+ TableMetaData.LEG_COUNT + " INTEGER,"
+				+ TableMetaData.LEG_NAMES + " TEXT,"
+				+ TableMetaData.LEG_TYPES + " TEXT,"
 				+ TableMetaData.updated + " LONG"
 				;
 	}
@@ -40,11 +39,10 @@ public class TripMetaData
 		public static final String CONTENT_TYPE = "vnd.android.cursor.dir/vnd." + PACKAGE_NAME + ITEM_TYPE;
 		public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd." + PACKAGE_NAME + ITEM_TYPE;
 
-		public static final String type = "type";
-		public static final String address = "address";
-		public static final String lat = "lat";
-		public static final String lng = "lng";
-		public static final String searchTerm = "searchTerm";
+		public static final String DURATION = "duration";
+		public static final String LEG_COUNT = "leg_count";
+		public static final String LEG_NAMES = "leg_names";
+		public static final String LEG_TYPES = "leg_types";
 		public static final String updated = "updated";
 
 	}

@@ -22,7 +22,7 @@ import android.util.Log;
 public class MinBusTurProvider extends ContentProvider
 {
 	public static final String DATABASE_NAME = AddressProviderMetaData.COLLECTION_TYPE;
-	public static final int DATABASE_VERSION = 1;
+	public static final int DATABASE_VERSION = 5;
 	// Logging helper tag. No significance to providers.
 	private static final String tag = MinBusTurProvider.class.getName();
 
@@ -31,10 +31,10 @@ public class MinBusTurProvider extends ContentProvider
 	private static final int INCOMING_ADDRESS_COLLECTION_URI_INDICATOR = 1;
 	private static final int INCOMING_SINGLE_ADDRESS_URI_INDICATOR = 2;
 	private static final int INCOMING_ADDRESS_SEARCH_URI_INDICATOR = 3;
-	private static final int INCOMING_ROUTE_COLLECTION_URI_INDICATOR = 4;
-	private static final int INCOMING_SINGLE_ROUTE_URI_INDICATOR = 5;
-	private static final int INCOMING_WAYPOINT_COLLECTION_URI_INDICATOR = 6;
-	private static final int INCOMING_SINGLE_WAYPOINT_URI_INDICATOR = 7;
+	private static final int INCOMING_TRIP_COLLECTION_URI_INDICATOR = 4;
+	private static final int INCOMING_SINGLE_TRIP_URI_INDICATOR = 5;
+	private static final int INCOMING_TRIPLEG_COLLECTION_URI_INDICATOR = 6;
+	private static final int INCOMING_SINGLE_TRIPLEG_URI_INDICATOR = 7;
 	private static final int INCOMING_WAYPOINT_IMG_COLLECTION_URI_INDICATOR = 8;
 	private static final int INCOMING_SINGLE_WAYPOINT_IMG_URI_INDICATOR = 9;
 	
@@ -45,12 +45,12 @@ public class MinBusTurProvider extends ContentProvider
 		sUriMatcher.addURI(AddressProviderMetaData.AUTHORITY, AddressProviderMetaData.COLLECTION_TYPE, INCOMING_ADDRESS_COLLECTION_URI_INDICATOR);
 		sUriMatcher.addURI(AddressProviderMetaData.AUTHORITY, AddressProviderMetaData.COLLECTION_TYPE + "/#", INCOMING_SINGLE_ADDRESS_URI_INDICATOR);
 		sUriMatcher.addURI(AddressProviderMetaData.AUTHORITY, AddressProviderMetaData.COLLECTION_TYPE+ "/search", INCOMING_ADDRESS_SEARCH_URI_INDICATOR);
-		sUriMatcher.addURI(RouteMetaData.AUTHORITY, RouteMetaData.COLLECTION_TYPE, INCOMING_ROUTE_COLLECTION_URI_INDICATOR);
-		sUriMatcher.addURI(RouteMetaData.AUTHORITY, RouteMetaData.COLLECTION_TYPE + "/#", INCOMING_SINGLE_ROUTE_URI_INDICATOR);
-		sUriMatcher.addURI(RouteWaypointMetaData.AUTHORITY, RouteWaypointMetaData.COLLECTION_TYPE, INCOMING_WAYPOINT_COLLECTION_URI_INDICATOR);
-		sUriMatcher.addURI(RouteWaypointMetaData.AUTHORITY, RouteWaypointMetaData.COLLECTION_TYPE + "/#", INCOMING_SINGLE_WAYPOINT_URI_INDICATOR);
-		sUriMatcher.addURI(RouteWaypointImageMetaData.AUTHORITY, RouteWaypointImageMetaData.COLLECTION_TYPE, INCOMING_WAYPOINT_IMG_COLLECTION_URI_INDICATOR);
-		sUriMatcher.addURI(RouteWaypointImageMetaData.AUTHORITY, RouteWaypointImageMetaData.COLLECTION_TYPE + "/#", INCOMING_SINGLE_WAYPOINT_IMG_URI_INDICATOR);
+		sUriMatcher.addURI(TripMetaData.AUTHORITY, TripMetaData.COLLECTION_TYPE, INCOMING_TRIP_COLLECTION_URI_INDICATOR);
+		sUriMatcher.addURI(TripMetaData.AUTHORITY, TripMetaData.COLLECTION_TYPE + "/#", INCOMING_SINGLE_TRIP_URI_INDICATOR);
+		sUriMatcher.addURI(TripLegMetaData.AUTHORITY, TripLegMetaData.COLLECTION_TYPE, INCOMING_TRIPLEG_COLLECTION_URI_INDICATOR);
+		sUriMatcher.addURI(TripLegMetaData.AUTHORITY, TripLegMetaData.COLLECTION_TYPE + "/#", INCOMING_SINGLE_TRIPLEG_URI_INDICATOR);
+		sUriMatcher.addURI(TripLegImageMetaData.AUTHORITY, TripLegImageMetaData.COLLECTION_TYPE, INCOMING_WAYPOINT_IMG_COLLECTION_URI_INDICATOR);
+		sUriMatcher.addURI(TripLegImageMetaData.AUTHORITY, TripLegImageMetaData.COLLECTION_TYPE + "/#", INCOMING_SINGLE_WAYPOINT_IMG_URI_INDICATOR);
 		
 	}
 
@@ -70,9 +70,9 @@ public class MinBusTurProvider extends ContentProvider
 		{
 			Log.d(tag, "inner oncreate called");
 			db.execSQL("CREATE TABLE IF NOT EXISTS " + AddressProviderMetaData.TABLE_NAME + getTableSchemaStart() + AddressProviderMetaData.getTableSchema() + getTableSchemaEnd());
-			db.execSQL("CREATE TABLE IF NOT EXISTS " + RouteMetaData.TABLE_NAME + getTableSchemaStart() + RouteMetaData.getTableSchema() + getTableSchemaEnd());
-			db.execSQL("CREATE TABLE IF NOT EXISTS " + RouteWaypointMetaData.TABLE_NAME + getTableSchemaStart() + RouteWaypointMetaData.getTableSchema() + getTableSchemaEnd());
-			db.execSQL("CREATE TABLE IF NOT EXISTS " + RouteWaypointImageMetaData.TABLE_NAME + getTableSchemaStart() + RouteWaypointImageMetaData.getTableSchema() + getTableSchemaEnd());
+			db.execSQL("CREATE TABLE IF NOT EXISTS " + TripMetaData.TABLE_NAME + getTableSchemaStart() + TripMetaData.getTableSchema() + getTableSchemaEnd());
+			db.execSQL("CREATE TABLE IF NOT EXISTS " + TripLegMetaData.TABLE_NAME + getTableSchemaStart() + TripLegMetaData.getTableSchema() + getTableSchemaEnd());
+			db.execSQL("CREATE TABLE IF NOT EXISTS " + TripLegImageMetaData.TABLE_NAME + getTableSchemaStart() + TripLegImageMetaData.getTableSchema() + getTableSchemaEnd());
 		}
 
 		protected static String getTableSchemaStart()
@@ -91,9 +91,9 @@ public class MinBusTurProvider extends ContentProvider
 			Log.d(tag, "inner onupgrade called");
 			Log.w(tag, "Upgrading database from version " + oldVersion + " to " + newVersion + ", which will destroy all old data");
 			db.execSQL("DROP TABLE IF EXISTS " + AddressProviderMetaData.TABLE_NAME);
-			db.execSQL("DROP TABLE IF EXISTS " + RouteMetaData.TABLE_NAME);
-			db.execSQL("DROP TABLE IF EXISTS " + RouteWaypointMetaData.TABLE_NAME);
-			db.execSQL("DROP TABLE IF EXISTS " + RouteWaypointImageMetaData.TABLE_NAME);
+			db.execSQL("DROP TABLE IF EXISTS " + TripMetaData.TABLE_NAME);
+			db.execSQL("DROP TABLE IF EXISTS " + TripLegMetaData.TABLE_NAME);
+			db.execSQL("DROP TABLE IF EXISTS " + TripLegImageMetaData.TABLE_NAME);
 			onCreate(db);
 		}
 	}
@@ -135,30 +135,30 @@ public class MinBusTurProvider extends ContentProvider
 			Cursor c = db.rawQuery(b.toString(), null);
 			c.setNotificationUri(getContext().getContentResolver(), uri);
 			return c;
-		case INCOMING_ROUTE_COLLECTION_URI_INDICATOR:
-			qb.setTables(RouteMetaData.TABLE_NAME);
+		case INCOMING_TRIP_COLLECTION_URI_INDICATOR:
+			qb.setTables(TripMetaData.TABLE_NAME);
 			break;
 
-		case INCOMING_SINGLE_ROUTE_URI_INDICATOR:
-			qb.setTables(RouteMetaData.TABLE_NAME);
-			qb.appendWhere(RouteMetaData.TableMetaData._ID + "=" + uri.getPathSegments().get(1));
+		case INCOMING_SINGLE_TRIP_URI_INDICATOR:
+			qb.setTables(TripMetaData.TABLE_NAME);
+			qb.appendWhere(TripMetaData.TableMetaData._ID + "=" + uri.getPathSegments().get(1));
 			break;
-		case INCOMING_WAYPOINT_COLLECTION_URI_INDICATOR:
-			qb.setTables(RouteWaypointMetaData.TABLE_NAME);
+		case INCOMING_TRIPLEG_COLLECTION_URI_INDICATOR:
+			qb.setTables(TripLegMetaData.TABLE_NAME);
 			break;
 
-		case INCOMING_SINGLE_WAYPOINT_URI_INDICATOR:
-			qb.setTables(RouteWaypointMetaData.TABLE_NAME);
-			qb.appendWhere(RouteWaypointMetaData.TableMetaData._ID + "=" + uri.getPathSegments().get(1));
+		case INCOMING_SINGLE_TRIPLEG_URI_INDICATOR:
+			qb.setTables(TripLegMetaData.TABLE_NAME);
+			qb.appendWhere(TripLegMetaData.TableMetaData._ID + "=" + uri.getPathSegments().get(1));
 			break;
 			
 		case INCOMING_WAYPOINT_IMG_COLLECTION_URI_INDICATOR:
-			qb.setTables(RouteWaypointImageMetaData.TABLE_NAME);
+			qb.setTables(TripLegImageMetaData.TABLE_NAME);
 			break;
 
 		case INCOMING_SINGLE_WAYPOINT_IMG_URI_INDICATOR:
-			qb.setTables(RouteWaypointImageMetaData.TABLE_NAME);
-			qb.appendWhere(RouteWaypointImageMetaData.TableMetaData._ID + "=" + uri.getPathSegments().get(1));
+			qb.setTables(TripLegImageMetaData.TABLE_NAME);
+			qb.appendWhere(TripLegImageMetaData.TableMetaData._ID + "=" + uri.getPathSegments().get(1));
 			break;
 
 		default:
@@ -205,20 +205,20 @@ public class MinBusTurProvider extends ContentProvider
 			tbl = AddressProviderMetaData.TABLE_NAME;
 			contentUri = AddressProviderMetaData.TableMetaData.CONTENT_URI;
 		}
-		else if (sUriMatcher.match(uri) == INCOMING_ROUTE_COLLECTION_URI_INDICATOR)
+		else if (sUriMatcher.match(uri) == INCOMING_TRIP_COLLECTION_URI_INDICATOR)
 		{
-			tbl = RouteMetaData.TABLE_NAME;
-			contentUri = RouteMetaData.TableMetaData.CONTENT_URI;
+			tbl = TripMetaData.TABLE_NAME;
+			contentUri = TripMetaData.TableMetaData.CONTENT_URI;
 		}
-		else if (sUriMatcher.match(uri) == INCOMING_WAYPOINT_COLLECTION_URI_INDICATOR)
+		else if (sUriMatcher.match(uri) == INCOMING_TRIPLEG_COLLECTION_URI_INDICATOR)
 		{
-			tbl = RouteWaypointMetaData.TABLE_NAME;
-			contentUri = RouteWaypointMetaData.TableMetaData.CONTENT_URI;
+			tbl = TripLegMetaData.TABLE_NAME;
+			contentUri = TripLegMetaData.TableMetaData.CONTENT_URI;
 		}
 		else if (sUriMatcher.match(uri) == INCOMING_WAYPOINT_IMG_COLLECTION_URI_INDICATOR)
 		{
-			tbl = RouteWaypointImageMetaData.TABLE_NAME;
-			contentUri = RouteWaypointImageMetaData.TableMetaData.CONTENT_URI;
+			tbl = TripLegImageMetaData.TABLE_NAME;
+			contentUri = TripLegImageMetaData.TableMetaData.CONTENT_URI;
 		}
 		else
 		{
@@ -262,29 +262,29 @@ public class MinBusTurProvider extends ContentProvider
 			String rowId = uri.getPathSegments().get(1);
 			count = db.delete(AddressProviderMetaData.TABLE_NAME, AddressProviderMetaData.TableMetaData._ID + "=" + rowId + (!TextUtils.isEmpty(where) ? " AND (" + where + ')' : ""), whereArgs);
 			break;
-		case INCOMING_ROUTE_COLLECTION_URI_INDICATOR:
-			count = db.delete(RouteMetaData.TABLE_NAME, where, whereArgs);
+		case INCOMING_TRIP_COLLECTION_URI_INDICATOR:
+			count = db.delete(TripMetaData.TABLE_NAME, where, whereArgs);
 			break;
 
-		case INCOMING_SINGLE_ROUTE_URI_INDICATOR:
+		case INCOMING_SINGLE_TRIP_URI_INDICATOR:
 			String rowId1 = uri.getPathSegments().get(1);
-			count = db.delete(RouteMetaData.TABLE_NAME, RouteMetaData.TableMetaData._ID + "=" + rowId1 + (!TextUtils.isEmpty(where) ? " AND (" + where + ')' : ""), whereArgs);
+			count = db.delete(TripMetaData.TABLE_NAME, TripMetaData.TableMetaData._ID + "=" + rowId1 + (!TextUtils.isEmpty(where) ? " AND (" + where + ')' : ""), whereArgs);
 			break;
-		case INCOMING_WAYPOINT_COLLECTION_URI_INDICATOR:
-			count = db.delete(RouteWaypointMetaData.TABLE_NAME, where, whereArgs);
+		case INCOMING_TRIPLEG_COLLECTION_URI_INDICATOR:
+			count = db.delete(TripLegMetaData.TABLE_NAME, where, whereArgs);
 			break;
 
-		case INCOMING_SINGLE_WAYPOINT_URI_INDICATOR:
+		case INCOMING_SINGLE_TRIPLEG_URI_INDICATOR:
 			String rowId2 = uri.getPathSegments().get(1);
-			count = db.delete(RouteWaypointMetaData.TABLE_NAME, RouteWaypointMetaData.TableMetaData._ID + "=" + rowId2 + (!TextUtils.isEmpty(where) ? " AND (" + where + ')' : ""), whereArgs);
+			count = db.delete(TripLegMetaData.TABLE_NAME, TripLegMetaData.TableMetaData._ID + "=" + rowId2 + (!TextUtils.isEmpty(where) ? " AND (" + where + ')' : ""), whereArgs);
 			break;
 		case INCOMING_WAYPOINT_IMG_COLLECTION_URI_INDICATOR:
-			count = db.delete(RouteWaypointImageMetaData.TABLE_NAME, where, whereArgs);
+			count = db.delete(TripLegImageMetaData.TABLE_NAME, where, whereArgs);
 			break;
 
 		case INCOMING_SINGLE_WAYPOINT_IMG_URI_INDICATOR:
 			String rowId3 = uri.getPathSegments().get(1);
-			count = db.delete(RouteWaypointImageMetaData.TABLE_NAME, RouteWaypointImageMetaData.TableMetaData._ID + "=" + rowId3 + (!TextUtils.isEmpty(where) ? " AND (" + where + ')' : ""), whereArgs);
+			count = db.delete(TripLegImageMetaData.TABLE_NAME, TripLegImageMetaData.TableMetaData._ID + "=" + rowId3 + (!TextUtils.isEmpty(where) ? " AND (" + where + ')' : ""), whereArgs);
 			break;
 		default:
 			throw new IllegalArgumentException("Unknown URI " + uri);
@@ -308,30 +308,30 @@ public class MinBusTurProvider extends ContentProvider
 			String rowId = uri.getPathSegments().get(1);
 			count = db.update(AddressProviderMetaData.TABLE_NAME, values, AddressProviderMetaData.TableMetaData._ID + "=" + rowId + (!TextUtils.isEmpty(where) ? " AND (" + where + ')' : ""), whereArgs);
 			break;
-		case INCOMING_ROUTE_COLLECTION_URI_INDICATOR:
-			count = db.update(RouteMetaData.TABLE_NAME, values, where, whereArgs);
+		case INCOMING_TRIP_COLLECTION_URI_INDICATOR:
+			count = db.update(TripMetaData.TABLE_NAME, values, where, whereArgs);
 			break;
 
-		case INCOMING_SINGLE_ROUTE_URI_INDICATOR:
+		case INCOMING_SINGLE_TRIP_URI_INDICATOR:
 			String rowId1 = uri.getPathSegments().get(1);
-			count = db.update(RouteMetaData.TABLE_NAME, values, RouteMetaData.TableMetaData._ID + "=" + rowId1 + (!TextUtils.isEmpty(where) ? " AND (" + where + ')' : ""), whereArgs);
+			count = db.update(TripMetaData.TABLE_NAME, values, TripMetaData.TableMetaData._ID + "=" + rowId1 + (!TextUtils.isEmpty(where) ? " AND (" + where + ')' : ""), whereArgs);
 			break;
-		case INCOMING_WAYPOINT_COLLECTION_URI_INDICATOR:
-			count = db.update(RouteWaypointMetaData.TABLE_NAME, values, where, whereArgs);
+		case INCOMING_TRIPLEG_COLLECTION_URI_INDICATOR:
+			count = db.update(TripLegMetaData.TABLE_NAME, values, where, whereArgs);
 			break;
 
-		case INCOMING_SINGLE_WAYPOINT_URI_INDICATOR:
+		case INCOMING_SINGLE_TRIPLEG_URI_INDICATOR:
 			String rowId2 = uri.getPathSegments().get(1);
-			count = db.update(RouteWaypointMetaData.TABLE_NAME, values, RouteWaypointMetaData.TableMetaData._ID + "=" + rowId2 + (!TextUtils.isEmpty(where) ? " AND (" + where + ')' : ""), whereArgs);
+			count = db.update(TripLegMetaData.TABLE_NAME, values, TripLegMetaData.TableMetaData._ID + "=" + rowId2 + (!TextUtils.isEmpty(where) ? " AND (" + where + ')' : ""), whereArgs);
 			break;
 
 		case INCOMING_WAYPOINT_IMG_COLLECTION_URI_INDICATOR:
-			count = db.update(RouteWaypointImageMetaData.TABLE_NAME, values, where, whereArgs);
+			count = db.update(TripLegImageMetaData.TABLE_NAME, values, where, whereArgs);
 			break;
 
 		case INCOMING_SINGLE_WAYPOINT_IMG_URI_INDICATOR:
 			String rowId3 = uri.getPathSegments().get(1);
-			count = db.update(RouteWaypointImageMetaData.TABLE_NAME, values, RouteWaypointImageMetaData.TableMetaData._ID + "=" + rowId3 + (!TextUtils.isEmpty(where) ? " AND (" + where + ')' : ""), whereArgs);
+			count = db.update(TripLegImageMetaData.TABLE_NAME, values, TripLegImageMetaData.TableMetaData._ID + "=" + rowId3 + (!TextUtils.isEmpty(where) ? " AND (" + where + ')' : ""), whereArgs);
 			break;
 		default:
 			throw new IllegalArgumentException("Unknown URI " + uri);

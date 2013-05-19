@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+	<LocationList xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://xmlopen.rejseplanen.dk/xml/rest/hafasRestLocation.xsd">
+		<StopLocation name="Nygade" x="12286267" y="56064786" id="000005417" />
+		<StopLocation name="Nygade" x="12117126" y="55255667" id="000032958" />
+		<StopLocation name="Nygade v. torvet" x="8976268" y="56137464" id="657010300" />
+		<StopLocation name="Nygade / hallen" x="8857619" y="56797604" id="773004003" />
+		<StopLocation name="Nygade, Apoteket" x="11140745" y="54830881" id="000032727" />
+		<StopLocation name="Nygade/Rosengade" x="10142726" y="55972107" id="727000704" />
+		<StopLocation name="Nygade/Rolighedsvej" x="8971225" y="56137931" id="657010400" />
+		<StopLocation name="Nygade (Odense Kommune)" x="10375016" y="55359276" id="461089700" />
+		<StopLocation name="Nygade / Slotsgade (Langeland Kommune)" x="10845152" y="54997245" id="482354100" />
+		<StopLocation name="Nygade (VrÃ¥ / Nordjylland)" x="9948658" y="57353659" id="829003700" />
+		<StopLocation name="Nygade v. Villavej        Ikast" x="9155917" y="56143226" id="663012100" />
+		<StopLocation name="Nygade / Demantsvej (Odense Kommune)" x="10378954" y="55358791" id="461089800" />
+		<StopLocation name="Nygade v Ãsterbyskolen (Vejen)" x="9142874" y="55474671" id="575607300" />
+		<CoordLocation name="Nygade 8700 Horsens, Horsens" x="9841552" y="55867994" type="ADR" />
+		<CoordLocation name="Nygade 8870 LangÃ¥, Randers" x="9891873" y="56386546" type="ADR" />
+		<CoordLocation name="Nygade 4300 HolbÃ¦k, HolbÃ¦k" x="11709070" y="55716876" type="ADR" />
+		<CoordLocation name="Nygade 7600 Struer, Struer" x="8602523" y="56489140" type="ADR" />
+		<StopLocation name="Ny Vestergade / Nygade (Faaborg Midtfyn)" x="10311373" y="55270346" id="430266600" />
+		<CoordLocation name="Nygade 5500 Middelfart, Middelfart" x="9732036" y="55503715" type="ADR" />
+		<CoordLocation name="Nygade 6580 Vamdrup, Kolding" x="9280112" y="55427496" type="ADR" />
+		<CoordLocation name="Nygade 4200 Slagelse, Slagelse" x="11354436" y="55404231" type="ADR" />
+		<CoordLocation name="Nygade 7800 Skive, Skive" x="9026877" y="56563984" type="ADR" />
+		<CoordLocation name="Nygade 4340 TÃ¸llÃ¸se, HolbÃ¦k" x="11771104" y="55609159" type="ADR" />
+		<CoordLocation name="Nygade 7480 Vildbjerg, Herning" x="8767691" y="56195992" type="ADR" />
+		<CoordLocation name="Nygade Thyregod, 7323 Give, Vejle" x="9255356" y="55909515" type="ADR" />
+		<CoordLocation name="Nygade 7570 Vemb, Holstebro" x="8342708" y="56342570" type="ADR" />
+		<CoordLocation name="Nygade 4550 AsnÃ¦s, Odsherred" x="11499432" y="55807946" type="ADR" />
+		<CoordLocation name="Nygade 9760 VrÃ¥, HjÃ¸rring" x="9946582" y="57354171" type="ADR" />
+		<CoordLocation name="Nygade 4690 Haslev, Faxe" x="11965244" y="55326007" type="ADR" />
+		<CoordLocation name="Nygade 4640 Faxe, Faxe" x="12117512" y="55257914" type="ADR" />
+		<CoordLocation name="Nygade 9700 BrÃ¸nderslev, BrÃ¸nderslev" x="9946555" y="57269044" type="ADR" />
+		<CoordLocation name="Nygade 3390 Hundested, HalsnÃ¦s" x="11851405" y="55963756" type="ADR" />
+		<CoordLocation name="Nygade 4672 Klippinge, Stevns" x="12326314" y="55347527" type="ADR" />
+		<CoordLocation name="Nygade Ejby, 5592 Ejby, Middelfart" x="9928136" y="55426246" type="ADR" />
+		<CoordLocation name="Nygade 8600 Silkeborg, Silkeborg" x="9547443" y="56167236" type="ADR" />
+		<CoordLocation name="Nygade 6950 RingkÃ¸bing, RingkÃ¸bing-Skjern" x="8245885" y="56091349" type="ADR" />
+		<CoordLocation name="Nygade 7430 Ikast, Ikast-Brande" x="9166606" y="56142911" type="ADR" />
+		<CoordLocation name="Nygade 6690 GÃ¸rding, Esbjerg" x="8797517" y="55467956" type="ADR" />
+		<CoordLocation name="Nygade 8550 RyomgÃ¥rd, Syddjurs" x="10498160" y="56381035" type="ADR" />
+		<CoordLocation name="Nygade 6870 Ãlgod, Varde" x="8619810" y="55808872" type="ADR" />
+		<CoordLocation name="Nygade 6900 Skjern, RingkÃ¸bing-Skjern" x="8492046" y="55950982" type="ADR" />
+		<CoordLocation name="Nygade 4560 Vig, Odsherred" x="11576685" y="55850950" type="ADR" />
+		<CoordLocation name="Nygade 3600 Frederikssund, Frederikssund" x="12062993" y="55835992" type="ADR" />
+		<CoordLocation name="Nygade 4900 Nakskov, Lolland" x="11140133" y="54830783" type="ADR" />
+		<CoordLocation name="Nygade 3200 Helsinge, Gribskov" x="12203422" y="56027373" type="ADR" />
+		<CoordLocation name="Nygade 7400 Herning, Herning" x="8974632" y="56137580" type="ADR" />
+		<CoordLocation name="Nygade 6300 GrÃ¥sten, SÃ¸nderborg" x="9595274" y="54921412" type="ADR" />
+		<CoordLocation name="Nygade 7760 Hurup Thy, Thisted" x="8418577" y="56748820" type="ADR" />
+		<CoordLocation name="Nygade 3320 SkÃ¦vinge, HillerÃ¸d" x="12153056" y="55908113" type="ADR" />
+		<CoordLocation name="Nygade 6800 Varde, Varde" x="8482203" y="55621582" type="ADR" />
+</LocationList>

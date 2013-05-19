@@ -46,7 +46,7 @@ public abstract class BaseFetcher
 	public static final String LOADING_DATA = "LOADING_DATA";
 	public static final String ARGS_FORCE_UPDATE = "ARGS_FORCE_UPDATE";
 	
-	public static final String BASE_URL = "http://www.rejseplanen.dk";
+	public static final String BASE_URL = "http://xmlopen.rejseplanen.dk/bin/rest.exe/";
 
 	protected Context mContext = null;
 	protected ContentResolver mContentResolver = null;
@@ -144,9 +144,9 @@ public abstract class BaseFetcher
 		}
 	}
 
-	abstract boolean start();
+	protected boolean start(){return true;}
 
-	abstract void end();
+	protected void end(){}
 	
 	public static void resetLoadingState(Context c){}
 

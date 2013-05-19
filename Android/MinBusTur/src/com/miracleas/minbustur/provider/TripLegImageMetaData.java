@@ -3,16 +3,16 @@ package com.miracleas.minbustur.provider;
 import android.net.Uri;
 import android.provider.BaseColumns;
 
-public class RouteWaypointImageMetaData
+public class TripLegImageMetaData
 {
 	public static final String PROVIDER_NAME = "MinBusTurProvider";
 	public static final String PACKAGE_NAME = "com.miracleas.minbustur.provider.";
 	public static final String AUTHORITY = PACKAGE_NAME + PROVIDER_NAME;
 	public static final String COLLECTION_TYPE = "waypoint_images";
 	public static final String ITEM_TYPE = "waypoint_image";
-	public static final String TABLE_NAME = RouteWaypointImageMetaData.COLLECTION_TYPE;
+	public static final String TABLE_NAME = TripLegImageMetaData.COLLECTION_TYPE;
 
-	private RouteWaypointImageMetaData()
+	private TripLegImageMetaData()
 	{
 	}
 

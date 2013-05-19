@@ -32,6 +32,7 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemSelectedListener;
 
 import com.actionbarsherlock.app.SherlockFragment;
+import com.miracleas.minbustur.model.TripRequest;
 import com.miracleas.minbustur.net.AddressFetcher;
 import com.miracleas.minbustur.provider.AddressProviderMetaData;
 
@@ -47,7 +48,7 @@ public abstract class CreateRouteFragmentBase extends SherlockFragment implement
 	protected static final int LOADER_ADDRESS_TO = 2;
 	protected static final int LOADER_TITLE_TO = 3;
 	protected static final int LOADER_TITLE_FROM = 4;
-	protected static final String[] PROJECTION = { AddressProviderMetaData.TableMetaData._ID, AddressProviderMetaData.TableMetaData.address, AddressProviderMetaData.TableMetaData.lat, AddressProviderMetaData.TableMetaData.lng };
+	protected static final String[] PROJECTION = { AddressProviderMetaData.TableMetaData._ID, AddressProviderMetaData.TableMetaData.id, AddressProviderMetaData.TableMetaData.address, AddressProviderMetaData.TableMetaData.lat, AddressProviderMetaData.TableMetaData.lng, AddressProviderMetaData.TableMetaData.type_int };
 	protected static final String[] PROJECTION_CONTACTS = new String[] { ContactsContract.Contacts._ID, ContactsContract.Contacts.DISPLAY_NAME };
 
 	protected AddressFetcher mAddressFetcher = null;
@@ -57,10 +58,10 @@ public abstract class CreateRouteFragmentBase extends SherlockFragment implement
 	protected String mPreviousEnteredContactTo = null;
 	protected Handler mHandler = null;
 	
-	protected String mSelectedFromLatitude = null;
+	/*protected String mSelectedFromLatitude = null;
 	protected String mSelectedFromLongitude = null;
 	protected String mSelectedToLatitude = null;
-	protected String mSelectedToLongitude = null;
+	protected String mSelectedToLongitude = null;*/
 	protected int mActiveLoader = LOADER_TITLE_FROM;
 	protected Uri mDataUri = null;
 
@@ -75,6 +76,7 @@ public abstract class CreateRouteFragmentBase extends SherlockFragment implement
 	protected Drawable mBitmapDrawableDummy = null;
 
 	protected int mLoadCount = 0;
+	protected TripRequest mTripRequest = null;
 	
 	@SuppressLint("NewApi")
 	@Override
@@ -83,6 +85,11 @@ public abstract class CreateRouteFragmentBase extends SherlockFragment implement
 		if(savedInstanceState!=null)
 		{
 			mActiveLoader = savedInstanceState.getInt("mActiveLoader", LOADER_TITLE_TO);
+			mTripRequest = savedInstanceState.getParcelable("tripRequest");
+		}
+		else
+		{
+			mTripRequest = new TripRequest();
 		}
 		View rootView = inflater.inflate(R.layout.fragment_create_route, container, false);
 		mAutoCompleteTextViewToTitle = (AutoCompleteTextView) rootView.findViewById(R.id.autoCompleteTextViewToTitle);
@@ -197,6 +204,7 @@ public abstract class CreateRouteFragmentBase extends SherlockFragment implement
 	{
 		super.onSaveInstanceState(outState);
 		outState.putInt("mActiveLoader", mActiveLoader);
+		outState.putParcelable("tripRequest", mTripRequest);
 	}
 
 	@Override

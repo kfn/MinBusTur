@@ -25,6 +25,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.miracleas.minbustur.model.AddressSearch;
 import com.miracleas.minbustur.model.TripRequest;
@@ -43,6 +44,7 @@ public class CreateRouteFragment extends CreateRouteFragmentBase
 	private LoadContactRun mLoadContactRun = null;
 	private LoadTrips mLoadTrips = null;
 	private TripFetcher mTripFetcher = null;
+	
 
 	public static CreateRouteFragment createInstance()
 	{
@@ -180,15 +182,21 @@ public class CreateRouteFragment extends CreateRouteFragmentBase
 			String text = a.getAddress(position);
 			String lat = a.getLat(position);
 			String lng = a.getLng(position);
+			String positionId = a.getId(position);
 			if(mActiveLoader == LOADER_ADDRESS_FROM)
 			{
-				mSelectedFromLatitude = lat;
-				mSelectedFromLongitude = lng;
+				mTripRequest.setOriginId(positionId);
+				mTripRequest.setOriginCoordName(text);	
+				mTripRequest.setOriginCoordX(lat);
+				mTripRequest.setOriginCoordY(lng);
+				
 			}
 			else if(mActiveLoader == LOADER_ADDRESS_TO)
 			{
-				mSelectedToLatitude = lat;
-				mSelectedToLongitude = lng;
+				mTripRequest.setDestId(positionId);
+				mTripRequest.setDestCoordName(text);
+				mTripRequest.setDestCoordX(lat);
+				mTripRequest.setDestCoordY(lng);
 			}
 			setPreviousEnteredText(text);
 			setSelectedValue(text);
@@ -208,8 +216,9 @@ public class CreateRouteFragment extends CreateRouteFragmentBase
 	private void loadAddress(String query)
 	{
 		mLoadCount++;
+		query = query.trim();
 		setPreviousEnteredText(query);
-		Log.d(tag, "lockup for: " + query);
+		Log.d(tag, "lookup for: " + query);
 		new LoadAddresses().execute(query);
 		Bundle args = new Bundle();
 		args.putString(AddressProviderMetaData.TableMetaData.address, query);
@@ -261,6 +270,7 @@ public class CreateRouteFragment extends CreateRouteFragmentBase
 		private int iLat;
 		private int iLng;
 		private int iType;
+		private int iId;
 		private LayoutInflater mInf = null;
 
 		public AutoCompleteAddressAdapter(Context context, Cursor c, int flags)
@@ -309,7 +319,8 @@ public class CreateRouteFragment extends CreateRouteFragmentBase
 				iAddress = newCursor.getColumnIndex(AddressProviderMetaData.TableMetaData.address);
 				iLat = newCursor.getColumnIndex(AddressProviderMetaData.TableMetaData.lat);
 				iLng = newCursor.getColumnIndex(AddressProviderMetaData.TableMetaData.lng);
-				iType = newCursor.getColumnIndex(AddressProviderMetaData.TableMetaData.type);
+				iType = newCursor.getColumnIndex(AddressProviderMetaData.TableMetaData.type_int);
+				iId = newCursor.getColumnIndex(AddressProviderMetaData.TableMetaData.id);
 			}
 			return super.swapCursor(newCursor);
 		}
@@ -343,6 +354,17 @@ public class CreateRouteFragment extends CreateRouteFragmentBase
 			if (c.moveToPosition(position))
 			{
 				address = c.getString(iAddress);
+			}
+			return address;
+		}
+		
+		public String getId(int position)
+		{
+			String address = null;
+			Cursor c = getCursor();
+			if (c.moveToPosition(position))
+			{
+				address = c.getString(iId);
 			}
 			return address;
 		}
@@ -447,6 +469,8 @@ public class CreateRouteFragment extends CreateRouteFragmentBase
 			}
 			return address;
 		}
+		
+
 	}
 
 	private CursorAdapter getAdapter()
@@ -547,38 +571,27 @@ public class CreateRouteFragment extends CreateRouteFragmentBase
 	}
 	private void loadTrips()
 	{
-		if(mLoadTrips==null || mLoadTrips.getStatus()==AsyncTask.Status.FINISHED)
+		if(mTripRequest.isValid())
 		{
-			if(mTripFetcher==null)
+			if(mLoadTrips==null || mLoadTrips.getStatus()==AsyncTask.Status.FINISHED)
 			{
-				mTripFetcher = new TripFetcher(getActivity(), null, null);
+				if(mTripFetcher==null)
+				{
+					mTripFetcher = new TripFetcher(getActivity(), null, null);
+				}
+				mLoadTrips = new LoadTrips();
+				mLoadTrips.execute(null,null,null);
 			}
-			mLoadTrips = new LoadTrips();
-			mLoadTrips.execute(null,null,null);
 		}
+		else
+		{
+			Toast.makeText(getActivity(), "Not valid", Toast.LENGTH_SHORT).show();
+		}
+		
+		
 	}
 	private class LoadTrips extends AsyncTask<String, Void, Void>
 	{
-		private TripRequest mTripRequest = null;
-		@Override
-		public void onPreExecute()
-		{
-			mTripRequest = new TripRequest();
-			try
-			{
-				mTripRequest.setOriginCoordName(mAutoCompleteTextViewFromAddress.getText().toString());
-				mTripRequest.setOriginCoordX(mSelectedFromLatitude);
-				mTripRequest.setOriginCoordY(mSelectedFromLongitude);
-				mTripRequest.setDestCoordName(mAutoCompleteTextViewToAddress.getText().toString());
-				mTripRequest.setDestCoordX(mSelectedToLatitude);
-				mTripRequest.setDestCoordY(mSelectedToLongitude);
-			} catch (UnsupportedEncodingException e)
-			{
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-		
 		@Override
 		protected Void doInBackground(String... params)
 		{

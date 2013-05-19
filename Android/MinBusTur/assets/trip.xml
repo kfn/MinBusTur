@@ -1,0 +1,463 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TripList xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="http://xmlopen.rejseplanen.dk/xml/rest/hafasRestTrip.xsd" >
+
+    <Trip>
+
+        <Leg
+            name="Bus 141"
+            type="BUS" >
+
+            <Origin
+                name="Nygade (Odense Kommune)"
+                date="19.05.13"
+                routeIdx="26"
+                time="12:03"
+                type="ST" />
+
+            <Destination
+                name="OBC Plads F (Odense Kommune)"
+                date="19.05.13"
+                routeIdx="44"
+                time="12:21"
+                type="ST" />
+
+            <Notes text="Retning: Otterup;" />
+
+            <JourneyDetailRef ref="http://xmlopen.rejseplanen.dk/bin/rest.exe/journeyDetail?ref=141546%2F58281%2F544762%2F225201%2F86%3Fdate%3D19.05.13%26station_evaId%3D461085800%26" />
+        </Leg>
+
+        <Leg
+            name="til fods"
+            type="WALK" >
+
+            <Origin
+                name="OBC Plads F (Odense Kommune)"
+                date="19.05.13"
+                time="12:21"
+                type="ST" />
+
+            <Destination
+                name="Odense st"
+                date="19.05.13"
+                time="12:27"
+                type="ST" />
+
+            <Notes text="Varighed: 6 min.;" />
+        </Leg>
+
+        <Leg
+            name="Togbus 70024"
+            type="TOG" >
+
+            <Origin
+                name="Odense st"
+                date="19.05.13"
+                routeIdx="0"
+                time="12:45"
+                type="ST" />
+
+            <Destination
+                name="Vejle st"
+                date="19.05.13"
+                routeIdx="14"
+                time="14:15"
+                type="ST" />
+
+            <Notes text="Retning: Vejle st;" />
+
+            <JourneyDetailRef ref="http://xmlopen.rejseplanen.dk/bin/rest.exe/journeyDetail?ref=665886%2F231646%2F407716%2F18110%2F86%3Fdate%3D19.05.13%26station_evaId%3D8600512%26" />
+        </Leg>
+
+        <Leg
+            name="IC 80141"
+            type="IC" >
+
+            <Origin
+                name="Vejle st"
+                date="19.05.13"
+                routeIdx="0"
+                time="14:27"
+                type="ST" />
+
+            <Destination
+                name="Horsens st"
+                date="19.05.13"
+                routeIdx="2"
+                time="14:43"
+                type="ST" />
+
+            <Notes text="Retning: Lindholm st;Mulighed for internet,Cykelreservering kræves" />
+
+            <JourneyDetailRef ref="http://xmlopen.rejseplanen.dk/bin/rest.exe/journeyDetail?ref=753399%2F259422%2F964572%2F231153%2F86%3Fdate%3D19.05.13%26station_evaId%3D8600073%26" />
+        </Leg>
+
+        <Leg
+            name="til fods"
+            type="WALK" >
+
+            <Origin
+                name="Horsens st"
+                date="19.05.13"
+                time="14:43"
+                type="ST" />
+
+            <Destination
+                name="Horsens Trafikterminal"
+                date="19.05.13"
+                time="14:53"
+                type="ST" />
+
+            <Notes text="Varighed: 10 min.;" />
+        </Leg>
+
+        <Leg
+            name="Bus 306"
+            type="BUS" >
+
+            <Origin
+                name="Horsens Trafikterminal"
+                date="19.05.13"
+                routeIdx="0"
+                time="15:25"
+                track="9 "
+                type="ST" />
+
+            <Destination
+                name="Odder Busterminal"
+                date="19.05.13"
+                routeIdx="35"
+                time="16:05"
+                type="ST" />
+
+            <Notes text="Retning: Odder Busterminal;" />
+
+            <JourneyDetailRef ref="http://xmlopen.rejseplanen.dk/bin/rest.exe/journeyDetail?ref=97215%2F51749%2F104502%2F19849%2F86%3Fdate%3D19.05.13%26station_evaId%3D615100100%26" />
+        </Leg>
+
+        <Leg
+            name="til fods"
+            type="WALK" >
+
+            <Origin
+                name="Odder Busterminal"
+                date="19.05.13"
+                time="16:05"
+                type="ST" />
+
+            <Destination
+                name="Nygade/Rosengade"
+                date="19.05.13"
+                time="16:13"
+                type="ST" />
+
+            <Notes text="Varighed: 8 min.;(Afstand: ca. 0,6 km);" />
+        </Leg>
+    </Trip>
+
+    <Trip>
+
+        <Leg
+            name="Bus 141"
+            type="BUS" >
+
+            <Origin
+                name="Nygade (Odense Kommune)"
+                date="19.05.13"
+                routeIdx="26"
+                time="13:03"
+                type="ST" />
+
+            <Destination
+                name="OBC Plads F (Odense Kommune)"
+                date="19.05.13"
+                routeIdx="44"
+                time="13:21"
+                type="ST" />
+
+            <Notes text="Retning: Otterup;" />
+
+            <JourneyDetailRef ref="http://xmlopen.rejseplanen.dk/bin/rest.exe/journeyDetail?ref=641820%2F225039%2F442578%2F7352%2F86%3Fdate%3D19.05.13%26station_evaId%3D461085800%26" />
+        </Leg>
+
+        <Leg
+            name="til fods"
+            type="WALK" >
+
+            <Origin
+                name="OBC Plads F (Odense Kommune)"
+                date="19.05.13"
+                time="13:21"
+                type="ST" />
+
+            <Destination
+                name="Odense st"
+                date="19.05.13"
+                time="13:27"
+                type="ST" />
+
+            <Notes text="Varighed: 6 min.;" />
+        </Leg>
+
+        <Leg
+            name="Togbus 70025"
+            type="TOG" >
+
+            <Origin
+                name="Odense st"
+                date="19.05.13"
+                routeIdx="0"
+                time="13:45"
+                type="ST" />
+
+            <Destination
+                name="Vejle st"
+                date="19.05.13"
+                routeIdx="14"
+                time="15:15"
+                type="ST" />
+
+            <Notes text="Retning: Vejle st;" />
+
+            <JourneyDetailRef ref="http://xmlopen.rejseplanen.dk/bin/rest.exe/journeyDetail?ref=594000%2F207684%2F874450%2F239232%2F86%3Fdate%3D19.05.13%26station_evaId%3D8600512%26" />
+        </Leg>
+
+        <Leg
+            name="IC 80145"
+            type="IC" >
+
+            <Origin
+                name="Vejle st"
+                date="19.05.13"
+                routeIdx="0"
+                time="15:27"
+                type="ST" />
+
+            <Destination
+                name="Skanderborg st"
+                date="19.05.13"
+                routeIdx="3"
+                time="15:59"
+                type="ST" />
+
+            <Notes text="Retning: Lindholm st;Mulighed for internet,Cykelreservering kræves" />
+
+            <JourneyDetailRef ref="http://xmlopen.rejseplanen.dk/bin/rest.exe/journeyDetail?ref=772596%2F265821%2F900478%2F192708%2F86%3Fdate%3D19.05.13%26station_evaId%3D8600073%26" />
+        </Leg>
+
+        <Leg
+            name="til fods"
+            type="WALK" >
+
+            <Origin
+                name="Skanderborg st"
+                date="19.05.13"
+                time="15:59"
+                type="ST" />
+
+            <Destination
+                name="Skanderborg st (bus)"
+                date="19.05.13"
+                time="16:03"
+                type="ST" />
+
+            <Notes text="Varighed: 4 min.;" />
+        </Leg>
+
+        <Leg
+            name="Bus 331"
+            type="BUS" >
+
+            <Origin
+                name="Skanderborg st (bus)"
+                date="19.05.13"
+                routeIdx="3"
+                time="16:48"
+                type="ST" />
+
+            <Destination
+                name="Kongshusvej/Rosensgade"
+                date="19.05.13"
+                routeIdx="26"
+                time="17:21"
+                type="ST" />
+
+            <Notes text="Retning: Odder Busterminal;" />
+
+            <JourneyDetailRef ref="http://xmlopen.rejseplanen.dk/bin/rest.exe/journeyDetail?ref=292041%2F116843%2F581774%2F193542%2F86%3Fdate%3D19.05.13%26station_evaId%3D745000600%26" />
+        </Leg>
+
+        <Leg
+            name="til fods"
+            type="WALK" >
+
+            <Origin
+                name="Kongshusvej/Rosensgade"
+                date="19.05.13"
+                time="17:21"
+                type="ST" />
+
+            <Destination
+                name="Nygade/Rosengade"
+                date="19.05.13"
+                time="17:30"
+                type="ST" />
+
+            <Notes text="Varighed: 9 min.;(Afstand: ca. 0,7 km);" />
+        </Leg>
+    </Trip>
+
+    <Trip>
+
+        <Leg
+            name="Bus 141"
+            type="BUS" >
+
+            <Origin
+                name="Nygade (Odense Kommune)"
+                date="19.05.13"
+                routeIdx="26"
+                time="14:03"
+                type="ST" />
+
+            <Destination
+                name="OBC Plads F (Odense Kommune)"
+                date="19.05.13"
+                routeIdx="44"
+                time="14:21"
+                type="ST" />
+
+            <Notes text="Retning: Otterup;" />
+
+            <JourneyDetailRef ref="http://xmlopen.rejseplanen.dk/bin/rest.exe/journeyDetail?ref=419286%2F150861%2F426822%2F73653%2F86%3Fdate%3D19.05.13%26station_evaId%3D461085800%26" />
+        </Leg>
+
+        <Leg
+            name="til fods"
+            type="WALK" >
+
+            <Origin
+                name="OBC Plads F (Odense Kommune)"
+                date="19.05.13"
+                time="14:21"
+                type="ST" />
+
+            <Destination
+                name="Odense st"
+                date="19.05.13"
+                time="14:27"
+                type="ST" />
+
+            <Notes text="Varighed: 6 min.;" />
+        </Leg>
+
+        <Leg
+            name="Togbus 70026"
+            type="TOG" >
+
+            <Origin
+                name="Odense st"
+                date="19.05.13"
+                routeIdx="0"
+                time="14:45"
+                type="ST" />
+
+            <Destination
+                name="Vejle st"
+                date="19.05.13"
+                routeIdx="14"
+                time="16:15"
+                type="ST" />
+
+            <Notes text="Retning: Vejle st;" />
+
+            <JourneyDetailRef ref="http://xmlopen.rejseplanen.dk/bin/rest.exe/journeyDetail?ref=670653%2F233235%2F377830%2F34644%2F86%3Fdate%3D19.05.13%26station_evaId%3D8600512%26" />
+        </Leg>
+
+        <Leg
+            name="IC 80149"
+            type="IC" >
+
+            <Origin
+                name="Vejle st"
+                date="19.05.13"
+                routeIdx="0"
+                time="16:27"
+                type="ST" />
+
+            <Destination
+                name="Horsens st"
+                date="19.05.13"
+                routeIdx="2"
+                time="16:43"
+                type="ST" />
+
+            <Notes text="Retning: Lindholm st;Mulighed for internet,Cykelreservering kræves" />
+
+            <JourneyDetailRef ref="http://xmlopen.rejseplanen.dk/bin/rest.exe/journeyDetail?ref=799356%2F274741%2F846120%2F156610%2F86%3Fdate%3D19.05.13%26station_evaId%3D8600073%26" />
+        </Leg>
+
+        <Leg
+            name="til fods"
+            type="WALK" >
+
+            <Origin
+                name="Horsens st"
+                date="19.05.13"
+                time="16:43"
+                type="ST" />
+
+            <Destination
+                name="Horsens Trafikterminal"
+                date="19.05.13"
+                time="16:53"
+                type="ST" />
+
+            <Notes text="Varighed: 10 min.;" />
+        </Leg>
+
+        <Leg
+            name="Bus 306"
+            type="BUS" >
+
+            <Origin
+                name="Horsens Trafikterminal"
+                date="19.05.13"
+                routeIdx="0"
+                time="17:25"
+                track="9 "
+                type="ST" />
+
+            <Destination
+                name="Odder Busterminal"
+                date="19.05.13"
+                routeIdx="35"
+                time="18:05"
+                type="ST" />
+
+            <Notes text="Retning: Odder Busterminal;" />
+
+            <JourneyDetailRef ref="http://xmlopen.rejseplanen.dk/bin/rest.exe/journeyDetail?ref=911430%2F323154%2F743810%2F68099%2F86%3Fdate%3D19.05.13%26station_evaId%3D615100100%26" />
+        </Leg>
+
+        <Leg
+            name="til fods"
+            type="WALK" >
+
+            <Origin
+                name="Odder Busterminal"
+                date="19.05.13"
+                time="18:05"
+                type="ST" />
+
+            <Destination
+                name="Nygade/Rosengade"
+                date="19.05.13"
+                time="18:13"
+                type="ST" />
+
+            <Notes text="Varighed: 8 min.;(Afstand: ca. 0,6 km);" />
+        </Leg>
+    </Trip>
+
+</TripList>

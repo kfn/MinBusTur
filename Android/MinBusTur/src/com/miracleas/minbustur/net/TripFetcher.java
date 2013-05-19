@@ -8,8 +8,12 @@ import org.apache.http.protocol.HTTP;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.xmlpull.v1.XmlPullParser;
+import org.xmlpull.v1.XmlPullParserException;
+import org.xmlpull.v1.XmlPullParserFactory;
 
 import android.content.ContentProviderOperation;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
@@ -18,15 +22,19 @@ import android.util.Log;
 
 import com.miracleas.minbustur.R;
 import com.miracleas.minbustur.model.AddressSearch;
+import com.miracleas.minbustur.model.Trip;
+import com.miracleas.minbustur.model.TripLeg;
 import com.miracleas.minbustur.model.TripRequest;
 import com.miracleas.minbustur.provider.AddressProviderMetaData;
+import com.miracleas.minbustur.provider.TripLegMetaData;
+import com.miracleas.minbustur.provider.TripMetaData;
 
 public class TripFetcher extends BaseFetcher
 {
 	public static final String tag = TripFetcher.class.getName();
 	private static final String[] PROJECTION = {AddressProviderMetaData.TableMetaData._ID};
 	private String selection;
-	public static final String URL = BASE_URL + "/bin/ajax-getstop.exe/trip?";
+	public static final String URL = BASE_URL + "trip?";
 	private long mUpdated = 0;
 	private Uri mUriNotify = null;
 	private TripRequest mTripRequest = null;
@@ -39,40 +47,36 @@ public class TripFetcher extends BaseFetcher
 		mUpdated = System.currentTimeMillis();
 		mUriNotify = notifyUri;
 	}
-
-	@Override
-	boolean start()
-	{
-		// TODO Auto-generated method stub
-		return true;
-	}
-
-	@Override
-	void end()
-	{
-		
-		
-	}
 	@Override
 	void fetchHelper() throws Exception
 	{
 		
 	}
 
-	
-	//originId=8600626&destCoordX=<xInteger>&destCoordY=<yInteger>&destCoordName=<NameOfDestination>&date=19.09.10&time=07:02&useBus=0"
 	public void tripSearch(TripRequest tripRequest) throws Exception
 	{
 		b = new StringBuilder();
-		addRequest("originId", tripRequest.getOriginId());
-		addRequest("originCoordX", tripRequest.getOriginCoordX());
-		addRequest("originCoordY", tripRequest.getOriginCoordY());
-		addRequest("originCoordName", tripRequest.getOriginCoordName());
-		addRequest("destId", tripRequest.getDestId());
-		addRequest("destCoordX", tripRequest.getDestCoordX());
-		addRequest("destCoordY", tripRequest.getDestCoordY());
-		addRequest("destCoordName", tripRequest.getDestCoordName());
-		addRequest("viaId", tripRequest.getViaId());		
+		if(TextUtils.isEmpty(tripRequest.getOriginId()))
+		{
+			addRequest("originCoordX", tripRequest.getOriginCoordX());
+			addRequest("originCoordY", tripRequest.getOriginCoordY());
+			addRequest("originCoordName", tripRequest.getOriginCoordName());
+		}
+		else
+		{
+			addRequest("originId", tripRequest.getOriginId());
+		}
+		if(TextUtils.isEmpty(tripRequest.getDestId()))
+		{
+			addRequest("destCoordX", tripRequest.getDestCoordX());
+			addRequest("destCoordY", tripRequest.getDestCoordY());
+			addRequest("destCoordName", tripRequest.getDestCoordName());
+		}
+		else
+		{
+			addRequest("destId", tripRequest.getDestId());
+		}
+		addRequest("viaId", tripRequest.getViaId());
 		addRequest("date", tripRequest.getDate());
 		addRequest("time", tripRequest.getTime());
 		addTransportRequest("useBus", tripRequest.getUseBus());
@@ -88,13 +92,11 @@ public class TripFetcher extends BaseFetcher
 			{
 				mUpdated = System.currentTimeMillis();								
 				InputStream input = urlConnection.getInputStream();
-				String s = Utils.convertStreamToString(input, HTTP.ISO_8859_1).replace("SLs.sls=", "");
-				//parse(s);
+				parse(input);
 				if (!mDbOperations.isEmpty())
 				{
-					
+					saveData(TripLegMetaData.AUTHORITY);
 				}
-
 			} else if (repsonseCode == 404)
 			{
 				throw new Exception(mContext.getString(R.string.search_failed_404));
@@ -116,35 +118,120 @@ public class TripFetcher extends BaseFetcher
 
 	}
 	
-	private void parse(String in) throws IOException, JSONException
+	private void parse(InputStream in) throws XmlPullParserException, IOException
 	{
-		JSONObject obj = new JSONObject(in);
-		JSONArray suggestions = obj.getJSONArray("suggestions");
-		for(int i = 0; i < suggestions.length(); i++)
+		XmlPullParserFactory factory = XmlPullParserFactory.newInstance();
+		factory.setNamespaceAware(true);
+		XmlPullParser xpp = factory.newPullParser();
+
+		xpp.setInput(in, null);
+		int eventType = xpp.getEventType();
+		while (eventType != XmlPullParser.END_DOCUMENT)
 		{
-			AddressSearch current = new AddressSearch();
-			JSONObject s = suggestions.getJSONObject(i);
-			current.address = s.getString("value");
-			current.latitude = ((double)s.getInt("xcoord") / 1000000d)+ "";
-			current.longitude = ((double)s.getInt("ycoord") / 1000000d)+ "";
-			current.type = s.getString("type");
-			current.typeStr = s.getString("typeStr");
-			saveAddress(current);
+			if (eventType == XmlPullParser.START_TAG && xpp.getName().equals("TripList"))
+			{
+				eventType = xpp.next();
+				while (!(eventType == XmlPullParser.END_TAG && xpp.getName().equals("TripList")))
+				{
+					if (eventType == XmlPullParser.START_TAG && xpp.getName().equals("Trip"))
+					{
+						Trip trip = createNewTrip();
+						while (!(eventType == XmlPullParser.END_TAG && xpp.getName().equals("Trip")))
+						{							
+							if (eventType == XmlPullParser.START_TAG && xpp.getName().equals("Leg"))
+							{				
+								trip.incrementLegCount();
+								TripLeg leg = new TripLeg();
+								leg.tripId = trip.id;
+								leg.name = xpp.getAttributeValue(null, "name");
+								leg.type = xpp.getAttributeValue(null, "date");	
+								
+								eventType = xpp.next();
+								while (!(eventType == XmlPullParser.END_TAG && xpp.getName().equals("Leg")))
+								{	
+									if (eventType == XmlPullParser.START_TAG && xpp.getName().equals("Origin"))
+									{									
+										leg.originName = xpp.getAttributeValue(null, "name");
+										leg.originDate = xpp.getAttributeValue(null, "date");
+										leg.originRouteId = xpp.getAttributeValue(null, "routeIdx");
+										leg.originTime = xpp.getAttributeValue(null, "time");
+										leg.originType = xpp.getAttributeValue(null, "type");				
+									}
+									else if (eventType == XmlPullParser.START_TAG && xpp.getName().equals("Destination"))
+									{
+										leg.destName = xpp.getAttributeValue(null, "name");
+										leg.destDate = xpp.getAttributeValue(null, "date");
+										leg.destRouteId = xpp.getAttributeValue(null, "routeIdx");
+										leg.destTime = xpp.getAttributeValue(null, "time");
+										leg.destType = xpp.getAttributeValue(null, "type");
+									}
+									else if (eventType == XmlPullParser.START_TAG && xpp.getName().equals("Notes"))
+									{
+										leg.notes = xpp.getAttributeValue(null, "text");
+									}
+									eventType = xpp.next();	
+								}
+								if(!TextUtils.isEmpty(leg.tripId))
+								{
+									saveLeg(leg);
+									trip.duration = trip.duration + leg.getDuration();
+								}							
+							}
+							eventType = xpp.next();			
+						}							
+						updateTrip(trip);
+					}				
+					eventType = xpp.next();				
+				}				
+			}
+			eventType = xpp.next();		
 		}
 	}
 	
-	private void saveAddress(AddressSearch s)
+	private Trip createNewTrip()
 	{
-		ContentProviderOperation.Builder b = ContentProviderOperation.newInsert(AddressProviderMetaData.TableMetaData.CONTENT_URI);
-		ContentProviderOperation operation = 
-		b.withValue(AddressProviderMetaData.TableMetaData.address, s.address).
-		withValue(AddressProviderMetaData.TableMetaData.lat, s.latitude).
-		withValue(AddressProviderMetaData.TableMetaData.lng, s.longitude).
-		withValue(AddressProviderMetaData.TableMetaData.type, s.type).
-		withValue(AddressProviderMetaData.TableMetaData.updated, mUpdated).
-		build();
-		mDbOperations.add(operation);
+		ContentValues values = new ContentValues();
+		values.put(TripMetaData.TableMetaData.DURATION, 0l);
+		Uri uri = mContentResolver.insert(TripMetaData.TableMetaData.CONTENT_URI, values);
+		Trip t = new Trip();
+		t.id = uri.getLastPathSegment();
+		return t;
 	}
+	
+	private String updateTrip(Trip t)
+	{
+		ContentValues values = new ContentValues();
+		values.put(TripMetaData.TableMetaData.DURATION, t.duration);
+		values.put(TripMetaData.TableMetaData.LEG_COUNT, t.legCount);
+		values.put(TripMetaData.TableMetaData.LEG_NAMES, t.getNames());
+		values.put(TripMetaData.TableMetaData.LEG_TYPES, t.getTypes());
+		Uri uri = Uri.withAppendedPath(TripMetaData.TableMetaData.CONTENT_URI, t.id);
+		mContentResolver.update(uri, values, null, null);
+		return uri.getLastPathSegment();
+	}
+	
+	private void saveLeg(TripLeg leg)
+	{
+		ContentProviderOperation.Builder b = ContentProviderOperation.newInsert(TripLegMetaData.TableMetaData.CONTENT_URI);	
+		b.withValue(TripLegMetaData.TableMetaData.DEST_DATE, leg.destDate)
+		.withValue(TripLegMetaData.TableMetaData.DEST_NAME, leg.destName)
+		.withValue(TripLegMetaData.TableMetaData.DEST_ROUTE_ID, leg.destRouteId)
+		.withValue(TripLegMetaData.TableMetaData.DEST_TIME, leg.destTime)
+		.withValue(TripLegMetaData.TableMetaData.DEST_TYPE, leg.destType)
+		.withValue(TripLegMetaData.TableMetaData.NAME, leg.name)
+		.withValue(TripLegMetaData.TableMetaData.NOTES, leg.notes)
+		.withValue(TripLegMetaData.TableMetaData.ORIGIN_DATE, leg.originName)
+		.withValue(TripLegMetaData.TableMetaData.ORIGIN_NAME, leg.originName)
+		.withValue(TripLegMetaData.TableMetaData.ORIGIN_ROUTE_ID, leg.originRouteId)
+		.withValue(TripLegMetaData.TableMetaData.ORIGIN_TIME, leg.originTime)
+		.withValue(TripLegMetaData.TableMetaData.ORIGIN_TYPE, leg.originType)
+		.withValue(TripLegMetaData.TableMetaData.TRIP_ID, leg.tripId)
+		.withValue(TripLegMetaData.TableMetaData.DURATION, leg.getDuration())
+		.withValue(TripLegMetaData.TableMetaData.DURATION_FORMATTED, leg.getFormattedDuration())
+		.withValue(TripLegMetaData.TableMetaData.updated, mUpdated);
+		mDbOperations.add(b.build());
+	}
+
 
 	
 	private void addRequest(String key, String value)
