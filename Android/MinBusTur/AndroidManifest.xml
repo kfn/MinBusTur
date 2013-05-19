@@ -27,6 +27,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name="com.miracleas.minbustur.TripSuggestionsActivity"
+            android:label="@string/trip_suggestions"/>
+        
         <provider
             android:name="com.miracleas.minbustur.provider.MinBusTurProvider"
             android:authorities="com.miracleas.minbustur.provider.MinBusTurProvider"        
@@ -37,6 +40,12 @@
     		android:label="@string/app_name"
     		android:exported="false">
 		</service>
+		<service
+    		android:name="com.miracleas.minbustur.service.TripService"
+    		android:label="@string/app_name"
+    		android:exported="false">
+		</service>
+        
     </application>
 
 </manifest>

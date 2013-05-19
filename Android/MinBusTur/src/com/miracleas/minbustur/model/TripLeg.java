@@ -18,30 +18,24 @@ public class TripLeg
 	public String type;
 	public String notes;
 	public String ref;
-	public String originName;
-	public String originDate;
-	public String originRouteId;
-	public String originTime;
-	public String originType;
-	public String destName;
-	public String destDate;
-	public String destRouteId;
-	public String destTime;
-	public String destType;
+	public TripLocation origin;
+	public TripLocation dest;
 	public String updated;
 	private long duration = 0;
 	private StringBuilder b;
+	private Calendar start;
+	private Calendar end;
 	
 	public long getDuration()
 	{
-		if(duration==0)
+		if(duration==0 && origin!=null && dest!=null)
 		{
-			if(!TextUtils.isEmpty(originTime) && !TextUtils.isEmpty(destTime))
+			if(!TextUtils.isEmpty(origin.time) && !TextUtils.isEmpty(dest.time))
 			{
 				try
 				{
-					Calendar start = DateHelper.parseToCalendar(originDate+" "+originTime, DateHelper.formatter);
-					Calendar end = DateHelper.parseToCalendar(destDate+" "+destTime, DateHelper.formatter);
+					start = DateHelper.parseToCalendar(origin.date+" "+origin.time, DateHelper.formatter);
+					end = DateHelper.parseToCalendar(dest.date+" "+dest.time, DateHelper.formatter);
 					duration = end.getTimeInMillis() - start.getTimeInMillis();
 				} catch (ParseException e)
 				{
@@ -59,6 +53,26 @@ public class TripLeg
 		TimeUtils.formatDuration(duration, b);
 		Log.d("TripLeg", b.toString());
 		return b.toString();
+	}
+	
+	public long getDeparturesIn()
+	{
+		long s = 0l;
+		if(start!=null)
+		{
+			s = start.getTimeInMillis() - System.currentTimeMillis();
+		}
+		return s;
+	}
+	
+	public long getArrivesIn()
+	{
+		long s = 0l;
+		if(end!=null)
+		{
+			s = end.getTimeInMillis() - System.currentTimeMillis();
+		}
+		return s;
 	}
 	
 	private Time getTime(String text)

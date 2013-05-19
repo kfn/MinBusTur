@@ -24,37 +24,42 @@ import com.miracleas.minbustur.R;
 import com.miracleas.minbustur.model.AddressSearch;
 import com.miracleas.minbustur.model.Trip;
 import com.miracleas.minbustur.model.TripLeg;
+import com.miracleas.minbustur.model.TripLocation;
 import com.miracleas.minbustur.model.TripRequest;
 import com.miracleas.minbustur.provider.AddressProviderMetaData;
 import com.miracleas.minbustur.provider.TripLegMetaData;
 import com.miracleas.minbustur.provider.TripMetaData;
+import com.miracleas.minbustur.utils.DateHelper;
 
 public class TripFetcher extends BaseFetcher
 {
 	public static final String tag = TripFetcher.class.getName();
-	private static final String[] PROJECTION = {AddressProviderMetaData.TableMetaData._ID};
-	private String selection;
 	public static final String URL = BASE_URL + "trip?";
 	private long mUpdated = 0;
-	private Uri mUriNotify = null;
-	private TripRequest mTripRequest = null;
 	private StringBuilder b = new StringBuilder();
-
+	private DateHelper mDateHelper = null;
+	private TripRequest mTripRequest = null;
+	public static final String TRIP_REQUEST = "TRIP_REQUEST";
 	
 	public TripFetcher(Context c, Intent intent, Uri notifyUri)
 	{
 		super(c, intent);
 		mUpdated = System.currentTimeMillis();
 		mUriNotify = notifyUri;
+		mTripRequest = intent.getParcelableExtra(TripFetcher.TRIP_REQUEST);
 	}
 	@Override
 	void fetchHelper() throws Exception
 	{
-		
+		if(mTripRequest!=null)
+		{
+			tripSearch(mTripRequest);
+		}		
 	}
 
 	public void tripSearch(TripRequest tripRequest) throws Exception
 	{
+		deleteOldTrips();
 		b = new StringBuilder();
 		if(TextUtils.isEmpty(tripRequest.getOriginId()))
 		{
@@ -90,7 +95,8 @@ public class TripFetcher extends BaseFetcher
 			int repsonseCode = urlConnection.getResponseCode();
 			if (repsonseCode == HttpURLConnection.HTTP_OK)
 			{
-				mUpdated = System.currentTimeMillis();								
+				mUpdated = System.currentTimeMillis();		
+				mDateHelper = new DateHelper(mContext.getString(R.string.days), mContext.getString(R.string.hours), mContext.getString(R.string.minutes), mContext.getString(R.string.seconds));
 				InputStream input = urlConnection.getInputStream();
 				parse(input);
 				if (!mDbOperations.isEmpty())
@@ -140,30 +146,21 @@ public class TripFetcher extends BaseFetcher
 						{							
 							if (eventType == XmlPullParser.START_TAG && xpp.getName().equals("Leg"))
 							{				
-								trip.incrementLegCount();
 								TripLeg leg = new TripLeg();
 								leg.tripId = trip.id;
 								leg.name = xpp.getAttributeValue(null, "name");
-								leg.type = xpp.getAttributeValue(null, "date");	
+								leg.type = xpp.getAttributeValue(null, "type");	
 								
 								eventType = xpp.next();
 								while (!(eventType == XmlPullParser.END_TAG && xpp.getName().equals("Leg")))
 								{	
 									if (eventType == XmlPullParser.START_TAG && xpp.getName().equals("Origin"))
 									{									
-										leg.originName = xpp.getAttributeValue(null, "name");
-										leg.originDate = xpp.getAttributeValue(null, "date");
-										leg.originRouteId = xpp.getAttributeValue(null, "routeIdx");
-										leg.originTime = xpp.getAttributeValue(null, "time");
-										leg.originType = xpp.getAttributeValue(null, "type");				
+										leg.origin = getTripLegValues(xpp);				
 									}
 									else if (eventType == XmlPullParser.START_TAG && xpp.getName().equals("Destination"))
 									{
-										leg.destName = xpp.getAttributeValue(null, "name");
-										leg.destDate = xpp.getAttributeValue(null, "date");
-										leg.destRouteId = xpp.getAttributeValue(null, "routeIdx");
-										leg.destTime = xpp.getAttributeValue(null, "time");
-										leg.destType = xpp.getAttributeValue(null, "type");
+										leg.dest = getTripLegValues(xpp);	
 									}
 									else if (eventType == XmlPullParser.START_TAG && xpp.getName().equals("Notes"))
 									{
@@ -173,8 +170,8 @@ public class TripFetcher extends BaseFetcher
 								}
 								if(!TextUtils.isEmpty(leg.tripId))
 								{
+									trip.addLeg(leg);
 									saveLeg(leg);
-									trip.duration = trip.duration + leg.getDuration();
 								}							
 							}
 							eventType = xpp.next();			
@@ -188,6 +185,17 @@ public class TripFetcher extends BaseFetcher
 		}
 	}
 	
+	private TripLocation getTripLegValues(XmlPullParser xpp)
+	{
+		TripLocation leg = new TripLocation();
+		leg.name = xpp.getAttributeValue(null, "name");
+		leg.date = xpp.getAttributeValue(null, "date");
+		leg.routeId = xpp.getAttributeValue(null, "routeIdx");
+		leg.time = xpp.getAttributeValue(null, "time");
+		leg.type = xpp.getAttributeValue(null, "type");
+		return leg;
+	}
+	
 	private Trip createNewTrip()
 	{
 		ContentValues values = new ContentValues();
@@ -198,33 +206,44 @@ public class TripFetcher extends BaseFetcher
 		return t;
 	}
 	
-	private String updateTrip(Trip t)
+	private void updateTrip(Trip t)
 	{
-		ContentValues values = new ContentValues();
-		values.put(TripMetaData.TableMetaData.DURATION, t.duration);
-		values.put(TripMetaData.TableMetaData.LEG_COUNT, t.legCount);
-		values.put(TripMetaData.TableMetaData.LEG_NAMES, t.getNames());
-		values.put(TripMetaData.TableMetaData.LEG_TYPES, t.getTypes());
 		Uri uri = Uri.withAppendedPath(TripMetaData.TableMetaData.CONTENT_URI, t.id);
-		mContentResolver.update(uri, values, null, null);
-		return uri.getLastPathSegment();
+		ContentProviderOperation.Builder b = ContentProviderOperation.newUpdate(uri);
+		long duration = t.getTotalDuration();
+		b.withValue(TripMetaData.TableMetaData.DURATION, duration);
+		b.withValue(TripMetaData.TableMetaData.DURATION_LABEL, mDateHelper.getDurationLabel(duration, false));
+		b.withValue(TripMetaData.TableMetaData.LEG_COUNT, t.getLegCount());
+		b.withValue(TripMetaData.TableMetaData.LEG_NAMES, t.getNames());
+		b.withValue(TripMetaData.TableMetaData.LEG_TYPES, t.getTypes());
+		b.withValue(TripMetaData.TableMetaData.DEPATURE_TIME, t.getDepatureTime());
+		b.withValue(TripMetaData.TableMetaData.ARRIVAL_TIME, t.getArrivalTime());
+		b.withValue(TripMetaData.TableMetaData.TRANSPORT_CHANGES, t.getTransportChanges());
+		b.withValue(TripMetaData.TableMetaData.DURATION_BUS, mDateHelper.getDurationLabel(t.getDurationBus(), false));
+		b.withValue(TripMetaData.TableMetaData.DURATION_TRAIN, mDateHelper.getDurationLabel(t.getDurationTrain(), false));
+		b.withValue(TripMetaData.TableMetaData.DURATION_WALK, mDateHelper.getDurationLabel(t.getDurationWalk(), false));
+		b.withValue(TripMetaData.TableMetaData.ARRIVES_IN_TIME_LABEL, mDateHelper.getDurationLabel(t.getArrivesInTime(), true));
+		long departures = t.getDeparturesInTime();
+		b.withValue(TripMetaData.TableMetaData.DEPATURES_IN_TIME_LABEL, mDateHelper.getDurationLabel(departures, true));
+		b.withValue(TripMetaData.TableMetaData.DEPATURES_IN_TIME, departures);
+		mDbOperations.add(b.build());
 	}
 	
 	private void saveLeg(TripLeg leg)
 	{
 		ContentProviderOperation.Builder b = ContentProviderOperation.newInsert(TripLegMetaData.TableMetaData.CONTENT_URI);	
-		b.withValue(TripLegMetaData.TableMetaData.DEST_DATE, leg.destDate)
-		.withValue(TripLegMetaData.TableMetaData.DEST_NAME, leg.destName)
-		.withValue(TripLegMetaData.TableMetaData.DEST_ROUTE_ID, leg.destRouteId)
-		.withValue(TripLegMetaData.TableMetaData.DEST_TIME, leg.destTime)
-		.withValue(TripLegMetaData.TableMetaData.DEST_TYPE, leg.destType)
+		b.withValue(TripLegMetaData.TableMetaData.DEST_DATE, leg.dest.date)
+		.withValue(TripLegMetaData.TableMetaData.DEST_NAME, leg.dest.name)
+		.withValue(TripLegMetaData.TableMetaData.DEST_ROUTE_ID, leg.dest.routeId)
+		.withValue(TripLegMetaData.TableMetaData.DEST_TIME, leg.dest.time)
+		.withValue(TripLegMetaData.TableMetaData.DEST_TYPE, leg.dest.type)
 		.withValue(TripLegMetaData.TableMetaData.NAME, leg.name)
 		.withValue(TripLegMetaData.TableMetaData.NOTES, leg.notes)
-		.withValue(TripLegMetaData.TableMetaData.ORIGIN_DATE, leg.originName)
-		.withValue(TripLegMetaData.TableMetaData.ORIGIN_NAME, leg.originName)
-		.withValue(TripLegMetaData.TableMetaData.ORIGIN_ROUTE_ID, leg.originRouteId)
-		.withValue(TripLegMetaData.TableMetaData.ORIGIN_TIME, leg.originTime)
-		.withValue(TripLegMetaData.TableMetaData.ORIGIN_TYPE, leg.originType)
+		.withValue(TripLegMetaData.TableMetaData.ORIGIN_DATE, leg.origin.name)
+		.withValue(TripLegMetaData.TableMetaData.ORIGIN_NAME, leg.origin.name)
+		.withValue(TripLegMetaData.TableMetaData.ORIGIN_ROUTE_ID, leg.origin.routeId)
+		.withValue(TripLegMetaData.TableMetaData.ORIGIN_TIME, leg.origin.time)
+		.withValue(TripLegMetaData.TableMetaData.ORIGIN_TYPE, leg.origin.type)
 		.withValue(TripLegMetaData.TableMetaData.TRIP_ID, leg.tripId)
 		.withValue(TripLegMetaData.TableMetaData.DURATION, leg.getDuration())
 		.withValue(TripLegMetaData.TableMetaData.DURATION_FORMATTED, leg.getFormattedDuration())
@@ -232,7 +251,11 @@ public class TripFetcher extends BaseFetcher
 		mDbOperations.add(b.build());
 	}
 
-
+	private void deleteOldTrips()
+	{
+		mContentResolver.delete(TripMetaData.TableMetaData.CONTENT_URI, null, null);
+		mContentResolver.delete(TripLegMetaData.TableMetaData.CONTENT_URI, null, null);
+	}
 	
 	private void addRequest(String key, String value)
 	{

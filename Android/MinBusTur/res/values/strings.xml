@@ -1,15 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources  xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
 
     <string name="app_name">MinBusTur</string>
     <string name="create_route">Opret rute</string>
     <string name="route_creation">Ruteoprettelse</string>
+    <string name="trip_suggestions">Ruteforslag</string>
     <string name="action_settings">Settings</string>
     <string name="title_section1">Section 1</string>
     <string name="title_section2">Section 2</string>
     <string name="title_section3">Section 3</string>
-    
+    <string name="seconds">sekunder</string>
+    <string name="minutes">minutter</string>
+    <string name="hours">timer</string>
+    <string name="days">dage</string>
     <string name="geocoding_service_not_available">geocoding_service_not_available</string>
-    
+    <string name="departure">Afgang <xliff:g ID="time_label">%1$s</xliff:g></string>
+    <string name="parenthese_value">(<xliff:g ID="time_label">%1$s</xliff:g>)</string>
+    <string name="arrival_within">Ankomst: <xliff:g ID="time_label">%1$s</xliff:g></string>
+    <string name="duration">Varighed: <xliff:g ID="time_label">%1$s</xliff:g></string>
 
 </resources>

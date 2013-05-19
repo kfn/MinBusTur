@@ -1,0 +1,66 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" android:paddingTop="4dp">
+
+    <TextView
+        android:id="@+id/textViewDepatureIn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:text="@string/departure"
+        android:textSize="19sp" />
+
+    <TextView
+        android:id="@+id/textViewDepatureTime"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/textViewDepatureIn"
+        android:layout_marginBottom="2dp"
+        android:layout_marginLeft="4dp"
+        android:layout_toRightOf="@+id/textViewDepatureIn"
+        android:gravity="center_vertical"
+        android:text="@string/parenthese_value"
+        android:textSize="14sp" />
+    
+    <TextView
+        android:id="@+id/textViewDuration"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/textViewDepatureIn"
+        android:layout_marginTop="4dp"
+        android:gravity="center_vertical"
+        android:text="@string/duration"
+        android:textSize="17sp" />
+
+    <TextView
+        android:id="@+id/textViewArrivalAt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/textViewDuration"
+        android:layout_marginTop="4dp"
+        android:gravity="center_vertical"
+        android:text="@string/arrival_within"
+        android:textSize="17sp" />
+
+    <TextView
+        android:id="@+id/textViewArrivalTime"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/textViewArrivalAt"
+        android:layout_marginBottom="2dp"
+        android:layout_marginLeft="4dp"
+        android:layout_toRightOf="@+id/textViewArrivalAt"
+        android:gravity="center_vertical"
+        android:text="@string/parenthese_value"
+        android:textSize="14sp" />
+
+    <TextView
+        android:id="@+id/textViewTransport"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/textViewArrivalAt"
+        android:layout_marginTop="4dp"
+        android:gravity="center_vertical"        
+        android:textSize="14sp" />
+</RelativeLayout>

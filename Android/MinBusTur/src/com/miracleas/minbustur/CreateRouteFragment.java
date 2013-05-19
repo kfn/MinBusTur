@@ -6,6 +6,7 @@ import android.annotation.SuppressLint;
 import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
@@ -32,6 +33,7 @@ import com.miracleas.minbustur.model.TripRequest;
 import com.miracleas.minbustur.net.AddressFetcher;
 import com.miracleas.minbustur.net.TripFetcher;
 import com.miracleas.minbustur.provider.AddressProviderMetaData;
+import com.miracleas.minbustur.service.TripService;
 
 public class CreateRouteFragment extends CreateRouteFragmentBase 
 {
@@ -573,15 +575,10 @@ public class CreateRouteFragment extends CreateRouteFragmentBase
 	{
 		if(mTripRequest.isValid())
 		{
-			if(mLoadTrips==null || mLoadTrips.getStatus()==AsyncTask.Status.FINISHED)
-			{
-				if(mTripFetcher==null)
-				{
-					mTripFetcher = new TripFetcher(getActivity(), null, null);
-				}
-				mLoadTrips = new LoadTrips();
-				mLoadTrips.execute(null,null,null);
-			}
+			Intent service = new Intent(getActivity(), TripService.class);
+			service.putExtra(TripFetcher.TRIP_REQUEST, mTripRequest);
+			getActivity().startService(service);
+			startActivity(new Intent(getActivity(), TripSuggestionsActivity.class));
 		}
 		else
 		{
