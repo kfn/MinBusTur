@@ -80,9 +80,10 @@ public abstract class BaseFetcher
 		{
 			String errorMsg = null;
 			boolean unauthorized = false;
+			boolean errorFatal = false;
 			try
 			{
-				fetchHelper();
+				doWork();
 			}
 			catch (java.net.SocketTimeoutException e)
 			{
@@ -110,10 +111,14 @@ public abstract class BaseFetcher
 			}
 			catch (Exception e)
 			{
+				errorFatal = true;
 				e.printStackTrace();
 				errorMsg = e.getMessage();
 			}
-			
+			if(errorFatal)
+			{
+				onFatalError();
+			}
 			if(mConnectionError && mRetry)
 			{
 				mRetry = false;
@@ -138,7 +143,7 @@ public abstract class BaseFetcher
 			Log.d(tag, "applyBatch: "+count);
 			if(mUriNotify!=null)
 			{
-				mContentResolver.notifyChange(mUriNotify, null);
+				//mContentResolver.notifyChange(mUriNotify, null);
 			}			
 			mDbOperations.clear();
 		}
@@ -148,9 +153,11 @@ public abstract class BaseFetcher
 
 	protected void end(){}
 	
+	protected void onFatalError(){}
+	
 	public static void resetLoadingState(Context c){}
 
-	abstract void fetchHelper() throws Exception;
+	abstract void doWork() throws Exception;
 
 	/*
 	 * protected BasicHeader[] getHeaders() { BasicHeader[] headers = { new
@@ -201,7 +208,7 @@ public abstract class BaseFetcher
 		urlConnection.setConnectTimeout(TIME_OUT);
 		urlConnection.setReadTimeout(TIME_OUT);
 		urlConnection.addRequestProperty(CONTENT_TYPE, MIME_FORM_ENCODED);
-		urlConnection.setRequestProperty("Accept-Encoding", "gzip, deflate");
+		urlConnection.setRequestProperty("Accept-Encoding", "gzip");
 		urlConnection.setRequestProperty("Accept", "*/*");		
 		return urlConnection;
 	}

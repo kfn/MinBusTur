@@ -18,8 +18,9 @@ public class TripLegMetaData
 
 	public static String getTableSchema()
 	{
-		return TableMetaData._ID + " INTEGER PRIMARY KEY AUTOINCREMENT," +
-				TableMetaData.TRIP_ID + " LONG," 
+		return TableMetaData._ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
+				+ TableMetaData.STEP_NUMBER + " INTEGER," 
+				+ TableMetaData.TRIP_ID + " LONG," 
 				+ TableMetaData.NAME + " TEXT," 
 				+ TableMetaData.TYPE + " TEXT," 
 				+ TableMetaData.NOTES + " TEXT," 
@@ -35,7 +36,11 @@ public class TripLegMetaData
 				+ TableMetaData.DEST_TIME + " TEXT,"
 				+ TableMetaData.DEST_TYPE + " TEXT,"
 				+ TableMetaData.DURATION + " LONG,"
-				+ TableMetaData.DURATION_FORMATTED + " TEXT,"				
+				+ TableMetaData.DURATION_FORMATTED + " TEXT,"	
+				+ TableMetaData.PROGRESS_BAR_PROGRESS + " INTEGER,"	
+				+ TableMetaData.PROGRESS_BAR_MAX + " INTEGER,"	
+				+ TableMetaData.DEPARTURES_IN_TIME_LABEL + " TEXT,"	
+				+ TableMetaData.COMPLETED + " TEXT,"	
 				+ TableMetaData.updated + " LONG"
 				;
 	}
@@ -51,7 +56,8 @@ public class TripLegMetaData
 		public static final Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY + "/" + COLLECTION_TYPE);
 		public static final String CONTENT_TYPE = "vnd.android.cursor.dir/vnd." + PACKAGE_NAME + ITEM_TYPE;
 		public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd." + PACKAGE_NAME + ITEM_TYPE;
-
+		
+		public static final String STEP_NUMBER = "step_number";
 		public static final String TRIP_ID = "trip_id";
 		public static final String NAME = "leg_name";
 		public static final String TYPE = "leg_type";
@@ -71,6 +77,15 @@ public class TripLegMetaData
 		public static final String DURATION = "duration";
 		public static final String updated = "updated";
 		public static final String DURATION_FORMATTED = "duaration_formatted";
+		
+		public static final String PROGRESS_BAR_PROGRESS = "progress_bar_progress";
+		public static final String PROGRESS_BAR_MAX = "progress_bar_max";
+		public static final String DEPARTURES_IN_TIME_LABEL = "progress_departures_in_label";
+		public static final String COMPLETED = "completed";
+		/*public static final String ORIGIN_LATITUDE = "origin_latitude";
+		public static final String ORIGIN_LONGITUDE = "origin_longitude";
+		public static final String DEST_LATITUDE = "dest_latitude";
+		public static final String DEST_LONGITUDE = "dest_longitude";*/
 
 	}
 }

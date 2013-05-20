@@ -49,7 +49,7 @@ public class TripFetcher extends BaseFetcher
 		mTripRequest = intent.getParcelableExtra(TripFetcher.TRIP_REQUEST);
 	}
 	@Override
-	void fetchHelper() throws Exception
+	void doWork() throws Exception
 	{
 		if(mTripRequest!=null)
 		{
@@ -166,12 +166,18 @@ public class TripFetcher extends BaseFetcher
 									{
 										leg.notes = xpp.getAttributeValue(null, "text");
 									}
+									else if (eventType == XmlPullParser.START_TAG && xpp.getName().equals("JourneyDetailRef"))
+									{
+										leg.ref = xpp.getAttributeValue(null, "ref");
+									}
+									
+									
 									eventType = xpp.next();	
 								}
 								if(!TextUtils.isEmpty(leg.tripId))
 								{
 									trip.addLeg(leg);
-									saveLeg(leg);
+									saveLeg(leg, trip.getLegCount());
 								}							
 							}
 							eventType = xpp.next();			
@@ -229,7 +235,7 @@ public class TripFetcher extends BaseFetcher
 		mDbOperations.add(b.build());
 	}
 	
-	private void saveLeg(TripLeg leg)
+	private void saveLeg(TripLeg leg, int stepNumber)
 	{
 		ContentProviderOperation.Builder b = ContentProviderOperation.newInsert(TripLegMetaData.TableMetaData.CONTENT_URI);	
 		b.withValue(TripLegMetaData.TableMetaData.DEST_DATE, leg.dest.date)
@@ -238,6 +244,7 @@ public class TripFetcher extends BaseFetcher
 		.withValue(TripLegMetaData.TableMetaData.DEST_TIME, leg.dest.time)
 		.withValue(TripLegMetaData.TableMetaData.DEST_TYPE, leg.dest.type)
 		.withValue(TripLegMetaData.TableMetaData.NAME, leg.name)
+		.withValue(TripLegMetaData.TableMetaData.TYPE, leg.type)
 		.withValue(TripLegMetaData.TableMetaData.NOTES, leg.notes)
 		.withValue(TripLegMetaData.TableMetaData.ORIGIN_DATE, leg.origin.name)
 		.withValue(TripLegMetaData.TableMetaData.ORIGIN_NAME, leg.origin.name)
@@ -247,7 +254,9 @@ public class TripFetcher extends BaseFetcher
 		.withValue(TripLegMetaData.TableMetaData.TRIP_ID, leg.tripId)
 		.withValue(TripLegMetaData.TableMetaData.DURATION, leg.getDuration())
 		.withValue(TripLegMetaData.TableMetaData.DURATION_FORMATTED, leg.getFormattedDuration())
-		.withValue(TripLegMetaData.TableMetaData.updated, mUpdated);
+		.withValue(TripLegMetaData.TableMetaData.STEP_NUMBER, stepNumber)
+		.withValue(TripLegMetaData.TableMetaData.updated, mUpdated)
+		.withValue(TripLegMetaData.TableMetaData.REF, leg.ref);
 		mDbOperations.add(b.build());
 	}
 

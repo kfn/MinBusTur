@@ -1,0 +1,70 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingTop="4dp" >
+
+    <TextView
+        android:id="@+id/textViewTime"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:text="19:00-20:00"
+        android:textSize="19sp" />
+
+    <TextView
+        android:id="@+id/textViewType"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/textViewTime"
+        android:layout_marginTop="4dp"
+        android:gravity="center_vertical"
+        android:textSize="14sp" />
+
+    <TextView
+        android:id="@+id/textViewOriginName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/textViewTime"
+        android:layout_marginTop="4dp"
+        android:gravity="center_vertical"
+        android:textSize="17sp" />
+
+    <TextView
+        android:id="@+id/textViewDestName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/textViewOriginName"
+        android:layout_marginTop="4dp"
+        android:gravity="center_vertical"
+        android:textSize="17sp" />
+
+    <TextView
+        android:id="@+id/textViewDuration"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/textViewDestName"
+        android:layout_marginTop="4dp"
+        android:gravity="center_vertical"
+        android:textSize="14sp" />
+
+    <TextView
+        android:id="@+id/textViewNotes"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/textViewDuration"
+        android:layout_marginTop="4dp"
+        android:drawableLeft="@drawable/ic_menu_info_details"
+        android:gravity="center_vertical"
+        android:textSize="14sp" />
+
+    <TextView
+        android:id="@+id/textViewDeparturesIn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/textViewNotes"
+        android:layout_marginTop="4dp"
+        android:gravity="center_vertical"
+        android:textSize="14sp" />
+
+</RelativeLayout>

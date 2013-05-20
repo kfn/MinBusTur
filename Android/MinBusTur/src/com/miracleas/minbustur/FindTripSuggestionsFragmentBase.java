@@ -36,7 +36,7 @@ import com.miracleas.minbustur.model.TripRequest;
 import com.miracleas.minbustur.net.AddressFetcher;
 import com.miracleas.minbustur.provider.AddressProviderMetaData;
 
-public abstract class CreateRouteFragmentBase extends SherlockFragment implements TextWatcher, LoaderCallbacks<Cursor>, OnItemSelectedListener, OnItemClickListener, OnFocusChangeListener, OnClickListener
+public abstract class FindTripSuggestionsFragmentBase extends SherlockFragment implements LoaderCallbacks<Cursor>, OnItemSelectedListener, OnItemClickListener, OnClickListener, OnFocusChangeListener
 {
 	protected AutoCompleteTextView mAutoCompleteTextViewFromAddress;
 	protected AutoCompleteTextView mAutoCompleteTextViewToAddress;
@@ -44,25 +44,16 @@ public abstract class CreateRouteFragmentBase extends SherlockFragment implement
 	protected AutoCompleteTextView mAutoCompleteTextViewFromTitle = null;
 
 	protected static final int THRESHOLD = 2;
-	protected static final int LOADER_ADDRESS_FROM = 1;
-	protected static final int LOADER_ADDRESS_TO = 2;
-	protected static final int LOADER_TITLE_TO = 3;
-	protected static final int LOADER_TITLE_FROM = 4;
+	
 	protected static final String[] PROJECTION = { AddressProviderMetaData.TableMetaData._ID, AddressProviderMetaData.TableMetaData.id, AddressProviderMetaData.TableMetaData.address, AddressProviderMetaData.TableMetaData.lat, AddressProviderMetaData.TableMetaData.lng, AddressProviderMetaData.TableMetaData.type_int };
 	protected static final String[] PROJECTION_CONTACTS = new String[] { ContactsContract.Contacts._ID, ContactsContract.Contacts.DISPLAY_NAME };
 
-	protected AddressFetcher mAddressFetcher = null;
+	
 	protected String mPreviousEnteredAddressFrom = null;
 	protected String mPreviousEnteredAddressTo = null;
 	protected String mPreviousEnteredContactFrom = null;
 	protected String mPreviousEnteredContactTo = null;
 	protected Handler mHandler = null;
-	
-	/*protected String mSelectedFromLatitude = null;
-	protected String mSelectedFromLongitude = null;
-	protected String mSelectedToLatitude = null;
-	protected String mSelectedToLongitude = null;*/
-	protected int mActiveLoader = LOADER_TITLE_FROM;
 	protected Uri mDataUri = null;
 
 	protected ProgressBar mProgressBarToAddress = null;
@@ -77,6 +68,7 @@ public abstract class CreateRouteFragmentBase extends SherlockFragment implement
 
 	protected int mLoadCount = 0;
 	protected TripRequest mTripRequest = null;
+	protected View mFocusedView = null;
 	
 	@SuppressLint("NewApi")
 	@Override
@@ -84,23 +76,116 @@ public abstract class CreateRouteFragmentBase extends SherlockFragment implement
 	{
 		if(savedInstanceState!=null)
 		{
-			mActiveLoader = savedInstanceState.getInt("mActiveLoader", LOADER_TITLE_TO);
 			mTripRequest = savedInstanceState.getParcelable("tripRequest");
 		}
 		else
 		{
 			mTripRequest = new TripRequest();
 		}
-		View rootView = inflater.inflate(R.layout.fragment_create_route, container, false);
+		View rootView = inflater.inflate(R.layout.fragment_find_trip_suggestions, container, false);
 		mAutoCompleteTextViewToTitle = (AutoCompleteTextView) rootView.findViewById(R.id.autoCompleteTextViewToTitle);
 		mAutoCompleteTextViewFromTitle = (AutoCompleteTextView) rootView.findViewById(R.id.autoCompleteTextViewFromTitle);
 		mAutoCompleteTextViewFromAddress = (AutoCompleteTextView) rootView.findViewById(R.id.autoCompleteTextViewFrom);
 		mAutoCompleteTextViewToAddress = (AutoCompleteTextView) rootView.findViewById(R.id.autoCompleteTextViewTo);
 
 		initAutoComplete(mAutoCompleteTextViewToTitle);
+		mAutoCompleteTextViewToTitle.addTextChangedListener(new TextWatcher()
+		{
+			
+			@Override
+			public void onTextChanged(CharSequence s, int start, int before, int count)
+			{
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void beforeTextChanged(CharSequence s, int start, int count, int after)
+			{
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void afterTextChanged(Editable s)
+			{
+				afterTextChangedHelper(s, LoaderConstants.LOADER_TITLE_TO);				
+			}
+		});
+		
+	
 		initAutoComplete(mAutoCompleteTextViewFromTitle);
+		mAutoCompleteTextViewFromTitle.addTextChangedListener(new TextWatcher()
+		{
+			
+			@Override
+			public void onTextChanged(CharSequence s, int start, int before, int count)
+			{
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void beforeTextChanged(CharSequence s, int start, int count, int after)
+			{
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void afterTextChanged(Editable s)
+			{
+				afterTextChangedHelper(s, LoaderConstants.LOADER_TITLE_FROM);				
+			}
+		});
 		initAutoComplete(mAutoCompleteTextViewFromAddress);
+		mAutoCompleteTextViewFromAddress.addTextChangedListener(new TextWatcher()
+		{
+			
+			@Override
+			public void onTextChanged(CharSequence s, int start, int before, int count)
+			{
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void beforeTextChanged(CharSequence s, int start, int count, int after)
+			{
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void afterTextChanged(Editable s)
+			{
+				afterTextChangedHelper(s, LoaderConstants.LOADER_ADDRESS_FROM);				
+			}
+		});
 		initAutoComplete(mAutoCompleteTextViewToAddress);
+		mAutoCompleteTextViewToAddress.addTextChangedListener(new TextWatcher()
+		{
+			
+			@Override
+			public void onTextChanged(CharSequence s, int start, int before, int count)
+			{
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void beforeTextChanged(CharSequence s, int start, int count, int after)
+			{
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void afterTextChanged(Editable s)
+			{
+				afterTextChangedHelper(s, LoaderConstants.LOADER_ADDRESS_TO);				
+			}
+		});
 
 		mProgressBarToAddress = (ProgressBar) rootView.findViewById(R.id.progressBarToAddress);
 		mProgressBarFromAddress = (ProgressBar) rootView.findViewById(R.id.progressBarFromAddress);
@@ -111,11 +196,10 @@ public abstract class CreateRouteFragmentBase extends SherlockFragment implement
 		return rootView;
 	}
 	
-
+	public abstract void afterTextChangedHelper(Editable s, int loaderId);
 
 	private void initAutoComplete(AutoCompleteTextView a)
 	{
-		a.addTextChangedListener(this);
 		a.setOnItemSelectedListener(this);
 		a.setThreshold(THRESHOLD);
 		a.setOnItemClickListener(this);
@@ -203,24 +287,8 @@ public abstract class CreateRouteFragmentBase extends SherlockFragment implement
 	public void onSaveInstanceState(Bundle outState)
 	{
 		super.onSaveInstanceState(outState);
-		outState.putInt("mActiveLoader", mActiveLoader);
 		outState.putParcelable("tripRequest", mTripRequest);
 	}
-
-	@Override
-	public void afterTextChanged(Editable s)
-	{
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void beforeTextChanged(CharSequence s, int start, int count, int after)
-	{
-		// TODO Auto-generated method stub
-
-	}
-	
 
 	@Override
 	public void onNothingSelected(AdapterView<?> arg0)
@@ -229,120 +297,40 @@ public abstract class CreateRouteFragmentBase extends SherlockFragment implement
 
 	}
 	
-	protected String getPreviousEnteredText()
-	{
-		if (mActiveLoader == LOADER_ADDRESS_FROM)
-		{
-			return mPreviousEnteredAddressFrom;
-		} else if (mActiveLoader == LOADER_ADDRESS_TO)
-		{
-			return mPreviousEnteredAddressTo;
-		} else if (mActiveLoader == LOADER_TITLE_FROM)
-		{
-			return mPreviousEnteredContactFrom;
-		} else if (mActiveLoader == LOADER_TITLE_TO)
-		{
-			return mPreviousEnteredContactTo;
-		}
-		return "";
-	}
 
-	protected void setPreviousEnteredText(String text)
+	protected void setSelectedValue(AutoCompleteTextView view, String text)
 	{
-		if (mActiveLoader == LOADER_ADDRESS_FROM)
-		{
-			mPreviousEnteredAddressFrom = text;
-		} else if (mActiveLoader == LOADER_ADDRESS_TO)
-		{
-			mPreviousEnteredAddressTo = text;
-		} else if (mActiveLoader == LOADER_TITLE_FROM)
-		{
-			mPreviousEnteredContactFrom = text;
-		} else if (mActiveLoader == LOADER_TITLE_TO)
-		{
-			mPreviousEnteredContactTo = text;
-		}
+		view.setText(text);
 	}
-
-	protected void setSelectedValue(String text)
-	{
-		if (mActiveLoader == LOADER_ADDRESS_FROM)
-		{
-			mAutoCompleteTextViewFromAddress.setText(text);
-		} else if (mActiveLoader == LOADER_ADDRESS_TO)
-		{
-			mAutoCompleteTextViewToAddress.setText(text);
-		} else if (mActiveLoader == LOADER_TITLE_FROM)
-		{
-			mAutoCompleteTextViewFromTitle.setText(text);
-		} else if (mActiveLoader == LOADER_TITLE_TO)
-		{
-			mAutoCompleteTextViewToTitle.setText(text);
-		}
-	}
-
-	protected AutoCompleteTextView getAutoCompleteTextView()
-	{
-		if (mActiveLoader == LOADER_ADDRESS_FROM)
-		{
-			return mAutoCompleteTextViewFromAddress;
-		} else if (mActiveLoader == LOADER_ADDRESS_TO)
-		{
-			return mAutoCompleteTextViewToAddress;
-		} else if (mActiveLoader == LOADER_TITLE_FROM)
-		{
-			return mAutoCompleteTextViewFromTitle;
-		} else if (mActiveLoader == LOADER_TITLE_TO)
-		{
-			return mAutoCompleteTextViewToTitle;
-		}
-		return null;
-	}
-
-	protected ProgressBar getProgressBar()
-	{
-		if (mActiveLoader == LOADER_ADDRESS_FROM)
-		{
-			return mProgressBarFromAddress;
-		} else if (mActiveLoader == LOADER_ADDRESS_TO)
-		{
-			return mProgressBarToAddress;
-		} else if (mActiveLoader == LOADER_TITLE_FROM)
-		{
-			return mProgressBarFromTitle;
-		} else if (mActiveLoader == LOADER_TITLE_TO)
-		{
-			return mProgressBarToTitle;
-		}
-		return null;
-	}
-
 	@Override
 	public void onFocusChange(View v, boolean hasFocus)
 	{
-		int id = v.getId();
-		switch (id)
+		if(hasFocus)
+		{
+			mFocusedView = v;
+		}		
+	}
+	
+	public int getActiveLoader()
+	{
+		int loaderId = 0;
+		int id = mFocusedView.getId();
+		switch(id)
 		{
 		case R.id.autoCompleteTextViewToTitle:
-			mActiveLoader = LOADER_TITLE_TO;
+			loaderId = LoaderConstants.LOADER_TITLE_TO;
 			break;
 		case R.id.autoCompleteTextViewFromTitle:
-			mActiveLoader = LOADER_TITLE_FROM;
+			loaderId = LoaderConstants.LOADER_TITLE_FROM;
 			break;
 		case R.id.autoCompleteTextViewFrom:
-			mActiveLoader = LOADER_ADDRESS_FROM;
+			loaderId = LoaderConstants.LOADER_ADDRESS_FROM;
 			break;
 		case R.id.autoCompleteTextViewTo:
-			mActiveLoader = LOADER_ADDRESS_TO;
-			break;
-		default:
+			loaderId = LoaderConstants.LOADER_ADDRESS_TO;
 			break;
 		}
-	}
-
-	protected boolean isAddressMode()
-	{
-		return mActiveLoader == LOADER_ADDRESS_FROM || mActiveLoader == LOADER_ADDRESS_TO;
+		return loaderId;
 	}
 
 }

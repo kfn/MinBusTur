@@ -14,11 +14,13 @@ public class TripRequest implements Parcelable
 	private String originId;
 	private String originCoordX;
 	private String originCoordY;
-	private String originCoordName;
+	private String originCoordName = "";
+	public String originCoordNameNotEncoded = "";
 	private String destId;
 	private String destCoordX;
 	private String destCoordY;
-	private String destCoordName;
+	private String destCoordName = "";
+	public String destCoordNameNotEncoded = "";
 	private String viaId;
 	private String date; //If the date is not set the current date will be used (server time)
 	private String time; //If the time is not set the current time will be used (server time)
@@ -82,6 +84,7 @@ public class TripRequest implements Parcelable
 	}
 	public void setOriginCoordName(String originCoordName)
 	{
+		originCoordNameNotEncoded = originCoordName;
 		if(TextUtils.isEmpty(originCoordName))
 		{
 			this.originCoordName = originCoordName;
@@ -141,7 +144,7 @@ public class TripRequest implements Parcelable
 		return destCoordName;
 	}
 	public void setDestCoordName(String destCoordName) 	{
-		
+		destCoordNameNotEncoded = destCoordName;
 		if(TextUtils.isEmpty(destCoordName))
 		{
 			this.destCoordName = destCoordName;

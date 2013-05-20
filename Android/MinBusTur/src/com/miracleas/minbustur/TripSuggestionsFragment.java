@@ -1,5 +1,6 @@
 package com.miracleas.minbustur;
 
+import android.app.Activity;
 import android.content.Context;
 import android.database.Cursor;
 import android.os.Bundle;
@@ -13,6 +14,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.actionbarsherlock.app.SherlockListFragment;
@@ -71,6 +73,7 @@ public class TripSuggestionsFragment extends SherlockListFragment implements Loa
 		super.onActivityCreated(savedInstanceState);
 		mTripAdapter = new TripAdapter(getActivity(), null, 0);
 		setListAdapter(mTripAdapter);
+		getListView().setOnItemClickListener(this);
 		getLoaderManager().initLoader(LoaderConstants.LOAD_TRIP_SUGGESTIONS, null, this);
 	}
 
@@ -163,12 +166,69 @@ public class TripSuggestionsFragment extends SherlockListFragment implements Loa
 			}
 			return super.swapCursor(newCursor);
 		}
+		
+		int getStepCount(int position)
+		{
+			int count = 1;
+			Cursor c = getCursor();
+			if(c.moveToPosition(position))
+			{
+				count = c.getInt(iLegCount);
+			}
+			return count;
+		}
 	}
 	@Override
-	public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3)
+	public void onItemClick(AdapterView<?> parent, View view, int position, long id)
 	{
-		// TODO Auto-generated method stub
-		
+		mCallbacks.onTripSuggestionSelected(id+"", mTripAdapter.getStepCount(position));		
 	}
+	
+	@Override
+	public void onAttach(Activity activity)
+	{
+		super.onAttach(activity);
+
+		// Activities containing this fragment must implement its callbacks.
+		if (!(activity instanceof Callbacks))
+		{
+			throw new IllegalStateException("Activity must implement fragment's callbacks.");
+		}			
+		mCallbacks = (Callbacks)activity;
+	}
+	@Override
+	public void onDetach()
+	{
+		super.onDetach();
+
+		// Reset the active callbacks interface to the dummy implementation.
+		mCallbacks = sDummyCallbacks;
+	}
+	private Callbacks mCallbacks = sDummyCallbacks;
+	
+	/**
+	 * A callback interface that all activities containing this fragment must
+	 * implement.
+	 */
+	public interface Callbacks
+	{
+		public void onTripSuggestionSelected(String id, int stepCount);
+	}
+
+	/**
+	 * A dummy implementation of the {@link Callbacks} interface that does
+	 * nothing. Used only when this fragment is not attached to an activity.
+	 */
+	private static Callbacks sDummyCallbacks = new Callbacks()
+	{
+
+		@Override
+		public void onTripSuggestionSelected(String id, int stepCount)
+		{
+			// TODO Auto-generated method stub
+			
+		}
+		
+	};
 
 }

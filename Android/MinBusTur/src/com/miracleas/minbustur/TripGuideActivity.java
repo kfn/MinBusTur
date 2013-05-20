@@ -1,18 +1,20 @@
 package com.miracleas.minbustur;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.Menu;
+import com.miracleas.minbustur.provider.TripLegMetaData;
 
-public class CreateRouteActivity extends SherlockFragmentActivity
+public class TripGuideActivity extends GeofenceActivity
 {
 	@Override
 	public void onCreate(Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_create_route);
+		setContentView(R.layout.activity_trip_guide);
 
 		// Set up the action bar.
 		final ActionBar actionBar = getSupportActionBar();
@@ -31,21 +33,23 @@ public class CreateRouteActivity extends SherlockFragmentActivity
 		// http://developer.android.com/guide/components/fragments.html
 		//
 
-		/*if (savedInstanceState == null)
+		if (savedInstanceState == null)
 		{
 			Intent intent = getIntent();
+			String tripId = intent.getStringExtra(TripLegMetaData.TableMetaData._ID);
+			int stepCount = intent.getIntExtra(TripLegMetaData.TableMetaData.STEP_NUMBER, 1);
 			// Create the detail fragment and add it to the activity
 			// using a fragment transaction.
-			CreateRouteFragment fragment = CreateRouteFragment.createInstance();
-			getSupportFragmentManager().beginTransaction().add(android.R.id.content, fragment).commit();
-		}*/
+			TripGuideFragment fragment = TripGuideFragment.createInstance(tripId, stepCount);
+			getSupportFragmentManager().beginTransaction().add(R.id.fragmentTripGuideContainer, fragment).commit();
+		}
 	}
 	
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu)
 	{
 		// Inflate the menu; this adds items to the action bar if it is present.
-		getSupportMenuInflater().inflate(R.menu.create_route, menu);
-		return true;
+		//getSupportMenuInflater().inflate(R.menu.create_route, menu);
+		return super.onCreateOptionsMenu(menu);
 	}
 }

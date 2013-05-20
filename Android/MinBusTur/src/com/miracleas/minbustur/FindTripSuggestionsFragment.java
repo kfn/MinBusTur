@@ -1,7 +1,5 @@
 package com.miracleas.minbustur;
 
-import java.io.UnsupportedEncodingException;
-
 import android.annotation.SuppressLint;
 import android.content.ContentResolver;
 import android.content.ContentUris;
@@ -19,25 +17,27 @@ import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v4.util.LruCache;
 import android.support.v4.widget.CursorAdapter;
+import android.text.Editable;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.AutoCompleteTextView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.miracleas.minbustur.model.AddressSearch;
-import com.miracleas.minbustur.model.TripRequest;
 import com.miracleas.minbustur.net.AddressFetcher;
 import com.miracleas.minbustur.net.TripFetcher;
 import com.miracleas.minbustur.provider.AddressProviderMetaData;
 import com.miracleas.minbustur.service.TripService;
 
-public class CreateRouteFragment extends CreateRouteFragmentBase 
+public class FindTripSuggestionsFragment extends FindTripSuggestionsFragmentBase
 {
-	public static final String tag = CreateRouteFragment.class.getName();
+	public static final String tag = FindTripSuggestionsFragment.class.getName();
 	private AutoCompleteAddressAdapter mAutoCompleteAdapterFrom = null;
 	private AutoCompleteAddressAdapter mAutoCompleteAdapterTo = null;
 	private AutoCompleteContactsAdapter mAutoCompleteContactsAdapterTo = null;
@@ -45,12 +45,14 @@ public class CreateRouteFragment extends CreateRouteFragmentBase
 	private LoadAddressesRun mLoadAddressesRun = null;
 	private LoadContactRun mLoadContactRun = null;
 	private LoadTrips mLoadTrips = null;
+	protected AddressFetcher mAddressFetcher = null;
 	private TripFetcher mTripFetcher = null;
-	
+	private static boolean mIsLoadingAddresses = false;
+	private boolean mUpdateCursor = true;
 
-	public static CreateRouteFragment createInstance()
+	public static FindTripSuggestionsFragment createInstance()
 	{
-		CreateRouteFragment fragment = new CreateRouteFragment();
+		FindTripSuggestionsFragment fragment = new FindTripSuggestionsFragment();
 		Bundle args = new Bundle();
 		fragment.setArguments(args);
 		return fragment;
@@ -72,12 +74,11 @@ public class CreateRouteFragment extends CreateRouteFragmentBase
 		return rootView;
 	}
 
-
 	/**
 	 * Mandatory empty constructor for the fragment manager to instantiate the
 	 * fragment (e.g. upon screen orientation changes).
 	 */
-	public CreateRouteFragment()
+	public FindTripSuggestionsFragment()
 	{
 	}
 
@@ -88,46 +89,26 @@ public class CreateRouteFragment extends CreateRouteFragmentBase
 		cache = new LruCache<Long, Drawable>(20);
 		mBitmapDrawableDummy = getResources().getDrawable(R.drawable.ic_action_user);
 		mHandler = new Handler();
-		mLoadAddressesRun = new LoadAddressesRun(null);
-		mLoadContactRun = new LoadContactRun(null);
-		mDataUri = Uri.withAppendedPath(AddressProviderMetaData.TableMetaData.CONTENT_URI, "search");
+		mLoadAddressesRun = new LoadAddressesRun(null, 0);
+		mLoadContactRun = new LoadContactRun(null, 0);
+		
+		mDataUri = null;//Uri.withAppendedPath(AddressProviderMetaData.TableMetaData.CONTENT_URI, "search");
 		mAddressFetcher = new AddressFetcher(getActivity(), mDataUri);
 		Bundle args = new Bundle();
 		args.putString(AddressProviderMetaData.TableMetaData.address, "a");
 		args.putString(ContactsContract.Contacts.DISPLAY_NAME, "abc");
 	}
 
-
-	@Override
-	public void onTextChanged(CharSequence s, int start, int before, int count)
-	{
-		final String value = s.toString();
-		if (value.length() > THRESHOLD && !value.equals(getPreviousEnteredText()))
-		{
-			if (isAddressMode())
-			{
-				mHandler.removeCallbacks(mLoadAddressesRun);
-				mLoadAddressesRun = new LoadAddressesRun(value);
-				mHandler.postDelayed(mLoadAddressesRun, 500);
-			} else
-			{
-				mHandler.removeCallbacks(mLoadContactRun);
-				mLoadContactRun = new LoadContactRun(value);
-				mHandler.postDelayed(mLoadContactRun, 200);
-			}
-		}
-	}
-
 	@Override
 	public Loader<Cursor> onCreateLoader(int id, Bundle args)
 	{
-		if (id == LOADER_ADDRESS_FROM || id == LOADER_ADDRESS_TO)
+		if (id == LoaderConstants.LOADER_ADDRESS_FROM || id == LoaderConstants.LOADER_ADDRESS_TO)
 		{
 			String address = args.getString(AddressProviderMetaData.TableMetaData.address);
-			Log.d(tag, "create loader: " + address);
+			Log.d(tag, "create loader id " + id + ": " + address);
 			String[] selectionArgs = { address };
-			return new CursorLoader(getActivity(), mDataUri, PROJECTION, null, selectionArgs, null);
-		} else if (id == LOADER_TITLE_FROM || id == LOADER_TITLE_TO)
+			return new CursorLoader(getActivity(), AddressProviderMetaData.TableMetaData.CONTENT_URI, PROJECTION, null, selectionArgs, AddressProviderMetaData.TableMetaData.address + " LIMIT 20");
+		} else if (id == LoaderConstants.LOADER_TITLE_FROM || id == LoaderConstants.LOADER_TITLE_TO)
 		{
 			String name = args.getString(ContactsContract.Contacts.DISPLAY_NAME);
 			Log.d(tag, "create loader: " + name);
@@ -141,110 +122,248 @@ public class CreateRouteFragment extends CreateRouteFragmentBase
 	@Override
 	public void onLoadFinished(Loader<Cursor> loader, Cursor newCursor)
 	{
-		getAdapter().swapCursor(newCursor);
+		if(newCursor.isClosed())return;
+		Log.d(tag, "onLoadFinished id Swap cursor");
+		int currentLoaderId = loader.getId();
+		int focusedLoader = getActiveLoader();
+		if(currentLoaderId!=focusedLoader)
+		{
+			Log.d(tag, "ignored loader changed");
+		}		
+		else if (loader.getId() == LoaderConstants.LOADER_ADDRESS_FROM)
+		{
+			mAutoCompleteAdapterFrom.swapCursor(newCursor);
+			updateCursor(newCursor, mAutoCompleteTextViewFromAddress);
+		} else if (loader.getId() == LoaderConstants.LOADER_ADDRESS_TO)
+		{
+			mAutoCompleteAdapterTo.swapCursor(newCursor);
+			updateCursor(newCursor, mAutoCompleteTextViewToAddress);
+		} else if (loader.getId() == LoaderConstants.LOADER_TITLE_FROM)
+		{
+			mAutoCompleteContactsAdapterFrom.swapCursor(newCursor);
+			updateCursor(newCursor, mAutoCompleteTextViewFromTitle);
+		} else if (loader.getId() == LoaderConstants.LOADER_TITLE_TO)
+		{
+			mAutoCompleteContactsAdapterTo.swapCursor(newCursor);
+			updateCursor(newCursor, mAutoCompleteTextViewToTitle);
+		}
+	}
+
+	private void updateCursor(Cursor newCursor, AutoCompleteTextView a)
+	{
+
 		if (newCursor != null && newCursor.getCount() > 0)
 		{
-			getAutoCompleteTextView().showDropDown();
-			Log.d(tag, "showDropDown");
+			if (!a.isPopupShowing())
+			{
+				a.showDropDown();
+				Log.d(tag, "showDropDown");
+			}
 		}
+
 	}
 
 	@Override
 	public void onLoaderReset(Loader<Cursor> loader)
 	{
-		if (mActiveLoader == LOADER_ADDRESS_TO)
+		if (loader.getId() == LoaderConstants.LOADER_ADDRESS_FROM)
 		{
-			Log.d(tag, "onLoaderReset: LOADER_ADDRESS_TO");
 			mAutoCompleteAdapterFrom.swapCursor(null);
-		} else if (mActiveLoader == LOADER_ADDRESS_FROM)
+		} else if (loader.getId() == LoaderConstants.LOADER_ADDRESS_TO)
 		{
-			Log.d(tag, "onLoaderReset: LOADER_ADDRESS_FROM");
 			mAutoCompleteAdapterTo.swapCursor(null);
+		} else if (loader.getId() == LoaderConstants.LOADER_TITLE_FROM)
+		{
+			mAutoCompleteContactsAdapterFrom.swapCursor(null);
+		} else if (loader.getId() == LoaderConstants.LOADER_TITLE_TO)
+		{
+			mAutoCompleteContactsAdapterTo.swapCursor(null);
 		}
+	}
+	@Override
+	public void afterTextChangedHelper(Editable s, int loaderId)
+	{		
+		final String value = s.toString();
+		if (value.length() > THRESHOLD )
+		{
+			if (loaderId == LoaderConstants.LOADER_ADDRESS_TO || loaderId == LoaderConstants.LOADER_ADDRESS_FROM)
+			{
+				boolean doAddressSearch = true;
+				if(loaderId == LoaderConstants.LOADER_ADDRESS_TO)
+				{
+					doAddressSearch = !mTripRequest.destCoordNameNotEncoded.equals(value);
+				}
+				else
+				{
+					doAddressSearch = !mTripRequest.originCoordNameNotEncoded.equals(value);
+				}
+				if(doAddressSearch)
+				{
+					mHandler.removeCallbacks(mLoadAddressesRun);
+					mLoadAddressesRun = new LoadAddressesRun(value, loaderId);
+					mHandler.postDelayed(mLoadAddressesRun, 500);
+				}
+				
+				
+			} else if(loaderId == LoaderConstants.LOADER_TITLE_FROM || loaderId == LoaderConstants.LOADER_TITLE_TO)
+			{				
+				mHandler.removeCallbacks(mLoadContactRun);
+				mLoadContactRun = new LoadContactRun(value, loaderId);
+				mHandler.postDelayed(mLoadContactRun, 200);
+			}
+		}
+
 	}
 
 	@Override
-	public void onItemSelected(AdapterView<?> arg0, View view, int position, long id)
+	public void onItemSelected(AdapterView<?> parent, View view, int position, long id)
 	{
-		onAddressSelect(position, id);
+		onAddressSelect(position, id, parent, view);
 	}
 
 	@Override
 	public void onItemClick(AdapterView<?> parent, View view, int position, long id)
 	{
-		onAddressSelect(position, id);
+		onAddressSelect(position, id, parent, view);
 	}
 
-	private void onAddressSelect(int position, long id)
+	private void onAddressSelect(int position, long id, AdapterView<?> parent, View view)
 	{
-		CursorAdapter adapter = getAdapter();
-		if (isAddressMode() && adapter instanceof AutoCompleteAddressAdapter)
+		if(mFocusedView==null)return;
+		boolean origin = false;
+		boolean address = false;
+
+		int parentId = mFocusedView.getId();
+		switch(parentId)
 		{
-			AutoCompleteAddressAdapter a = (AutoCompleteAddressAdapter) adapter;
-			String text = a.getAddress(position);
-			String lat = a.getLat(position);
-			String lng = a.getLng(position);
-			String positionId = a.getId(position);
-			if(mActiveLoader == LOADER_ADDRESS_FROM)
-			{
-				mTripRequest.setOriginId(positionId);
-				mTripRequest.setOriginCoordName(text);	
-				mTripRequest.setOriginCoordX(lat);
-				mTripRequest.setOriginCoordY(lng);
-				
-			}
-			else if(mActiveLoader == LOADER_ADDRESS_TO)
-			{
-				mTripRequest.setDestId(positionId);
-				mTripRequest.setDestCoordName(text);
-				mTripRequest.setDestCoordX(lat);
-				mTripRequest.setDestCoordY(lng);
-			}
-			setPreviousEnteredText(text);
-			setSelectedValue(text);
+		case R.id.autoCompleteTextViewToTitle:
+			origin = false;
+			break;
+		case R.id.autoCompleteTextViewFromTitle:
+			origin = true;
+			break;
+		case R.id.autoCompleteTextViewFrom:
+			origin = true;
+			address = true;
+			break;
+		case R.id.autoCompleteTextViewTo:
+			origin = false;
+			address = true;
+			break;
 		}
-		else if(adapter instanceof AutoCompleteContactsAdapter)
+
+		if (address)
 		{
-			AutoCompleteContactsAdapter a = (AutoCompleteContactsAdapter)adapter;
-			String name = a.getName(position);
-			setPreviousEnteredText(name);
-			setSelectedValue(name);
-			loadContactAddress(id);
+			int loaderId = origin ? LoaderConstants.LOADER_ADDRESS_FROM: LoaderConstants.LOADER_ADDRESS_TO;
+			AutoCompleteTextView addressAuto = origin ? mAutoCompleteTextViewFromAddress : mAutoCompleteTextViewToAddress;
+			addressAuto.clearComposingText();
+			addressAuto.dismissDropDown();
+			AutoCompleteAddressAdapter addressAdapter = origin ? mAutoCompleteAdapterFrom : mAutoCompleteAdapterTo;
+			onAddressSelected(addressAuto, addressAdapter, origin, position);
+		} 
+		else
+		{			
+			int loaderId = origin ? LoaderConstants.LOADER_TITLE_FROM : LoaderConstants.LOADER_TITLE_TO;
+			AutoCompleteTextView contactAuto = origin ? mAutoCompleteTextViewFromTitle : mAutoCompleteTextViewToTitle;
+			contactAuto.dismissDropDown();
+			AutoCompleteContactsAdapter a = origin ? mAutoCompleteContactsAdapterFrom : mAutoCompleteContactsAdapterTo;
+			String name = a.getName(position);			
+			setSelectedValue(contactAuto, name);
+			loadContactAddress(id, loaderId);
 		}
 
 	}
-
-
-	private void loadAddress(String query)
+	
+	private void onAddressSelected(AutoCompleteTextView view, AutoCompleteAddressAdapter adapter, boolean origin, int position)
 	{
-		mLoadCount++;
-		query = query.trim();
-		setPreviousEnteredText(query);
-		Log.d(tag, "lookup for: " + query);
-		new LoadAddresses().execute(query);
-		Bundle args = new Bundle();
-		args.putString(AddressProviderMetaData.TableMetaData.address, query);
-		getProgressBar().setVisibility(View.VISIBLE);
-		if(getSherlockActivity().getSupportLoaderManager().getLoader(mActiveLoader)==null)
+		AutoCompleteAddressAdapter a = adapter;
+		String text = a.getAddress(position);
+		String lat = a.getLat(position);
+		String lng = a.getLng(position);
+		String positionId = a.getId(position);
+		if (origin)
 		{
-			getSherlockActivity().getSupportLoaderManager().initLoader(mActiveLoader, args, this);
+			mTripRequest.setOriginId(positionId);
+			mTripRequest.setOriginCoordName(text);
+			mTripRequest.setOriginCoordX(lat);
+			mTripRequest.setOriginCoordY(lng);
+
+		} else 
+		{
+			mTripRequest.setDestId(positionId);
+			mTripRequest.setDestCoordName(text);
+			mTripRequest.setDestCoordX(lat);
+			mTripRequest.setDestCoordY(lng);
+		}
+		setSelectedValue(view, text);
+	}
+	private LoadAddresses mLoadAddresses = null;
+	private void loadAddress(String query, int loaderId)
+	{
+		if(mLoadAddresses==null || mLoadAddresses.getStatus()==AsyncTask.Status.FINISHED)
+		{
+			mLoadCount++;
+			query = query.trim();
+			Log.d(tag, "lookup for: " + query);
+			mLoadAddresses = new LoadAddresses(loaderId);
+			mLoadAddresses.execute(query);
+			Bundle args = new Bundle();
+			args.putString(AddressProviderMetaData.TableMetaData.address, query);
+			getProgressBar(loaderId).setVisibility(View.VISIBLE);
+			if (getSherlockActivity().getSupportLoaderManager().getLoader(loaderId) == null)
+			{
+				getSherlockActivity().getSupportLoaderManager().initLoader(loaderId, args, this);
+			} else
+			{
+				getSherlockActivity().getSupportLoaderManager().restartLoader(loaderId, args, this);
+			}
 		}
 		else
 		{
-			getSherlockActivity().getSupportLoaderManager().restartLoader(mActiveLoader, args, this);
+			Log.d(tag, "delay lookup for: " + query);
+			mHandler.removeCallbacks(mLoadAddressesRun);
+			mLoadAddressesRun = new LoadAddressesRun(query, loaderId);
+			mHandler.postDelayed(mLoadAddressesRun, 500);
 		}
-		
+	}
+	
+	private ProgressBar getProgressBar(int loaderId)
+	{
+		if (loaderId == LoaderConstants.LOADER_ADDRESS_FROM)
+		{
+			return mProgressBarFromAddress;
+		} else if (loaderId == LoaderConstants.LOADER_ADDRESS_TO)
+		{
+			return mProgressBarToAddress;
+		} else if (loaderId == LoaderConstants.LOADER_TITLE_FROM)
+		{
+			return mProgressBarFromTitle;
+		} else 
+		{
+			return mProgressBarToTitle;
+		}
 	}
 
 	private class LoadAddresses extends AsyncTask<String, Void, Void>
 	{
+		private int mLoaderId = 0;
+		public void onPreExecute()
+		{
+			mIsLoadingAddresses = true;
+		}
+		
+		LoadAddresses(int loaderId)
+		{
+			mLoaderId = loaderId;
+		}
 
 		@Override
 		protected Void doInBackground(String... params)
 		{
 			try
 			{
-				mAddressFetcher.performGeocode(params[0]); //mDataUri
+
+				mAddressFetcher.performGeocode(params[0]); // mDataUri
 			} catch (Exception e)
 			{
 				// TODO Auto-generated catch block
@@ -256,13 +375,9 @@ public class CreateRouteFragment extends CreateRouteFragmentBase
 
 		protected void onPostExecute(Void result)
 		{
+			mIsLoadingAddresses = false;
 			mLoadCount--;
-			if (mLoadCount <= 0)
-			{
-				getProgressBar().setVisibility(View.GONE);
-				mLoadCount = 0;
-			}
-				
+			getProgressBar(mLoaderId).setVisibility(View.GONE);
 		}
 	}
 
@@ -287,16 +402,16 @@ public class CreateRouteFragment extends CreateRouteFragmentBase
 			TextView tv = (TextView) v;
 			tv.setText(cursor.getString(iAddress));
 			int icon = getIcon(cursor.getInt(iType));
-			if(icon!=-1)
+			if (icon != -1)
 			{
 				tv.setCompoundDrawablesWithIntrinsicBounds(icon, 0, 0, 0);
 			}
-			
+
 		}
-		
+
 		private int getIcon(int type)
 		{
-			switch(type)
+			switch (type)
 			{
 			case AddressSearch.TYPE_ADRESSE:
 				return R.drawable.ic_menu_home;
@@ -304,7 +419,7 @@ public class CreateRouteFragment extends CreateRouteFragmentBase
 				return R.drawable.ic_menu_myplaces;
 			default:
 				return -1;
-			
+
 			}
 		}
 
@@ -359,7 +474,7 @@ public class CreateRouteFragment extends CreateRouteFragmentBase
 			}
 			return address;
 		}
-		
+
 		public String getId(int position)
 		{
 			String address = null;
@@ -372,21 +487,19 @@ public class CreateRouteFragment extends CreateRouteFragmentBase
 		}
 	}
 
-	private void loadContact(String query)
+	private void loadContact(String query, int loaderId)
 	{
-		setPreviousEnteredText(query);
 		Log.d(tag, "lockup for: " + query);
 		Bundle args = new Bundle();
 		args.putString(ContactsContract.Contacts.DISPLAY_NAME, query);
-		if(getSherlockActivity().getSupportLoaderManager().getLoader(mActiveLoader)==null)
+		if (getSherlockActivity().getSupportLoaderManager().getLoader(loaderId) == null)
 		{
-			getSherlockActivity().getSupportLoaderManager().initLoader(mActiveLoader, args, this);
-		}
-		else
+			getSherlockActivity().getSupportLoaderManager().initLoader(loaderId, args, this);
+		} else
 		{
-			getSherlockActivity().getSupportLoaderManager().restartLoader(mActiveLoader, args, this);
+			getSherlockActivity().getSupportLoaderManager().restartLoader(loaderId, args, this);
 		}
-		
+
 	}
 
 	private class AutoCompleteContactsAdapter extends CursorAdapter
@@ -407,8 +520,9 @@ public class CreateRouteFragment extends CreateRouteFragmentBase
 		{
 			TextView tv = (TextView) v;
 			tv.setText(cursor.getString(iName));
-			//tv.setCompoundDrawablesWithIntrinsicBounds(mBitmapDrawableDummy, null, null, null);
-			
+			// tv.setCompoundDrawablesWithIntrinsicBounds(mBitmapDrawableDummy,
+			// null, null, null);
+
 			loadImageOfContact(tv, cursor);
 		}
 
@@ -471,70 +585,61 @@ public class CreateRouteFragment extends CreateRouteFragmentBase
 			}
 			return address;
 		}
-		
 
 	}
-
-	private CursorAdapter getAdapter()
-	{
-		if (mActiveLoader == LOADER_ADDRESS_FROM)
-		{
-			return mAutoCompleteAdapterFrom;
-		} else if (mActiveLoader == LOADER_ADDRESS_TO)
-		{
-			return mAutoCompleteAdapterTo;
-		} else if (mActiveLoader == LOADER_TITLE_FROM)
-		{
-			return mAutoCompleteContactsAdapterFrom;
-		} else if (mActiveLoader == LOADER_TITLE_TO)
-		{
-			return mAutoCompleteContactsAdapterTo;
-		}
-		return null;
-	}
-
-
 
 	private class LoadAddressesRun implements Runnable
 	{
 		private final String mQuery;
+		private final int loaderId;
 
-		LoadAddressesRun(String q)
+		LoadAddressesRun(String q, int loaderId)
 		{
 			mQuery = q;
+			this.loaderId = loaderId;
 		}
 
 		@Override
 		public void run()
 		{
-			loadAddress(mQuery);
+			loadAddress(mQuery, loaderId);
 		}
 	}
 
 	private class LoadContactRun implements Runnable
 	{
 		private final String mQuery;
+		private final int loaderId;
 
-		LoadContactRun(String q)
+		LoadContactRun(String q, int loaderId)
 		{
 			mQuery = q;
+			this.loaderId = loaderId;
 		}
 
 		@Override
 		public void run()
 		{
-			loadContact(mQuery);
+			loadContact(mQuery, loaderId);
 		}
 	}
-	
-	private void loadContactAddress(long id)
+
+
+	private void loadContactAddress(long id, int loaderId)
 	{
-		new LoadContactAddress().execute(id);
+		new LoadContactAddress(loaderId).execute(id);
 	}
-	
-	private static final String[] PROJECTION_CONTACT_ADDRESS = {ContactsContract.CommonDataKinds.StructuredPostal.FORMATTED_ADDRESS};
+
+	private static final String[] PROJECTION_CONTACT_ADDRESS = { ContactsContract.CommonDataKinds.StructuredPostal.FORMATTED_ADDRESS };
+
 	private class LoadContactAddress extends AsyncTask<Long, Void, String>
-	{	
+	{
+		private final int loaderId;
+		LoadContactAddress(int loaderId)
+		{
+			this.loaderId = loaderId;
+		}
+		
 		protected String doInBackground(Long... args)
 		{
 			String address = "";
@@ -543,56 +648,54 @@ public class CreateRouteFragment extends CreateRouteFragmentBase
 			try
 			{
 				String selection = ContactsContract.CommonDataKinds.StructuredPostal.CONTACT_ID + "=?";
-				String[] selectionArgs = {args[0]+""};
+				String[] selectionArgs = { args[0] + "" };
 				c = cr.query(ContactsContract.CommonDataKinds.StructuredPostal.CONTENT_URI, PROJECTION_CONTACT_ADDRESS, selection, selectionArgs, null);
-				if(c.moveToFirst())
+				if (c.moveToFirst())
 				{
 					address = c.getString(c.getColumnIndex(ContactsContract.CommonDataKinds.StructuredPostal.FORMATTED_ADDRESS));
 				}
-			}
-			finally
+			} finally
 			{
-				if(c!=null)
+				if (c != null)
 					c.close();
 			}
-			
+
 			return address;
 		}
 
 		protected void onPostExecute(String address)
 		{
-			if(mActiveLoader==LOADER_TITLE_FROM && TextUtils.isEmpty(mAutoCompleteTextViewFromAddress.getText()))
+			if (loaderId == LoaderConstants.LOADER_TITLE_FROM && TextUtils.isEmpty(mAutoCompleteTextViewFromAddress.getText()))
 			{
 				mAutoCompleteTextViewFromAddress.setText(address);
-			}
-			else if(mActiveLoader==LOADER_TITLE_TO && TextUtils.isEmpty(mAutoCompleteTextViewToAddress.getText()))
+			} else if (loaderId == LoaderConstants.LOADER_TITLE_TO && TextUtils.isEmpty(mAutoCompleteTextViewToAddress.getText()))
 			{
 				mAutoCompleteTextViewToAddress.setText(address);
 			}
 		}
 	}
+
 	private void loadTrips()
 	{
-		if(mTripRequest.isValid())
+		if (mTripRequest.isValid())
 		{
 			Intent service = new Intent(getActivity(), TripService.class);
 			service.putExtra(TripFetcher.TRIP_REQUEST, mTripRequest);
 			getActivity().startService(service);
 			startActivity(new Intent(getActivity(), TripSuggestionsActivity.class));
-		}
-		else
+		} else
 		{
 			Toast.makeText(getActivity(), "Not valid", Toast.LENGTH_SHORT).show();
 		}
-		
-		
+
 	}
+
 	private class LoadTrips extends AsyncTask<String, Void, Void>
 	{
 		@Override
 		protected Void doInBackground(String... params)
 		{
-			
+
 			try
 			{
 				mTripFetcher.tripSearch(mTripRequest);
@@ -607,17 +710,19 @@ public class CreateRouteFragment extends CreateRouteFragmentBase
 
 		protected void onPostExecute(Void result)
 		{
-							
+
 		}
 	}
 
 	@Override
 	public void onClick(View v)
 	{
-		if(v.getId()==R.id.btnFindRoute)
+		if (v.getId() == R.id.btnFindRoute)
 		{
 			loadTrips();
 		}
-		
+
 	}
+
+
 }

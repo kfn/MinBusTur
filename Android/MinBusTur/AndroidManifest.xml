@@ -11,6 +11,7 @@
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.READ_CONTACTS" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
      
 
     <application
@@ -19,7 +20,7 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
         <activity
-            android:name="com.miracleas.minbustur.CreateRouteActivity"
+            android:name="com.miracleas.minbustur.FindTripSuggestionsActivity"
             android:label="@string/route_creation" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -29,6 +30,9 @@
         </activity>
         <activity android:name="com.miracleas.minbustur.TripSuggestionsActivity"
             android:label="@string/trip_suggestions"/>
+        <activity android:name="com.miracleas.minbustur.TripGuideActivity"
+            android:label="@string/trip_guide"/>
+        
         
         <provider
             android:name="com.miracleas.minbustur.provider.MinBusTurProvider"
@@ -45,6 +49,12 @@
     		android:label="@string/app_name"
     		android:exported="false">
 		</service>
+		<service
+    		android:name="com.miracleas.minbustur.service.JourneyDetailsService"
+    		android:label="@string/app_name"
+    		android:exported="false">
+		</service>
+		
         
     </application>
 

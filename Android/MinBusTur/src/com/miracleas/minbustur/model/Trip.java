@@ -13,6 +13,7 @@ public class Trip
 	public static final String TYPE_TRAIN = "TOG";
 	public static final String TYPE_IC = "IC";
 	public static final String TYPE_LYN = "LYN";
+	public static final String TYPE_REG = "REG";
 	
 	
 	public String id = "";
@@ -92,6 +93,11 @@ public class Trip
 			durationTrain = durationTrain + leg.getDuration();
 		}
 		else if(leg.type.equals(TYPE_LYN))
+		{
+			transportChanges++;
+			durationTrain = durationTrain + leg.getDuration();
+		}
+		else if(leg.type.equals(TYPE_REG))
 		{
 			transportChanges++;
 			durationTrain = durationTrain + leg.getDuration();

@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<JourneyDetail xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://xmlopen.rejseplanen.dk/xml/rest/hafasRestJourneyDetail.xsd">
+<Stop name="Søholm/Stavtrup (Århus)" x="10115786" y="56141410" routeIdx="0" depTime="07:56" depDate="20.05.13"/>
+<Stop name="Stavtrup Station (Århus)" x="10119067" y="56138605" routeIdx="1" arrTime="07:57" arrDate="20.05.13" depTime="07:57" depDate="20.05.13"/>
+<Stop name="Bispevej/Søholmvej (Århus)" x="10117116" y="56136870" routeIdx="2" arrTime="07:58" arrDate="20.05.13" depTime="07:58" depDate="20.05.13"/>
+<Stop name="Stavtrup Vest, Endestation (Århus)" x="10116073" y="56132493" routeIdx="3" arrTime="07:59" arrDate="20.05.13" depTime="07:59" depDate="20.05.13"/>
+<Stop name="Stavtrup, Byvænget (Århus)" x="10116019" y="56128591" routeIdx="4" arrTime="08:01" arrDate="20.05.13" depTime="08:01" depDate="20.05.13"/>
+<Stop name="Ormslevvej/Jarlsmindevej (Århus)" x="10124029" y="56128375" routeIdx="5" arrTime="08:03" arrDate="20.05.13" depTime="08:03" depDate="20.05.13"/>
+<Stop name="Bøgeskov Høvej/Ormslevvej (Århus)" x="10136056" y="56125975" routeIdx="6" arrTime="08:04" arrDate="20.05.13" depTime="08:04" depDate="20.05.13"/>
+<Stop name="Ormslevvej/Hømosevej (Århus)" x="10143131" y="56128600" routeIdx="7" arrTime="08:05" arrDate="20.05.13" depTime="08:05" depDate="20.05.13"/>
+<Stop name="Ormslevvej/Stensagervej (Århus)" x="10148875" y="56129149" routeIdx="8" arrTime="08:06" arrDate="20.05.13" depTime="08:06" depDate="20.05.13"/>
+<Stop name="Ormslevsvej/Myrholmsvej v. Århus Købmandsskole (År" x="10154403" y="56129895" routeIdx="9" arrTime="08:07" arrDate="20.05.13" depTime="08:07" depDate="20.05.13"/>
+<Stop name="Ormslevvej/Nordbyvej (Århus)" x="10157648" y="56130326" routeIdx="10" arrTime="08:08" arrDate="20.05.13" depTime="08:08" depDate="20.05.13"/>
+<Stop name="Skanderborgvej/Viby Torv, Viby J" x="10162718" y="56128717" routeIdx="11" arrTime="08:09" arrDate="20.05.13" depTime="08:09" depDate="20.05.13"/>
+<Stop name="Grundtvigsvej/Birkedalsvej (Århus)" x="10167689" y="56129805" routeIdx="12" arrTime="08:10" arrDate="20.05.13" depTime="08:10" depDate="20.05.13"/>
+<Stop name="Vilhelm Becks Vej/Kaj Munks Vej (Århus)" x="10174980" y="56130452" routeIdx="13" arrTime="08:11" arrDate="20.05.13" depTime="08:11" depDate="20.05.13"/>
+<Stop name="Rosenvangs Allé/Vilhelm Becks Vej v. Rosenvangskol" x="10181236" y="56131396" routeIdx="14" arrTime="08:12" arrDate="20.05.13" depTime="08:12" depDate="20.05.13"/>
+<Stop name="Jyllands Allé/Vilhelm Bechs Vej v. Cykelbanen (Årh" x="10189641" y="56132493" routeIdx="15" arrTime="08:14" arrDate="20.05.13" depTime="08:14" depDate="20.05.13"/>
+<Stop name="Jyllands Allé/Dyrehavevej (Århus)" x="10189812" y="56136124" routeIdx="16" arrTime="08:15" arrDate="20.05.13" depTime="08:15" depDate="20.05.13"/>
+<Stop name="Jyllands Allé/Ellemarksvej (Århus)" x="10190126" y="56138327" routeIdx="17" arrTime="08:15" arrDate="20.05.13" depTime="08:15" depDate="20.05.13"/>
+<Stop name="Jyllands Allé/P. P. Ørums Gade (Århus)" x="10190558" y="56141446" routeIdx="18" arrTime="08:16" arrDate="20.05.13" depTime="08:16" depDate="20.05.13"/>
+<Stop name="Skanderborgvej/Harald Jensens Plads, Århus C" x="10189138" y="56143972" routeIdx="19" arrTime="08:18" arrDate="20.05.13" depTime="08:18" depDate="20.05.13"/>
+<Stop name="Frederiks Allé/Holbergsgade, Århus C" x="10195385" y="56147289" routeIdx="20" arrTime="08:20" arrDate="20.05.13" depTime="08:20" depDate="20.05.13"/>
+<Stop name="Frederiks Allé/Søgade, Århus C" x="10198855" y="56150066" routeIdx="21" arrTime="08:20" arrDate="20.05.13" depTime="08:20" depDate="20.05.13"/>
+<Stop name="Park Allé/Banegårdspladsen (Århus)" x="10203349" y="56151756" routeIdx="22" arrTime="08:22" arrDate="20.05.13" depTime="08:22" depDate="20.05.13"/>
+<Stop name="Hans Hartvig Seedorffs Stræde (Århus)" x="10204392" y="56153590" routeIdx="23" arrTime="08:23" arrDate="20.05.13" depTime="08:23" depDate="20.05.13"/>
+<Stop name="Busgaden (Århus)" x="10205956" y="56155280" routeIdx="24" arrTime="08:24" arrDate="20.05.13" depTime="08:24" depDate="20.05.13"/>
+<Stop name="Emil Vetts Passage (Århus)" x="10205318" y="56156862" routeIdx="25" arrTime="08:25" arrDate="20.05.13" depTime="08:25" depDate="20.05.13"/>
+<Stop name="Klostertorvet (Århus)" x="10205741" y="56158543" routeIdx="26" arrTime="08:26" arrDate="20.05.13" depTime="08:26" depDate="20.05.13"/>
+<Stop name="Nørre Allé/Lollandsgade (Århus)" x="10203152" y="56159703" routeIdx="27" arrTime="08:27" arrDate="20.05.13" depTime="08:27" depDate="20.05.13"/>
+<Stop name="Vesterbrogade (Århus)" x="10196023" y="56157797" routeIdx="28" arrTime="08:28" arrDate="20.05.13" depTime="08:28" depDate="20.05.13"/>
+<Stop name="Den Gamle By, Cereskrydset (Aarhus)" x="10194180" y="56157545" routeIdx="29" arrTime="08:29" arrDate="20.05.13" depTime="08:29" depDate="20.05.13"/>
+<Stop name="Silkeborgvej v. Rosengården (Århus)" x="10187555" y="56156395" routeIdx="30" arrTime="08:30" arrDate="20.05.13" depTime="08:30" depDate="20.05.13"/>
+<Stop name="Silkeborgvej/Vestre Ringgade (Århus)" x="10182656" y="56156215" routeIdx="31" arrTime="08:31" arrDate="20.05.13" depTime="08:31" depDate="20.05.13"/>
+<Stop name="Silkeborgvej/Birkeparken (Århus)" x="10176274" y="56155927" routeIdx="32" arrTime="08:32" arrDate="20.05.13" depTime="08:32" depDate="20.05.13"/>
+<Stop name="Silkeborgvej/Åbyhøj Torv (Århus)" x="10169253" y="56155424" routeIdx="33" arrTime="08:33" arrDate="20.05.13" depTime="08:33" depDate="20.05.13"/>
+<Stop name="Silkeborgvej/Haslevej (Århus)" x="10165514" y="56155163" routeIdx="34" arrTime="08:34" arrDate="20.05.13" depTime="08:34" depDate="20.05.13"/>
+<Stop name="Silkeborgvej/B. S. Ingemanns Vej v.  Åbyhøj Kirke" x="10159329" y="56154732" routeIdx="35" arrTime="08:35" arrDate="20.05.13" depTime="08:35" depDate="20.05.13"/>
+<Stop name="Silkeborgvej/Chr. Winthers Vej (Århus)" x="10154700" y="56154408" routeIdx="36" arrTime="08:36" arrDate="20.05.13" depTime="08:36" depDate="20.05.13"/>
+<Stop name="Silkeborgvej/Jeppe Åkjærs Vej (Århus)" x="10149342" y="56154022" routeIdx="37" arrTime="08:36" arrDate="20.05.13" depTime="08:36" depDate="20.05.13"/>
+<Stop name="Silkeborgvej/Åby Ringvej (Århus)" x="10143877" y="56153617" routeIdx="38" arrTime="08:37" arrDate="20.05.13" depTime="08:37" depDate="20.05.13"/>
+<Stop name="Silkeborgvej/Louisevej v. City Vest (Århus)" x="10136488" y="56153051" routeIdx="39" arrTime="08:38" arrDate="20.05.13" depTime="08:38" depDate="20.05.13"/>
+<Stop name="Silkeborgvej/Røgelvej (Århus)" x="10127166" y="56152467" routeIdx="40" arrTime="08:39" arrDate="20.05.13" depTime="08:39" depDate="20.05.13"/>
+<Stop name="Silkeborgvej/Stenbækvej (Århus)" x="10117628" y="56152790" routeIdx="41" arrTime="08:40" arrDate="20.05.13" depTime="08:40" depDate="20.05.13"/>
+<Stop name="Silkeborgvej/Tunnelen (Århus)" x="10105763" y="56153923" routeIdx="42" arrTime="08:40" arrDate="20.05.13" depTime="08:40" depDate="20.05.13"/>
+<Stop name="Silkeborgvej/Sødalsvej (Århus)" x="10094059" y="56153303" routeIdx="43" arrTime="08:41" arrDate="20.05.13" depTime="08:41" depDate="20.05.13"/>
+<Stop name="Tre Ege, Silkeborgvej/Årslev Møllevej (Århus)" x="10088719" y="56152943" routeIdx="44" arrTime="08:42" arrDate="20.05.13" depTime="08:42" depDate="20.05.13"/>
+<Stop name="Årslev Skov, Silkeborgvej (Århus)" x="10083218" y="56152592" routeIdx="45" arrTime="08:43" arrDate="20.05.13" depTime="08:43" depDate="20.05.13"/>
+<Stop name="Årslev (Århus)" x="10071046" y="56151927" routeIdx="46" arrTime="08:45" arrDate="20.05.13" depTime="08:45" depDate="20.05.13"/>
+<Stop name="Årslev Kro (Århus)" x="10039054" y="56153446" routeIdx="47" arrTime="08:48" arrDate="20.05.13" depTime="08:48" depDate="20.05.13"/>
+<Stop name="Stillingvej/Framlev Korsvej (Århus)" x="10006962" y="56150983" routeIdx="48" arrTime="08:50" arrDate="20.05.13" depTime="08:50" depDate="20.05.13"/>
+<Stop name="Gl. Stillingvej (Århus)" x="10001353" y="56148008" routeIdx="49" arrTime="08:51" arrDate="20.05.13" depTime="08:51" depDate="20.05.13"/>
+<Stop name="Gl. Stillingvej v. Næshøjskolen (Århus)" x="10000094" y="56145958" routeIdx="50" arrTime="08:52" arrDate="20.05.13" depTime="08:52" depDate="20.05.13"/>
+<Stop name="Kettingvej/Nyvangsvej (Århus)" x="9995393" y="56140565" routeIdx="51" arrTime="08:53" arrDate="20.05.13" depTime="08:53" depDate="20.05.13"/>
+<Stop name="Kettingvej/Vestervej (Århus)" x="9995168" y="56139819" routeIdx="52" arrTime="08:54" arrDate="20.05.13" depTime="08:54" depDate="20.05.13"/>
+<Stop name="Vestervej/Højlundvej (Århus)" x="9995986" y="56137976" routeIdx="53" arrTime="08:55" arrDate="20.05.13" depTime="08:55" depDate="20.05.13"/>
+<Stop name="Ketting Parkvej/Kettingvej (Århus)" x="9995609" y="56136870" routeIdx="54" arrTime="08:56" arrDate="20.05.13" depTime="08:56" depDate="20.05.13"/>
+<Stop name="Ketting Parkvej (Århus)" x="9992436" y="56140646" routeIdx="55" arrTime="08:57" arrDate="20.05.13" depTime="08:57" depDate="20.05.13"/>
+<Stop name="Harlev/Rødlundvej Syd (Århus)" x="9987492" y="56144062" routeIdx="56" arrTime="08:58" arrDate="20.05.13"/>
+<JourneyName name="Bus 11" routeIdxFrom="0" routeIdxTo="56"/>
+<JourneyType type="BUS" routeIdxFrom="0" routeIdxTo="56"/>
+<Note text="Retning: Harlev/Rødlundvej Syd (Århus)" routeIdxFrom="0" routeIdxTo="56"/><Note text="kører:26. maj - 23. jun 2013 sø; også 20. maj, 5. jun" routeIdxFrom="0" routeIdxTo="56"/>
+</JourneyDetail>

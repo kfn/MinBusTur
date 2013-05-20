@@ -41,7 +41,7 @@ public class AddressFetcher extends BaseFetcher
 	}
 	
 	@Override
-	void fetchHelper() throws Exception
+	void doWork() throws Exception
 	{
 		
 	}
@@ -59,11 +59,11 @@ public class AddressFetcher extends BaseFetcher
 		}
 		finally
 		{
-			if(cursor!=null)
+			if(cursor!=null && !cursor.isClosed())
 			{
 				cursor.close();
 			}
-		}				
+		}		
 		if(!hasCachedResult)
 		{
 			rejseplanenAddressSearch();				
@@ -71,11 +71,7 @@ public class AddressFetcher extends BaseFetcher
 	}
 	private void rejseplanenAddressSearch() throws Exception
 	{
-		HttpURLConnection urlConnection = initHttpURLConnection(URL+URLEncoder.encode(mSearchTerm, HTTP.ISO_8859_1));
-		urlConnection.setRequestProperty("Accept-Encoding", "gzip");
-		urlConnection.setRequestProperty("Accept", "*/*");
-		urlConnection.setRequestProperty(CONTENT_TYPE, MIME_FORM_ENCODED);
-		
+		HttpURLConnection urlConnection = initHttpURLConnection(URL+URLEncoder.encode(mSearchTerm, HTTP.ISO_8859_1));	
 		try
 		{
 			int repsonseCode = urlConnection.getResponseCode();
@@ -86,6 +82,7 @@ public class AddressFetcher extends BaseFetcher
 				parse(input);
 				if (!mDbOperations.isEmpty())
 				{
+					
 					saveData(AddressProviderMetaData.AUTHORITY);
 				}
 

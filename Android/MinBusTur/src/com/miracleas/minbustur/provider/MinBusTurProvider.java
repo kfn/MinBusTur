@@ -2,6 +2,7 @@ package com.miracleas.minbustur.provider;
 
 import java.util.ArrayList;
 
+import android.annotation.SuppressLint;
 import android.content.ContentProvider;
 import android.content.ContentProviderOperation;
 import android.content.ContentProviderResult;
@@ -21,8 +22,8 @@ import android.util.Log;
 
 public class MinBusTurProvider extends ContentProvider
 {
-	public static final String DATABASE_NAME = AddressProviderMetaData.COLLECTION_TYPE;
-	public static final int DATABASE_VERSION = 5;
+	public static final String DATABASE_NAME = "minrejseplan";
+	public static final int DATABASE_VERSION = 1;
 	// Logging helper tag. No significance to providers.
 	private static final String tag = MinBusTurProvider.class.getName();
 
@@ -37,6 +38,15 @@ public class MinBusTurProvider extends ContentProvider
 	private static final int INCOMING_SINGLE_TRIPLEG_URI_INDICATOR = 7;
 	private static final int INCOMING_WAYPOINT_IMG_COLLECTION_URI_INDICATOR = 8;
 	private static final int INCOMING_SINGLE_WAYPOINT_IMG_URI_INDICATOR = 9;
+	private static final int INCOMING_JOURNEY_DETAIL_COLLECTION_URI_INDICATOR = 10;
+	private static final int INCOMING_SINGLE_JOURNEY_DETAIL_URI_INDICATOR = 11;
+	private static final int INCOMING_JOURNEY_DETAIL_STOP_COLLECTION_URI_INDICATOR = 12;
+	private static final int INCOMING_SINGLE_JOURNEY_DETAIL_STOP_URI_INDICATOR = 13;
+	private static final int INCOMING_JOURNEY_DETAIL_NOTE_COLLECTION_URI_INDICATOR = 14;
+	private static final int INCOMING_GEOFENCE_COLLECTION_URI_INDICATOR = 15;
+	private static final int INCOMING_SINGLE_GEOFENCE_URI_INDICATOR = 16;
+	
+	
 	
 
 	static
@@ -51,7 +61,13 @@ public class MinBusTurProvider extends ContentProvider
 		sUriMatcher.addURI(TripLegMetaData.AUTHORITY, TripLegMetaData.COLLECTION_TYPE + "/#", INCOMING_SINGLE_TRIPLEG_URI_INDICATOR);
 		sUriMatcher.addURI(TripLegImageMetaData.AUTHORITY, TripLegImageMetaData.COLLECTION_TYPE, INCOMING_WAYPOINT_IMG_COLLECTION_URI_INDICATOR);
 		sUriMatcher.addURI(TripLegImageMetaData.AUTHORITY, TripLegImageMetaData.COLLECTION_TYPE + "/#", INCOMING_SINGLE_WAYPOINT_IMG_URI_INDICATOR);
-		
+		sUriMatcher.addURI(JourneyDetailMetaData.AUTHORITY, JourneyDetailMetaData.COLLECTION_TYPE, INCOMING_JOURNEY_DETAIL_COLLECTION_URI_INDICATOR);
+		sUriMatcher.addURI(JourneyDetailMetaData.AUTHORITY, JourneyDetailMetaData.COLLECTION_TYPE + "/#", INCOMING_SINGLE_JOURNEY_DETAIL_URI_INDICATOR);
+		sUriMatcher.addURI(JourneyDetailStopMetaData.AUTHORITY, JourneyDetailStopMetaData.COLLECTION_TYPE, INCOMING_JOURNEY_DETAIL_STOP_COLLECTION_URI_INDICATOR);
+		sUriMatcher.addURI(JourneyDetailStopMetaData.AUTHORITY, JourneyDetailStopMetaData.COLLECTION_TYPE + "/#", INCOMING_SINGLE_JOURNEY_DETAIL_STOP_URI_INDICATOR);
+		sUriMatcher.addURI(JourneyDetailNoteMetaData.AUTHORITY, JourneyDetailNoteMetaData.COLLECTION_TYPE, INCOMING_JOURNEY_DETAIL_NOTE_COLLECTION_URI_INDICATOR);
+		sUriMatcher.addURI(GeofenceMetaData.AUTHORITY, GeofenceMetaData.COLLECTION_TYPE, INCOMING_GEOFENCE_COLLECTION_URI_INDICATOR);
+		sUriMatcher.addURI(GeofenceMetaData.AUTHORITY, GeofenceMetaData.COLLECTION_TYPE + "/#", INCOMING_SINGLE_GEOFENCE_URI_INDICATOR);				
 	}
 
 	/**
@@ -73,6 +89,10 @@ public class MinBusTurProvider extends ContentProvider
 			db.execSQL("CREATE TABLE IF NOT EXISTS " + TripMetaData.TABLE_NAME + getTableSchemaStart() + TripMetaData.getTableSchema() + getTableSchemaEnd());
 			db.execSQL("CREATE TABLE IF NOT EXISTS " + TripLegMetaData.TABLE_NAME + getTableSchemaStart() + TripLegMetaData.getTableSchema() + getTableSchemaEnd());
 			db.execSQL("CREATE TABLE IF NOT EXISTS " + TripLegImageMetaData.TABLE_NAME + getTableSchemaStart() + TripLegImageMetaData.getTableSchema() + getTableSchemaEnd());
+			db.execSQL("CREATE TABLE IF NOT EXISTS " + JourneyDetailMetaData.TABLE_NAME + getTableSchemaStart() + JourneyDetailMetaData.getTableSchema() + getTableSchemaEnd());
+			db.execSQL("CREATE TABLE IF NOT EXISTS " + JourneyDetailStopMetaData.TABLE_NAME + getTableSchemaStart() + JourneyDetailStopMetaData.getTableSchema() + getTableSchemaEnd());
+			db.execSQL("CREATE TABLE IF NOT EXISTS " + JourneyDetailNoteMetaData.TABLE_NAME + getTableSchemaStart() + JourneyDetailNoteMetaData.getTableSchema() + getTableSchemaEnd());
+			db.execSQL("CREATE TABLE IF NOT EXISTS " + GeofenceMetaData.TABLE_NAME + getTableSchemaStart() + GeofenceMetaData.getTableSchema() + getTableSchemaEnd());
 		}
 
 		protected static String getTableSchemaStart()
@@ -94,6 +114,10 @@ public class MinBusTurProvider extends ContentProvider
 			db.execSQL("DROP TABLE IF EXISTS " + TripMetaData.TABLE_NAME);
 			db.execSQL("DROP TABLE IF EXISTS " + TripLegMetaData.TABLE_NAME);
 			db.execSQL("DROP TABLE IF EXISTS " + TripLegImageMetaData.TABLE_NAME);
+			db.execSQL("DROP TABLE IF EXISTS " + JourneyDetailMetaData.TABLE_NAME);
+			db.execSQL("DROP TABLE IF EXISTS " + JourneyDetailStopMetaData.TABLE_NAME);
+			db.execSQL("DROP TABLE IF EXISTS " + JourneyDetailNoteMetaData.TABLE_NAME);
+			db.execSQL("DROP TABLE IF EXISTS " + GeofenceMetaData.TABLE_NAME);
 			onCreate(db);
 		}
 	}
@@ -108,14 +132,23 @@ public class MinBusTurProvider extends ContentProvider
 		return true;
 	}
 
+	@SuppressLint("NewApi")
 	@Override
 	public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder)
 	{
 		SQLiteQueryBuilder qb = new SQLiteQueryBuilder();
-
+		String groupBy = null;
 		switch (sUriMatcher.match(uri)) {
 		case INCOMING_ADDRESS_COLLECTION_URI_INDICATOR:
+			//qb.setTables(AddressProviderMetaData.TABLE_NAME);
+			String query = selectionArgs[0];
+			selectionArgs = null;
+			Log.d(tag, "query: "+query);
+			StringBuilder b = new StringBuilder();
+			b.append(AddressProviderMetaData.TableMetaData.address).append(" LIKE '").append(query).append("%'");
 			qb.setTables(AddressProviderMetaData.TABLE_NAME);
+			selection = b.toString();
+			groupBy = AddressProviderMetaData.TableMetaData.address;
 			break;
 
 		case INCOMING_SINGLE_ADDRESS_URI_INDICATOR:
@@ -124,17 +157,8 @@ public class MinBusTurProvider extends ContentProvider
 			break;
 			
 		case INCOMING_ADDRESS_SEARCH_URI_INDICATOR:
-			String query = selectionArgs[0];
-			StringBuilder b = new StringBuilder();
-			b.append("SELECT * FROM ").append(AddressProviderMetaData.TABLE_NAME).append(" WHERE ")
-			.append(AddressProviderMetaData.TableMetaData.address).append(" LIKE '").append(query)
-			.append("%'").append(" GROUP BY ").append(AddressProviderMetaData.TableMetaData.address)
-			.append(" ORDER BY ").append(AddressProviderMetaData.TableMetaData.address);
 			
-			SQLiteDatabase db = mOpenHelper.getReadableDatabase();
-			Cursor c = db.rawQuery(b.toString(), null);
-			c.setNotificationUri(getContext().getContentResolver(), uri);
-			return c;
+			break;
 		case INCOMING_TRIP_COLLECTION_URI_INDICATOR:
 			qb.setTables(TripMetaData.TABLE_NAME);
 			break;
@@ -145,7 +169,7 @@ public class MinBusTurProvider extends ContentProvider
 			break;
 		case INCOMING_TRIPLEG_COLLECTION_URI_INDICATOR:
 			qb.setTables(TripLegMetaData.TABLE_NAME);
-			break;
+			break; 
 
 		case INCOMING_SINGLE_TRIPLEG_URI_INDICATOR:
 			qb.setTables(TripLegMetaData.TABLE_NAME);
@@ -160,6 +184,33 @@ public class MinBusTurProvider extends ContentProvider
 			qb.setTables(TripLegImageMetaData.TABLE_NAME);
 			qb.appendWhere(TripLegImageMetaData.TableMetaData._ID + "=" + uri.getPathSegments().get(1));
 			break;
+		case INCOMING_JOURNEY_DETAIL_COLLECTION_URI_INDICATOR:
+			qb.setTables(JourneyDetailMetaData.TABLE_NAME);
+			break;
+
+		case INCOMING_SINGLE_JOURNEY_DETAIL_URI_INDICATOR:
+			qb.setTables(JourneyDetailMetaData.TABLE_NAME);
+			qb.appendWhere(JourneyDetailMetaData.TableMetaData._ID + "=" + uri.getPathSegments().get(1));
+			break;
+		case INCOMING_JOURNEY_DETAIL_STOP_COLLECTION_URI_INDICATOR:
+			qb.setTables(JourneyDetailStopMetaData.TABLE_NAME);
+			break;
+
+		case INCOMING_SINGLE_JOURNEY_DETAIL_STOP_URI_INDICATOR:
+			qb.setTables(JourneyDetailStopMetaData.TABLE_NAME);
+			qb.appendWhere(JourneyDetailStopMetaData.TableMetaData._ID + "=" + uri.getPathSegments().get(1));
+			break;
+		case INCOMING_JOURNEY_DETAIL_NOTE_COLLECTION_URI_INDICATOR:
+			qb.setTables(JourneyDetailNoteMetaData.TABLE_NAME);
+			break;
+		case INCOMING_GEOFENCE_COLLECTION_URI_INDICATOR:
+			qb.setTables(GeofenceMetaData.TABLE_NAME);
+			break;
+
+		case INCOMING_SINGLE_GEOFENCE_URI_INDICATOR:
+			qb.setTables(GeofenceMetaData.TABLE_NAME);
+			qb.appendWhere(GeofenceMetaData.TableMetaData._ID + "=" + uri.getPathSegments().get(1));
+			break;
 
 		default:
 			throw new IllegalArgumentException("Unknown URI " + uri);
@@ -167,7 +218,7 @@ public class MinBusTurProvider extends ContentProvider
 
 		// Get the database and run the query
 		SQLiteDatabase db = mOpenHelper.getReadableDatabase();
-		Cursor c = qb.query(db, projection, selection, selectionArgs, null, null, sortOrder);
+		Cursor c = qb.query(db, projection, selection, selectionArgs, groupBy, null, sortOrder);
 
 		// example of getting a count
 		// int i = c.getCount();
@@ -219,6 +270,26 @@ public class MinBusTurProvider extends ContentProvider
 		{
 			tbl = TripLegImageMetaData.TABLE_NAME;
 			contentUri = TripLegImageMetaData.TableMetaData.CONTENT_URI;
+		}
+		else if (sUriMatcher.match(uri) == INCOMING_JOURNEY_DETAIL_COLLECTION_URI_INDICATOR)
+		{
+			tbl = JourneyDetailMetaData.TABLE_NAME;
+			contentUri = JourneyDetailMetaData.TableMetaData.CONTENT_URI;
+		}
+		else if (sUriMatcher.match(uri) == INCOMING_JOURNEY_DETAIL_STOP_COLLECTION_URI_INDICATOR)
+		{
+			tbl = JourneyDetailStopMetaData.TABLE_NAME;
+			contentUri = JourneyDetailStopMetaData.TableMetaData.CONTENT_URI;
+		}
+		else if (sUriMatcher.match(uri) == INCOMING_JOURNEY_DETAIL_NOTE_COLLECTION_URI_INDICATOR)
+		{
+			tbl = JourneyDetailNoteMetaData.TABLE_NAME;
+			contentUri = JourneyDetailNoteMetaData.TableMetaData.CONTENT_URI;
+		}
+		else if (sUriMatcher.match(uri) == INCOMING_GEOFENCE_COLLECTION_URI_INDICATOR)
+		{
+			tbl = GeofenceMetaData.TABLE_NAME;
+			contentUri = GeofenceMetaData.TableMetaData.CONTENT_URI;
 		}
 		else
 		{
@@ -286,6 +357,33 @@ public class MinBusTurProvider extends ContentProvider
 			String rowId3 = uri.getPathSegments().get(1);
 			count = db.delete(TripLegImageMetaData.TABLE_NAME, TripLegImageMetaData.TableMetaData._ID + "=" + rowId3 + (!TextUtils.isEmpty(where) ? " AND (" + where + ')' : ""), whereArgs);
 			break;
+		case INCOMING_JOURNEY_DETAIL_COLLECTION_URI_INDICATOR:
+			count = db.delete(JourneyDetailMetaData.TABLE_NAME, where, whereArgs);
+			break;
+
+		case INCOMING_SINGLE_JOURNEY_DETAIL_URI_INDICATOR:
+			String rowId4 = uri.getPathSegments().get(1);
+			count = db.delete(JourneyDetailMetaData.TABLE_NAME, JourneyDetailMetaData.TableMetaData._ID + "=" + rowId4 + (!TextUtils.isEmpty(where) ? " AND (" + where + ')' : ""), whereArgs);
+			break;
+		case INCOMING_JOURNEY_DETAIL_STOP_COLLECTION_URI_INDICATOR:
+			count = db.delete(JourneyDetailStopMetaData.TABLE_NAME, where, whereArgs);
+			break;
+
+		case INCOMING_SINGLE_JOURNEY_DETAIL_STOP_URI_INDICATOR:
+			String rowId5 = uri.getPathSegments().get(1);
+			count = db.delete(JourneyDetailStopMetaData.TABLE_NAME, JourneyDetailStopMetaData.TableMetaData._ID + "=" + rowId5 + (!TextUtils.isEmpty(where) ? " AND (" + where + ')' : ""), whereArgs);
+			break;
+		case INCOMING_JOURNEY_DETAIL_NOTE_COLLECTION_URI_INDICATOR:
+			count = db.delete(JourneyDetailNoteMetaData.TABLE_NAME, where, whereArgs);
+			break;
+		case INCOMING_GEOFENCE_COLLECTION_URI_INDICATOR:
+			count = db.delete(GeofenceMetaData.TABLE_NAME, where, whereArgs);
+			break;
+
+		case INCOMING_SINGLE_GEOFENCE_URI_INDICATOR:
+			String rowId6 = uri.getPathSegments().get(1);
+			count = db.delete(GeofenceMetaData.TABLE_NAME, GeofenceMetaData.TableMetaData._ID + "=" + rowId6 + (!TextUtils.isEmpty(where) ? " AND (" + where + ')' : ""), whereArgs);
+			break;
 		default:
 			throw new IllegalArgumentException("Unknown URI " + uri);
 		}
@@ -333,6 +431,30 @@ public class MinBusTurProvider extends ContentProvider
 			String rowId3 = uri.getPathSegments().get(1);
 			count = db.update(TripLegImageMetaData.TABLE_NAME, values, TripLegImageMetaData.TableMetaData._ID + "=" + rowId3 + (!TextUtils.isEmpty(where) ? " AND (" + where + ')' : ""), whereArgs);
 			break;
+		case INCOMING_JOURNEY_DETAIL_COLLECTION_URI_INDICATOR:
+			count = db.update(JourneyDetailMetaData.TABLE_NAME, values, where, whereArgs);
+			break;
+
+		case INCOMING_SINGLE_JOURNEY_DETAIL_URI_INDICATOR:
+			String rowId4 = uri.getPathSegments().get(1);
+			count = db.update(JourneyDetailMetaData.TABLE_NAME, values, JourneyDetailMetaData.TableMetaData._ID + "=" + rowId4 + (!TextUtils.isEmpty(where) ? " AND (" + where + ')' : ""), whereArgs);
+			break;
+		case INCOMING_JOURNEY_DETAIL_STOP_COLLECTION_URI_INDICATOR:
+			count = db.update(JourneyDetailStopMetaData.TABLE_NAME, values, where, whereArgs);
+			break;
+
+		case INCOMING_SINGLE_JOURNEY_DETAIL_STOP_URI_INDICATOR:
+			String rowId5 = uri.getPathSegments().get(1);
+			count = db.update(JourneyDetailStopMetaData.TABLE_NAME, values, JourneyDetailStopMetaData.TableMetaData._ID + "=" + rowId5 + (!TextUtils.isEmpty(where) ? " AND (" + where + ')' : ""), whereArgs);
+			break;
+		case INCOMING_GEOFENCE_COLLECTION_URI_INDICATOR:
+			count = db.update(GeofenceMetaData.TABLE_NAME, values, where, whereArgs);
+			break;
+
+		case INCOMING_SINGLE_GEOFENCE_URI_INDICATOR:
+			String rowId6 = uri.getPathSegments().get(1);
+			count = db.update(GeofenceMetaData.TABLE_NAME, values, GeofenceMetaData.TableMetaData._ID + "=" + rowId6 + (!TextUtils.isEmpty(where) ? " AND (" + where + ')' : ""), whereArgs);
+			break;
 		default:
 			throw new IllegalArgumentException("Unknown URI " + uri);
 		}
@@ -347,6 +469,7 @@ public class MinBusTurProvider extends ContentProvider
 
 		final SQLiteDatabase db = mOpenHelper.getWritableDatabase();
 		db.beginTransaction();
+	
 		try
 		{
 			final int numOperations = operations.size();
