@@ -6,6 +6,7 @@ import android.os.Bundle;
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.Menu;
+import com.miracleas.minbustur.model.TripRequest;
 import com.miracleas.minbustur.provider.TripLegMetaData;
 
 public class TripSuggestionsActivity extends SherlockFragmentActivity implements TripSuggestionsFragment.Callbacks
@@ -29,11 +30,12 @@ public class TripSuggestionsActivity extends SherlockFragmentActivity implements
 	}
 
 	@Override
-	public void onTripSuggestionSelected(String id, int stepCount)
+	public void onTripSuggestionSelected(String id, int stepCount, TripRequest tripRequest)
 	{
 		Intent intent = new Intent(this, TripGuideActivity.class);
 		intent.putExtra(TripLegMetaData.TableMetaData._ID, id);
 		intent.putExtra(TripLegMetaData.TableMetaData.STEP_NUMBER, stepCount);	
+		intent.putExtra(TripRequest.tag, tripRequest);
 		startActivity(intent);
 	}
 }

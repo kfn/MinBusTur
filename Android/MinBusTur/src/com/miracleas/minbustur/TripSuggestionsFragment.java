@@ -18,6 +18,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.actionbarsherlock.app.SherlockListFragment;
+import com.miracleas.minbustur.model.TripRequest;
 import com.miracleas.minbustur.provider.TripMetaData;
 import com.miracleas.minbustur.provider.TripMetaData.TableMetaData;
 
@@ -41,10 +42,11 @@ public class TripSuggestionsFragment extends SherlockListFragment implements Loa
 	
 	
 	
-	public static TripSuggestionsFragment createInstance()
+	public static TripSuggestionsFragment createInstance(TripRequest tripRequest)
 	{
 		TripSuggestionsFragment f = new TripSuggestionsFragment();
 		Bundle args = new Bundle();
+		args.putParcelable(TripRequest.tag, tripRequest);
 		f.setArguments(args);
 		return f;
 	}
@@ -181,7 +183,8 @@ public class TripSuggestionsFragment extends SherlockListFragment implements Loa
 	@Override
 	public void onItemClick(AdapterView<?> parent, View view, int position, long id)
 	{
-		mCallbacks.onTripSuggestionSelected(id+"", mTripAdapter.getStepCount(position));		
+		TripRequest tripRequest = getArguments().getParcelable(TripRequest.tag);
+		mCallbacks.onTripSuggestionSelected(id+"", mTripAdapter.getStepCount(position), tripRequest);		
 	}
 	
 	@Override
@@ -212,7 +215,7 @@ public class TripSuggestionsFragment extends SherlockListFragment implements Loa
 	 */
 	public interface Callbacks
 	{
-		public void onTripSuggestionSelected(String id, int stepCount);
+		public void onTripSuggestionSelected(String id, int stepCount, TripRequest tripRequest);
 	}
 
 	/**
@@ -223,7 +226,7 @@ public class TripSuggestionsFragment extends SherlockListFragment implements Loa
 	{
 
 		@Override
-		public void onTripSuggestionSelected(String id, int stepCount)
+		public void onTripSuggestionSelected(String id, int stepCount, TripRequest tripRequest)
 		{
 			// TODO Auto-generated method stub
 			

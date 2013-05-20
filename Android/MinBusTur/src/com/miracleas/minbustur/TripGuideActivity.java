@@ -6,6 +6,7 @@ import android.os.Bundle;
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.Menu;
+import com.miracleas.minbustur.model.TripRequest;
 import com.miracleas.minbustur.provider.TripLegMetaData;
 
 public class TripGuideActivity extends GeofenceActivity
@@ -37,10 +38,11 @@ public class TripGuideActivity extends GeofenceActivity
 		{
 			Intent intent = getIntent();
 			String tripId = intent.getStringExtra(TripLegMetaData.TableMetaData._ID);
-			int stepCount = intent.getIntExtra(TripLegMetaData.TableMetaData.STEP_NUMBER, 1);
+			int stepCount = intent.getIntExtra(TripLegMetaData.TableMetaData.STEP_NUMBER, 1);			
+			TripRequest tripRequest = intent.getParcelableExtra(TripRequest.tag);
 			// Create the detail fragment and add it to the activity
 			// using a fragment transaction.
-			TripGuideFragment fragment = TripGuideFragment.createInstance(tripId, stepCount);
+			TripGuideFragment fragment = TripGuideFragment.createInstance(tripId, stepCount, tripRequest);
 			getSupportFragmentManager().beginTransaction().add(R.id.fragmentTripGuideContainer, fragment).commit();
 		}
 	}

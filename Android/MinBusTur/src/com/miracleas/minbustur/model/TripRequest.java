@@ -11,6 +11,7 @@ import android.text.TextUtils;
 
 public class TripRequest implements Parcelable
 {
+	public static final String tag = TripRequest.class.getName();
 	private String originId;
 	private String originCoordX;
 	private String originCoordY;

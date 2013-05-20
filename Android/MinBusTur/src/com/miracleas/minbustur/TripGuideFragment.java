@@ -29,6 +29,7 @@ import com.google.android.gms.location.Geofence;
 import com.google.android.gms.location.LocationClient.OnAddGeofencesResultListener;
 import com.miracleas.minbustur.TripSuggestionsFragment.Callbacks;
 import com.miracleas.minbustur.model.Trip;
+import com.miracleas.minbustur.model.TripRequest;
 import com.miracleas.minbustur.provider.JourneyDetailMetaData;
 import com.miracleas.minbustur.provider.JourneyDetailStopMetaData;
 import com.miracleas.minbustur.provider.TripLegMetaData;
@@ -76,12 +77,13 @@ public class TripGuideFragment extends SherlockListFragment implements LoaderCal
 	private TripAdapter mTripAdapter = null;
 	private long[] mLegIds;
 
-	public static TripGuideFragment createInstance(String tripId, int stepCount)
+	public static TripGuideFragment createInstance(String tripId, int stepCount, TripRequest tripRequest)
 	{
 		TripGuideFragment f = new TripGuideFragment();
 		Bundle args = new Bundle();
 		args.putString(TripLegMetaData.TableMetaData._ID, tripId);
 		args.putString(TripLegMetaData.TableMetaData.STEP_NUMBER, stepCount+"");
+		args.putParcelable("TripRequest", tripRequest);
 		f.setArguments(args);
 		return f;
 	}
@@ -167,12 +169,16 @@ public class TripGuideFragment extends SherlockListFragment implements LoaderCal
 		else if(loader.getId()==LoaderConstants.LOAD_START_END_POSITION)
 		{		
 			if(newCursor.moveToFirst())
-			{
-				List<Geofence> geofences = new ArrayList<Geofence>();
-				loadGeofenceInfo(newCursor, geofences, true);
+			{	
+				
+				Geofence g1 = loadGeofenceInfo(newCursor, true);
 				if(newCursor.moveToLast())
 				{
-					loadGeofenceInfo(newCursor, geofences, false);		
+					Geofence g2 = loadGeofenceInfo(newCursor, false);
+					List<Geofence> geofences = new ArrayList<Geofence>();
+					loadStartAndEndGeofences(geofences);
+					geofences.add(g1);
+					geofences.add(g2);
 					GeofenceActivity geo = (GeofenceActivity)getActivity();
 					geo.addGeofences(geofences);
 					getLoaderManager().destroyLoader(LoaderConstants.LOAD_START_END_POSITION);
@@ -195,7 +201,7 @@ public class TripGuideFragment extends SherlockListFragment implements LoaderCal
 		service.putExtra(JourneyDetailsService.LEG+count, id+"");	
 	}
 	
-	private void loadGeofenceInfo(Cursor newCursor, List<Geofence> geofences, boolean first)
+	private Geofence loadGeofenceInfo(Cursor newCursor, boolean first)
 	{
 		int iId = newCursor.getColumnIndex(JourneyDetailStopMetaData.TableMetaData._ID);
 		int iLat = newCursor.getColumnIndex(JourneyDetailStopMetaData.TableMetaData.LATITUDE);
@@ -206,17 +212,31 @@ public class TripGuideFragment extends SherlockListFragment implements LoaderCal
 		double lat = (double)newCursor.getInt(iLat) / 1000000d;
 		double lng = (double)newCursor.getInt(iLng) / 1000000d;
 		int transitionId = -1;
-		if(first)
+		if(first) //skal laves om, saa foerste geofence er den placering hvor man er
 		{
-			transitionId = Geofence.GEOFENCE_TRANSITION_EXIT;
+			transitionId = Geofence.GEOFENCE_TRANSITION_ENTER;
 		}
 		else
 		{
 			transitionId = Geofence.GEOFENCE_TRANSITION_ENTER;
 		}
 		Geofence g = toGeofence(stopId+"", transitionId, lat, lng, 10, DateUtils.HOUR_IN_MILLIS);
-		geofences.add(g);
+		return g;		
+	}
+	
+	private void loadStartAndEndGeofences(List<Geofence> geofences)
+	{
+		TripRequest tripRequest = getArguments().getParcelable(TripRequest.tag);
+		double lat = (double)(Integer.parseInt(tripRequest.getOriginCoordX()) / 1000000d);
+		double lng = (double)(Integer.parseInt(tripRequest.getOriginCoordY()) / 1000000d);
+		Geofence origin = toGeofence("origin", Geofence.GEOFENCE_TRANSITION_EXIT, lat, lng, 10, DateUtils.HOUR_IN_MILLIS);
 		
+		lat = (double)(Integer.parseInt(tripRequest.getDestCoordX()) / 1000000d);
+		lng = (double)(Integer.parseInt(tripRequest.getDestCoordY()) / 1000000d);
+		Geofence dest = toGeofence("dest", Geofence.GEOFENCE_TRANSITION_ENTER, lat, lng, 10, DateUtils.HOUR_IN_MILLIS);
+		
+		geofences.add(origin);
+		geofences.add(dest);
 	}
 	
 	public Geofence toGeofence(String id, int transitionType, double lat, double lng, float radius, long expirationDuration)
