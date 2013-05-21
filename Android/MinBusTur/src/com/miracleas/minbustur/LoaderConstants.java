@@ -10,4 +10,7 @@ public class LoaderConstants
 	public static final int LOADER_TITLE_FROM = 17;
 	public static final int LOADER_ADDRESS_TO = 15;
 	public static final int LOADER_ADDRESS_FROM = 14;
+	public static final int LOADER_TRIP_LEG_DETAILS = 18;
+	public static final int LOADER_TRIP_LEG_STOP_DETAILS = 19;
+	public static final int LOADER_TRIP_LEG_NOTE_DETAILS = 20;
 }

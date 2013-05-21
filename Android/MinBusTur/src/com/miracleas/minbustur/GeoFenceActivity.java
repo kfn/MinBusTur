@@ -13,6 +13,7 @@ import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.miracleas.minbustur.provider.GeofenceMetaData;
 
@@ -26,6 +27,7 @@ import com.google.android.gms.location.LocationClient.OnRemoveGeofencesResultLis
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationStatusCodes;
 import com.miracleas.minbustur.service.ReceiveTransitionsIntentService;
+import com.miracleas.minbustur.service.RemoveGeofencesService;
 
 public class GeofenceActivity extends GoogleServiceActivity implements GooglePlayServicesClient.ConnectionCallbacks, LocationListener, OnAddGeofencesResultListener, OnRemoveGeofencesResultListener
 {
@@ -79,6 +81,7 @@ public class GeofenceActivity extends GoogleServiceActivity implements GooglePla
 			}
 			break;
 		case REMOVE_INTENT:
+			mGeofenceRequestIntent = getRemoveGeofencesPendingIntent();
 			mLocationClient.removeGeofences(mGeofenceRequestIntent, this);
 			break;
 		// If removeGeofencesById was called
@@ -89,14 +92,28 @@ public class GeofenceActivity extends GoogleServiceActivity implements GooglePla
 		}
 	}
 
-	/*
+	/**
 	 * Create a PendingIntent that triggers an IntentService in your app when a
-	 * geofence transition occurs.
+	 * geofence transition occurs. 
+	 * @return
 	 */
 	private PendingIntent getTransitionPendingIntent()
 	{
 		// Create an explicit Intent
 		Intent intent = new Intent(this, ReceiveTransitionsIntentService.class);
+		/*
+		 * Return the PendingIntent
+		 */
+		return PendingIntent.getService(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+	}
+	
+	/*
+	 * Create a PendingIntent
+	 */
+	private PendingIntent getRemoveGeofencesPendingIntent()
+	{
+		// Create an explicit Intent
+		Intent intent = new Intent(this, RemoveGeofencesService.class);
 		/*
 		 * Return the PendingIntent
 		 */
@@ -147,7 +164,7 @@ public class GeofenceActivity extends GoogleServiceActivity implements GooglePla
 	/**
 	 * Start a request to remove geofences by calling LocationClient.connect()
 	 */
-	public void removeGeofences(PendingIntent requestIntent)
+	public void removeAllGeofences()
 	{
 		// Record the type of removal request
 		mRequestType = REQUEST_TYPE.REMOVE_INTENT;
@@ -159,8 +176,7 @@ public class GeofenceActivity extends GoogleServiceActivity implements GooglePla
 		{
 			return;
 		}
-		// Store the PendingIntent
-		mGeofenceRequestIntent = requestIntent;
+		
 		/*
 		 * Create a new location client object. Since the current activity class
 		 * implements ConnectionCallbacks and OnConnectionFailedListener, pass
@@ -243,6 +259,8 @@ public class GeofenceActivity extends GoogleServiceActivity implements GooglePla
 			 * extended data.
 			 */
 			saveGeofences(true);
+			Log.d(tag, "added geofences!");
+			Toast.makeText(this, "added geofences!", Toast.LENGTH_SHORT).show();
 		} else
 		{
 			// If adding the geofences failed

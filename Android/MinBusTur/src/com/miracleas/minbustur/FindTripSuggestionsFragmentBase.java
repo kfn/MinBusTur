@@ -16,6 +16,7 @@ import android.os.Handler;
 import android.provider.ContactsContract;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.util.LruCache;
+import android.support.v4.widget.SimpleCursorAdapter;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
@@ -26,6 +27,7 @@ import android.view.View.OnFocusChangeListener;
 import android.widget.AdapterView;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
+import android.widget.FilterQueryProvider;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.AdapterView.OnItemClickListener;
@@ -36,7 +38,7 @@ import com.miracleas.minbustur.model.TripRequest;
 import com.miracleas.minbustur.net.AddressFetcher;
 import com.miracleas.minbustur.provider.AddressProviderMetaData;
 
-public abstract class FindTripSuggestionsFragmentBase extends SherlockFragment implements LoaderCallbacks<Cursor>, OnItemSelectedListener, OnItemClickListener, OnClickListener, OnFocusChangeListener
+public abstract class FindTripSuggestionsFragmentBase extends SherlockFragment implements LoaderCallbacks<Cursor>, OnClickListener, OnFocusChangeListener
 {
 	protected AutoCompleteTextView mAutoCompleteTextViewFromAddress;
 	protected AutoCompleteTextView mAutoCompleteTextViewToAddress;
@@ -45,7 +47,7 @@ public abstract class FindTripSuggestionsFragmentBase extends SherlockFragment i
 
 	protected static final int THRESHOLD = 2;
 	
-	protected static final String[] PROJECTION = { AddressProviderMetaData.TableMetaData._ID, AddressProviderMetaData.TableMetaData.id, AddressProviderMetaData.TableMetaData.address, AddressProviderMetaData.TableMetaData.lat, AddressProviderMetaData.TableMetaData.lng, AddressProviderMetaData.TableMetaData.type_int };
+	protected static final String[] PROJECTION = { AddressProviderMetaData.TableMetaData._ID, AddressProviderMetaData.TableMetaData.id, AddressProviderMetaData.TableMetaData.address, AddressProviderMetaData.TableMetaData.Y, AddressProviderMetaData.TableMetaData.X, AddressProviderMetaData.TableMetaData.type_int };
 	protected static final String[] PROJECTION_CONTACTS = new String[] { ContactsContract.Contacts._ID, ContactsContract.Contacts.DISPLAY_NAME };
 
 	
@@ -89,104 +91,27 @@ public abstract class FindTripSuggestionsFragmentBase extends SherlockFragment i
 		mAutoCompleteTextViewToAddress = (AutoCompleteTextView) rootView.findViewById(R.id.autoCompleteTextViewTo);
 
 		initAutoComplete(mAutoCompleteTextViewToTitle);
-		mAutoCompleteTextViewToTitle.addTextChangedListener(new TextWatcher()
-		{
-			
-			@Override
-			public void onTextChanged(CharSequence s, int start, int before, int count)
-			{
-				// TODO Auto-generated method stub
-				
-			}
-			
-			@Override
-			public void beforeTextChanged(CharSequence s, int start, int count, int after)
-			{
-				// TODO Auto-generated method stub
-				
-			}
-			
-			@Override
-			public void afterTextChanged(Editable s)
-			{
-				afterTextChangedHelper(s, LoaderConstants.LOADER_TITLE_TO);				
-			}
-		});
-		
-	
 		initAutoComplete(mAutoCompleteTextViewFromTitle);
-		mAutoCompleteTextViewFromTitle.addTextChangedListener(new TextWatcher()
-		{
-			
-			@Override
-			public void onTextChanged(CharSequence s, int start, int before, int count)
-			{
-				// TODO Auto-generated method stub
-				
-			}
-			
-			@Override
-			public void beforeTextChanged(CharSequence s, int start, int count, int after)
-			{
-				// TODO Auto-generated method stub
-				
-			}
-			
-			@Override
-			public void afterTextChanged(Editable s)
-			{
-				afterTextChangedHelper(s, LoaderConstants.LOADER_TITLE_FROM);				
-			}
-		});
 		initAutoComplete(mAutoCompleteTextViewFromAddress);
-		mAutoCompleteTextViewFromAddress.addTextChangedListener(new TextWatcher()
+		mAutoCompleteTextViewFromAddress.setOnItemClickListener(new OnItemClickListener()
 		{
-			
+
 			@Override
-			public void onTextChanged(CharSequence s, int start, int before, int count)
+			public void onItemClick(AdapterView<?> parent, View view, int position, long id)
 			{
-				// TODO Auto-generated method stub
-				
-			}
-			
-			@Override
-			public void beforeTextChanged(CharSequence s, int start, int count, int after)
-			{
-				// TODO Auto-generated method stub
-				
-			}
-			
-			@Override
-			public void afterTextChanged(Editable s)
-			{
-				afterTextChangedHelper(s, LoaderConstants.LOADER_ADDRESS_FROM);				
+				onAddressFromSelected(position);				
 			}
 		});
 		initAutoComplete(mAutoCompleteTextViewToAddress);
-		mAutoCompleteTextViewToAddress.addTextChangedListener(new TextWatcher()
+		mAutoCompleteTextViewToAddress.setOnItemClickListener(new OnItemClickListener()
 		{
-			
+
 			@Override
-			public void onTextChanged(CharSequence s, int start, int before, int count)
+			public void onItemClick(AdapterView<?> parent, View view, int position, long id)
 			{
-				// TODO Auto-generated method stub
-				
-			}
-			
-			@Override
-			public void beforeTextChanged(CharSequence s, int start, int count, int after)
-			{
-				// TODO Auto-generated method stub
-				
-			}
-			
-			@Override
-			public void afterTextChanged(Editable s)
-			{
-				afterTextChangedHelper(s, LoaderConstants.LOADER_ADDRESS_TO);				
+				onAddressToSelected(position);			
 			}
 		});
-
 		mProgressBarToAddress = (ProgressBar) rootView.findViewById(R.id.progressBarToAddress);
 		mProgressBarFromAddress = (ProgressBar) rootView.findViewById(R.id.progressBarFromAddress);
 		mProgressBarFromTitle = (ProgressBar) rootView.findViewById(R.id.progressBarFromTitle);
@@ -196,13 +121,13 @@ public abstract class FindTripSuggestionsFragmentBase extends SherlockFragment i
 		return rootView;
 	}
 	
-	public abstract void afterTextChangedHelper(Editable s, int loaderId);
+	public abstract void textChangedHelper(CharSequence s, int loaderId);
+	protected abstract void onAddressFromSelected(int position);
+	protected abstract void onAddressToSelected(int position);
 
 	private void initAutoComplete(AutoCompleteTextView a)
 	{
-		a.setOnItemSelectedListener(this);
 		a.setThreshold(THRESHOLD);
-		a.setOnItemClickListener(this);
 		a.setOnFocusChangeListener(this);
 	}
 	
@@ -290,18 +215,6 @@ public abstract class FindTripSuggestionsFragmentBase extends SherlockFragment i
 		outState.putParcelable("tripRequest", mTripRequest);
 	}
 
-	@Override
-	public void onNothingSelected(AdapterView<?> arg0)
-	{
-		// TODO Auto-generated method stub
-
-	}
-	
-
-	protected void setSelectedValue(AutoCompleteTextView view, String text)
-	{
-		view.setText(text);
-	}
 	@Override
 	public void onFocusChange(View v, boolean hasFocus)
 	{

@@ -1,12 +1,21 @@
 package com.miracleas.minbustur.service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.google.android.gms.location.Geofence;
 import com.google.android.gms.location.LocationClient;
+import com.miracleas.minbustur.provider.JourneyDetailNoteMetaData;
+import com.miracleas.minbustur.provider.TripLegMetaData;
 
 import android.app.IntentService;
+import android.content.ContentProviderOperation;
+import android.content.ContentResolver;
 import android.content.Intent;
+import android.content.OperationApplicationException;
+import android.net.Uri;
+import android.os.AsyncTask;
+import android.os.RemoteException;
 import android.util.Log;
 
 public class ReceiveTransitionsIntentService extends IntentService
@@ -37,7 +46,7 @@ public class ReceiveTransitionsIntentService extends IntentService
 	@Override
 	protected void onHandleIntent(Intent intent)
 	{
-		Log.e(tag, "onHandleIntent");
+		Log.d(tag, "onHandleIntent");
 		// First check for errors
 		if (LocationClient.hasError(intent))
 		{
@@ -66,20 +75,36 @@ public class ReceiveTransitionsIntentService extends IntentService
 				} else if (transitionType == Geofence.GEOFENCE_TRANSITION_EXIT)
 				{
 					Log.d(tag, "Exit");
-				}
-				/*
-				 * List <Geofence> triggerList = getTriggeringGeofences(intent);
-				 * String[] triggerIds = new String[geofenceList.size()];
-				 * 
-				 * for (int i = 0; i < triggerIds.length; i++) { // Store the Id
-				 * of each geofence triggerIds[i] =
-				 * triggerList.get(i).getRequestId(); }
-				 */
 
-				/*
-				 * At this point, you can store the IDs for further use display
-				 * them, or display the details associated with them.
-				 */
+				}
+
+				List<Geofence> triggerList = LocationClient.getTriggeringGeofences(intent);
+				ArrayList<ContentProviderOperation> mDbOperations = new ArrayList<ContentProviderOperation>(triggerList.size());
+				for (int i = 0; i < triggerList.size(); i++)
+				{
+					String legId = triggerList.get(i).getRequestId().replace("exit", "").replace("enter", "");
+					Uri uri = Uri.withAppendedPath(TripLegMetaData.TableMetaData.CONTENT_URI, legId);
+					ContentProviderOperation.Builder b = ContentProviderOperation.newUpdate(uri);	
+					b.withValue(TripLegMetaData.TableMetaData.GEOFENCE_EVENT_ID, transitionType);
+					mDbOperations.add(b.build());
+				}
+				if(!mDbOperations.isEmpty())
+				{					
+					try
+					{
+						int count = getContentResolver().applyBatch(TripLegMetaData.AUTHORITY, mDbOperations).length;
+						Log.d(tag, "applyBatch: "+count);
+					} catch (RemoteException e)
+					{
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} catch (OperationApplicationException e)
+					{
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					
+				}
 			} else
 			{
 				// An invalid transition was reported
@@ -87,7 +112,6 @@ public class ReceiveTransitionsIntentService extends IntentService
 			}
 
 		}
-
 	}
 
 }

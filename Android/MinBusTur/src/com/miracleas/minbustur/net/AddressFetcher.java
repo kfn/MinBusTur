@@ -14,6 +14,7 @@ import android.content.ContentProviderOperation;
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
+import android.text.format.DateUtils;
 import android.util.Log;
 
 import com.miracleas.minbustur.R;
@@ -35,7 +36,7 @@ public class AddressFetcher extends BaseFetcher
 	{
 		super(c, null);
 		sort = AddressProviderMetaData.TableMetaData._ID +" LIMIT 1";
-		selection = AddressProviderMetaData.TableMetaData.searchTerm + "=?";
+		selection = AddressProviderMetaData.TableMetaData.searchTerm + "=? AND "+AddressProviderMetaData.TableMetaData.updated + ">=?";
 		mUpdated = System.currentTimeMillis();
 		mUriNotify = notifyUri;
 	}
@@ -53,7 +54,8 @@ public class AddressFetcher extends BaseFetcher
 		Cursor cursor = null;
 		try
 		{	
-			String[] selectionArgs = {mSearchTerm};
+			long updated = System.currentTimeMillis() - DateUtils.WEEK_IN_MILLIS;
+			String[] selectionArgs = {mSearchTerm, updated+""};
 			cursor = mContentResolver.query(AddressProviderMetaData.TableMetaData.CONTENT_URI, PROJECTION, selection, selectionArgs, sort);
 			hasCachedResult = cursor.getCount()>0;
 		}
@@ -148,6 +150,10 @@ public class AddressFetcher extends BaseFetcher
 		}
 		b.withValue(AddressProviderMetaData.TableMetaData.updated, mUpdated);
 		b.withValue(AddressProviderMetaData.TableMetaData.searchTerm, mSearchTerm);
+		if(log)
+		{
+			log(tag, xpp.getAttributeValue(null, "name"));
+		}
 		mDbOperations.add(b.build());
 	}
 

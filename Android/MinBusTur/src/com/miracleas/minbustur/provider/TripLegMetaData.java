@@ -41,6 +41,7 @@ public class TripLegMetaData
 				+ TableMetaData.PROGRESS_BAR_MAX + " INTEGER,"	
 				+ TableMetaData.DEPARTURES_IN_TIME_LABEL + " TEXT,"	
 				+ TableMetaData.COMPLETED + " TEXT,"	
+				+ TableMetaData.GEOFENCE_EVENT_ID + " INTEGER,"
 				+ TableMetaData.updated + " LONG"
 				;
 	}
@@ -48,6 +49,7 @@ public class TripLegMetaData
 	// inner class describing columns and their types
 	public static final class TableMetaData implements BaseColumns
 	{
+		
 		private TableMetaData()
 		{
 		}
@@ -82,6 +84,7 @@ public class TripLegMetaData
 		public static final String PROGRESS_BAR_MAX = "progress_bar_max";
 		public static final String DEPARTURES_IN_TIME_LABEL = "progress_departures_in_label";
 		public static final String COMPLETED = "completed";
+		public static final String GEOFENCE_EVENT_ID = "geofence_event_id";
 		/*public static final String ORIGIN_LATITUDE = "origin_latitude";
 		public static final String ORIGIN_LONGITUDE = "origin_longitude";
 		public static final String DEST_LATITUDE = "dest_latitude";

@@ -16,8 +16,10 @@ import android.content.ContentProviderOperation;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.content.OperationApplicationException;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.RemoteException;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -91,13 +93,7 @@ public class JourneyDetailFetcher extends BaseFetcher
 			if (repsonseCode == HttpURLConnection.HTTP_OK)
 			{						
 				InputStream input = urlConnection.getInputStream();
-				parse(input);
-				if (!mDbOperations.isEmpty())
-				{
-					saveData(JourneyDetailStopMetaData.AUTHORITY);
-				}
-				com.miracleas.minbustur.utils.Utils.copyDbToSdCard(com.miracleas.minbustur.provider.MinBusTurProvider.DATABASE_NAME);
-
+				parse(input);		
 			} else if (repsonseCode == 404)
 			{
 				throw new Exception(mContext.getString(R.string.search_failed_404));
@@ -117,6 +113,37 @@ public class JourneyDetailFetcher extends BaseFetcher
 			urlConnection.disconnect();
 		}
 
+	}
+	
+	public void save()
+	{
+		if (!mDbOperations.isEmpty())
+		{
+			try
+			{
+				saveData(JourneyDetailStopMetaData.AUTHORITY);
+				com.miracleas.minbustur.utils.Utils.copyDbToSdCard(com.miracleas.minbustur.provider.MinBusTurProvider.DATABASE_NAME);
+			} catch (RemoteException e)
+			{
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (OperationApplicationException e)
+			{
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		
+	}
+	
+	public ArrayList<ContentProviderOperation> getDbOperations()
+	{
+		return mDbOperations;
+	}
+	
+	public void addContentProviderOperations(ArrayList<ContentProviderOperation> list)
+	{
+		mDbOperations.addAll(list);
 	}
 	
 	private void parse(InputStream in) throws XmlPullParserException, IOException
@@ -225,6 +252,7 @@ public class JourneyDetailFetcher extends BaseFetcher
 		b.withValue(JourneyDetailMetaData.TableMetaData.TYPE_ROUTE_ID_X_TO, t.typeRouteIdxTo);
 		b.withValue(JourneyDetailMetaData.TableMetaData.REF, mUrl);
 		b.withValue(JourneyDetailMetaData.TableMetaData.TRIP_ID, mTripId);
+		b.withValue(JourneyDetailMetaData.TableMetaData.LEG_ID, mLegId);
 		b.withValue(JourneyDetailMetaData.TableMetaData.COUNT_OF_STOPS, t.countOfStops);
 		mDbOperations.add(b.build());
 	}

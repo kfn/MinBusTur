@@ -30,13 +30,20 @@ public class JourneyDetailStopMetaData
 				+ TableMetaData.DEP_DATE + " TEXT,"
 				+ TableMetaData.TRIP_ID + " TEXT,"
 				+ TableMetaData.LEG_ID + " TEXT,"
-				+ TableMetaData.TRACK + " TEXT"
+				+ TableMetaData.TRACK + " TEXT,"
+				+ TableMetaData.RT_DEP_TIME + " TEXT,"
+				+ TableMetaData.RT_ARR_TIME + " TEXT,"
+				+ TableMetaData.RT_DEP_DATE + " TEXT,"
+				+ TableMetaData.RT_ARR_DATE + " TEXT"
+			
 				;
 	}
 
 	// inner class describing columns and their types
 	public static final class TableMetaData implements BaseColumns
 	{
+		
+		
 		private TableMetaData()
 		{
 		}
@@ -47,8 +54,8 @@ public class JourneyDetailStopMetaData
 		public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd." + PACKAGE_NAME + ITEM_TYPE;
 
 		public static final String NAME = "name";
-		public static final String LATITUDE = "x";
-		public static final String LONGITUDE = "y";
+		public static final String LATITUDE = "y";
+		public static final String LONGITUDE = "x";
 		public static final String ROUTE_ID_X = "routeIdx";
 		public static final String ARR_TIME = "arrTime";
 		public static final String ARR_DATE = "arrDate";
@@ -58,5 +65,12 @@ public class JourneyDetailStopMetaData
 		public static final String LEG_ID = "leg_id";
 		public static final String TRIP_ID = "stop_trip_id";
 		public static final String TRACK = "track";
+		public static final String RT_DEP_TIME = "rtDepTime";
+		public static final String RT_DEP_DATE = "rtDepDate";
+		public static final String RT_ARR_TIME = "rtArrTime";
+		public static final String RT_ARR_DATE = "rtArrDate";
+		
+
+
 	}
 }

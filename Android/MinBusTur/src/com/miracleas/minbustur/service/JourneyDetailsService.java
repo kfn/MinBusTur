@@ -34,15 +34,22 @@ public class JourneyDetailsService extends IntentService
 		String tripId = intent.getStringExtra(TRIP_ID);
 		if(!TextUtils.isEmpty(tripId))
 		{
+			JourneyDetailFetcher fetcher1 = null;
+			JourneyDetailFetcher fetcher2 = null;
 			if(!TextUtils.isEmpty(url1) && !TextUtils.isEmpty(legId1))
 			{
-				JourneyDetailFetcher fetcher = new JourneyDetailFetcher(this, intent, url1, tripId, legId1);
-				fetcher.startFetch();
+				fetcher1 = new JourneyDetailFetcher(this, intent, url1, tripId, legId1);
+				fetcher1.startFetch();
 			}
 			if(!TextUtils.isEmpty(url2) && !TextUtils.isEmpty(legId2))
 			{
-				JourneyDetailFetcher fetcher = new JourneyDetailFetcher(this, intent, url2, tripId, legId2);
-				fetcher.startFetch();
+				fetcher2 = new JourneyDetailFetcher(this, intent, url2, tripId, legId2);
+				fetcher2.startFetch();
+			}
+			if(fetcher1!=null && fetcher2!=null)
+			{
+				fetcher1.addContentProviderOperations(fetcher2.getDbOperations());
+				fetcher1.save();
 			}
 		}
 		

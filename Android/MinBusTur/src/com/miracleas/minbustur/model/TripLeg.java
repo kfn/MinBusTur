@@ -4,6 +4,7 @@ package com.miracleas.minbustur.model;
 import java.text.ParseException;
 import java.util.Calendar;
 
+import com.miracleas.minbustur.R;
 import com.miracleas.minbustur.utils.DateHelper;
 
 import android.support.v4.util.TimeUtils;
@@ -85,5 +86,35 @@ public class TripLeg
 		t.hour = hour;
 		t.minute = minute;
 		return t;
+	}
+	
+	public static int getIcon(String type)
+	{
+		int icon = 0;
+		if(type.equals(Trip.TYPE_WALK))
+		{
+			icon = R.drawable.walking;
+		}
+		else if(type.equals(Trip.TYPE_BUS))
+		{
+			icon = R.drawable.driving;
+		}
+		else if(type.equals(Trip.TYPE_IC))
+		{
+			icon = R.drawable.driving;
+		}
+		else if(type.equals(Trip.TYPE_TRAIN))
+		{
+			icon = R.drawable.driving;
+		}
+		else if(type.equals(Trip.TYPE_LYN))
+		{
+			icon = R.drawable.driving;
+		}
+		else if(type.equals(Trip.TYPE_REG))
+		{
+			icon = R.drawable.driving;
+		}
+		return icon;
 	}
 }

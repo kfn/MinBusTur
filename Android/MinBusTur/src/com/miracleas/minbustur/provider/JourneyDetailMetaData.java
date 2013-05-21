@@ -27,6 +27,7 @@ public class JourneyDetailMetaData
 				+ TableMetaData.TYPE_ROUTE_ID_X_TO + " TEXT,"
 				+ TableMetaData.REF + " TEXT,"
 				+ TableMetaData.TRIP_ID + " LONG,"
+				+ TableMetaData.LEG_ID + " LONG,"
 				+ TableMetaData.COUNT_OF_STOPS + " INTEGER"
 				;
 	}
@@ -54,6 +55,7 @@ public class JourneyDetailMetaData
 		public static final String TYPE_ROUTE_ID_X_TO = "type_routeIdxTo";	
 		public static final String REF = "journey_ref";	
 		public static final String TRIP_ID = "trip_id";
+		public static final String LEG_ID = "leg_id";
 		public static final String COUNT_OF_STOPS = "count_of_stops";	
 	}
 }

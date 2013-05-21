@@ -56,6 +56,7 @@ public class TripSuggestionsFragment extends SherlockListFragment implements Loa
 	public void onCreate(Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);
+		
 	}
 	
 	@Override
@@ -68,15 +69,22 @@ public class TripSuggestionsFragment extends SherlockListFragment implements Loa
 		return rootView;
 		
 	}
+	@Override
+	public void onViewCreated(View view, Bundle savedInstanceState)
+	{
+		super.onViewCreated(view, savedInstanceState);		
+		mTripAdapter = new TripAdapter(getActivity(), null, 0);
+		setListAdapter(mTripAdapter);
+		setListShown(false);
+		getListView().setOnItemClickListener(this);		
+		getLoaderManager().initLoader(LoaderConstants.LOAD_TRIP_SUGGESTIONS, null, this);
+	}
 
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState)
 	{
 		super.onActivityCreated(savedInstanceState);
-		mTripAdapter = new TripAdapter(getActivity(), null, 0);
-		setListAdapter(mTripAdapter);
-		getListView().setOnItemClickListener(this);
-		getLoaderManager().initLoader(LoaderConstants.LOAD_TRIP_SUGGESTIONS, null, this);
+		
 	}
 
 	@Override
@@ -89,6 +97,7 @@ public class TripSuggestionsFragment extends SherlockListFragment implements Loa
 	@Override
 	public void onLoadFinished(Loader<Cursor> loader, Cursor newCursor)
 	{
+		setListShown(true);
 		mTripAdapter.swapCursor(newCursor);		
 	}
 

@@ -1,12 +1,18 @@
 package com.miracleas.minbustur;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.widget.Toast;
 
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.Menu;
+import com.actionbarsherlock.view.MenuItem;
+import com.miracleas.minbustur.model.TripRequest;
+import com.miracleas.minbustur.net.TripFetcher;
+import com.miracleas.minbustur.service.TripService;
 
-public class FindTripSuggestionsActivity extends SherlockFragmentActivity
+public class FindTripSuggestionsActivity extends GeofenceActivity implements FindTripSuggestionsFragment.Callbacks
 {
 	@Override
 	public void onCreate(Bundle savedInstanceState)
@@ -39,13 +45,57 @@ public class FindTripSuggestionsActivity extends SherlockFragmentActivity
 			CreateRouteFragment fragment = CreateRouteFragment.createInstance();
 			getSupportFragmentManager().beginTransaction().add(android.R.id.content, fragment).commit();
 		}*/
+		
+	}
+	@Override
+	public void onStart()
+	{
+		super.onStart();
+		removeAllGeofences();
 	}
 	
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu)
 	{
 		// Inflate the menu; this adds items to the action bar if it is present.
-		getSupportMenuInflater().inflate(R.menu.create_route, menu);
-		return true;
+		//getSupportMenuInflater().inflate(R.menu.create_route, menu);
+		return super.onCreateOptionsMenu(menu);
+	}
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item)
+	{
+
+		switch (item.getItemId())
+		{
+		case android.R.id.home:
+			// This ID represents the Home or Up button. In the case of this
+			// activity, the Up button is shown. Use NavUtils to allow users
+			// to navigate up one level in the application structure. For
+			// more details, see the Navigation pattern on Android Design:
+			//
+			// http://developer.android.com/design/patterns/navigation.html#up-vs-back
+			//
+			finish();
+			return true;
+		
+		default:
+			return super.onOptionsItemSelected(item);
+		}
+	}
+	@Override
+	public void onFindTripSuggestion(TripRequest tripRequest)
+	{
+		if (tripRequest.isValid())
+		{
+			Intent service = new Intent(this, TripService.class);
+			service.putExtra(TripFetcher.TRIP_REQUEST, tripRequest);
+			startService(service);
+			Intent activity = new Intent(this, TripSuggestionsActivity.class);
+			activity.putExtra(TripRequest.tag, tripRequest);
+			startActivity(activity);
+		} else
+		{
+			Toast.makeText(this, "Not valid", Toast.LENGTH_SHORT).show();
+		}	
 	}
 }

@@ -29,6 +29,7 @@ import com.google.android.gms.location.Geofence;
 import com.google.android.gms.location.LocationClient.OnAddGeofencesResultListener;
 import com.miracleas.minbustur.TripSuggestionsFragment.Callbacks;
 import com.miracleas.minbustur.model.Trip;
+import com.miracleas.minbustur.model.TripLeg;
 import com.miracleas.minbustur.model.TripRequest;
 import com.miracleas.minbustur.provider.JourneyDetailMetaData;
 import com.miracleas.minbustur.provider.JourneyDetailStopMetaData;
@@ -83,7 +84,7 @@ public class TripGuideFragment extends SherlockListFragment implements LoaderCal
 		Bundle args = new Bundle();
 		args.putString(TripLegMetaData.TableMetaData._ID, tripId);
 		args.putString(TripLegMetaData.TableMetaData.STEP_NUMBER, stepCount+"");
-		args.putParcelable("TripRequest", tripRequest);
+		args.putParcelable(TripRequest.tag, tripRequest);
 		f.setArguments(args);
 		return f;
 	}
@@ -102,6 +103,7 @@ public class TripGuideFragment extends SherlockListFragment implements LoaderCal
 		View rootView = inflater.inflate(R.layout.fragment_trip_guide, container, false);
 		FrameLayout frame = (FrameLayout)rootView.findViewById(R.id.listContainer);
 		frame.addView(listView);
+		
 		return rootView;
 		
 	}
@@ -112,6 +114,7 @@ public class TripGuideFragment extends SherlockListFragment implements LoaderCal
 		super.onActivityCreated(savedInstanceState);
 		mTripAdapter = new TripAdapter(getActivity(), null, 0);
 		mLegIds = new long[2];
+		getListView().setOnItemClickListener(this);
 		setListAdapter(mTripAdapter);
 		getLoaderManager().initLoader(LoaderConstants.LOAD_TRIP_LEGS, getArguments(), this);
 		getLoaderManager().initLoader(LoaderConstants.LOAD_TRIP_LEG_FIRST_LAST, getArguments(), this);
@@ -176,12 +179,14 @@ public class TripGuideFragment extends SherlockListFragment implements LoaderCal
 				{
 					Geofence g2 = loadGeofenceInfo(newCursor, false);
 					List<Geofence> geofences = new ArrayList<Geofence>();
-					loadStartAndEndGeofences(geofences);
-					geofences.add(g1);
-					geofences.add(g2);
-					GeofenceActivity geo = (GeofenceActivity)getActivity();
-					geo.addGeofences(geofences);
-					getLoaderManager().destroyLoader(LoaderConstants.LOAD_START_END_POSITION);
+					if(loadStartAndEndGeofences(geofences))
+					{
+						geofences.add(g1);
+						geofences.add(g2);
+						GeofenceActivity geo = (GeofenceActivity)getActivity();
+						geo.addGeofences(geofences);
+						getLoaderManager().destroyLoader(LoaderConstants.LOAD_START_END_POSITION);
+					}					
 				}
 			}
 			
@@ -224,19 +229,27 @@ public class TripGuideFragment extends SherlockListFragment implements LoaderCal
 		return g;		
 	}
 	
-	private void loadStartAndEndGeofences(List<Geofence> geofences)
+	private boolean loadStartAndEndGeofences(List<Geofence> geofences)
 	{
+		boolean savedGeofences = false;
 		TripRequest tripRequest = getArguments().getParcelable(TripRequest.tag);
-		double lat = (double)(Integer.parseInt(tripRequest.getOriginCoordX()) / 1000000d);
-		double lng = (double)(Integer.parseInt(tripRequest.getOriginCoordY()) / 1000000d);
-		Geofence origin = toGeofence("origin", Geofence.GEOFENCE_TRANSITION_EXIT, lat, lng, 10, DateUtils.HOUR_IN_MILLIS);
-		
-		lat = (double)(Integer.parseInt(tripRequest.getDestCoordX()) / 1000000d);
-		lng = (double)(Integer.parseInt(tripRequest.getDestCoordY()) / 1000000d);
-		Geofence dest = toGeofence("dest", Geofence.GEOFENCE_TRANSITION_ENTER, lat, lng, 10, DateUtils.HOUR_IN_MILLIS);
-		
-		geofences.add(origin);
-		geofences.add(dest);
+		if(tripRequest!=null)
+		{
+			double lat = (double)(Integer.parseInt(tripRequest.getOriginCoordY()) / 1000000d);
+			double lng = (double)(Integer.parseInt(tripRequest.getOriginCoordX()) / 1000000d);
+			Geofence origin1 = toGeofence(mLegIds[0]+"enter", Geofence.GEOFENCE_TRANSITION_ENTER, lat, lng, 10, DateUtils.HOUR_IN_MILLIS);
+			Geofence origin2 = toGeofence(mLegIds[0]+"exit", Geofence.GEOFENCE_TRANSITION_EXIT, lat, lng, 10, DateUtils.HOUR_IN_MILLIS);
+			
+			lat = (double)(Integer.parseInt(tripRequest.getDestCoordY()) / 1000000d);
+			lng = (double)(Integer.parseInt(tripRequest.getDestCoordX()) / 1000000d);
+			Geofence dest = toGeofence(mLegIds[1]+"", Geofence.GEOFENCE_TRANSITION_ENTER, lat, lng, 10, DateUtils.HOUR_IN_MILLIS);
+			
+			geofences.add(origin1);
+			geofences.add(origin2);
+			geofences.add(dest);
+			savedGeofences = true;
+		}
+		return savedGeofences;
 	}
 	
 	public Geofence toGeofence(String id, int transitionType, double lat, double lng, float radius, long expirationDuration)
@@ -277,7 +290,7 @@ public class TripGuideFragment extends SherlockListFragment implements LoaderCal
 		private int iProgressBarMax = 0;
 		private int iDeparturesInTimeLabel = 0;
 		private int iCompleted = 0;
-		
+		private int iGeofenceTransition = 0;
 		
 		
 		private LayoutInflater mInf = null;
@@ -326,30 +339,9 @@ public class TripGuideFragment extends SherlockListFragment implements LoaderCal
 			textViewDuration.setText(String.format(getString(R.string.in_duration), cursor.getString(iName), cursor.getString(iDurationFormatted)));
 			
 			String type = cursor.getString(iType);
-			if(type.equals(Trip.TYPE_WALK))
-			{
-				textViewDuration.setCompoundDrawablesWithIntrinsicBounds(R.drawable.walking, 0, 0, 0);
-			}
-			else if(type.equals(Trip.TYPE_BUS))
-			{
-				textViewDuration.setCompoundDrawablesWithIntrinsicBounds(R.drawable.driving, 0, 0, 0);
-			}
-			else if(type.equals(Trip.TYPE_IC))
-			{
-				textViewDuration.setCompoundDrawablesWithIntrinsicBounds(R.drawable.driving, 0, 0, 0);
-			}
-			else if(type.equals(Trip.TYPE_TRAIN))
-			{
-				textViewDuration.setCompoundDrawablesWithIntrinsicBounds(R.drawable.driving, 0, 0, 0);
-			}
-			else if(type.equals(Trip.TYPE_LYN))
-			{
-				textViewDuration.setCompoundDrawablesWithIntrinsicBounds(R.drawable.driving, 0, 0, 0);
-			}
-			else if(type.equals(Trip.TYPE_REG))
-			{
-				textViewDuration.setCompoundDrawablesWithIntrinsicBounds(R.drawable.driving, 0, 0, 0);
-			}
+			int iconRes = TripLeg.getIcon(type);
+			textViewDuration.setCompoundDrawablesWithIntrinsicBounds(iconRes, 0, 0, 0);
+			
 			String notes = cursor.getString(iNotes);
 			TextView textViewNotes = (TextView)v.findViewById(R.id.textViewNotes);
 			if(!TextUtils.isEmpty(notes))
@@ -364,6 +356,20 @@ public class TripGuideFragment extends SherlockListFragment implements LoaderCal
 			
 			TextView textViewDeparturesIn = (TextView)v.findViewById(R.id.textViewDeparturesIn);
 			textViewDeparturesIn.setText(cursor.getString(iDeparturesInTimeLabel));
+			
+			int geofenceTransitionType = cursor.getInt(iGeofenceTransition);
+			if(geofenceTransitionType==Geofence.GEOFENCE_TRANSITION_ENTER)
+			{
+				v.setBackgroundResource(R.color.green_transparent);
+			}
+			else if(geofenceTransitionType==Geofence.GEOFENCE_TRANSITION_EXIT)
+			{
+				v.setBackgroundResource(R.color.black_transparent);
+			}
+			else
+			{
+				v.setBackgroundResource(R.drawable.selectable_background_minrutevejledning);
+			}
 		}
 
 		@Override
@@ -399,15 +405,26 @@ public class TripGuideFragment extends SherlockListFragment implements LoaderCal
 			}
 			return super.swapCursor(newCursor);
 		}
+		
+		String getRef(int position)
+		{
+			String ref = "";
+			Cursor c = getCursor();
+			if(c.moveToPosition(position))
+			{
+				ref = c.getString(iRef);
+			}
+			return ref;
+		}
 	}
 	@Override
-	public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3)
+	public void onItemClick(AdapterView<?> parent, View view, int position, long id)
 	{
-		// TODO Auto-generated method stub
-		
+		String ref = mTripAdapter.getRef(position);
+		String tripId = getArguments().getString(TripLegMetaData.TableMetaData._ID);
+		mCallbacks.onTripLegSelected(tripId, id+"", ref);
 	}
-
-
+	
 	@Override
 	public void onAttach(Activity activity)
 	{
@@ -415,6 +432,46 @@ public class TripGuideFragment extends SherlockListFragment implements LoaderCal
 		if (!(activity instanceof GeofenceActivity))
 		{
 			throw new IllegalStateException("Activity must be a GeofenceActivity.");
+		}	
+		// Activities containing this fragment must implement its callbacks.
+		if (!(activity instanceof Callbacks))
+		{
+			throw new IllegalStateException("Activity must implement fragment's callbacks.");
 		}			
+		mCallbacks = (Callbacks)activity;
 	}
+	@Override
+	public void onDetach()
+	{
+		super.onDetach();
+
+		// Reset the active callbacks interface to the dummy implementation.
+		mCallbacks = sDummyCallbacks;
+	}
+	private Callbacks mCallbacks = sDummyCallbacks;
+	
+	/**
+	 * A callback interface that all activities containing this fragment must
+	 * implement.
+	 */
+	public interface Callbacks
+	{
+		public void onTripLegSelected(String tripId, String legId, String ref);
+	}
+
+	/**
+	 * A dummy implementation of the {@link Callbacks} interface that does
+	 * nothing. Used only when this fragment is not attached to an activity.
+	 */
+	private static Callbacks sDummyCallbacks = new Callbacks()
+	{
+
+		@Override
+		public void onTripLegSelected(String tripId, String legId, String ref)
+		{
+			// TODO Auto-generated method stub
+			
+		}
+		
+	};
 }

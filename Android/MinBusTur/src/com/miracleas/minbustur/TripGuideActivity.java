@@ -2,14 +2,17 @@ package com.miracleas.minbustur;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.TextUtils;
 
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.Menu;
+import com.actionbarsherlock.view.MenuItem;
 import com.miracleas.minbustur.model.TripRequest;
+import com.miracleas.minbustur.provider.JourneyDetailMetaData;
 import com.miracleas.minbustur.provider.TripLegMetaData;
 
-public class TripGuideActivity extends GeofenceActivity
+public class TripGuideActivity extends GeofenceActivity implements TripGuideFragment.Callbacks
 {
 	@Override
 	public void onCreate(Bundle savedInstanceState)
@@ -53,5 +56,40 @@ public class TripGuideActivity extends GeofenceActivity
 		// Inflate the menu; this adds items to the action bar if it is present.
 		//getSupportMenuInflater().inflate(R.menu.create_route, menu);
 		return super.onCreateOptionsMenu(menu);
+	}
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item)
+	{
+
+		switch (item.getItemId())
+		{
+		case android.R.id.home:
+			// This ID represents the Home or Up button. In the case of this
+			// activity, the Up button is shown. Use NavUtils to allow users
+			// to navigate up one level in the application structure. For
+			// more details, see the Navigation pattern on Android Design:
+			//
+			// http://developer.android.com/design/patterns/navigation.html#up-vs-back
+			//
+			finish();
+			return true;
+		
+		default:
+			return super.onOptionsItemSelected(item);
+		}
+	}
+
+	@Override
+	public void onTripLegSelected(String tripId, String legId, String ref)
+	{
+		if(!TextUtils.isEmpty(ref))
+		{
+			Intent activity = new Intent(this, TripLegDetailsActivity.class);
+			activity.putExtra(JourneyDetailMetaData.TableMetaData.TRIP_ID, tripId);
+			activity.putExtra(JourneyDetailMetaData.TableMetaData.LEG_ID, legId);
+			activity.putExtra(JourneyDetailMetaData.TableMetaData.REF, ref);
+			startActivity(activity);
+		}
+		
 	}
 }

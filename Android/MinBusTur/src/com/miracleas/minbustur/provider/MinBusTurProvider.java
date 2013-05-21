@@ -140,15 +140,15 @@ public class MinBusTurProvider extends ContentProvider
 		String groupBy = null;
 		switch (sUriMatcher.match(uri)) {
 		case INCOMING_ADDRESS_COLLECTION_URI_INDICATOR:
-			//qb.setTables(AddressProviderMetaData.TABLE_NAME);
-			String query = selectionArgs[0];
-			selectionArgs = null;
-			Log.d(tag, "query: "+query);
+			qb.setTables(AddressProviderMetaData.TABLE_NAME);
+			//String query = selectionArgs[0];
+			//selectionArgs = null;
+			/*Log.d(tag, "query: "+query);
 			StringBuilder b = new StringBuilder();
 			b.append(AddressProviderMetaData.TableMetaData.address).append(" LIKE '").append(query).append("%'");
 			qb.setTables(AddressProviderMetaData.TABLE_NAME);
 			selection = b.toString();
-			groupBy = AddressProviderMetaData.TableMetaData.address;
+			groupBy = AddressProviderMetaData.TableMetaData.address;*/
 			break;
 
 		case INCOMING_SINGLE_ADDRESS_URI_INDICATOR:

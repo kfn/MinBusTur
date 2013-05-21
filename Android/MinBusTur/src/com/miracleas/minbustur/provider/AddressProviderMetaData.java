@@ -23,8 +23,8 @@ public class AddressProviderMetaData
 				+ TableMetaData.type_int + " INTEGER," 
 				+ TableMetaData.address + " TEXT," 
 				+ TableMetaData.id + " TEXT," 
-				+ TableMetaData.lat + " TEXT," 
-				+ TableMetaData.lng + " TEXT,"
+				+ TableMetaData.Y + " TEXT," 
+				+ TableMetaData.X + " TEXT,"
 				+ TableMetaData.searchTerm + " TEXT,"
 				+ TableMetaData.updated + " LONG"
 				;
@@ -45,8 +45,8 @@ public class AddressProviderMetaData
 		public static final String type = "type";
 		public static final String type_int = "type_int";
 		public static final String address = "name";
-		public static final String lat = "x";
-		public static final String lng = "y";
+		public static final String Y = "y";
+		public static final String X = "x";
 		public static final String searchTerm = "searchTerm";
 		public static final String id = "id";
 		public static final String updated = "updated";
