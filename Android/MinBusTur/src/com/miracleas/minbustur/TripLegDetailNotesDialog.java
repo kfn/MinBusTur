@@ -115,12 +115,13 @@ public class TripLegDetailNotesDialog extends SherlockDialogFragment implements 
 			int margin = getResources().getDimensionPixelOffset(R.dimen.note_marginTop);
 			do{
 				TextView tv = new TextView(getActivity());
-				LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+				LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
 				tv.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_menu_info_details, 0, 0, 0);
 				tv.setText(newCursor.getString(iNote));
+				tv.setGravity(Gravity.CENTER_VERTICAL);
 				params.topMargin = margin; 
 				params.bottomMargin = margin;
-				params.gravity = Gravity.CENTER;
+				
 				tv.setLayoutParams(params);
 				mContainerNotes.addView(tv);
 				
