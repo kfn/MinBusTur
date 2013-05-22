@@ -2,7 +2,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/bg_pattern"
+    
     android:padding="8dp" >
 
     <TextView
@@ -10,19 +10,12 @@
         android:layout_width="wrap_content" android:gravity="center_vertical"
         android:layout_height="wrap_content" />
 
-    <LinearLayout android:orientation="vertical"
-        android:id="@+id/containerOfNotes"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/textViewJourneyName"
-        android:layout_marginTop="6dp" >
-    </LinearLayout>
 
     <FrameLayout
         android:id="@+id/listContainer"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/containerOfNotes"
+        android:layout_below="@+id/textViewJourneyName"
         android:layout_marginTop="6dp" />
 
 </RelativeLayout>

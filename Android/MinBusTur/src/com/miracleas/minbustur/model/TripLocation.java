@@ -7,4 +7,6 @@ public class TripLocation
 	public String routeId;
 	public String time;
 	public String type;
+	public String track;
+	public String rtTrack;
 }

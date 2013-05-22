@@ -8,13 +8,12 @@ import android.text.TextUtils;
 
 public class JourneyDetailsService extends IntentService
 {
+	public static final String ADDRESS_ORIGIN = "origin";
+	public static final String ADDRESS_DEST = "dest";
 	public static final String URL = "url";
-	public static final String URL1 = "url1";
-	public static final String URL2 = "url2";
 	public static final String LEG = "legId";
-	public static final String LEG_ID1 = "legId1";
-	public static final String LEG_ID2 = "legId2";
 	public static final String TRIP_ID = "trip_id";
+	
 	public JourneyDetailsService()
 	{
 		super(JourneyDetailsService.class.getName());
@@ -27,34 +26,21 @@ public class JourneyDetailsService extends IntentService
 	@Override
 	protected void onHandleIntent(Intent intent)
 	{
-		String url1 = intent.getStringExtra(URL1);
-		String url2 = intent.getStringExtra(URL2);
-		String legId1 = intent.getStringExtra(LEG_ID1);
-		String legId2 = intent.getStringExtra(LEG_ID2);
+		String address1 = intent.getStringExtra(ADDRESS_ORIGIN);
+		String address2 = intent.getStringExtra(ADDRESS_DEST);
+		String url1 = intent.getStringExtra(URL);
+		String legId1 = intent.getStringExtra(LEG);
 		String tripId = intent.getStringExtra(TRIP_ID);
+		
 		if(!TextUtils.isEmpty(tripId))
 		{
-			JourneyDetailFetcher fetcher1 = null;
-			JourneyDetailFetcher fetcher2 = null;
-			if(!TextUtils.isEmpty(url1) && !TextUtils.isEmpty(legId1))
+			if(!TextUtils.isEmpty(url1) && !TextUtils.isEmpty(legId1) && !TextUtils.isEmpty(address1) && !TextUtils.isEmpty(address2))
 			{
-				fetcher1 = new JourneyDetailFetcher(this, intent, url1, tripId, legId1);
+				JourneyDetailFetcher fetcher1 = new JourneyDetailFetcher(this, intent, url1, tripId, legId1, address1, address2);
 				fetcher1.startFetch();
-			}
-			if(!TextUtils.isEmpty(url2) && !TextUtils.isEmpty(legId2))
-			{
-				fetcher2 = new JourneyDetailFetcher(this, intent, url2, tripId, legId2);
-				fetcher2.startFetch();
-			}
-			if(fetcher1!=null && fetcher2!=null)
-			{
-				fetcher1.addContentProviderOperations(fetcher2.getDbOperations());
 				fetcher1.save();
 			}
 		}
-		
-		
-		
 		stopSelf();
 	}
 }

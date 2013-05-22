@@ -42,6 +42,10 @@ public class TripLegMetaData
 				+ TableMetaData.DEPARTURES_IN_TIME_LABEL + " TEXT,"	
 				+ TableMetaData.COMPLETED + " TEXT,"	
 				+ TableMetaData.GEOFENCE_EVENT_ID + " INTEGER,"
+				+ TableMetaData.ORIGIN_TRACK + " TEXT,"	
+				+ TableMetaData.DEST_TRACK + " TEXT,"	
+				+ TableMetaData.ORIGIN_RT_TRACK + " TEXT,"
+				+ TableMetaData.DEST_RT_TRACK + " TEXT,"
 				+ TableMetaData.updated + " LONG"
 				;
 	}
@@ -89,6 +93,10 @@ public class TripLegMetaData
 		public static final String ORIGIN_LONGITUDE = "origin_longitude";
 		public static final String DEST_LATITUDE = "dest_latitude";
 		public static final String DEST_LONGITUDE = "dest_longitude";*/
+		public static final String ORIGIN_TRACK = "origin_track";
+		public static final String DEST_TRACK = "dest_track";
+		public static final String ORIGIN_RT_TRACK = "origin_rt_track";
+		public static final String DEST_RT_TRACK = "dest_rt_track";
 
 	}
 }

@@ -2,6 +2,7 @@ package com.miracleas.minbustur;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.text.TextUtils;
 
 import com.actionbarsherlock.app.ActionBar;
@@ -11,6 +12,7 @@ import com.actionbarsherlock.view.MenuItem;
 import com.miracleas.minbustur.model.TripRequest;
 import com.miracleas.minbustur.provider.JourneyDetailMetaData;
 import com.miracleas.minbustur.provider.TripLegMetaData;
+import com.miracleas.minbustur.provider.TripMetaData;
 
 public class TripGuideActivity extends GeofenceActivity implements TripGuideFragment.Callbacks
 {
@@ -40,7 +42,7 @@ public class TripGuideActivity extends GeofenceActivity implements TripGuideFrag
 		if (savedInstanceState == null)
 		{
 			Intent intent = getIntent();
-			String tripId = intent.getStringExtra(TripLegMetaData.TableMetaData._ID);
+			String tripId = intent.getStringExtra(TripMetaData.TableMetaData._ID);
 			int stepCount = intent.getIntExtra(TripLegMetaData.TableMetaData.STEP_NUMBER, 1);			
 			TripRequest tripRequest = intent.getParcelableExtra(TripRequest.tag);
 			// Create the detail fragment and add it to the activity
@@ -78,9 +80,20 @@ public class TripGuideActivity extends GeofenceActivity implements TripGuideFrag
 			return super.onOptionsItemSelected(item);
 		}
 	}
+	@Override
+	public void onActivityResult(int requestCode, int resultCode, Intent data)
+	{
+		super.onActivityResult(requestCode, resultCode, data);
+		Fragment f = getSupportFragmentManager().findFragmentById(R.id.fragmentTripGuideContainer);
+		if(f!=null)
+		{
+			f.onActivityResult(requestCode, resultCode, data);
+		}
+		
+	}
 
 	@Override
-	public void onTripLegSelected(String tripId, String legId, String ref)
+	public void onTripLegSelected(String tripId, String legId, String ref, String transportType)
 	{
 		if(!TextUtils.isEmpty(ref))
 		{
@@ -88,6 +101,7 @@ public class TripGuideActivity extends GeofenceActivity implements TripGuideFrag
 			activity.putExtra(JourneyDetailMetaData.TableMetaData.TRIP_ID, tripId);
 			activity.putExtra(JourneyDetailMetaData.TableMetaData.LEG_ID, legId);
 			activity.putExtra(JourneyDetailMetaData.TableMetaData.REF, ref);
+			activity.putExtra(TripLegMetaData.TableMetaData.TYPE, transportType);
 			startActivity(activity);
 		}
 		

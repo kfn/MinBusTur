@@ -12,13 +12,29 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.READ_CONTACTS" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-     
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+     <permission
+        android:name="com.miracleas.findtoilet.permission.MAPS_RECEIVE"
+        android:protectionLevel="signature" />
+
+    <uses-permission android:name="com.miracleas.findtoilet.permission.MAPS_RECEIVE" />
+    <uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES" />
+     <!-- Maps API needs OpenGL ES 2.0. -->
+    <uses-feature
+        android:glEsVersion="0x00020000"
+        android:required="true" />
 
     <application
-        android:allowBackup="true"
+        android:allowBackup="true" android:hardwareAccelerated="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/Theme.Minrutevejledning" >
+        
+         <!-- You must insert your own Google Maps for Android API v2 key in here. signed: AIzaSyClMQvagQwwow4Jay7mhIdaxor6z9CSheE debug:AIzaSyBLui-Dqj4-GPjmvFK89iIQLFzbcBuS9oU -->
+        <meta-data
+            android:name="com.google.android.maps.v2.API_KEY"
+            android:value="AIzaSyBLui-Dqj4-GPjmvFK89iIQLFzbcBuS9oU" />
+        
         <activity
             android:name="com.miracleas.minbustur.FindTripSuggestionsActivity"
             android:label="@string/route_creation" android:screenOrientation="portrait">
@@ -32,8 +48,13 @@
             android:label="@string/trip_suggestions" android:screenOrientation="portrait"/>
         <activity android:name="com.miracleas.minbustur.TripGuideActivity"
             android:label="@string/trip_guide" android:screenOrientation="portrait"/>
+        
         <activity android:name="com.miracleas.minbustur.TripLegDetailsActivity"
             android:label="@string/trip_leg_details" android:screenOrientation="portrait"/>
+        
+        <activity android:name="com.miracleas.minbustur.TripLegMapActivity"
+            android:label="@string/trip_leg_details" android:screenOrientation="portrait"/>
+        
         
         <provider
             android:name="com.miracleas.minbustur.provider.MinBusTurProvider"
@@ -51,11 +72,15 @@
     		android:exported="false">
 		</service>
 		<service
+    		android:name="com.miracleas.minbustur.service.JourneyDetailsGeofenceService"
+    		android:label="@string/app_name"
+    		android:exported="false">
+		</service>
+		<service
     		android:name="com.miracleas.minbustur.service.JourneyDetailsService"
     		android:label="@string/app_name"
     		android:exported="false">
 		</service>
-		
         
     </application>
 

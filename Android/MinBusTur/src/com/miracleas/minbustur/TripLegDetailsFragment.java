@@ -3,11 +3,13 @@ package com.miracleas.minbustur;
 import android.app.Activity;
 import android.content.Context;
 import android.database.Cursor;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v4.widget.CursorAdapter;
+import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -45,23 +47,23 @@ public class TripLegDetailsFragment extends SherlockListFragment implements Load
 		JourneyDetailStopMetaData.TableMetaData.LATITUDE,
 		JourneyDetailStopMetaData.TableMetaData.LONGITUDE,
 		JourneyDetailStopMetaData.TableMetaData.NAME,
+		JourneyDetailStopMetaData.TableMetaData.TRACK,
+		JourneyDetailStopMetaData.TableMetaData.IS_PART_OF_USER_ROUTE,
 	};
-	private static final String[] PROJECTION_NOTES = { 
-		JourneyDetailNoteMetaData.TableMetaData._ID, 
-		JourneyDetailNoteMetaData.TableMetaData.NOTE
-	};
+
 	private TripAdapter mTripAdapter = null;
 	private TextView mTextViewJourneyName = null;
-	private LinearLayout mContainerNotes = null;
+	private long journeyDetailId;
 	
 	
-	public static TripLegDetailsFragment createInstance(String tripId, String legId, String ref)
+	public static TripLegDetailsFragment createInstance(String tripId, String legId, String ref, String transportType)
 	{
 		TripLegDetailsFragment f = new TripLegDetailsFragment();
 		Bundle args = new Bundle();
 		args.putString(JourneyDetailMetaData.TableMetaData.TRIP_ID, tripId);
 		args.putString(JourneyDetailMetaData.TableMetaData.LEG_ID, legId);
 		args.putString(JourneyDetailMetaData.TableMetaData.REF, ref);
+		args.putString(TripLegMetaData.TableMetaData.TYPE, transportType);
 		f.setArguments(args);
 		return f;
 	}
@@ -82,15 +84,16 @@ public class TripLegDetailsFragment extends SherlockListFragment implements Load
 		FrameLayout frame = (FrameLayout)rootView.findViewById(R.id.listContainer);
 		frame.addView(listView);
 		mTextViewJourneyName = (TextView)rootView.findViewById(R.id.textViewJourneyName);
-		mContainerNotes = (LinearLayout)rootView.findViewById(R.id.containerOfNotes);
+		
 		return rootView;
 		
 	}
 	@Override
 	public void onViewCreated(View view, Bundle savedInstanceState)
 	{
-		super.onViewCreated(view, savedInstanceState);		
-		mTripAdapter = new TripAdapter(getActivity(), null, 0);
+		super.onViewCreated(view, savedInstanceState);	
+		String transportType = getArguments().getString(TripLegMetaData.TableMetaData.TYPE);
+		mTripAdapter = new TripAdapter(getActivity(), null, 0, transportType);
 		getListView().setOnItemClickListener(this);
 		setListAdapter(mTripAdapter);
 		setListShown(false);
@@ -119,12 +122,6 @@ public class TripLegDetailsFragment extends SherlockListFragment implements Load
 			String[] selectionArgs = {args.getLong(JourneyDetailMetaData.TableMetaData._ID)+""};
 			return new CursorLoader(getActivity(), JourneyDetailStopMetaData.TableMetaData.CONTENT_URI, PROJECTION_STOP, selection, selectionArgs, null);
 		}
-		else if(id==LoaderConstants.LOADER_TRIP_LEG_NOTE_DETAILS)
-		{
-			String selection = JourneyDetailNoteMetaData.TableMetaData.JOURNEY_DETAIL_ID + "=?";
-			String[] selectionArgs = {args.getLong(JourneyDetailMetaData.TableMetaData._ID)+""};
-			return new CursorLoader(getActivity(), JourneyDetailNoteMetaData.TableMetaData.CONTENT_URI, PROJECTION_NOTES, selection, selectionArgs, null);
-		}
 
 		return null;
 	}
@@ -136,14 +133,16 @@ public class TripLegDetailsFragment extends SherlockListFragment implements Load
 		int id = loader.getId();
 		if(id==LoaderConstants.LOADER_TRIP_LEG_DETAILS && newCursor.moveToFirst())
 		{
-			long journeyDetailId = newCursor.getLong(newCursor.getColumnIndex(JourneyDetailMetaData.TableMetaData._ID));
+			journeyDetailId = newCursor.getLong(newCursor.getColumnIndex(JourneyDetailMetaData.TableMetaData._ID));
+			String transportType = getArguments().getString(TripLegMetaData.TableMetaData.TYPE);
+			String legId = getArguments().getString(JourneyDetailMetaData.TableMetaData.LEG_ID);
 			Bundle args = new Bundle();
 			args.putLong(JourneyDetailMetaData.TableMetaData._ID, journeyDetailId);
 			getLoaderManager().initLoader(LoaderConstants.LOADER_TRIP_LEG_STOP_DETAILS, args, this);
-			getLoaderManager().initLoader(LoaderConstants.LOADER_TRIP_LEG_NOTE_DETAILS, args, this);
+
+			mCallbacks.setJourneyDetailId(journeyDetailId, legId, transportType);
 			String name = newCursor.getString(newCursor.getColumnIndex(JourneyDetailMetaData.TableMetaData.NAME));
 			mTextViewJourneyName.setText(name);
-			
 			String type = newCursor.getString(newCursor.getColumnIndex(JourneyDetailMetaData.TableMetaData.TYPE));
 			int iconRes = TripLeg.getIcon(type);
 			mTextViewJourneyName.setCompoundDrawablesWithIntrinsicBounds(iconRes, 0, 0, 0);
@@ -152,21 +151,6 @@ public class TripLegDetailsFragment extends SherlockListFragment implements Load
 		{
 			setListShown(true);
 			mTripAdapter.swapCursor(newCursor);	
-		}
-		else if(id==LoaderConstants.LOADER_TRIP_LEG_NOTE_DETAILS && newCursor.moveToFirst())
-		{
-			mContainerNotes.removeAllViews();
-			int iNote = newCursor.getColumnIndex(JourneyDetailNoteMetaData.TableMetaData.NOTE);
-			do{
-				TextView tv = new TextView(getActivity());
-				LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-				tv.setLayoutParams(params);
-				params.gravity = Gravity.CENTER_VERTICAL;
-				tv.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_menu_info_details, 0, 0, 0);
-				tv.setText(newCursor.getString(iNote));
-				mContainerNotes.addView(tv);
-				
-			}while(newCursor.moveToNext());
 		}
 	}
 
@@ -179,18 +163,24 @@ public class TripLegDetailsFragment extends SherlockListFragment implements Load
 	
 	private class TripAdapter extends CursorAdapter
 	{
-		private int iArrDate;
+		private int iArrTime;
 		private int iDepTime;
 		private int iLat;
 		private int iLng;
 		private int iName;
+		private int iTrack;
+		private String mTransportType;
+		private boolean mIsTrain = false;
+		private int iPartOfUserRoute;
 		
 		private LayoutInflater mInf = null;
 
-		public TripAdapter(Context context, Cursor c, int flags)
+		public TripAdapter(Context context, Cursor c, int flags, String transportType)
 		{
 			super(context, c, flags);
 			mInf = LayoutInflater.from(context);
+			mTransportType = transportType;
+			mIsTrain = TripLeg.isTrain(transportType);
 		}
 
 		@Override
@@ -199,7 +189,46 @@ public class TripLegDetailsFragment extends SherlockListFragment implements Load
 			TextView textViewDepatureTime = (TextView)v.findViewById(R.id.textViewDepatureTime);
 			TextView textViewStopName = (TextView)v.findViewById(R.id.textViewStopName);					
 			textViewDepatureTime.setText(cursor.getString(iDepTime));
-			textViewStopName.setText(cursor.getString(iName));			
+			String name = cursor.getString(iName);
+			String arrTime = cursor.getString(iArrTime);
+			String track = cursor.getString(iTrack);;
+			String depTime = cursor.getString(iDepTime);
+			boolean isPartOfUsersRoute = cursor.getInt(iPartOfUserRoute) == 1;
+			
+			if(!TextUtils.isEmpty(arrTime) && !TextUtils.isEmpty(depTime) && !depTime.equals(arrTime))
+			{
+				textViewDepatureTime.setText(arrTime+"\n"+depTime);
+			}
+			else if(!TextUtils.isEmpty(arrTime))
+			{
+				textViewDepatureTime.setText(arrTime);
+			}
+			else if(!TextUtils.isEmpty(arrTime))
+			{
+				textViewDepatureTime.setText(depTime);
+			}		
+			
+			if(TextUtils.isEmpty(track))
+			{
+				textViewStopName.setText(name);
+			}
+			else
+			{
+				textViewStopName.setText(String.format(getString(R.string.transport_type_and_track_number), name, track));
+			}
+			
+			if(isPartOfUsersRoute)
+			{
+				textViewStopName.setTextColor(Color.BLACK);
+				textViewDepatureTime.setTextColor(Color.BLACK);
+				//v.setBackgroundResource(R.drawable.selectable_background_minrutevejledning);
+			}
+			else
+			{
+				textViewStopName.setTextColor(Color.GRAY);
+				textViewDepatureTime.setTextColor(Color.GRAY);
+				//v.setBackgroundResource(R.drawable.selectable_background_minrutevejledning_dark);
+			}
 		}
 
 		@Override
@@ -212,11 +241,13 @@ public class TripLegDetailsFragment extends SherlockListFragment implements Load
 		{
 			if (newCursor != null)
 			{
-				iArrDate = newCursor.getColumnIndex(JourneyDetailStopMetaData.TableMetaData.ARR_DATE);
+				iArrTime = newCursor.getColumnIndex(JourneyDetailStopMetaData.TableMetaData.ARR_TIME);
 				iDepTime = newCursor.getColumnIndex(JourneyDetailStopMetaData.TableMetaData.DEP_TIME);
 				iLat = newCursor.getColumnIndex(JourneyDetailStopMetaData.TableMetaData.LATITUDE);
 				iLng = newCursor.getColumnIndex(JourneyDetailStopMetaData.TableMetaData.LONGITUDE);
-				iName = newCursor.getColumnIndex(JourneyDetailStopMetaData.TableMetaData.NAME);				
+				iName = newCursor.getColumnIndex(JourneyDetailStopMetaData.TableMetaData.NAME);		
+				iTrack = newCursor.getColumnIndex(JourneyDetailStopMetaData.TableMetaData.TRACK);	
+				iPartOfUserRoute = newCursor.getColumnIndex(JourneyDetailStopMetaData.TableMetaData.IS_PART_OF_USER_ROUTE);	
 			}
 			return super.swapCursor(newCursor);
 		}
@@ -258,6 +289,7 @@ public class TripLegDetailsFragment extends SherlockListFragment implements Load
 	public interface Callbacks
 	{
 		public void onTripLegStopSelected(String stopId, String tripId, String legId);
+		public void setJourneyDetailId(long id, String LegId, String transportType);
 	}
 
 	/**
@@ -270,7 +302,12 @@ public class TripLegDetailsFragment extends SherlockListFragment implements Load
 		@Override
 		public void onTripLegStopSelected(String stopId, String tripId, String legId)
 		{
-			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void setJourneyDetailId(long id, String LegId, String transportType)
+		{
 			
 		}
 		

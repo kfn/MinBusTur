@@ -9,6 +9,7 @@ import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 import com.miracleas.minbustur.model.TripRequest;
 import com.miracleas.minbustur.provider.TripLegMetaData;
+import com.miracleas.minbustur.provider.TripMetaData;
 
 public class TripSuggestionsActivity extends SherlockFragmentActivity implements TripSuggestionsFragment.Callbacks
 {
@@ -64,7 +65,7 @@ public class TripSuggestionsActivity extends SherlockFragmentActivity implements
 	public void onTripSuggestionSelected(String id, int stepCount, TripRequest tripRequest)
 	{
 		Intent intent = new Intent(this, TripGuideActivity.class);
-		intent.putExtra(TripLegMetaData.TableMetaData._ID, id);
+		intent.putExtra(TripMetaData.TableMetaData._ID, id);
 		intent.putExtra(TripLegMetaData.TableMetaData.STEP_NUMBER, stepCount);	
 		intent.putExtra(TripRequest.tag, tripRequest);
 		startActivity(intent);

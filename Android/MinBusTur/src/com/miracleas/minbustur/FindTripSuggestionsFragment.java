@@ -44,17 +44,16 @@ public class FindTripSuggestionsFragment extends FindTripSuggestionsFragmentBase
 {
 	public static final String tag = FindTripSuggestionsFragment.class.getName();
 	private AutoCompleteAddressAdapter mAutoCompleteAdapterFrom = null;
-	private AutoCompleteAddressAdapter mAutoCompleteAdapterTo = null;
-	private AutoCompleteContactsAdapter mAutoCompleteContactsAdapterTo = null;
-	private AutoCompleteContactsAdapter mAutoCompleteContactsAdapterFrom = null;
+	private AutoCompleteAddressAdapter mAutoCompleteAdapterTo = null;	
 	private LoadAddressesRun mLoadAddressesRun = null;
-	private LoadContactRun mLoadContactRun = null;
+	
 	private LoadTrips mLoadTrips = null;
 	protected AddressFetcher mAddressFetcher = null;
 	private TripFetcher mTripFetcher = null;
 	private static boolean mIsLoadingAddresses = false;
 	private boolean mUpdateCursor = true;
 	private boolean mItemClicked = false;
+	
 
 	public static FindTripSuggestionsFragment createInstance()
 	{
@@ -72,11 +71,7 @@ public class FindTripSuggestionsFragment extends FindTripSuggestionsFragmentBase
 		mAutoCompleteAdapterFrom = new AutoCompleteAddressAdapter(getActivity(), null, 0, LoaderConstants.LOADER_ADDRESS_FROM);
 		mAutoCompleteTextViewFromAddress.setAdapter(mAutoCompleteAdapterFrom);
 		mAutoCompleteAdapterTo = new AutoCompleteAddressAdapter(getActivity(), null, 0, LoaderConstants.LOADER_ADDRESS_TO);
-		mAutoCompleteTextViewToAddress.setAdapter(mAutoCompleteAdapterTo);
-		mAutoCompleteContactsAdapterTo = new AutoCompleteContactsAdapter(getActivity(), null, 0);
-		mAutoCompleteContactsAdapterFrom = new AutoCompleteContactsAdapter(getActivity(), null, 0);
-		mAutoCompleteTextViewToTitle.setAdapter(mAutoCompleteContactsAdapterTo);
-		mAutoCompleteTextViewFromTitle.setAdapter(mAutoCompleteContactsAdapterFrom);
+		mAutoCompleteTextViewToAddress.setAdapter(mAutoCompleteAdapterTo);		
 		return rootView;
 	}
 
@@ -92,11 +87,9 @@ public class FindTripSuggestionsFragment extends FindTripSuggestionsFragmentBase
 	public void onCreate(Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);
-		cache = new LruCache<Long, Drawable>(20);
-		mBitmapDrawableDummy = getResources().getDrawable(R.drawable.ic_action_user);
 		mHandler = new Handler();
 		mLoadAddressesRun = new LoadAddressesRun(null, 0);
-		mLoadContactRun = new LoadContactRun(null, 0);
+		
 
 		mDataUri = null;// Uri.withAppendedPath(AddressProviderMetaData.TableMetaData.CONTENT_URI,
 						// "search");
@@ -145,7 +138,7 @@ public class FindTripSuggestionsFragment extends FindTripSuggestionsFragmentBase
 		{
 			mAutoCompleteAdapterTo.swapCursor(newCursor);
 			updateCursor(newCursor, mAutoCompleteTextViewToAddress);
-		} else if (loader.getId() == LoaderConstants.LOADER_TITLE_FROM)
+		} /*else if (loader.getId() == LoaderConstants.LOADER_TITLE_FROM)
 		{
 			mAutoCompleteContactsAdapterFrom.swapCursor(newCursor);
 			updateCursor(newCursor, mAutoCompleteTextViewFromTitle);
@@ -153,7 +146,7 @@ public class FindTripSuggestionsFragment extends FindTripSuggestionsFragmentBase
 		{
 			mAutoCompleteContactsAdapterTo.swapCursor(newCursor);
 			updateCursor(newCursor, mAutoCompleteTextViewToTitle);
-		}
+		}*/
 	}
 
 	private void updateCursor(Cursor newCursor, AutoCompleteTextView a)
@@ -179,13 +172,13 @@ public class FindTripSuggestionsFragment extends FindTripSuggestionsFragmentBase
 		} else if (loader.getId() == LoaderConstants.LOADER_ADDRESS_TO)
 		{
 			mAutoCompleteAdapterTo.swapCursor(null);
-		} else if (loader.getId() == LoaderConstants.LOADER_TITLE_FROM)
+		} /*else if (loader.getId() == LoaderConstants.LOADER_TITLE_FROM)
 		{
 			mAutoCompleteContactsAdapterFrom.swapCursor(null);
 		} else if (loader.getId() == LoaderConstants.LOADER_TITLE_TO)
 		{
 			mAutoCompleteContactsAdapterTo.swapCursor(null);
-		}
+		}*/
 	}
 
 	@Override
@@ -209,15 +202,16 @@ public class FindTripSuggestionsFragment extends FindTripSuggestionsFragmentBase
 				{
 					mHandler.removeCallbacks(mLoadAddressesRun);
 					mLoadAddressesRun = new LoadAddressesRun(value, loaderId);
-					mHandler.postDelayed(mLoadAddressesRun, 500);
+					mHandler.postDelayed(mLoadAddressesRun, 1000);
 				}
 
-			} else if (loaderId == LoaderConstants.LOADER_TITLE_FROM || loaderId == LoaderConstants.LOADER_TITLE_TO)
+			} 
+			/*else if (loaderId == LoaderConstants.LOADER_TITLE_FROM || loaderId == LoaderConstants.LOADER_TITLE_TO)
 			{
 				mHandler.removeCallbacks(mLoadContactRun);
 				mLoadContactRun = new LoadContactRun(value, loaderId);
 				mHandler.postDelayed(mLoadContactRun, 200);
-			}
+			}*/
 		}
 
 	}
@@ -225,26 +219,15 @@ public class FindTripSuggestionsFragment extends FindTripSuggestionsFragmentBase
 	@Override
 	protected void onAddressFromSelected(int position)
 	{
-		onAddressSelected(mAutoCompleteAdapterFrom, true, position);
+		//onAddressSelected(mAutoCompleteAdapterFrom, true, position);
 	}
 	@Override
 	protected void onAddressToSelected(int position)
 	{
-		onAddressSelected(mAutoCompleteAdapterTo, false, position);
+		//onAddressSelected(mAutoCompleteAdapterTo, false, position);
 	}
 
-	private void onAddressSelected(AutoCompleteAddressAdapter adapter, boolean origin, int position)
-	{
-		mItemClicked = true;
-		if (origin)
-		{
-			mAutoCompleteTextViewToAddress.requestFocus();
-		} else
-		{
-			ViewHelper.hideKeyboard(getActivity(), mAutoCompleteTextViewToAddress);
-		}
-		onAddressSelected(adapter, position, origin);
-	}
+
 
 	private LoadAddresses mLoadAddresses = null;
 
@@ -281,15 +264,9 @@ public class FindTripSuggestionsFragment extends FindTripSuggestionsFragmentBase
 		if (loaderId == LoaderConstants.LOADER_ADDRESS_FROM)
 		{
 			return mProgressBarFromAddress;
-		} else if (loaderId == LoaderConstants.LOADER_ADDRESS_TO)
+		} else 
 		{
 			return mProgressBarToAddress;
-		} else if (loaderId == LoaderConstants.LOADER_TITLE_FROM)
-		{
-			return mProgressBarFromTitle;
-		} else
-		{
-			return mProgressBarToTitle;
 		}
 	}
 
@@ -495,108 +472,31 @@ public class FindTripSuggestionsFragment extends FindTripSuggestionsFragmentBase
 			}
 			return address;
 		}
-	}
-
-	private void loadContact(String query, int loaderId)
-	{
-		Log.d(tag, "lockup for: " + query);
-		Bundle args = new Bundle();
-		args.putString(ContactsContract.Contacts.DISPLAY_NAME, query);
-		if (getSherlockActivity().getSupportLoaderManager().getLoader(loaderId) == null)
+		
+		public int getPosition(String address)
 		{
-			getSherlockActivity().getSupportLoaderManager().initLoader(loaderId, args, this);
-		} else
-		{
-			getSherlockActivity().getSupportLoaderManager().restartLoader(loaderId, args, this);
-		}
-
-	}
-
-	private class AutoCompleteContactsAdapter extends CursorAdapter
-	{
-		private int iName;
-		private int iImg;
-		private int iId;
-		private LayoutInflater mInf = null;
-
-		public AutoCompleteContactsAdapter(Context context, Cursor c, int flags)
-		{
-			super(context, c, flags);
-			mInf = LayoutInflater.from(context);
-		}
-
-		@Override
-		public void bindView(View v, Context context, Cursor cursor)
-		{
-			TextView tv = (TextView) v;
-			tv.setText(cursor.getString(iName));
-			// tv.setCompoundDrawablesWithIntrinsicBounds(mBitmapDrawableDummy,
-			// null, null, null);
-
-			loadImageOfContact(tv, cursor);
-		}
-
-		private void loadImageOfContact(TextView v, Cursor cursor)
-		{
-			Object tag;
-			long con_id = cursor.getLong(iId);
-			if (!id_list.contains(Long.valueOf(con_id)))
-			{
-				id_list.add(con_id);
-			}
-			Uri contactUri = ContentUris.withAppendedId(Contacts.CONTENT_URI, con_id);
-			tag = con_id;
-			v.setTag(tag);
-			Drawable d = getBitmapFromCache(con_id);
-			if (d != null)
-			{
-				v.setCompoundDrawablesWithIntrinsicBounds(d, null, null, null);
-			} else
-			{
-				ImageLoader loader = new ImageLoader(v, contactUri, con_id);
-				loader.execute();
-			}
-		}
-
-		@Override
-		public View newView(Context context, Cursor cursor, ViewGroup parent)
-		{
-			return mInf.inflate(R.layout.item_address, null);
-		}
-
-		public Cursor swapCursor(Cursor newCursor)
-		{
-			if (newCursor != null)
-			{
-				iName = newCursor.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME);
-				iId = newCursor.getColumnIndex(ContactsContract.Contacts._ID);
-			}
-			return super.swapCursor(newCursor);
-		}
-
-		public String getImage(int position)
-		{
-			String lat = null;
+			int pos = -1;
 			Cursor c = getCursor();
-			if (c.moveToPosition(position))
+			boolean found = false;
+			if(c.moveToFirst())
 			{
-				lat = c.getString(iImg);
+				do{
+					String current = c.getString(iAddress);
+					if(current.equals(address))
+					{
+						pos = c.getPosition();
+						found = true;
+					}
+				}
+				while(c.moveToNext() && !found);
 			}
-			return lat;
+			return pos;
 		}
-
-		public String getName(int position)
-		{
-			String address = null;
-			Cursor c = getCursor();
-			if (c.moveToPosition(position))
-			{
-				address = c.getString(iName);
-			}
-			return address;
-		}
-
 	}
+
+
+
+
 
 	private class LoadAddressesRun implements Runnable
 	{
@@ -616,74 +516,9 @@ public class FindTripSuggestionsFragment extends FindTripSuggestionsFragmentBase
 		}
 	}
 
-	private class LoadContactRun implements Runnable
-	{
-		private final String mQuery;
-		private final int loaderId;
 
-		LoadContactRun(String q, int loaderId)
-		{
-			mQuery = q;
-			this.loaderId = loaderId;
-		}
 
-		@Override
-		public void run()
-		{
-			loadContact(mQuery, loaderId);
-		}
-	}
 
-	private void loadContactAddress(long id, int loaderId)
-	{
-		new LoadContactAddress(loaderId).execute(id);
-	}
-
-	private static final String[] PROJECTION_CONTACT_ADDRESS = { ContactsContract.CommonDataKinds.StructuredPostal.FORMATTED_ADDRESS };
-
-	private class LoadContactAddress extends AsyncTask<Long, Void, String>
-	{
-		private final int loaderId;
-
-		LoadContactAddress(int loaderId)
-		{
-			this.loaderId = loaderId;
-		}
-
-		protected String doInBackground(Long... args)
-		{
-			String address = "";
-			ContentResolver cr = getActivity().getContentResolver();
-			Cursor c = null;
-			try
-			{
-				String selection = ContactsContract.CommonDataKinds.StructuredPostal.CONTACT_ID + "=?";
-				String[] selectionArgs = { args[0] + "" };
-				c = cr.query(ContactsContract.CommonDataKinds.StructuredPostal.CONTENT_URI, PROJECTION_CONTACT_ADDRESS, selection, selectionArgs, null);
-				if (c.moveToFirst())
-				{
-					address = c.getString(c.getColumnIndex(ContactsContract.CommonDataKinds.StructuredPostal.FORMATTED_ADDRESS));
-				}
-			} finally
-			{
-				if (c != null)
-					c.close();
-			}
-
-			return address;
-		}
-
-		protected void onPostExecute(String address)
-		{
-			if (loaderId == LoaderConstants.LOADER_TITLE_FROM && TextUtils.isEmpty(mAutoCompleteTextViewFromAddress.getText()))
-			{
-				mAutoCompleteTextViewFromAddress.setText(address);
-			} else if (loaderId == LoaderConstants.LOADER_TITLE_TO && TextUtils.isEmpty(mAutoCompleteTextViewToAddress.getText()))
-			{
-				mAutoCompleteTextViewToAddress.setText(address);
-			}
-		}
-	}
 
 	private class LoadTrips extends AsyncTask<String, Void, Void>
 	{
@@ -708,13 +543,47 @@ public class FindTripSuggestionsFragment extends FindTripSuggestionsFragmentBase
 			
 		}
 	}
+
+	@Override
+	public void onClick(View v)
+	{
+		if (v.getId() == R.id.btnFindRoute)
+		{		
+			int posFrom = mSelectedAddressFromPosition;
+			int posTo = mSelectedAddressToPosition;
+			if(posFrom!=-1 && posTo!=-1)
+			{
+				onAddressSelected(posFrom, posTo);			
+			}
+			else if(mTripRequest.isValid())
+			{
+				mCallbacks.onFindTripSuggestion(mTripRequest);
+			}
+			
+			
+		}
+	}
+	
+	private void onAddressSelected2(boolean origin)
+	{
+		mItemClicked = true;
+		if (origin)
+		{
+			mAutoCompleteTextViewToAddress.requestFocus();
+		} else
+		{
+			ViewHelper.hideKeyboard(getActivity(), mAutoCompleteTextViewToAddress);
+		}
+		
+
+	}
 	private AddressSelected mAddressSelected = null;
-	private void onAddressSelected(AutoCompleteAddressAdapter a, int position, boolean origin)
+	private void onAddressSelected(int positionOrigin, int positionDest)
 	{
 		if(mAddressSelected==null || mAddressSelected.getStatus()==AsyncTask.Status.FINISHED)
 		{
-			mAddressSelected = new AddressSelected(a, position, origin);
-			mAddressSelected.execute(null,null,null);
+			mAddressSelected = new AddressSelected();
+			mAddressSelected.execute(positionOrigin,positionDest);
 		}
 		else
 		{
@@ -722,57 +591,42 @@ public class FindTripSuggestionsFragment extends FindTripSuggestionsFragmentBase
 		}
 	}
 	
-	private class AddressSelected extends AsyncTask<String, Void, Void>
+	private class AddressSelected extends AsyncTask<Integer, Void, Void>
 	{
-		private final AutoCompleteAddressAdapter a;
-		private final int position;
-		private final boolean origin;
-		
-		AddressSelected(AutoCompleteAddressAdapter adapter, int position, boolean origin)
-		{
-			this.a = adapter;
-			this.position = position;
-			this.origin = origin;
-		}
 		
 		@Override
-		protected Void doInBackground(String... params)
+		protected Void doInBackground(Integer... params)
 		{
-			String text = a.getAddress(position);
-			String y = a.getY(position);
-			String x = a.getX(position);
-			String positionId = a.getId(position);
-			if (origin)
-			{
-				mTripRequest.setOriginId(positionId);
-				mTripRequest.setOriginCoordName(text);
-				mTripRequest.setOriginCoordX(x);
-				mTripRequest.setOriginCoordY(y);
-
-			} else
-			{
-				mTripRequest.setDestId(positionId);
-				mTripRequest.setDestCoordName(text);
-				mTripRequest.setDestCoordX(x);
-				mTripRequest.setDestCoordY(y);
-			}			
+			
+			String text = mAutoCompleteAdapterFrom.getAddress(params[0]);
+			String y = mAutoCompleteAdapterFrom.getY(params[0]);
+			String x = mAutoCompleteAdapterFrom.getX(params[0]);
+			String positionId = mAutoCompleteAdapterFrom.getId(params[0]);
+			mTripRequest.setOriginId(positionId);
+			mTripRequest.setOriginCoordName(text);
+			mTripRequest.setOriginCoordX(x);
+			mTripRequest.setOriginCoordY(y);
+			
+			text = mAutoCompleteAdapterTo.getAddress(params[1]);
+			y = mAutoCompleteAdapterTo.getY(params[1]);
+			x = mAutoCompleteAdapterTo.getX(params[1]);
+			positionId = mAutoCompleteAdapterTo.getId(params[1]);
+			mTripRequest.setDestId(positionId);
+			mTripRequest.setDestCoordName(text);
+			mTripRequest.setDestCoordX(x);
+			mTripRequest.setDestCoordY(y);		
 			return null;
 		}
+		
+		
 
 		protected void onPostExecute(Void result)
 		{
 			mItemClicked = false;
-		}
-	}
-
-	@Override
-	public void onClick(View v)
-	{
-		if (v.getId() == R.id.btnFindRoute)
-		{
 			mCallbacks.onFindTripSuggestion(mTripRequest);
 		}
 	}
+
 
 	@Override
 	public void onAttach(Activity activity)

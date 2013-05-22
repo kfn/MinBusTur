@@ -23,7 +23,7 @@ public class FindTripSuggestionsActivity extends GeofenceActivity implements Fin
 		// Set up the action bar.
 		final ActionBar actionBar = getSupportActionBar();
 		// Show the Up button in the action bar.
-		actionBar.setDisplayHomeAsUpEnabled(true);
+		//actionBar.setDisplayHomeAsUpEnabled(true);
 		//actionBar.setTitle(null);
 		// actionBar.setDisplayShowHomeEnabled(false);
 		

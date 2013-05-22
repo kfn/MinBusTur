@@ -14,6 +14,16 @@ import android.util.Log;
 
 public class TripLeg
 {
+	public static final String TYPE_BUS = "BUS";
+	public static final String TYPE_WALK = "WALK";
+	public static final String TYPE_TRAIN = "TOG";
+	public static final String TYPE_IC = "IC";
+	public static final String TYPE_LYN = "LYN";
+	public static final String TYPE_REG = "REG";
+	public static final String TYPE_EXB = "EXB";
+	public static final String TYPE_TB = "TB";
+	
+	
 	public String tripId;
 	public String name;
 	public String type;
@@ -91,30 +101,43 @@ public class TripLeg
 	public static int getIcon(String type)
 	{
 		int icon = 0;
-		if(type.equals(Trip.TYPE_WALK))
+		if(type.equals(TripLeg.TYPE_WALK))
 		{
 			icon = R.drawable.walking;
 		}
-		else if(type.equals(Trip.TYPE_BUS))
+		else if(type.equals(TripLeg.TYPE_BUS))
 		{
 			icon = R.drawable.driving;
 		}
-		else if(type.equals(Trip.TYPE_IC))
+		else if(type.equals(TripLeg.TYPE_EXB))
 		{
 			icon = R.drawable.driving;
 		}
-		else if(type.equals(Trip.TYPE_TRAIN))
+		else if(type.equals(TripLeg.TYPE_TB))
 		{
 			icon = R.drawable.driving;
 		}
-		else if(type.equals(Trip.TYPE_LYN))
+		else if(type.equals(TripLeg.TYPE_IC))
 		{
 			icon = R.drawable.driving;
 		}
-		else if(type.equals(Trip.TYPE_REG))
+		else if(type.equals(TripLeg.TYPE_TRAIN))
+		{
+			icon = R.drawable.driving;
+		}
+		else if(type.equals(TripLeg.TYPE_LYN))
+		{
+			icon = R.drawable.driving;
+		}
+		else if(type.equals(TripLeg.TYPE_REG))
 		{
 			icon = R.drawable.driving;
 		}
 		return icon;
+	}
+	
+	public static boolean isTrain(String type)
+	{
+		return !(type.equals(TripLeg.TYPE_WALK) || type.equals(TripLeg.TYPE_BUS) || type.equals(TripLeg.TYPE_EXB) || type.equals(TripLeg.TYPE_TB));
 	}
 }

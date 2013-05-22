@@ -256,6 +256,8 @@ public class TripRequest implements Parcelable
 		originId = in.readString();
 		time = in.readString();
 		viaId = in.readString();
+		this.destCoordNameNotEncoded = in.readString();
+		this.originCoordNameNotEncoded = in.readString();
 	}
 
 	public void writeToParcel(Parcel out, int flags)
@@ -275,6 +277,8 @@ public class TripRequest implements Parcelable
 		out.writeString(this.originId);
 		out.writeString(this.time);
 		out.writeString(this.viaId);
+		out.writeString(this.destCoordNameNotEncoded);
+		out.writeString(this.originCoordNameNotEncoded);
 		
 	}
 

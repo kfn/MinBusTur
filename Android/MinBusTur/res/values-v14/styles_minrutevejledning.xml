@@ -29,7 +29,7 @@
         <item name="android:actionModeBackground">@drawable/cab_background_top_minrutevejledning</item>
         <item name="android:actionModeSplitBackground">@drawable/cab_background_bottom_minrutevejledning</item>
         <item name="android:actionModeCloseButtonStyle">@style/ActionButton.CloseMode.Minrutevejledning</item>
-        
+        <item name="android:windowBackground">@drawable/bg_pattern</item>
         
     </style>
 

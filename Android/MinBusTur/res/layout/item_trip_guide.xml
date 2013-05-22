@@ -13,48 +13,43 @@
         android:textSize="19sp" />
 
     <TextView
-        android:id="@+id/textViewType"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/textViewTime"
-        android:layout_marginTop="4dp"
-        android:gravity="center_vertical"
-        android:textSize="14sp" />
-
-    <TextView
         android:id="@+id/textViewOriginName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/textViewTime"
         android:layout_marginTop="4dp"
+        android:drawablePadding="10dp"
         android:gravity="center_vertical"
         android:textSize="17sp" />
-
+    
     <TextView
         android:id="@+id/textViewDestName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/textViewOriginName"
-        android:layout_marginTop="4dp"
+        android:layout_marginTop="4dp" android:visibility="gone"
+        android:drawablePadding="10dp"
         android:gravity="center_vertical"
         android:textSize="17sp" />
 
     <TextView
-        android:id="@+id/textViewDuration"
+        android:id="@+id/textViewTransportType"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/textViewDestName"
         android:layout_marginTop="4dp"
+        android:drawablePadding="10dp"
         android:gravity="center_vertical"
-        android:textSize="14sp" />
+        android:textSize="17sp" />
 
     <TextView
         android:id="@+id/textViewNotes"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/textViewDuration"
+        android:layout_below="@+id/textViewTransportType"
         android:layout_marginTop="4dp"
         android:drawableLeft="@drawable/ic_menu_info_details"
+        android:drawablePadding="10dp"
         android:gravity="center_vertical"
         android:textSize="14sp" />
 
@@ -64,6 +59,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/textViewNotes"
         android:layout_marginTop="4dp"
+        android:drawablePadding="10dp"
         android:gravity="center_vertical"
         android:textSize="14sp" />
 

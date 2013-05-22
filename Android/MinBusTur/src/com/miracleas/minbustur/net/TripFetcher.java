@@ -101,6 +101,7 @@ public class TripFetcher extends BaseFetcher
 				parse(input);
 				if (!mDbOperations.isEmpty())
 				{
+					
 					saveData(TripLegMetaData.AUTHORITY);
 				}
 			} else if (repsonseCode == 404)
@@ -199,6 +200,9 @@ public class TripFetcher extends BaseFetcher
 		leg.routeId = xpp.getAttributeValue(null, "routeIdx");
 		leg.time = xpp.getAttributeValue(null, "time");
 		leg.type = xpp.getAttributeValue(null, "type");
+		leg.track = xpp.getAttributeValue(null, "track");
+		leg.rtTrack = xpp.getAttributeValue(null, "rtTrack");
+		
 		return leg;
 	}
 	
@@ -256,7 +260,11 @@ public class TripFetcher extends BaseFetcher
 		.withValue(TripLegMetaData.TableMetaData.DURATION_FORMATTED, leg.getFormattedDuration())
 		.withValue(TripLegMetaData.TableMetaData.STEP_NUMBER, stepNumber)
 		.withValue(TripLegMetaData.TableMetaData.updated, mUpdated)
-		.withValue(TripLegMetaData.TableMetaData.REF, leg.ref);
+		.withValue(TripLegMetaData.TableMetaData.REF, leg.ref)
+		.withValue(TripLegMetaData.TableMetaData.ORIGIN_TRACK, leg.origin.track)
+		.withValue(TripLegMetaData.TableMetaData.DEST_TRACK, leg.dest.track)
+		.withValue(TripLegMetaData.TableMetaData.ORIGIN_RT_TRACK, leg.origin.rtTrack)
+		.withValue(TripLegMetaData.TableMetaData.DEST_RT_TRACK, leg.dest.rtTrack);
 		mDbOperations.add(b.build());
 	}
 
@@ -299,5 +307,6 @@ public class TripFetcher extends BaseFetcher
 			b.append(key).append("=").append(value);
 		}
 	}
+
 
 }

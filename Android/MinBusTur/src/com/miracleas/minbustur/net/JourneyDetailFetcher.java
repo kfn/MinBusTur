@@ -43,14 +43,21 @@ public class JourneyDetailFetcher extends BaseFetcher
 	private String mTripId;
 	private String mLegId;
 	private static final String[] PROJECTION = {JourneyDetailMetaData.TableMetaData._ID};
+	private final String mOriginName;
+	private final String mDestName;
+	private boolean mFoundOriginName = false;
+	private boolean mFoundDestName = false;
 	
-	public JourneyDetailFetcher(Context c, Intent intent, String url, String tripId, String legId)
+	
+	public JourneyDetailFetcher(Context c, Intent intent, String url, String tripId, String legId, String originName, String destName)
 	{
 		super(c, intent);
 		mIds = new ArrayList<String>();
 		mUrl = url;
 		mTripId = tripId;
 		mLegId = legId;
+		mOriginName = originName;
+		mDestName = destName;
 	}
 	@Override
 	protected boolean start()
@@ -191,16 +198,57 @@ public class JourneyDetailFetcher extends BaseFetcher
 	
 	private void saveStop(XmlPullParser xpp, JourneyDetail jouney)
 	{
-		ContentProviderOperation.Builder b = ContentProviderOperation.newInsert(JourneyDetailStopMetaData.TableMetaData.CONTENT_URI);	
-		int attrCount = xpp.getAttributeCount();
-		for(int i = 0; i < attrCount; i++)
-		{
-			b.withValue(xpp.getAttributeName(i), xpp.getAttributeValue(i));
+		String depTime =  xpp.getAttributeValue(null, "depTime");
+		String arrTime =  xpp.getAttributeValue(null, "arrTime");
+		String name =  xpp.getAttributeValue(null, "name");
+		
+		boolean isValid = !TextUtils.isEmpty(depTime) || !TextUtils.isEmpty(arrTime);
+		if(isValid)
+		{			
+			ContentProviderOperation.Builder b = ContentProviderOperation.newInsert(JourneyDetailStopMetaData.TableMetaData.CONTENT_URI);	
+			
+			if(!mFoundOriginName)
+			{
+				mFoundOriginName = name.equals(mOriginName);
+			}
+
+			if(mFoundOriginName && !mFoundDestName)
+			{
+				mFoundDestName = name.equals(mDestName);
+				if(mFoundDestName)
+				{
+					b.withValue(JourneyDetailStopMetaData.TableMetaData.IS_PART_OF_USER_ROUTE, 1);
+				}
+			}
+			
+			if((mFoundOriginName && !mFoundDestName))
+			{		
+				b.withValue(JourneyDetailStopMetaData.TableMetaData.IS_PART_OF_USER_ROUTE, 1);
+			}
+			String x =  xpp.getAttributeValue(null, "x");		
+			String y =  xpp.getAttributeValue(null, "y");		
+			String routeIdx =  xpp.getAttributeValue(null, "routeIdx");		
+			String arrDate =  xpp.getAttributeValue(null, "arrDate");	
+			String depDate =  xpp.getAttributeValue(null, "depDate");	
+			String track =  xpp.getAttributeValue(null, "track");
+			
+			
+			b.withValue(JourneyDetailStopMetaData.TableMetaData.LONGITUDE, x);
+			b.withValue(JourneyDetailStopMetaData.TableMetaData.LATITUDE, y);
+			b.withValue(JourneyDetailStopMetaData.TableMetaData.DEP_DATE, depDate);
+			b.withValue(JourneyDetailStopMetaData.TableMetaData.ROUTE_ID_X, routeIdx);
+			b.withValue(JourneyDetailStopMetaData.TableMetaData.ARR_DATE, arrDate);
+			b.withValue(JourneyDetailStopMetaData.TableMetaData.TRACK, track);
+			b.withValue(JourneyDetailStopMetaData.TableMetaData.NAME, name);
+			b.withValue(JourneyDetailStopMetaData.TableMetaData.JOURNEY_DETAIL_ID, jouney.id);
+			b.withValue(JourneyDetailStopMetaData.TableMetaData.LEG_ID, mLegId);
+			b.withValue(JourneyDetailStopMetaData.TableMetaData.TRIP_ID, mTripId);
+			b.withValue(JourneyDetailStopMetaData.TableMetaData.DEP_TIME, depTime);
+			b.withValue(JourneyDetailStopMetaData.TableMetaData.ARR_TIME, arrTime);
+			mDbOperations.add(b.build());
 		}
-		b.withValue(JourneyDetailStopMetaData.TableMetaData.JOURNEY_DETAIL_ID, jouney.id);
-		b.withValue(JourneyDetailStopMetaData.TableMetaData.LEG_ID, mLegId);
-		b.withValue(JourneyDetailStopMetaData.TableMetaData.TRIP_ID, mTripId);
-		mDbOperations.add(b.build());
+		
+		
 	}
 	
 	private void saveNote(XmlPullParser xpp, JourneyDetail jouney)

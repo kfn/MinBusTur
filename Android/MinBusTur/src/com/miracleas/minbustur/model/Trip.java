@@ -8,12 +8,8 @@ import android.text.TextUtils;
 
 public class Trip
 {
-	public static final String TYPE_BUS = "BUS";
-	public static final String TYPE_WALK = "WALK";
-	public static final String TYPE_TRAIN = "TOG";
-	public static final String TYPE_IC = "IC";
-	public static final String TYPE_LYN = "LYN";
-	public static final String TYPE_REG = "REG";
+
+	
 	
 	
 	public String id = "";
@@ -35,11 +31,10 @@ public class Trip
 	
 	private void addName(String name, String type)
 	{
-		if(!type.equals(TYPE_WALK))
+		if(!type.equals(TripLeg.TYPE_WALK))
 		{
 			names.append(name).append(",");
-		}
-		
+		}		
 	}
 	
 	private void addType(String type)
@@ -73,31 +68,41 @@ public class Trip
 		{
 			
 		}
-		else if(leg.type.equals(TYPE_WALK))
+		else if(leg.type.equals(TripLeg.TYPE_WALK))
 		{
 			durationWalk = durationWalk + leg.getDuration();
 		}
-		else if(leg.type.equals(TYPE_BUS))
+		else if(leg.type.equals(TripLeg.TYPE_BUS))
 		{
 			transportChanges++;
 			durationBus = durationBus + leg.getDuration();
 		}
-		else if(leg.type.equals(TYPE_IC))
+		else if(leg.type.equals(TripLeg.TYPE_EXB))
+		{
+			transportChanges++;
+			durationBus = durationBus + leg.getDuration();
+		}
+		else if(leg.type.equals(TripLeg.TYPE_TB))
+		{
+			transportChanges++;
+			durationBus = durationBus + leg.getDuration();
+		}
+		else if(leg.type.equals(TripLeg.TYPE_IC))
 		{
 			transportChanges++;
 			durationTrain = durationTrain + leg.getDuration();
 		}
-		else if(leg.type.equals(TYPE_TRAIN))
+		else if(leg.type.equals(TripLeg.TYPE_TRAIN))
 		{
 			transportChanges++;
 			durationTrain = durationTrain + leg.getDuration();
 		}
-		else if(leg.type.equals(TYPE_LYN))
+		else if(leg.type.equals(TripLeg.TYPE_LYN))
 		{
 			transportChanges++;
 			durationTrain = durationTrain + leg.getDuration();
 		}
-		else if(leg.type.equals(TYPE_REG))
+		else if(leg.type.equals(TripLeg.TYPE_REG))
 		{
 			transportChanges++;
 			durationTrain = durationTrain + leg.getDuration();

@@ -11,16 +11,13 @@ import com.miracleas.minbustur.model.TripRequest;
 import com.miracleas.minbustur.provider.JourneyDetailMetaData;
 import com.miracleas.minbustur.provider.TripLegMetaData;
 
-public class TripLegDetailsActivity extends GeofenceActivity implements TripLegDetailsFragment.Callbacks
+public class TripLegMapActivity extends GeofenceActivity implements TripLegMapFragment.Callbacks
 {
-	private long mJourneyId = -1;
-	private String mLegId = null;
-	private String mTransportType = null;
 	@Override
 	public void onCreate(Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_trip_leg_details);
+		setContentView(R.layout.activity_trip_leg_map);
 
 		// Set up the action bar.
 		final ActionBar actionBar = getSupportActionBar();
@@ -42,12 +39,11 @@ public class TripLegDetailsActivity extends GeofenceActivity implements TripLegD
 		if (savedInstanceState == null)
 		{
 			Intent intent = getIntent();
-			String tripId = intent.getStringExtra(JourneyDetailMetaData.TableMetaData.TRIP_ID);
+			long journeyId = intent.getLongExtra(JourneyDetailMetaData.TableMetaData._ID, -1);
 			String legId = intent.getStringExtra(JourneyDetailMetaData.TableMetaData.LEG_ID);
-			String ref = intent.getStringExtra(JourneyDetailMetaData.TableMetaData.REF);
 			String transportType = intent.getStringExtra(TripLegMetaData.TableMetaData.TYPE);
-			TripLegDetailsFragment fragment = TripLegDetailsFragment.createInstance(tripId, legId, ref, transportType);
-			getSupportFragmentManager().beginTransaction().add(R.id.fragmentTripLegDetailsContainer, fragment).commit();
+			TripLegMapFragment fragment = TripLegMapFragment.createInstance(journeyId+"", legId, transportType);
+			getSupportFragmentManager().beginTransaction().add(R.id.fragmentTripLegMapContainer, fragment).commit();
 		}
 	}
 	
@@ -55,7 +51,7 @@ public class TripLegDetailsActivity extends GeofenceActivity implements TripLegD
 	public boolean onCreateOptionsMenu(Menu menu)
 	{
 		// Inflate the menu; this adds items to the action bar if it is present.
-		getSupportMenuInflater().inflate(R.menu.activity_trip_leg_details, menu);
+		//getSupportMenuInflater().inflate(R.menu.activity_trip_leg_details, menu);
 		return super.onCreateOptionsMenu(menu);
 	}
 	@Override
@@ -74,39 +70,21 @@ public class TripLegDetailsActivity extends GeofenceActivity implements TripLegD
 			//
 			finish();
 			return true;
-		case R.id.menu_notes:
-			if(mJourneyId!=-1)
-			{
-				TripLegDetailNotesDialog.show(this, mJourneyId);
-			}		
-			return true;
-		case R.id.menu_map:
-			if(mJourneyId!=-1)
-			{
-				Intent activity = new Intent(this, TripLegMapActivity.class);
-				activity.putExtra(JourneyDetailMetaData.TableMetaData._ID, mJourneyId);
-				activity.putExtra(JourneyDetailMetaData.TableMetaData.LEG_ID, mLegId);
-				activity.putExtra(TripLegMetaData.TableMetaData.TYPE, mTransportType);
-				startActivity(activity);
-			}		
-			return true;
+		
 		default:
 			return super.onOptionsItemSelected(item);
 		}
 	}
 
 	@Override
-	public void onTripLegStopSelected(String stopId, String tripId, String legId)
+	public void onStopSelected(String stopId)
 	{
 		// TODO Auto-generated method stub
 		
 	}
 
-	@Override
-	public void setJourneyDetailId(long id, String legId, String transportType)
-	{
-		mJourneyId = id;		
-		mLegId = legId;
-		mTransportType = transportType;
-	}
+
+
+
+
 }
