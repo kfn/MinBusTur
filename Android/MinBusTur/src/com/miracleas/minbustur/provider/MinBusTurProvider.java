@@ -23,7 +23,7 @@ import android.util.Log;
 public class MinBusTurProvider extends ContentProvider
 {
 	public static final String DATABASE_NAME = "minrejseplan";
-	public static final int DATABASE_VERSION = 3;
+	public static final int DATABASE_VERSION = 5;
 	// Logging helper tag. No significance to providers.
 	private static final String tag = MinBusTurProvider.class.getName();
 
@@ -31,7 +31,6 @@ public class MinBusTurProvider extends ContentProvider
 	private static final UriMatcher sUriMatcher;
 	private static final int INCOMING_ADDRESS_COLLECTION_URI_INDICATOR = 1;
 	private static final int INCOMING_SINGLE_ADDRESS_URI_INDICATOR = 2;
-	private static final int INCOMING_ADDRESS_SEARCH_URI_INDICATOR = 3;
 	private static final int INCOMING_TRIP_COLLECTION_URI_INDICATOR = 4;
 	private static final int INCOMING_SINGLE_TRIP_URI_INDICATOR = 5;
 	private static final int INCOMING_TRIPLEG_COLLECTION_URI_INDICATOR = 6;
@@ -45,7 +44,7 @@ public class MinBusTurProvider extends ContentProvider
 	private static final int INCOMING_JOURNEY_DETAIL_NOTE_COLLECTION_URI_INDICATOR = 14;
 	private static final int INCOMING_GEOFENCE_COLLECTION_URI_INDICATOR = 15;
 	private static final int INCOMING_SINGLE_GEOFENCE_URI_INDICATOR = 16;
-	
+	private static final int INCOMING_STOP_IMAGE_COLLECTION_URI_INDICATOR = 17;
 	
 	
 
@@ -54,7 +53,6 @@ public class MinBusTurProvider extends ContentProvider
 		sUriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
 		sUriMatcher.addURI(AddressProviderMetaData.AUTHORITY, AddressProviderMetaData.COLLECTION_TYPE, INCOMING_ADDRESS_COLLECTION_URI_INDICATOR);
 		sUriMatcher.addURI(AddressProviderMetaData.AUTHORITY, AddressProviderMetaData.COLLECTION_TYPE + "/#", INCOMING_SINGLE_ADDRESS_URI_INDICATOR);
-		sUriMatcher.addURI(AddressProviderMetaData.AUTHORITY, AddressProviderMetaData.COLLECTION_TYPE+ "/search", INCOMING_ADDRESS_SEARCH_URI_INDICATOR);
 		sUriMatcher.addURI(TripMetaData.AUTHORITY, TripMetaData.COLLECTION_TYPE, INCOMING_TRIP_COLLECTION_URI_INDICATOR);
 		sUriMatcher.addURI(TripMetaData.AUTHORITY, TripMetaData.COLLECTION_TYPE + "/#", INCOMING_SINGLE_TRIP_URI_INDICATOR);
 		sUriMatcher.addURI(TripLegMetaData.AUTHORITY, TripLegMetaData.COLLECTION_TYPE, INCOMING_TRIPLEG_COLLECTION_URI_INDICATOR);
@@ -67,7 +65,8 @@ public class MinBusTurProvider extends ContentProvider
 		sUriMatcher.addURI(JourneyDetailStopMetaData.AUTHORITY, JourneyDetailStopMetaData.COLLECTION_TYPE + "/#", INCOMING_SINGLE_JOURNEY_DETAIL_STOP_URI_INDICATOR);
 		sUriMatcher.addURI(JourneyDetailNoteMetaData.AUTHORITY, JourneyDetailNoteMetaData.COLLECTION_TYPE, INCOMING_JOURNEY_DETAIL_NOTE_COLLECTION_URI_INDICATOR);
 		sUriMatcher.addURI(GeofenceMetaData.AUTHORITY, GeofenceMetaData.COLLECTION_TYPE, INCOMING_GEOFENCE_COLLECTION_URI_INDICATOR);
-		sUriMatcher.addURI(GeofenceMetaData.AUTHORITY, GeofenceMetaData.COLLECTION_TYPE + "/#", INCOMING_SINGLE_GEOFENCE_URI_INDICATOR);				
+		sUriMatcher.addURI(GeofenceMetaData.AUTHORITY, GeofenceMetaData.COLLECTION_TYPE + "/#", INCOMING_SINGLE_GEOFENCE_URI_INDICATOR);
+		sUriMatcher.addURI(JourneyDetailStopImagesMetaData.AUTHORITY, JourneyDetailStopImagesMetaData.COLLECTION_TYPE, INCOMING_STOP_IMAGE_COLLECTION_URI_INDICATOR);
 	}
 
 	/**
@@ -93,6 +92,7 @@ public class MinBusTurProvider extends ContentProvider
 			db.execSQL("CREATE TABLE IF NOT EXISTS " + JourneyDetailStopMetaData.TABLE_NAME + getTableSchemaStart() + JourneyDetailStopMetaData.getTableSchema() + getTableSchemaEnd());
 			db.execSQL("CREATE TABLE IF NOT EXISTS " + JourneyDetailNoteMetaData.TABLE_NAME + getTableSchemaStart() + JourneyDetailNoteMetaData.getTableSchema() + getTableSchemaEnd());
 			db.execSQL("CREATE TABLE IF NOT EXISTS " + GeofenceMetaData.TABLE_NAME + getTableSchemaStart() + GeofenceMetaData.getTableSchema() + getTableSchemaEnd());
+			db.execSQL("CREATE TABLE IF NOT EXISTS " + JourneyDetailStopImagesMetaData.TABLE_NAME + getTableSchemaStart() + JourneyDetailStopImagesMetaData.getTableSchema() + getTableSchemaEnd());
 		}
 
 		protected static String getTableSchemaStart()
@@ -118,6 +118,7 @@ public class MinBusTurProvider extends ContentProvider
 			db.execSQL("DROP TABLE IF EXISTS " + JourneyDetailStopMetaData.TABLE_NAME);
 			db.execSQL("DROP TABLE IF EXISTS " + JourneyDetailNoteMetaData.TABLE_NAME);
 			db.execSQL("DROP TABLE IF EXISTS " + GeofenceMetaData.TABLE_NAME);
+			db.execSQL("DROP TABLE IF EXISTS " + JourneyDetailStopImagesMetaData.TABLE_NAME);
 			onCreate(db);
 		}
 	}
@@ -154,10 +155,6 @@ public class MinBusTurProvider extends ContentProvider
 		case INCOMING_SINGLE_ADDRESS_URI_INDICATOR:
 			qb.setTables(AddressProviderMetaData.TABLE_NAME);
 			qb.appendWhere(AddressProviderMetaData.TableMetaData._ID + "=" + uri.getPathSegments().get(1));
-			break;
-			
-		case INCOMING_ADDRESS_SEARCH_URI_INDICATOR:
-			
 			break;
 		case INCOMING_TRIP_COLLECTION_URI_INDICATOR:
 			qb.setTables(TripMetaData.TABLE_NAME);
@@ -212,6 +209,9 @@ public class MinBusTurProvider extends ContentProvider
 			qb.appendWhere(GeofenceMetaData.TableMetaData._ID + "=" + uri.getPathSegments().get(1));
 			break;
 
+		case INCOMING_STOP_IMAGE_COLLECTION_URI_INDICATOR:
+			qb.setTables(JourneyDetailStopImagesMetaData.TABLE_NAME);
+			break;
 		default:
 			throw new IllegalArgumentException("Unknown URI " + uri);
 		}
@@ -290,6 +290,11 @@ public class MinBusTurProvider extends ContentProvider
 		{
 			tbl = GeofenceMetaData.TABLE_NAME;
 			contentUri = GeofenceMetaData.TableMetaData.CONTENT_URI;
+		}
+		else if (sUriMatcher.match(uri) == INCOMING_STOP_IMAGE_COLLECTION_URI_INDICATOR)
+		{
+			tbl = JourneyDetailStopImagesMetaData.TABLE_NAME;
+			contentUri = JourneyDetailStopImagesMetaData.TableMetaData.CONTENT_URI;
 		}
 		else
 		{
@@ -383,6 +388,10 @@ public class MinBusTurProvider extends ContentProvider
 		case INCOMING_SINGLE_GEOFENCE_URI_INDICATOR:
 			String rowId6 = uri.getPathSegments().get(1);
 			count = db.delete(GeofenceMetaData.TABLE_NAME, GeofenceMetaData.TableMetaData._ID + "=" + rowId6 + (!TextUtils.isEmpty(where) ? " AND (" + where + ')' : ""), whereArgs);
+			break;
+			
+		case INCOMING_STOP_IMAGE_COLLECTION_URI_INDICATOR:
+			count = db.delete(JourneyDetailStopImagesMetaData.TABLE_NAME, where, whereArgs);
 			break;
 		default:
 			throw new IllegalArgumentException("Unknown URI " + uri);

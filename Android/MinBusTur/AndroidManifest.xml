@@ -55,6 +55,13 @@
         <activity android:name="com.miracleas.minbustur.TripLegMapActivity"
             android:label="@string/trip_leg_details" android:screenOrientation="portrait"/>
         
+        <activity android:name="com.miracleas.minbustur.TripStopDetailsActivity"
+            android:label="@string/trip_stop_details" android:screenOrientation="portrait"/>
+        
+        <activity android:name="com.miracleas.minbustur.TripStopDetailsImageActivity"
+            android:label="@string/trip_stop_details_image" android:screenOrientation="portrait"/>
+        
+        
         
         <provider
             android:name="com.miracleas.minbustur.provider.MinBusTurProvider"

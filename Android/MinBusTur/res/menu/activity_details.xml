@@ -1,0 +1,14 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+    
+    <item
+        android:id="@+id/menu_streetview"
+        android:icon="@drawable/streetview_pegman"
+        android:showAsAction="ifRoom|withText"
+        android:title="@string/streetview"/>
+	<item
+        android:id="@+id/menu_direction"
+        android:icon="@android:drawable/ic_menu_directions"
+        android:showAsAction="ifRoom|withText"
+        android:title="@string/direction"/>
+
+</menu>

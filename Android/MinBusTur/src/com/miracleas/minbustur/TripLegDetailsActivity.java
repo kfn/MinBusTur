@@ -9,6 +9,7 @@ import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 import com.miracleas.minbustur.model.TripRequest;
 import com.miracleas.minbustur.provider.JourneyDetailMetaData;
+import com.miracleas.minbustur.provider.JourneyDetailStopMetaData;
 import com.miracleas.minbustur.provider.TripLegMetaData;
 
 public class TripLegDetailsActivity extends GeofenceActivity implements TripLegDetailsFragment.Callbacks
@@ -96,9 +97,14 @@ public class TripLegDetailsActivity extends GeofenceActivity implements TripLegD
 	}
 
 	@Override
-	public void onTripLegStopSelected(String stopId, String tripId, String legId)
+	public void onStopSelected(String stopId, String lat, String lng, String transportType)
 	{
-		// TODO Auto-generated method stub
+		Intent activity = new Intent(this, TripStopDetailsActivity.class);
+		activity.putExtra(JourneyDetailStopMetaData.TableMetaData.LATITUDE, lat);
+		activity.putExtra(JourneyDetailStopMetaData.TableMetaData.LONGITUDE, lng);
+		activity.putExtra(JourneyDetailStopMetaData.TableMetaData._ID, stopId);
+		activity.putExtra(JourneyDetailMetaData.TableMetaData.TYPE, transportType);
+		startActivity(activity);
 		
 	}
 

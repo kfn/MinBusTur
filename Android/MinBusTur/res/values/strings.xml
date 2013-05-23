@@ -7,9 +7,13 @@
     <string name="trip_suggestions">Ruteforslag</string>
     <string name="trip_guide">Rutevejledning</string>
     <string name="trip_leg_details">Rutedetaljer</string>
+    <string name="trip_stop_details_image">Rutestopbilleder</string>
+    <string name="trip_stop_details">Rutestopdetaljer</string>
+    
+    
     <string name="action_settings">Settings</string>
-    <string name="title_section1">Section 1</string>
-    <string name="title_section2">Section 2</string>
+    <string name="title_section1">Info</string>
+    <string name="title_section2">Billeder</string>
     <string name="title_section3">Section 3</string>
     <string name="seconds">sekunder</string>
     <string name="minutes">minutter</string>
@@ -25,5 +29,15 @@
 	<string name="transport_type_and_track_number"><xliff:g ID="transport_type">%1$s</xliff:g>, spor <xliff:g ID="track_number">%2$s</xliff:g></string>
 	<string name="notes">Bemærkinger</string>
 	<string name="map_mode">Se på kort</string>
+	<string name="transport_type">Transporttype:</string>
+	<string name="arrDateTime">Ankomst:</string>
+	<string name="depDateTime">Afgang:</string>
+	<string name="track">Spor:</string>
+	<string name="rtArrTime">Ankomst(live tid):</string>
+	<string name="rtDepTime">Afgang(live tid):</string>
+	<string name="streetview">Street view</string>
+	<string name="direction">Navigation</string>
+	
+	
 	
 </resources>
