@@ -19,6 +19,7 @@ import com.miracleas.minbustur.R;
 import com.miracleas.minbustur.provider.AddressProviderMetaData;
 
 import android.content.ContentProviderOperation;
+import android.content.ContentProviderResult;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
@@ -135,18 +136,20 @@ public abstract class BaseFetcher
 		return started;
 	}
 	
-	protected void saveData(String authority) throws RemoteException, OperationApplicationException
+	protected ContentProviderResult[] saveData(String authority) throws RemoteException, OperationApplicationException
 	{
+		ContentProviderResult[] results = null;
 		if(!mDbOperations.isEmpty())
 		{
-			int count = mContentResolver.applyBatch(authority, mDbOperations).length;
-			Log.d(tag, "applyBatch: "+count);
+			results  = mContentResolver.applyBatch(authority, mDbOperations);
+			Log.d(tag, "applyBatch: "+results.length);
 			if(mUriNotify!=null)
 			{
 				//mContentResolver.notifyChange(mUriNotify, null);
 			}			
 			mDbOperations.clear();
 		}
+		return results;
 	}
 
 	protected boolean start(){return true;}

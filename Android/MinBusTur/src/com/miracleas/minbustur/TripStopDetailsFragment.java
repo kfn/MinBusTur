@@ -1,5 +1,6 @@
 package com.miracleas.minbustur;
 
+import android.app.Activity;
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
@@ -13,11 +14,14 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TableLayout;
 import android.widget.TextView;
 
 import com.actionbarsherlock.app.SherlockFragment;
+import com.miracleas.camera.PhotoIntentActivity;
+import com.miracleas.minbustur.TripLegDetailsFragment.Callbacks;
 import com.miracleas.minbustur.provider.JourneyDetailMetaData;
 import com.miracleas.minbustur.provider.JourneyDetailStopMetaData;
 import com.miracleas.minbustur.provider.JourneyDetailStopMetaData.TableMetaData;
@@ -36,6 +40,7 @@ public class TripStopDetailsFragment extends SherlockFragment implements LoaderC
 	
 	private TableLayout mTblLayout = null;
 	private TextView mTextViewTitle = null;
+	
 	
 	public static TripStopDetailsFragment createInstance(String stopId, String lat, String lng, String transportType)
 	{
@@ -71,6 +76,7 @@ public class TripStopDetailsFragment extends SherlockFragment implements LoaderC
 		View rootView = inflater.inflate(R.layout.fragment_trip_stop_details, container, false);
 		mTblLayout = (TableLayout)rootView.findViewById(R.id.tblTripStopDetails);
 		mTextViewTitle = (TextView)rootView.findViewById(R.id.textViewTitle);
+		
 		return rootView;
 	}
 
@@ -144,8 +150,7 @@ public class TripStopDetailsFragment extends SherlockFragment implements LoaderC
 		if(loader.getId()==LoaderConstants.LOADER_TRIP_STOP_DETAILS)
 		{
 			
-		}
-				
+		}	
 	}
 
 

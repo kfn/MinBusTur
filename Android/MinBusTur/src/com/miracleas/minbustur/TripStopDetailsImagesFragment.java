@@ -18,6 +18,7 @@ import android.view.ViewGroup.LayoutParams;
 import android.view.ViewTreeObserver;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.GridView;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -26,6 +27,7 @@ import com.actionbarsherlock.app.SherlockFragment;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
+import com.miracleas.camera.PhotoIntentActivity;
 import com.miracleas.imagedownloader.ImageDownloaderActivity;
 import com.miracleas.imagedownloader.Utils;
 import com.miracleas.minbustur.provider.JourneyDetailStopImagesMetaData;
@@ -48,6 +50,7 @@ public class TripStopDetailsImagesFragment extends SherlockFragment implements L
     private GridView mGridView = null;
     private ImageAdapter mAdapter;
     private ImageDownloaderActivity mImageDownloaderActivity = null;
+    private Button mBtnTakePicture;
     
 	/**
 	 * The columns needed by the cursor adapter
@@ -77,6 +80,10 @@ public class TripStopDetailsImagesFragment extends SherlockFragment implements L
 	public void onAttach(Activity activity)
 	{
 		super.onAttach(activity);
+		if (!(activity instanceof PhotoIntentActivity))
+		{
+			throw new IllegalStateException("Activity must be a PhotoIntentActivity.");
+		}
 		mImageDownloaderActivity = (ImageDownloaderActivity)activity;
 		mImageDownloaderActivity.getIImageDownloader().setLoadingImage(R.drawable.empty_photo);
 	}
@@ -149,7 +156,9 @@ public class TripStopDetailsImagesFragment extends SherlockFragment implements L
 				}
 			}
 		});
-
+		mBtnTakePicture = (Button)v.findViewById(R.id.btnAddPicture);
+		PhotoIntentActivity activity = (PhotoIntentActivity)getActivity();
+		activity.setBtnListenerOrDisable(mBtnTakePicture);
 		return v;
 	}
 	
@@ -323,7 +332,8 @@ public class TripStopDetailsImagesFragment extends SherlockFragment implements L
 			return super.onOptionsItemSelected(item);
 		}
 	}
-
+	
+	
 
 
 }

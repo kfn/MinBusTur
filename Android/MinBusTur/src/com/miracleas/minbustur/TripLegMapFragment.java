@@ -248,7 +248,7 @@ public class TripLegMapFragment extends SupportMapFragment implements LoaderCall
 		LegStop wrap = mMarkers.get(marker.getPosition());
 		LatLng latLng = marker.getPosition();
 		String transportType = getArguments().getString(JourneyDetailMetaData.TableMetaData.TYPE);
-		mCallbacks.onStopSelected(wrap.dbId+"", latLng.latitude+"", latLng.longitude+"", transportType);
+		mCallbacks.onStopSelected(wrap.dbId+"", wrap.latitude+"", wrap.longitude+"", transportType);
 	}
 
 	@Override
@@ -320,8 +320,9 @@ public class TripLegMapFragment extends SupportMapFragment implements LoaderCall
 					String arrTime = data.getString(iArrTime);
 					String track = data.getString(iTrack);;
 					String depTime = data.getString(iDepTime);
-					double lat = (double)(Integer.parseInt(data.getString(iLat)) / 1000000d);
-					double lng = (double)(Integer.parseInt(data.getString(iLng)) / 1000000d);
+					
+					double lat = (double)(Integer.parseInt(strLat) / 1000000d);
+					double lng = (double)(Integer.parseInt(strLng) / 1000000d);
 					Location toiletLocation = new Location("");
 					toiletLocation.setLatitude(lat);
 					toiletLocation.setLongitude(lng);
@@ -335,7 +336,7 @@ public class TripLegMapFragment extends SupportMapFragment implements LoaderCall
 					boolean isPartOfUsersRoute = data.getInt(iPartOfUserRoute)==1;
 					int iconRes = getIconRes(hasTrack, isPartOfUsersRoute);
 					int id = data.getInt(iId);
-					LegStop current = new LegStop(new LatLng(lat, lng), toiletDistance, id, iconRes);
+					LegStop current = new LegStop(new LatLng(lat, lng), toiletDistance, id, iconRes, strLat, strLng);
 
 					if (closestToilet == null || toiletDistance < closestToilet.distance)
 					{
@@ -460,14 +461,18 @@ public class TripLegMapFragment extends SupportMapFragment implements LoaderCall
 		int dbId = -1;
 		float distance = 0;
 		int iconRes = -1;
+		String latitude;
+		String longitude;
 
-		public LegStop(LatLng latLng, float distance, int dbId, int iconRes)
+		public LegStop(LatLng latLng, float distance, int dbId, int iconRes, String lat, String lng)
 		{
 			super();
 			this.latLng = latLng;
 			this.dbId = dbId;
 			this.distance = distance;
 			this.iconRes = iconRes;
+			this.latitude = lat;
+			this.longitude = lng;
 		}
 
 		public String getDistance()

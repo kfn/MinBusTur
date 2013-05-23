@@ -125,7 +125,8 @@ public class TripStopDetailsImageActivity extends SherlockFragmentActivity imple
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
-                NavUtils.navigateUpFromSameTask(this);
+                //NavUtils.navigateUpFromSameTask(this);
+            	finish();
                 return true;          
         }
         return super.onOptionsItemSelected(item);

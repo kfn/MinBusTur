@@ -13,6 +13,7 @@ import org.xmlpull.v1.XmlPullParserException;
 import org.xmlpull.v1.XmlPullParserFactory;
 
 import android.content.ContentProviderOperation;
+import android.content.ContentProviderResult;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
@@ -31,6 +32,7 @@ import com.miracleas.minbustur.model.TripLocation;
 import com.miracleas.minbustur.provider.AddressProviderMetaData;
 import com.miracleas.minbustur.provider.JourneyDetailMetaData;
 import com.miracleas.minbustur.provider.JourneyDetailNoteMetaData;
+import com.miracleas.minbustur.provider.JourneyDetailStopImagesMetaData;
 import com.miracleas.minbustur.provider.JourneyDetailStopMetaData;
 import com.miracleas.minbustur.provider.TripMetaData;
 
@@ -42,13 +44,13 @@ public class JourneyDetailFetcher extends BaseFetcher
 	private List<String> mIds = null;
 	private String mTripId;
 	private String mLegId;
-	private static final String[] PROJECTION = {JourneyDetailMetaData.TableMetaData._ID};
+	private static final String[] PROJECTION = { JourneyDetailMetaData.TableMetaData._ID };
 	private final String mOriginName;
 	private final String mDestName;
 	private boolean mFoundOriginName = false;
 	private boolean mFoundDestName = false;
-	
-	
+	private List<String> mUrls;
+
 	public JourneyDetailFetcher(Context c, Intent intent, String url, String tripId, String legId, String originName, String destName)
 	{
 		super(c, intent);
@@ -58,49 +60,50 @@ public class JourneyDetailFetcher extends BaseFetcher
 		mLegId = legId;
 		mOriginName = originName;
 		mDestName = destName;
+		mUrls = new ArrayList<String>();
 	}
+
 	@Override
 	protected boolean start()
 	{
 		return !TextUtils.isEmpty(mUrl);
 	}
-	
+
 	@Override
 	void doWork() throws Exception
 	{
 		boolean hasCachedResult = false;
 		Cursor cursor = null;
 		try
-		{	
-			String selection = JourneyDetailMetaData.TableMetaData.REF + "=?";
-			String[] selectionArgs = {mUrl};
-			cursor = mContentResolver.query(JourneyDetailMetaData.TableMetaData.CONTENT_URI, PROJECTION, selection, selectionArgs, JourneyDetailMetaData.TableMetaData._ID +" LIMIT 1");
-			hasCachedResult = cursor.getCount()>0;
-		}
-		finally
 		{
-			if(cursor!=null)
+			String selection = JourneyDetailMetaData.TableMetaData.REF + "=?";
+			String[] selectionArgs = { mUrl };
+			cursor = mContentResolver.query(JourneyDetailMetaData.TableMetaData.CONTENT_URI, PROJECTION, selection, selectionArgs, JourneyDetailMetaData.TableMetaData._ID + " LIMIT 1");
+			hasCachedResult = cursor.getCount() > 0;
+		} finally
+		{
+			if (cursor != null)
 			{
 				cursor.close();
 			}
 		}
-		if(!hasCachedResult)
+		if (!hasCachedResult)
 		{
 			fetchJourneyDetails();
 		}
-		
+
 	}
-		
+
 	private void fetchJourneyDetails() throws Exception
 	{
-		HttpURLConnection urlConnection = initHttpURLConnection(mUrl);		
+		HttpURLConnection urlConnection = initHttpURLConnection(mUrl);
 		try
 		{
 			int repsonseCode = urlConnection.getResponseCode();
 			if (repsonseCode == HttpURLConnection.HTTP_OK)
-			{						
+			{
 				InputStream input = urlConnection.getInputStream();
-				parse(input);		
+				parse(input);
 			} else if (repsonseCode == 404)
 			{
 				throw new Exception(mContext.getString(R.string.search_failed_404));
@@ -113,7 +116,7 @@ public class JourneyDetailFetcher extends BaseFetcher
 			} else
 			{
 				Log.e(tag, "server response: " + repsonseCode);
-				throw new Exception("error"); 
+				throw new Exception("error");
 			}
 		} finally
 		{
@@ -121,15 +124,42 @@ public class JourneyDetailFetcher extends BaseFetcher
 		}
 
 	}
-	
+
 	public void save()
 	{
 		if (!mDbOperations.isEmpty())
 		{
 			try
 			{
-				saveData(JourneyDetailStopMetaData.AUTHORITY);
-				com.miracleas.minbustur.utils.Utils.copyDbToSdCard(com.miracleas.minbustur.provider.MinBusTurProvider.DATABASE_NAME);
+				ContentProviderResult[] results = saveData(JourneyDetailStopMetaData.AUTHORITY);
+				mDbOperations.clear();
+				int imgCount = 0;
+				for (int i = 0; i < results.length; i++)
+				{
+					Uri uri = results[i].uri;
+					if (uri != null)
+					{
+						if (results[i].uri.toString().contains(JourneyDetailStopMetaData.TABLE_NAME))
+						{
+							String id = results[i].uri.getLastPathSegment();
+							if (!TextUtils.isEmpty(id))
+							{
+								ContentProviderOperation.Builder b = ContentProviderOperation.newInsert(JourneyDetailStopImagesMetaData.TableMetaData.CONTENT_URI);
+								b.withValue(JourneyDetailStopImagesMetaData.TableMetaData.URL, mUrls.get(imgCount));
+								b.withValue(JourneyDetailStopImagesMetaData.TableMetaData.JOURNEY_DETAIL_STOP_ID, results[i].uri.getLastPathSegment());
+								mDbOperations.add(b.build());
+							}
+							imgCount++;
+						}
+					}
+
+				}
+				if (!mDbOperations.isEmpty())
+				{
+					saveData(JourneyDetailStopImagesMetaData.AUTHORITY);
+				}
+
+				// com.miracleas.minbustur.utils.Utils.copyDbToSdCard(com.miracleas.minbustur.provider.MinBusTurProvider.DATABASE_NAME);
 			} catch (RemoteException e)
 			{
 				// TODO Auto-generated catch block
@@ -140,19 +170,19 @@ public class JourneyDetailFetcher extends BaseFetcher
 				e.printStackTrace();
 			}
 		}
-		
+
 	}
-	
+
 	public ArrayList<ContentProviderOperation> getDbOperations()
 	{
 		return mDbOperations;
 	}
-	
+
 	public void addContentProviderOperations(ArrayList<ContentProviderOperation> list)
 	{
 		mDbOperations.addAll(list);
 	}
-	
+
 	private void parse(InputStream in) throws XmlPullParserException, IOException
 	{
 		XmlPullParserFactory factory = XmlPullParserFactory.newInstance();
@@ -171,68 +201,70 @@ public class JourneyDetailFetcher extends BaseFetcher
 				while (!(eventType == XmlPullParser.END_TAG && xpp.getName().equals("JourneyDetail")))
 				{
 					if (eventType == XmlPullParser.START_TAG && xpp.getName().equals("Stop"))
-					{						
+					{
 						saveStop(xpp, journey);
 						countOfStops++;
-					}
-					else if (eventType == XmlPullParser.START_TAG && xpp.getName().equals("JourneyName"))
-					{						
+					} else if (eventType == XmlPullParser.START_TAG && xpp.getName().equals("JourneyName"))
+					{
 						saveJourneyName(xpp, journey);
-					}
-					else if (eventType == XmlPullParser.START_TAG && xpp.getName().equals("JourneyType"))
-					{						
+					} else if (eventType == XmlPullParser.START_TAG && xpp.getName().equals("JourneyType"))
+					{
 						saveJourneyType(xpp, journey);
-					}
-					else if (eventType == XmlPullParser.START_TAG && xpp.getName().equals("Note"))
-					{						
+					} else if (eventType == XmlPullParser.START_TAG && xpp.getName().equals("Note"))
+					{
 						saveNote(xpp, journey);
 					}
-					eventType = xpp.next();				
-				}	
+					eventType = xpp.next();
+				}
 				journey.countOfStops = countOfStops;
 				updateJourneyDetail(journey);
 			}
-			eventType = xpp.next();		
+			eventType = xpp.next();
 		}
 	}
-	
+
 	private void saveStop(XmlPullParser xpp, JourneyDetail jouney)
 	{
-		String depTime =  xpp.getAttributeValue(null, "depTime");
-		String arrTime =  xpp.getAttributeValue(null, "arrTime");
-		String name =  xpp.getAttributeValue(null, "name");
-		
+		String depTime = xpp.getAttributeValue(null, "depTime");
+		String arrTime = xpp.getAttributeValue(null, "arrTime");
+		String name = xpp.getAttributeValue(null, "name");
+
 		boolean isValid = !TextUtils.isEmpty(depTime) || !TextUtils.isEmpty(arrTime);
-		if(isValid)
-		{			
-			ContentProviderOperation.Builder b = ContentProviderOperation.newInsert(JourneyDetailStopMetaData.TableMetaData.CONTENT_URI);	
-			
-			if(!mFoundOriginName)
+		if (isValid)
+		{
+			ContentProviderOperation.Builder b = ContentProviderOperation.newInsert(JourneyDetailStopMetaData.TableMetaData.CONTENT_URI);
+
+			if (!mFoundOriginName)
 			{
 				mFoundOriginName = name.equals(mOriginName);
 			}
 
-			if(mFoundOriginName && !mFoundDestName)
+			if (mFoundOriginName && !mFoundDestName)
 			{
 				mFoundDestName = name.equals(mDestName);
-				if(mFoundDestName)
+				if (mFoundDestName)
 				{
 					b.withValue(JourneyDetailStopMetaData.TableMetaData.IS_PART_OF_USER_ROUTE, 1);
 				}
 			}
-			
-			if((mFoundOriginName && !mFoundDestName))
-			{		
+
+			if ((mFoundOriginName && !mFoundDestName))
+			{
 				b.withValue(JourneyDetailStopMetaData.TableMetaData.IS_PART_OF_USER_ROUTE, 1);
 			}
-			String x =  xpp.getAttributeValue(null, "x");		
-			String y =  xpp.getAttributeValue(null, "y");		
-			String routeIdx =  xpp.getAttributeValue(null, "routeIdx");		
-			String arrDate =  xpp.getAttributeValue(null, "arrDate");	
-			String depDate =  xpp.getAttributeValue(null, "depDate");	
-			String track =  xpp.getAttributeValue(null, "track");
-			
-			
+			String x = xpp.getAttributeValue(null, "x");
+			String y = xpp.getAttributeValue(null, "y");
+			String routeIdx = xpp.getAttributeValue(null, "routeIdx");
+			String arrDate = xpp.getAttributeValue(null, "arrDate");
+			String depDate = xpp.getAttributeValue(null, "depDate");
+			String track = xpp.getAttributeValue(null, "track");
+
+			double lat = (double) (Integer.parseInt(y) / 1000000d);
+			double lng = (double) (Integer.parseInt(x) / 1000000d);
+			StringBuilder url = new StringBuilder();
+			url.append("http://maps.googleapis.com/maps/api/streetview?size=600x300&heading=151.78&pitch=-0.76&sensor=false&location=").append(lat).append(",").append(lng);
+			mUrls.add(url.toString());
+
 			b.withValue(JourneyDetailStopMetaData.TableMetaData.LONGITUDE, x);
 			b.withValue(JourneyDetailStopMetaData.TableMetaData.LATITUDE, y);
 			b.withValue(JourneyDetailStopMetaData.TableMetaData.DEP_DATE, depDate);
@@ -247,36 +279,35 @@ public class JourneyDetailFetcher extends BaseFetcher
 			b.withValue(JourneyDetailStopMetaData.TableMetaData.ARR_TIME, arrTime);
 			mDbOperations.add(b.build());
 		}
-		
-		
+
 	}
-	
+
 	private void saveNote(XmlPullParser xpp, JourneyDetail jouney)
 	{
-		ContentProviderOperation.Builder b = ContentProviderOperation.newInsert(JourneyDetailNoteMetaData.TableMetaData.CONTENT_URI);	
+		ContentProviderOperation.Builder b = ContentProviderOperation.newInsert(JourneyDetailNoteMetaData.TableMetaData.CONTENT_URI);
 		int attrCount = xpp.getAttributeCount();
-		for(int i = 0; i < attrCount; i++)
+		for (int i = 0; i < attrCount; i++)
 		{
 			b.withValue(xpp.getAttributeName(i), xpp.getAttributeValue(i));
 		}
 		b.withValue(JourneyDetailNoteMetaData.TableMetaData.JOURNEY_DETAIL_ID, jouney.id);
 		mDbOperations.add(b.build());
 	}
-	
+
 	private void saveJourneyName(XmlPullParser xpp, JourneyDetail jouney)
 	{
 		jouney.name = xpp.getAttributeValue(null, "name");
 		jouney.nameRouteIdxFrom = xpp.getAttributeValue(null, "routeIdxFrom");
-		jouney.nameRouteIdxTo = xpp.getAttributeValue(null, "routeIdxTo");		
+		jouney.nameRouteIdxTo = xpp.getAttributeValue(null, "routeIdxTo");
 	}
-	
+
 	private void saveJourneyType(XmlPullParser xpp, JourneyDetail jouney)
 	{
 		jouney.type = xpp.getAttributeValue(null, "type");
 		jouney.nameRouteIdxFrom = xpp.getAttributeValue(null, "routeIdxFrom");
-		jouney.nameRouteIdxTo = xpp.getAttributeValue(null, "routeIdxTo");		
+		jouney.nameRouteIdxTo = xpp.getAttributeValue(null, "routeIdxTo");
 	}
-	
+
 	private JourneyDetail createNewJourneyDetail()
 	{
 		ContentValues values = new ContentValues();
@@ -287,7 +318,7 @@ public class JourneyDetailFetcher extends BaseFetcher
 		mIds.add(t.id);
 		return t;
 	}
-	
+
 	private void updateJourneyDetail(JourneyDetail t)
 	{
 		Uri uri = Uri.withAppendedPath(JourneyDetailMetaData.TableMetaData.CONTENT_URI, t.id);
@@ -304,10 +335,11 @@ public class JourneyDetailFetcher extends BaseFetcher
 		b.withValue(JourneyDetailMetaData.TableMetaData.COUNT_OF_STOPS, t.countOfStops);
 		mDbOperations.add(b.build());
 	}
+
 	@Override
 	protected void onFatalError()
 	{
-		for(String id : mIds) // optimeres hvis der kommer flere..
+		for (String id : mIds) // optimeres hvis der kommer flere..
 		{
 			Uri uri = Uri.withAppendedPath(JourneyDetailMetaData.TableMetaData.CONTENT_URI, id);
 			mContentResolver.delete(uri, null, null);

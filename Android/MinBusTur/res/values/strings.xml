@@ -39,6 +39,7 @@
 	<string name="direction">Navigation</string>
 	<string name="fetch_departure_board">Hent afgangstavle</string>
 	<string name="transport_direction">Retning: <xliff:g ID="direction">%1$s</xliff:g></string>
+	<string name="add_picture">Tilføj billede</string>
 	
 	
 </resources>

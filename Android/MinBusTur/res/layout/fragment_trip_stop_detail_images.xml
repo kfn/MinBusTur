@@ -1,13 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
-<GridView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/gridView"
-    style="@style/PhotoGridLayout"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    android:columnWidth="@dimen/image_thumbnail_size"
-    android:horizontalSpacing="@dimen/image_thumbnail_spacing"
-    android:numColumns="auto_fit"
-    android:stretchMode="columnWidth"
-    android:verticalSpacing="@dimen/image_thumbnail_spacing" >
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
 
-</GridView>
+    <Button
+        android:id="@+id/btnAddPicture"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:text="@string/add_picture" />
+
+    <GridView
+        android:id="@+id/gridView"
+        style="@style/PhotoGridLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/btnAddPicture"
+        android:layout_marginTop="2dp"
+        android:columnWidth="@dimen/image_thumbnail_size"
+        android:horizontalSpacing="@dimen/image_thumbnail_spacing"
+        android:numColumns="auto_fit"
+        android:stretchMode="columnWidth"
+        android:verticalSpacing="@dimen/image_thumbnail_spacing" />
+
+</RelativeLayout>

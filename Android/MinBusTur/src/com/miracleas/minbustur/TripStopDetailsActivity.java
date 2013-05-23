@@ -3,17 +3,21 @@ package com.miracleas.minbustur;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.Button;
 
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.ActionBar.Tab;
-import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
+import com.miracleas.camera.PhotoIntentActivity;
 import com.miracleas.imagedownloader.IImageDownloader;
 import com.miracleas.imagedownloader.ImageDownloaderActivity;
 import com.miracleas.imagedownloader.ImageFetcher;
@@ -21,7 +25,7 @@ import com.miracleas.minbustur.model.NearbyLocationRequest;
 import com.miracleas.minbustur.provider.JourneyDetailMetaData;
 import com.miracleas.minbustur.provider.JourneyDetailStopMetaData;
 
-public class TripStopDetailsActivity extends SherlockFragmentActivity implements com.actionbarsherlock.app.ActionBar.TabListener, ImageDownloaderActivity
+public class TripStopDetailsActivity extends PhotoIntentActivity implements com.actionbarsherlock.app.ActionBar.TabListener, ImageDownloaderActivity
 {
 
 	/**
@@ -46,7 +50,7 @@ public class TripStopDetailsActivity extends SherlockFragmentActivity implements
 	private String mTransportType;
 
 	@Override
-	protected void onCreate(Bundle savedInstanceState)
+	public void onCreate(Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_toilet_details);
@@ -301,4 +305,7 @@ public class TripStopDetailsActivity extends SherlockFragmentActivity implements
 			startActivity(intent);
 		}
 	}
+	
+
+
 }
