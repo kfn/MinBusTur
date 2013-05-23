@@ -100,8 +100,7 @@ public class TripFetcher extends BaseFetcher
 				InputStream input = urlConnection.getInputStream();
 				parse(input);
 				if (!mDbOperations.isEmpty())
-				{
-					
+				{					
 					saveData(TripLegMetaData.AUTHORITY);
 				}
 			} else if (repsonseCode == 404)

@@ -1,0 +1,47 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_margin="8dp" >
+
+    <TextView
+        android:id="@+id/textViewTime"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:text="@string/departure"
+        android:textSize="19sp" />
+
+    <TextView
+        android:id="@+id/textViewDate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/textViewTime"
+        android:layout_marginBottom="2dp"
+        android:layout_marginLeft="6dp"
+        android:layout_toRightOf="@+id/textViewTime"
+        android:gravity="center_vertical"
+        android:text="@string/departure"
+        android:textSize="14sp" />
+
+    <TextView
+        android:id="@+id/textViewName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/textViewTime"
+        android:layout_marginTop="4dp"
+        android:gravity="center_vertical"
+        android:textSize="16sp" />
+
+
+    <TextView
+        android:id="@+id/textViewDirection"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/textViewName"        
+        android:layout_marginTop="4dp"       
+        android:gravity="center_vertical"
+        android:text="@string/arrival_within"
+        android:textSize="16sp" />
+
+</RelativeLayout>

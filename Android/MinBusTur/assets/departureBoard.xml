@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<DepartureBoard xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://xmlopen.rejseplanen.dk/xml/rest/hafasRestDepartureBoard.xsd">
+<Departure name="Bus 11" type="BUS" stop="Stavtrup Station (Århus)" time="09:27" date="23.05.13" direction="Harlev/Rødlundvej Syd (Århus)">
+<JourneyDetailRef ref="http://xmlopen.rejseplanen.dk/bin/rest.exe/journeyDetail?ref=402861%2F180437%2F983240%2F357335%2F86%3Fdate%3D23.05.13%26"/>
+</Departure>
+<Departure name="Bus 11" type="BUS" stop="Stavtrup Station (Århus)" time="09:49" date="23.05.13" direction="Søholm/Stavtrup (Århus)">
+<JourneyDetailRef ref="http://xmlopen.rejseplanen.dk/bin/rest.exe/journeyDetail?ref=742179%2F270217%2F217994%2F138397%2F86%3Fdate%3D23.05.13%26"/>
+</Departure>
+<Departure name="Bus 11" type="BUS" stop="Stavtrup Station (Århus)" time="09:57" date="23.05.13" direction="Harlev/Rødlundvej Syd (Århus)">
+<JourneyDetailRef ref="http://xmlopen.rejseplanen.dk/bin/rest.exe/journeyDetail?ref=419070%2F185840%2F506324%2F113475%2F86%3Fdate%3D23.05.13%26"/>
+</Departure>
+<Departure name="Bus 11" type="BUS" stop="Stavtrup Station (Århus)" time="10:19" date="23.05.13" direction="Søholm/Stavtrup (Århus)">
+<JourneyDetailRef ref="http://xmlopen.rejseplanen.dk/bin/rest.exe/journeyDetail?ref=93570%2F54014%2F15876%2F23254%2F86%3Fdate%3D23.05.13%26"/>
+</Departure>
+<Departure name="Bus 11" type="BUS" stop="Stavtrup Station (Århus)" time="10:27" date="23.05.13" direction="Harlev/Rødlundvej Syd (Århus)">
+<JourneyDetailRef ref="http://xmlopen.rejseplanen.dk/bin/rest.exe/journeyDetail?ref=511443%2F216631%2F886774%2F272910%2F86%3Fdate%3D23.05.13%26"/>
+</Departure>
+<Departure name="Bus 11" type="BUS" stop="Stavtrup Station (Århus)" time="10:49" date="23.05.13" direction="Søholm/Stavtrup (Århus)">
+<JourneyDetailRef ref="http://xmlopen.rejseplanen.dk/bin/rest.exe/journeyDetail?ref=190428%2F86300%2F933982%2F403518%2F86%3Fdate%3D23.05.13%26"/>
+</Departure>
+<Departure name="Bus 11" type="BUS" stop="Stavtrup Station (Århus)" time="10:57" date="23.05.13" direction="Harlev/Rødlundvej Syd (Århus)">
+<JourneyDetailRef ref="http://xmlopen.rejseplanen.dk/bin/rest.exe/journeyDetail?ref=876375%2F338275%2F384850%2F99705%2F86%3Fdate%3D23.05.13%26"/>
+</Departure>
+<Departure name="Bus 11" type="BUS" stop="Stavtrup Station (Århus)" time="11:19" date="23.05.13" direction="Søholm/Stavtrup (Århus)">
+<JourneyDetailRef ref="http://xmlopen.rejseplanen.dk/bin/rest.exe/journeyDetail?ref=973050%2F347174%2F437466%2F105621%2F86%3Fdate%3D23.05.13%26"/>
+</Departure>
+<Departure name="Bus 11" type="BUS" stop="Stavtrup Station (Århus)" time="11:27" date="23.05.13" direction="Harlev/Rødlundvej Syd (Århus)">
+<JourneyDetailRef ref="http://xmlopen.rejseplanen.dk/bin/rest.exe/journeyDetail?ref=867693%2F335381%2F543012%2F17731%2F86%3Fdate%3D23.05.13%26"/>
+</Departure>
+<Departure name="Bus 11" type="BUS" stop="Stavtrup Station (Århus)" time="11:49" date="23.05.13" direction="Søholm/Stavtrup (Århus)">
+<JourneyDetailRef ref="http://xmlopen.rejseplanen.dk/bin/rest.exe/journeyDetail?ref=567957%2F212143%2F667100%2F144236%2F86%3Fdate%3D23.05.13%26"/>
+</Departure>
+<Departure name="Bus 11" type="BUS" stop="Stavtrup Station (Århus)" time="11:57" date="23.05.13" direction="Harlev/Rødlundvej Syd (Århus)">
+<JourneyDetailRef ref="http://xmlopen.rejseplanen.dk/bin/rest.exe/journeyDetail?ref=420726%2F186392%2F632346%2F175938%2F86%3Fdate%3D23.05.13%26"/>
+</Departure>
+<Departure name="Bus 11" type="BUS" stop="Stavtrup Station (Århus)" time="12:19" date="23.05.13" direction="Søholm/Stavtrup (Århus)">
+<JourneyDetailRef ref="http://xmlopen.rejseplanen.dk/bin/rest.exe/journeyDetail?ref=740031%2F269501%2F45436%2F223965%2F86%3Fdate%3D23.05.13%26"/>
+</Departure>
+<Departure name="Bus 11" type="BUS" stop="Stavtrup Station (Århus)" time="12:27" date="23.05.13" direction="Harlev/Rødlundvej Syd (Århus)">
+<JourneyDetailRef ref="http://xmlopen.rejseplanen.dk/bin/rest.exe/journeyDetail?ref=837624%2F325358%2F380766%2F88833%2F86%3Fdate%3D23.05.13%26"/>
+</Departure>
+<Departure name="Bus 11" type="BUS" stop="Stavtrup Station (Århus)" time="12:49" date="23.05.13" direction="Søholm/Stavtrup (Århus)">
+<JourneyDetailRef ref="http://xmlopen.rejseplanen.dk/bin/rest.exe/journeyDetail?ref=735456%2F267976%2F258580%2F115869%2F86%3Fdate%3D23.05.13%26"/>
+</Departure>
+<Departure name="Bus 11" type="BUS" stop="Stavtrup Station (Århus)" time="12:57" date="23.05.13" direction="Harlev/Rødlundvej Syd (Århus)">
+<JourneyDetailRef ref="http://xmlopen.rejseplanen.dk/bin/rest.exe/journeyDetail?ref=156564%2F98338%2F657912%2F276777%2F86%3Fdate%3D23.05.13%26"/>
+</Departure>
+<Departure name="Bus 11" type="BUS" stop="Stavtrup Station (Århus)" time="13:19" date="23.05.13" direction="Søholm/Stavtrup (Århus)">
+<JourneyDetailRef ref="http://xmlopen.rejseplanen.dk/bin/rest.exe/journeyDetail?ref=591609%2F220027%2F738080%2F171845%2F86%3Fdate%3D23.05.13%26"/>
+</Departure>
+<Departure name="Bus 11" type="BUS" stop="Stavtrup Station (Århus)" time="13:27" date="23.05.13" direction="Harlev/Rødlundvej Syd (Århus)">
+<JourneyDetailRef ref="http://xmlopen.rejseplanen.dk/bin/rest.exe/journeyDetail?ref=497328%2F211926%2F918452%2F293460%2F86%3Fdate%3D23.05.13%26"/>
+</Departure>
+<Departure name="Bus 11" type="BUS" stop="Stavtrup Station (Århus)" time="13:49" date="23.05.13" direction="Søholm/Stavtrup (Århus)">
+<JourneyDetailRef ref="http://xmlopen.rejseplanen.dk/bin/rest.exe/journeyDetail?ref=428547%2F165673%2F612454%2F163387%2F86%3Fdate%3D23.05.13%26"/>
+</Departure>
+<Departure name="Bus 11" type="BUS" stop="Stavtrup Station (Århus)" time="13:57" date="23.05.13" direction="Harlev/Rødlundvej Syd (Århus)">
+<JourneyDetailRef ref="http://xmlopen.rejseplanen.dk/bin/rest.exe/journeyDetail?ref=172725%2F80387%2F377720%2F131285%2F86%3Fdate%3D23.05.13%26"/>
+</Departure>
+<Departure name="Bus 11" type="BUS" stop="Stavtrup Station (Århus)" time="14:19" date="23.05.13" direction="Søholm/Stavtrup (Århus)">
+<JourneyDetailRef ref="http://xmlopen.rejseplanen.dk/bin/rest.exe/journeyDetail?ref=477891%2F182121%2F124218%2F97198%2F86%3Fdate%3D23.05.13%26"/>
+</Departure>
+</DepartureBoard>

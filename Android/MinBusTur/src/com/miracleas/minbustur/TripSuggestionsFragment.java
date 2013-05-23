@@ -15,14 +15,17 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.actionbarsherlock.app.SherlockFragment;
 import com.actionbarsherlock.app.SherlockListFragment;
 import com.miracleas.minbustur.model.TripRequest;
 import com.miracleas.minbustur.provider.TripMetaData;
 import com.miracleas.minbustur.provider.TripMetaData.TableMetaData;
 
-public class TripSuggestionsFragment extends SherlockListFragment implements LoaderCallbacks<Cursor>, OnItemClickListener
+public class TripSuggestionsFragment extends SherlockFragment implements LoaderCallbacks<Cursor>, OnItemClickListener
 {
 	private static final String[] PROJECTION = { TripMetaData.TableMetaData._ID, 
 				TableMetaData.DURATION_LABEL,
@@ -40,7 +43,8 @@ public class TripSuggestionsFragment extends SherlockListFragment implements Loa
 				TableMetaData.ARRIVES_IN_TIME_LABEL};
 	private TripAdapter mTripAdapter = null;
 	
-	
+	private ListView mListView = null;
+	private View mLoadingView = null;
 	
 	public static TripSuggestionsFragment createInstance(TripRequest tripRequest)
 	{
@@ -62,11 +66,10 @@ public class TripSuggestionsFragment extends SherlockListFragment implements Loa
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
 	{
-		View listView = super.onCreateView(inflater, container, savedInstanceState);
-		View rootView = inflater.inflate(R.layout.fragment_trip_suggestions, container, false);
-		FrameLayout frame = (FrameLayout)rootView.findViewById(R.id.listContainer);
-		frame.addView(listView);
-		return rootView;
+		View v = inflater.inflate(R.layout.fragment_trip_suggestions, container, false);
+		mListView = (ListView)v.findViewById(android.R.id.list);
+		setEmptyView(LayoutInflater.from(getActivity()).inflate(R.layout.empty_list_view_waiting, null));
+		return v;
 		
 	}
 	@Override
@@ -74,9 +77,8 @@ public class TripSuggestionsFragment extends SherlockListFragment implements Loa
 	{
 		super.onViewCreated(view, savedInstanceState);		
 		mTripAdapter = new TripAdapter(getActivity(), null, 0);
-		setListAdapter(mTripAdapter);
-		setListShown(false);
-		getListView().setOnItemClickListener(this);		
+		mListView.setAdapter(mTripAdapter);
+		mListView.setOnItemClickListener(this);		
 		getLoaderManager().initLoader(LoaderConstants.LOAD_TRIP_SUGGESTIONS, null, this);
 	}
 
@@ -97,7 +99,6 @@ public class TripSuggestionsFragment extends SherlockListFragment implements Loa
 	@Override
 	public void onLoadFinished(Loader<Cursor> loader, Cursor newCursor)
 	{
-		setListShown(true);
 		mTripAdapter.swapCursor(newCursor);		
 	}
 
@@ -242,5 +243,23 @@ public class TripSuggestionsFragment extends SherlockListFragment implements Loa
 		}
 		
 	};
+	
+	/**
+	 * sets the ListView empty view.
+	 * 
+	 * @param emptyView
+	 */
+	private void setEmptyView(View emptyView)
+	{
+		if (mLoadingView != null)
+		{
+			((ViewGroup) mListView.getParent()).removeView(mLoadingView);
+		}
+		mLoadingView = emptyView;
+		RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT);
+		mLoadingView.setLayoutParams(params);
+		((ViewGroup) mListView.getParent()).addView(mLoadingView);
+		mListView.setEmptyView(mLoadingView);
+	}
 
 }

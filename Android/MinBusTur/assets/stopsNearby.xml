@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LocationList xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://xmlopen.rejseplanen.dk/xml/rest/hafasRestStopsNearby.xsd">
+<StopLocation name="Stavtrup Station (Århus)" x="10119067" y="56138605" id="751446100" distance="1"/>
+</LocationList>

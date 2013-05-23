@@ -17,6 +17,7 @@ import com.actionbarsherlock.view.MenuItem;
 import com.miracleas.imagedownloader.IImageDownloader;
 import com.miracleas.imagedownloader.ImageDownloaderActivity;
 import com.miracleas.imagedownloader.ImageFetcher;
+import com.miracleas.minbustur.model.NearbyLocationRequest;
 import com.miracleas.minbustur.provider.JourneyDetailMetaData;
 import com.miracleas.minbustur.provider.JourneyDetailStopMetaData;
 
@@ -40,8 +41,7 @@ public class TripStopDetailsActivity extends SherlockFragmentActivity implements
 	private IImageDownloader mImageLoader = null;
 
 	private static final String CACHE_DIR = "thumbs";
-	private String mLat;
-	private String mLng;
+	private NearbyLocationRequest mNearbyLocationRequest = null;
 
 	private String mTransportType;
 
@@ -64,6 +64,7 @@ public class TripStopDetailsActivity extends SherlockFragmentActivity implements
 		// Set up the ViewPager with the sections adapter.
 		mViewPager = (ViewPager) findViewById(R.id.pager);
 		mViewPager.setAdapter(mSectionsPagerAdapter);
+		mViewPager.setOffscreenPageLimit(3);
 
 		// When swiping between different sections, select the corresponding
 		// tab. We can also use ActionBar.Tab#select() to do this if we have
@@ -86,10 +87,12 @@ public class TripStopDetailsActivity extends SherlockFragmentActivity implements
 			// this tab is selected.
 			actionBar.addTab(actionBar.newTab().setText(mSectionsPagerAdapter.getPageTitle(i)).setTabListener(this));
 		}
-
-		mLat = getIntent().getStringExtra(JourneyDetailStopMetaData.TableMetaData.LATITUDE);
-		mLng = getIntent().getStringExtra(JourneyDetailStopMetaData.TableMetaData.LONGITUDE);
+		
+		String lat = getIntent().getStringExtra(JourneyDetailStopMetaData.TableMetaData.LATITUDE);
+		String lng = getIntent().getStringExtra(JourneyDetailStopMetaData.TableMetaData.LONGITUDE);
+		String id = getIntent().getStringExtra(JourneyDetailStopMetaData.TableMetaData._ID);
 		mTransportType = getIntent().getStringExtra(JourneyDetailMetaData.TableMetaData.TYPE);
+		mNearbyLocationRequest = new NearbyLocationRequest(id, lng, lat);
 	}
 
 	@Override
@@ -124,7 +127,7 @@ public class TripStopDetailsActivity extends SherlockFragmentActivity implements
 			break;
 		case R.id.menu_streetview:
 			handled = true;
-			showStreetView(mLat, mLng);
+			showStreetView(mNearbyLocationRequest.getLat()+"", mNearbyLocationRequest.getLng()+"");
 			break;
 
 		default:
@@ -189,11 +192,15 @@ public class TripStopDetailsActivity extends SherlockFragmentActivity implements
 			{
 				
 				String id = getIntent().getStringExtra(JourneyDetailStopMetaData.TableMetaData._ID);
-				fragment = TripStopDetailsFragment.createInstance(id, mLat, mLng, mTransportType);
+				fragment = TripStopDetailsFragment.createInstance(id, mNearbyLocationRequest.coordY, mNearbyLocationRequest.coordX, mTransportType);
 			}
 			else if (position == 1)
 			{
 				fragment = TripStopDetailsImagesFragment.createInstance(getIntent().getStringExtra(JourneyDetailStopMetaData.TableMetaData._ID));
+			}
+			else if (position == 2)
+			{
+				fragment = TripStopDetailsDepartureBoardFragment.createInstance(getIntent().getStringExtra(JourneyDetailStopMetaData.TableMetaData._ID), mNearbyLocationRequest.coordY, mNearbyLocationRequest.coordX);
 			} 
 			return fragment;
 		}
@@ -201,7 +208,7 @@ public class TripStopDetailsActivity extends SherlockFragmentActivity implements
 		@Override
 		public int getCount()
 		{
-			return 2;
+			return 3;
 		}
 
 		@Override
@@ -213,7 +220,11 @@ public class TripStopDetailsActivity extends SherlockFragmentActivity implements
 				return getString(R.string.title_section1).toUpperCase();
 			case 1:
 				return getString(R.string.title_section2).toUpperCase();
+			case 2:
+				return getString(R.string.title_section3).toUpperCase();
 			}
+		
+		
 			return null;
 		}
 	}
@@ -282,9 +293,9 @@ public class TripStopDetailsActivity extends SherlockFragmentActivity implements
 
 	public void navigateToDirectionMap()
 	{
-		if (mLat != null && mLng != null)
+		if (mNearbyLocationRequest.getLat()!=0d && mNearbyLocationRequest.getLng()!=0d)
 		{
-			String uriString = "http://maps.google.com/maps?daddr=" + mLat + "," + mLng + "&view=map";
+			String uriString = "http://maps.google.com/maps?daddr=" + mNearbyLocationRequest.getLat() + "," + mNearbyLocationRequest.getLng() + "&view=map";
 			Uri uri = Uri.parse(uriString);
 			Intent intent = new Intent(Intent.ACTION_VIEW, uri);
 			startActivity(intent);

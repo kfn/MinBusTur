@@ -268,7 +268,7 @@ public class TripLegDetailsFragment extends SherlockListFragment implements Load
 			Cursor c = getCursor();
 			if(c.moveToPosition(position))
 			{
-				lng = c.getString(iLat);
+				lng = c.getString(iLng);
 			}
 			return lng;
 		}
@@ -277,7 +277,7 @@ public class TripLegDetailsFragment extends SherlockListFragment implements Load
 	public void onItemClick(AdapterView<?> parent, View view, int position, long id)
 	{
 		String lat = mTripAdapter.getLat(position);
-		String lng = mTripAdapter.getLat(position);
+		String lng = mTripAdapter.getLng(position);
 		String transportType = getArguments().getString(TripLegMetaData.TableMetaData.TYPE);
 		mCallbacks.onStopSelected(id+"", lat, lng, transportType);		
 	}

@@ -35,8 +35,8 @@ public class JourneyDetailStopMetaData
 				+ TableMetaData.RT_ARR_TIME + " TEXT,"
 				+ TableMetaData.RT_DEP_DATE + " TEXT,"
 				+ TableMetaData.RT_ARR_DATE + " TEXT,"
-				+ TableMetaData.IS_PART_OF_USER_ROUTE + " INTEGER"
-			
+				+ TableMetaData.IS_PART_OF_USER_ROUTE + " INTEGER,"
+				+ TableMetaData.SEARCH_ID + " TEXT"
 				;
 	}
 
@@ -71,7 +71,7 @@ public class JourneyDetailStopMetaData
 		public static final String RT_ARR_TIME = "rtArrTime";
 		public static final String RT_ARR_DATE = "rtArrDate";
 		public static final String IS_PART_OF_USER_ROUTE = "partOfUserRoute";
-		
+		public static final String SEARCH_ID = "searchId";
 
 
 	}
