@@ -156,14 +156,14 @@ public class TripStopDetailsDepartureBoardFragment extends SherlockFragment impl
 			TextView textViewTime = (TextView)v.findViewById(R.id.textViewTime);
 			TextView textViewDate = (TextView)v.findViewById(R.id.textViewDate);
 			TextView textViewName = (TextView)v.findViewById(R.id.textViewName);
-			
-			TextView textViewDirection = (TextView)v.findViewById(R.id.textViewDirection);
-			
+			TextView textViewTransportName = (TextView)v.findViewById(R.id.textViewTransportName);			
+			TextView textViewDirection = (TextView)v.findViewById(R.id.textViewDirection);			
 			String time = cursor.getString(iTime);
 			String date = cursor.getString(iDate);
 			textViewTime.setText(time);
 			textViewDate.setText(date);
 			textViewName.setText(cursor.getString(iStop));
+			textViewTransportName.setText(cursor.getString(iName));
 			textViewDirection.setText(String.format(getString(R.string.transport_direction), cursor.getString(iDirection)));
 		}
 
