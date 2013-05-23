@@ -26,7 +26,7 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-import com.miracleas.minbustur.R;
+import com.miracleas.minrute.R;
 
 import android.app.Activity;
 import android.content.Context;
@@ -411,7 +411,12 @@ public class ImageFetcher extends ImageResizer
 		{
 			final URL url = new URL(urlString);
 			urlConnection = (HttpURLConnection) url.openConnection();
-			urlConnection.setConnectTimeout(15000);
+			urlConnection.setConnectTimeout(5000);
+			if(mAuthToken!=null)
+			{
+				urlConnection.setRequestProperty("Authorization", "OAuth " + mAuthToken);
+			}
+			
 			in = new BufferedInputStream(urlConnection.getInputStream(), IO_BUFFER_SIZE);
 			out = new BufferedOutputStream(outputStream, IO_BUFFER_SIZE);
 

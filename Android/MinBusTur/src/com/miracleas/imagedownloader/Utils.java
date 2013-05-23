@@ -20,7 +20,7 @@ import android.annotation.TargetApi;
 import android.os.Build;
 import android.os.StrictMode;
 
-import com.miracleas.minbustur.FindTripSuggestionsActivity;
+import com.miracleas.minrute.FindTripSuggestionsActivity;
 
 /**
  * Class containing some static utility methods.

@@ -35,6 +35,7 @@ public class ImageResizer extends ImageWorker
 	private static final String TAG = Utils.tag;
 	protected int mImageWidth;
 	protected int mImageHeight;
+	protected String mAuthToken;
 
 	private Context mContext = null;
 
@@ -276,5 +277,11 @@ public class ImageResizer extends ImageWorker
 	public void cancelMyWork(ImageView imageView)
 	{
 		ImageWorker.cancelWork(imageView);
+	}
+
+	@Override
+	public void setAuthToken(String authToken)
+	{
+		mAuthToken = authToken;		
 	}
 }

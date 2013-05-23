@@ -1,6 +1,6 @@
 <fragment xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/fragmentCreateRoute"
-    android:name="com.miracleas.minbustur.FindTripSuggestionsFragment"
+    android:name="com.miracleas.minrute.FindTripSuggestionsFragment"
     android:layout_width="match_parent"
     android:layout_height="match_parent" />
