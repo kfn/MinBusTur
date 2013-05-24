@@ -20,6 +20,7 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.RemoteException;
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.miracleas.minrute.model.JourneyDetail;
 import com.miracleas.minrute.provider.JourneyDetailMetaData;
@@ -36,6 +37,7 @@ public class JourneyDetailFetcher extends BaseFetcher
 	private String mTripId;
 	private String mLegId;
 	private static final String[] PROJECTION = { JourneyDetailMetaData.TableMetaData._ID };
+	private static final String[] PROJECTION_IMG = { JourneyDetailStopImagesMetaData.TableMetaData._ID };
 	private final String mOriginName;
 	private final String mDestName;
 	private boolean mFoundOriginName = false;
@@ -122,14 +124,23 @@ public class JourneyDetailFetcher extends BaseFetcher
 							String id = results[i].uri.getLastPathSegment();
 							if (!TextUtils.isEmpty(id))
 							{
+								Log.d(tag, "get img in index: "+imgCount);
 								MyImage img = mUrls.get(imgCount);
 								
-								ContentProviderOperation.Builder b = ContentProviderOperation.newInsert(JourneyDetailStopImagesMetaData.TableMetaData.CONTENT_URI);
-								b.withValue(JourneyDetailStopImagesMetaData.TableMetaData.URL, img.url);
-								b.withValue(JourneyDetailStopImagesMetaData.TableMetaData.JOURNEY_DETAIL_STOP_ID, results[i].uri.getLastPathSegment());
-								b.withValue(JourneyDetailStopImagesMetaData.TableMetaData.LAT, img.lat);
-								b.withValue(JourneyDetailStopImagesMetaData.TableMetaData.LNG, img.lng);
-								mDbOperations.add(b.build());
+								ContentValues values = new ContentValues();
+								values.put(JourneyDetailStopImagesMetaData.TableMetaData.URL, img.url);								
+								values.put(JourneyDetailStopImagesMetaData.TableMetaData.LAT, img.lat);
+								values.put(JourneyDetailStopImagesMetaData.TableMetaData.LNG, img.lng);
+								
+								String selection = JourneyDetailStopImagesMetaData.TableMetaData.URL + "=?";
+								String[] selectionArgs = {img.url};
+								int updates = mContentResolver.update(JourneyDetailStopImagesMetaData.TableMetaData.CONTENT_URI, values, selection, selectionArgs);
+								if(updates==0)
+								{
+									ContentProviderOperation.Builder b = ContentProviderOperation.newInsert(JourneyDetailStopImagesMetaData.TableMetaData.CONTENT_URI);
+									b.withValues(values);
+									mDbOperations.add(b.build());
+								}
 							}
 							imgCount++;
 						}
@@ -141,7 +152,7 @@ public class JourneyDetailFetcher extends BaseFetcher
 					saveData(JourneyDetailStopImagesMetaData.AUTHORITY);
 				}
 
-				// com.miracleas.minbustur.utils.Utils.copyDbToSdCard(com.miracleas.minbustur.provider.MinBusTurProvider.DATABASE_NAME);
+				exportDatabase();
 			} catch (RemoteException e)
 			{
 				// TODO Auto-generated catch block

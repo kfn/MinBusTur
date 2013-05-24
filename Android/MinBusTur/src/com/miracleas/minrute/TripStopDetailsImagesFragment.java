@@ -10,6 +10,7 @@ import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v4.widget.CursorAdapter;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,16 +24,12 @@ import android.widget.GridView;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 
-import com.actionbarsherlock.app.SherlockFragment;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
 import com.miracleas.camera.PhotoGoogleDriveActivity;
-import com.miracleas.camera.PhotoIntentActivity;
 import com.miracleas.imagedownloader.IImageDownloader;
-import com.miracleas.imagedownloader.ImageDownloaderActivity;
 import com.miracleas.imagedownloader.Utils;
-
 import com.miracleas.minrute.provider.JourneyDetailStopImagesMetaData;
 import com.miracleas.minrute.provider.JourneyDetailStopMetaData;
 
@@ -41,7 +38,7 @@ import com.miracleas.minrute.provider.JourneyDetailStopMetaData;
  * either contained in a {@link PrisniveauActivity} in two-pane mode (on
  * tablets) or a {@link ToiletDetailActivity} on handsets.
  */
-public class TripStopDetailsImagesFragment extends SherlockFragment implements LoaderCallbacks<Cursor>, AdapterView.OnItemClickListener
+public class TripStopDetailsImagesFragment extends LocaleImageHandlerFragment implements LoaderCallbacks<Cursor>, AdapterView.OnItemClickListener
 {
 	public static final String tag = TripStopDetailsImagesFragment.class.getName();
 	private ImageButton btnClose = null;
@@ -54,13 +51,16 @@ public class TripStopDetailsImagesFragment extends SherlockFragment implements L
     private ImageAdapter mAdapter;
     private IImageDownloader mImageDownloaderActivity = null;
     private Button mBtnTakePicture;
+    private int mItemHeight = 0;
+    
     
 	/**
 	 * The columns needed by the cursor adapter
 	 */
 	protected static final String[] PROJECTION = new String[] { 
 		JourneyDetailStopImagesMetaData.TableMetaData._ID,
-		JourneyDetailStopImagesMetaData.TableMetaData.URL
+		JourneyDetailStopImagesMetaData.TableMetaData.URL,
+		JourneyDetailStopImagesMetaData.TableMetaData.FILE_LOCALE_PATH
 	};
 	
 	public static TripStopDetailsImagesFragment createInstance(String stopId, String lat, String lng)
@@ -100,7 +100,7 @@ public class TripStopDetailsImagesFragment extends SherlockFragment implements L
 		setHasOptionsMenu(false);
 		mImageThumbSize = getResources().getDimensionPixelSize(R.dimen.image_thumbnail_size);
         mImageThumbSpacing = getResources().getDimensionPixelSize(R.dimen.image_thumbnail_spacing);
-	
+       
 		getSherlockActivity().getSupportLoaderManager().initLoader(LoaderConstants.LOADER_TRIP_STOP_IMAGES, getArguments(), this);
 	}
 
@@ -228,6 +228,8 @@ public class TripStopDetailsImagesFragment extends SherlockFragment implements L
 		final Intent i = new Intent(getActivity(), TripStopDetailsImageActivity.class);
 		i.putExtra(TripStopDetailsImageActivity.EXTRA_IMAGE, (int) id);
 		Bundle args = getArguments();
+		i.putExtra(JourneyDetailStopMetaData.TableMetaData.LATITUDE, args.getString(JourneyDetailStopMetaData.TableMetaData.LATITUDE));
+		i.putExtra(JourneyDetailStopMetaData.TableMetaData.LONGITUDE, args.getString(JourneyDetailStopMetaData.TableMetaData.LONGITUDE));
 		i.putExtra(JourneyDetailStopMetaData.TableMetaData._ID, args.getString(JourneyDetailStopMetaData.TableMetaData._ID));
 		
 		if (Utils.hasJellyBean())
@@ -252,35 +254,47 @@ public class TripStopDetailsImagesFragment extends SherlockFragment implements L
 	 */
 	private class ImageAdapter extends CursorAdapter
 	{
-
+		
 		private final Context mContext;
-		private int mItemHeight = 0;
+		
 		private int mNumColumns = 0;
 		private int mActionBarHeight = 0;
 		private GridView.LayoutParams mImageViewLayoutParams;
-		private LayoutInflater mInf = null;
 		private int iUrl;
-		
+		private int iId = -1;
+		private int iLocalePath = -1;
 
 		public ImageAdapter(Context context, Cursor data)
 		{
 			super(context, data, 0);
 			mContext = context;
-			mImageViewLayoutParams = new GridView.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
-			mInf = LayoutInflater.from(context);
+			mImageViewLayoutParams = new GridView.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);	
 		}
 
 		@Override
 		public void bindView(View v, Context context, Cursor cursor)
 		{
-			mImageDownloaderActivity.download(cursor.getString(iUrl), ((ImageView)v));	
+			String url = cursor.getString(iUrl);
+			if(TextUtils.isEmpty(url))
+			{
+				long imgId = cursor.getLong(iId);
+				String pathToFile = cursor.getString(iLocalePath);
+				loadLocaleImage(imgId, pathToFile, (ImageView) v);
+			}
+			else
+			{
+				mImageDownloaderActivity.download(cursor.getString(iUrl), ((ImageView)v));	
+			}
+			
 		}
-		
+
 		public Cursor swapCursor(Cursor newCursor)
 		{
 			if(newCursor!=null)
 			{
 				iUrl = newCursor.getColumnIndex(JourneyDetailStopImagesMetaData.TableMetaData.URL);
+				iId = newCursor.getColumnIndex(JourneyDetailStopImagesMetaData.TableMetaData._ID);
+				iLocalePath = newCursor.getColumnIndex(JourneyDetailStopImagesMetaData.TableMetaData.FILE_LOCALE_PATH);
 			}
 			return super.swapCursor(newCursor);
 		}
@@ -339,6 +353,18 @@ public class TripStopDetailsImagesFragment extends SherlockFragment implements L
 		default:
 			return super.onOptionsItemSelected(item);
 		}
+	}
+
+	@Override
+	protected int getImageHeight()
+	{
+		return mItemHeight;
+	}
+
+	@Override
+	protected int getImageWidth()
+	{
+		return mItemHeight;
 	}
 	
 	

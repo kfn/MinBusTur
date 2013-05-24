@@ -8,7 +8,9 @@
 	<dimen name="note_marginTop">8dp</dimen>
 	<dimen name="note_marginBottom">8dp</dimen>
 	
-	 <dimen name="image_height">73dp</dimen>
+	<dimen name="image_height_full">356dp</dimen>
+    <dimen name="image_width_full">300dp</dimen>
+	<dimen name="image_height">73dp</dimen>
     <dimen name="image_width">110dp</dimen>
     <dimen name="image_thumbnail_size">100dp</dimen>
     <dimen name="image_thumbnail_spacing">1dp</dimen>

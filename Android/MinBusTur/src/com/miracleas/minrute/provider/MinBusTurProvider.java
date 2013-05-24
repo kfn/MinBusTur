@@ -478,6 +478,9 @@ public class MinBusTurProvider extends ContentProvider
 			String rowId6 = uri.getPathSegments().get(1);
 			count = db.update(GeofenceMetaData.TABLE_NAME, values, GeofenceMetaData.TableMetaData._ID + "=" + rowId6 + (!TextUtils.isEmpty(where) ? " AND (" + where + ')' : ""), whereArgs);
 			break;
+		case INCOMING_STOP_IMAGE_COLLECTION_URI_INDICATOR:
+			count = db.update(JourneyDetailStopImagesMetaData.TABLE_NAME, values, where, whereArgs);
+			break;
 		default:
 			throw new IllegalArgumentException("Unknown URI " + uri);
 		}

@@ -280,7 +280,7 @@ public class ImageResizer extends ImageWorker
 	}
 
 	@Override
-	public void setAuthToken(String authToken)
+	public void setAuthTokenHeader(String authToken)
 	{
 		mAuthToken = authToken;		
 	}

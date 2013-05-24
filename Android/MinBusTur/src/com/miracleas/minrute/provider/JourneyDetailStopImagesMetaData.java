@@ -19,19 +19,20 @@ public class JourneyDetailStopImagesMetaData
 	public static String getTableSchema()
 	{
 		return TableMetaData._ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
-				+ TableMetaData.JOURNEY_DETAIL_STOP_ID + " INTEGER," 
 				+ TableMetaData.URL + " TEXT," 
 				+ TableMetaData.LAT + " TEXT,"
 				+ TableMetaData.LNG + " TEXT,"
-				+ TableMetaData.FILE_ID + " TEXT"
+				+ TableMetaData.FILE_ID + " TEXT,"
+				+ TableMetaData.UPLOADED + " INTEGER,"
+				+ TableMetaData.FILE_LOCALE_PATH + " TEXT,"
+				+ TableMetaData.FILE_TITLE + " TEXT,"
+				+ TableMetaData.FILE_MIME_TYPE + " TEXT"
 				;
 	}
 
 	// inner class describing columns and their types
 	public static final class TableMetaData implements BaseColumns
-	{
-		
-		
+	{		
 		private TableMetaData()
 		{
 		}
@@ -41,11 +42,15 @@ public class JourneyDetailStopImagesMetaData
 		public static final String CONTENT_TYPE = "vnd.android.cursor.dir/vnd." + PACKAGE_NAME + ITEM_TYPE;
 		public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd." + PACKAGE_NAME + ITEM_TYPE;
 
-		public static final String JOURNEY_DETAIL_STOP_ID = "stop_id";
+		
 		public static final String URL = "img_url";
 		public static final String LAT = "lat";
 		public static final String LNG = "lng";
 		public static final String FILE_ID = "file_id";
+		public static final String UPLOADED = "uploaded";
+		public static final String FILE_MIME_TYPE = "mime_type";
+		public static final String FILE_TITLE = "file_title";
+		public static final String FILE_LOCALE_PATH = "file_locale_path";
 	
 	}
 }

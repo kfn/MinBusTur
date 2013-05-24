@@ -18,6 +18,7 @@ package com.miracleas.minrute;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -28,16 +29,19 @@ import com.actionbarsherlock.app.SherlockFragment;
 import com.miracleas.imagedownloader.IImageDownloader;
 import com.miracleas.imagedownloader.ImageDownloaderActivity;
 import com.miracleas.imagedownloader.Utils;
+import com.miracleas.minrute.model.MyLittleImage;
 
 
 /**
  * This fragment will populate the children of the ViewPager from {@link TripStopDetailsImageActivity}.
  */
-public class TripStopDetailsImageFragment extends SherlockFragment {
+public class TripStopDetailsImageFragment extends LocaleImageHandlerFragment {
     private static final String IMAGE_DATA_EXTRA = "extra_image_data";
-    private String mImageUrl;
+    private MyLittleImage mImg;
     private ImageView mImageView;
     private IImageDownloader mImageDownloaderActivity;
+    private int mHeight = 0;
+    private int mWidth = 0;
 
     /**
      * Factory method to generate a new instance of the fragment given an image number.
@@ -45,13 +49,11 @@ public class TripStopDetailsImageFragment extends SherlockFragment {
      * @param imageUrl The image url to load
      * @return A new instance of ImageDetailFragment with imageNum extras
      */
-    public static TripStopDetailsImageFragment newInstance(String imageUrl) {
+    public static TripStopDetailsImageFragment newInstance(MyLittleImage img) {
         final TripStopDetailsImageFragment f = new TripStopDetailsImageFragment();
-
         final Bundle args = new Bundle();
-        args.putString(IMAGE_DATA_EXTRA, imageUrl);
+        args.putParcelable(IMAGE_DATA_EXTRA, img);
         f.setArguments(args);
-
         return f;
     }
 
@@ -73,7 +75,9 @@ public class TripStopDetailsImageFragment extends SherlockFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mImageUrl = getArguments() != null ? getArguments().getString(IMAGE_DATA_EXTRA) : null;
+        mImg = getArguments().getParcelable(IMAGE_DATA_EXTRA);
+        mHeight = getResources().getDimensionPixelOffset(R.dimen.image_height_full);
+        mWidth = getResources().getDimensionPixelOffset(R.dimen.image_width_full);
     }
 
     @Override
@@ -90,8 +94,13 @@ public class TripStopDetailsImageFragment extends SherlockFragment {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        if (mImageDownloaderActivity!=null) {
-        	mImageDownloaderActivity.download(mImageUrl, mImageView);
+        if(TextUtils.isEmpty(mImg.url) && !TextUtils.isEmpty(mImg.path))
+        {
+        	loadLocaleImage(mImg.id, mImg.path, mImageView);
+        }
+        else if (mImageDownloaderActivity!=null && !TextUtils.isEmpty(mImg.url)) 
+        {
+        	mImageDownloaderActivity.download(mImg.url, mImageView);
         }
         
         // Pass clicks on the ImageView to the parent activity to handle
@@ -109,4 +118,16 @@ public class TripStopDetailsImageFragment extends SherlockFragment {
             mImageView.setImageDrawable(null);
         }
     }
+
+	@Override
+	protected int getImageHeight()
+	{
+		return mHeight;
+	}
+
+	@Override
+	protected int getImageWidth()
+	{
+		return mWidth;
+	}
 }

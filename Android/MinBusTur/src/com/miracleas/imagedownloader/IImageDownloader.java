@@ -38,5 +38,6 @@ public interface IImageDownloader
 	 */
 	void setContext(Context c);
 	
-	void setAuthToken(String authToken);
+	void setAuthTokenHeader(String authToken);
+
 }

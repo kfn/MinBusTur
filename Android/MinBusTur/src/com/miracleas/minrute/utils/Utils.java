@@ -1,36 +1,36 @@
 package com.miracleas.minrute.utils;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.nio.channels.FileChannel;
 
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-
 import android.app.Activity;
+import android.content.Context;
+import android.content.Intent;
 import android.content.res.Configuration;
+import android.net.Uri;
 import android.os.Environment;
 import android.util.DisplayMetrics;
 import android.util.Log;
 
 public class Utils
 {
-	public static boolean copyDbToSdCard(String dbName)
+	public static File copyDbToSdCard(Context c, String dbName)
 	{
-		File dbFile = new File(Environment.getDataDirectory() + "/data/com.miracleas.minbustur/databases/" + dbName);
+		File dbFile = new File(Environment.getDataDirectory() + "/data/com.miracleas.minrute/databases/" + dbName);
 		File exportDir = new File(Environment.getExternalStorageDirectory(), "");
-		return Utils.moveFile(dbFile, exportDir);
+		File moved = Utils.moveFile(dbFile, exportDir);
+		refreshFile(c, Uri.fromFile(moved));
+		return moved;
 	}
 	
 
-	public static boolean moveFile(File source, File destination)
+	public static File moveFile(File source, File destination)
 	{
 		File dbFile = source;
 
@@ -45,13 +45,14 @@ public class Utils
 		{
 			file.createNewFile();
 			copyFile(dbFile, file);
-			return true;
+			
 		}
 		catch (Exception e)
 		{
 			Log.e("DBHelper", e.getMessage(), e);
-			return false;
+			
 		}
+		return file;
 	}
 
 	public static boolean copyFile(InputStream assetfile, File destination)
@@ -138,6 +139,13 @@ public class Utils
 		catch (Exception ex)
 		{
 		}
+	}
+	
+	public static void refreshFile(Context c, Uri uri)
+	{
+		Intent intent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
+		intent.setData(uri);
+		c.sendBroadcast(intent);
 	}
 
 	public static void getDisplayInfo(Activity a, String tag)

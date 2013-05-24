@@ -40,6 +40,7 @@ import com.miracleas.imagedownloader.ImageDownloaderActivity;
 import com.miracleas.imagedownloader.ImageFetcher;
 import com.miracleas.minrute.R;
 import com.miracleas.minrute.provider.JourneyDetailStopImagesMetaData;
+import com.miracleas.minrute.utils.MyPrefs;
 
 public class PhotoGoogleDriveActivity extends SherlockFragmentActivity implements IImageDownloader
 {
@@ -49,6 +50,7 @@ public class PhotoGoogleDriveActivity extends SherlockFragmentActivity implement
 	static final int REQUEST_ACCOUNT_PICKER = 1;
 	static final int REQUEST_AUTHORIZATION = 2;
 	static final int CAPTURE_IMAGE = 3;
+	static final String AUTH_TOKEN = "AUTH_TOKEN";
 	private String mLat = null;
 	private String mLng = null;
 	private IImageDownloader mImageLoader = null;
@@ -56,13 +58,14 @@ public class PhotoGoogleDriveActivity extends SherlockFragmentActivity implement
 	private static Uri fileUri;
 	private static Drive service;
 	protected GoogleAccountCredential credential;
+	private String mAuth = null;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);
-		
-		
+		String auth = getAuthToken();
+		setAuthTokenHeader(auth);
 	}
 
 	@Override
@@ -76,15 +79,18 @@ public class PhotoGoogleDriveActivity extends SherlockFragmentActivity implement
 				String accountName = data.getStringExtra(AccountManager.KEY_ACCOUNT_NAME);
 				if (accountName != null)
 				{
-					credential.setSelectedAccountName(accountName);					
+					credential.setSelectedAccountName(accountName);
 					service = getDriveService(credential);
-					
-					new Thread(){
+
+					new Thread()
+					{
 						public void run()
 						{
 							try
 							{
-								setAuthToken(credential.getToken());
+								String authToken = credential.getToken();
+								saveAuthToken(authToken);
+								setAuthTokenHeader(credential.getToken());
 							} catch (IOException e)
 							{
 								// TODO Auto-generated catch block
@@ -96,7 +102,7 @@ public class PhotoGoogleDriveActivity extends SherlockFragmentActivity implement
 							}
 						}
 					}.start();
-					
+
 					startCameraIntent();
 				}
 			}
@@ -104,7 +110,8 @@ public class PhotoGoogleDriveActivity extends SherlockFragmentActivity implement
 		case REQUEST_AUTHORIZATION:
 			if (resultCode == Activity.RESULT_OK)
 			{
-				saveFileToDrive();
+				//saveFileToDrive();
+				saveFileToDb();
 			} else
 			{
 				startActivityForResult(credential.newChooseAccountIntent(), REQUEST_ACCOUNT_PICKER);
@@ -113,30 +120,54 @@ public class PhotoGoogleDriveActivity extends SherlockFragmentActivity implement
 		case CAPTURE_IMAGE:
 			if (resultCode == Activity.RESULT_OK)
 			{
-				saveFileToDrive();
+				//saveFileToDrive();
+				saveFileToDb();
 			}
 		}
 	}
 
 	private void startCameraIntent()
 	{
-		
+
 		if (Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState()))
 		{
 			String mediaStorageDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).getPath();
 			String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(new Date());
-			fileUri = Uri.fromFile(new java.io.File(mediaStorageDir + java.io.File.separator + mLat+"-"+mLng+"-" + timeStamp + ".jpg"));
+			fileUri = Uri.fromFile(new java.io.File(mediaStorageDir + java.io.File.separator + mLat + "-" + mLng + "-" + timeStamp + ".jpg"));
 
 			Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
 			cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, fileUri);
 			startActivityForResult(cameraIntent, CAPTURE_IMAGE);
-		}
-		else
+		} else
 		{
 			Toast.makeText(this, getString(R.string.cache_unavailable), Toast.LENGTH_SHORT).show();
 		}
-		
-		
+
+	}
+
+	private void saveFileToDb()
+	{
+		Thread t = new Thread(new Runnable()
+		{
+			@Override
+			public void run()
+			{
+				// File's binary content
+				java.io.File fileContent = new java.io.File(fileUri.getPath());
+				if (fileUri != null)
+				{
+					ContentResolver cr = getContentResolver();
+					ContentValues values = new ContentValues();
+					values.put(JourneyDetailStopImagesMetaData.TableMetaData.LAT, mLat);
+					values.put(JourneyDetailStopImagesMetaData.TableMetaData.LNG, mLng);
+					values.put(JourneyDetailStopImagesMetaData.TableMetaData.FILE_LOCALE_PATH, fileUri.getPath());
+					values.put(JourneyDetailStopImagesMetaData.TableMetaData.FILE_MIME_TYPE, "image/jpeg");
+					values.put(JourneyDetailStopImagesMetaData.TableMetaData.FILE_TITLE, fileContent.getName());
+					cr.insert(JourneyDetailStopImagesMetaData.TableMetaData.CONTENT_URI, values);
+				}
+			}
+		});
+		t.start();
 	}
 
 	private void saveFileToDrive()
@@ -193,15 +224,15 @@ public class PhotoGoogleDriveActivity extends SherlockFragmentActivity implement
 			@Override
 			public void run()
 			{
-				Toast.makeText(getApplicationContext(), toast, Toast.LENGTH_SHORT).show();
+				Toast.makeText(PhotoGoogleDriveActivity.this, toast, Toast.LENGTH_SHORT).show();
 			}
 		});
 	}
-	
+
 	public void setBtnListenerOrDisable(Button btn, final String lat, final String lng)
 	{
 		if (isIntentAvailable(this, MediaStore.ACTION_IMAGE_CAPTURE))
-		{			
+		{
 			mLat = lat;
 			mLng = lng;
 			btn.setOnClickListener(new OnClickListener()
@@ -209,17 +240,16 @@ public class PhotoGoogleDriveActivity extends SherlockFragmentActivity implement
 				@Override
 				public void onClick(View v)
 				{
-					if(credential==null)
+					if (credential == null)
 					{
 						credential = GoogleAccountCredential.usingOAuth2(PhotoGoogleDriveActivity.this, DriveScopes.DRIVE);
 						startActivityForResult(credential.newChooseAccountIntent(), REQUEST_ACCOUNT_PICKER);
-					}
-					else
+					} else
 					{
 						startCameraIntent();
 					}
 				}
-			});		
+			});
 		} else
 		{
 			btn.setClickable(false);
@@ -256,6 +286,7 @@ public class PhotoGoogleDriveActivity extends SherlockFragmentActivity implement
 		outState.putParcelable(FILE_URI, fileUri);
 		outState.putString(LAT, mLat);
 		outState.putString(LNG, mLng);
+		outState.putString(AUTH_TOKEN, mAuth);
 		super.onSaveInstanceState(outState);
 	}
 
@@ -266,15 +297,21 @@ public class PhotoGoogleDriveActivity extends SherlockFragmentActivity implement
 		fileUri = savedInstanceState.getParcelable(FILE_URI);
 		mLat = savedInstanceState.getString(LAT);
 		mLng = savedInstanceState.getString(LNG);
+		mAuth = savedInstanceState.getString(AUTH_TOKEN);
 	}
 
 	public IImageDownloader getIImageDownloader()
 	{
 		if (mImageLoader == null)
 		{
-			mImageLoader = ImageFetcher.getInstance(this, getSupportFragmentManager(), CACHE_DIR);
+			mImageLoader = ImageFetcher.getInstance(this, getSupportFragmentManager(), getImgCacheDir());
 		}
 		return mImageLoader;
+	}
+
+	public String getImgCacheDir()
+	{
+		return CACHE_DIR;
 	}
 
 	@Override
@@ -302,31 +339,22 @@ public class PhotoGoogleDriveActivity extends SherlockFragmentActivity implement
 	@Override
 	public void closeCache()
 	{
-		if (mImageLoader != null)
-		{
-			mImageLoader.closeCache();
-		}
 
+		getIImageDownloader().closeCache();
 	}
 
 	@Override
 	public void flushCache()
 	{
-		if (mImageLoader != null)
-		{
-			mImageLoader.flushCache();
-		}
+
+		getIImageDownloader().flushCache();
 
 	}
 
 	@Override
 	public void setExitTasksEarly(boolean exitEarly)
 	{
-		if (mImageLoader != null)
-		{
-			mImageLoader.setExitTasksEarly(exitEarly);
-		}
-
+		getIImageDownloader().setExitTasksEarly(exitEarly);
 	}
 
 	@Override
@@ -340,14 +368,14 @@ public class PhotoGoogleDriveActivity extends SherlockFragmentActivity implement
 	public void setPauseWork(boolean pause)
 	{
 		getIImageDownloader().setPauseWork(pause);
-		
+
 	}
 
 	@Override
 	public void setLoadingImage(int resId)
 	{
 		getIImageDownloader().setLoadingImage(resId);
-		
+
 	}
 
 	@Override
@@ -360,36 +388,53 @@ public class PhotoGoogleDriveActivity extends SherlockFragmentActivity implement
 	public void setImageFadeIn(boolean fadeIn)
 	{
 		getIImageDownloader().setImageFadeIn(fadeIn);
-		
+
 	}
 
 	@Override
 	public void setImageSize(int size)
 	{
 		getIImageDownloader().setImageSize(size);
-		
+
 	}
 
 	@Override
 	public void cancelMyWork(ImageView imageView)
 	{
 		getIImageDownloader().cancelMyWork(imageView);
-		
+
 	}
 
 	@Override
 	public void setContext(Context c)
 	{
 		getIImageDownloader().setContext(c);
-		
+
 	}
 
 	@Override
-	public void setAuthToken(String authToken)
+	public void setAuthTokenHeader(String authToken)
 	{
-		getIImageDownloader().setAuthToken(authToken);
-		
+		mAuth = authToken;
+		if (authToken != null)
+		{
+			getIImageDownloader().setAuthTokenHeader(authToken);
+		}
+
 	}
 
+	public void saveAuthToken(String authToken)
+	{
+		mAuth = authToken;
+		MyPrefs.setString(this, MyPrefs.GOOGLE_DRIVE_AUTH, authToken);
+	}
 
+	public String getAuthToken()
+	{
+		if (mAuth == null)
+		{
+			mAuth = MyPrefs.getString(this, MyPrefs.GOOGLE_DRIVE_AUTH, null);
+		}
+		return mAuth;
+	}
 }

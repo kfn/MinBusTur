@@ -293,13 +293,13 @@ public abstract class BaseFetcher
 	}
 	
 	
-	private boolean isConnectedOnWifi()
+	protected void exportDatabase()
 	{
-		ConnectivityManager cm =
-		        (ConnectivityManager)mContext.getSystemService(Context.CONNECTIVITY_SERVICE);
-		 
-		NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
-		boolean isConnected = activeNetwork.isConnectedOrConnecting();
-		return (isConnected &&  activeNetwork.getType() == ConnectivityManager.TYPE_WIFI);	
+		if(log)
+		{
+			com.miracleas.minrute.utils.Utils.copyDbToSdCard(mContext, com.miracleas.minrute.provider.MinBusTurProvider.DATABASE_NAME);
+		}
+		
 	}
+	
 }
