@@ -7,6 +7,7 @@ import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.app.NavUtils;
 import android.support.v4.view.ViewPager;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -127,7 +128,9 @@ public class TripStopDetailsActivity extends PhotoGoogleDriveActivity implements
 			// http://developer.android.com/design/patterns/navigation.html#up-vs-back
 			//
 			// NavUtils.navigateUpFromSameTask(this);
-			finish();
+			//finish();
+			//NavUtils.navigateUpFromSameTask(this);
+			NavUtils.navigateUpTo(this, getIntent());
 			return true;
 		case R.id.menu_direction:
 			handled = true;

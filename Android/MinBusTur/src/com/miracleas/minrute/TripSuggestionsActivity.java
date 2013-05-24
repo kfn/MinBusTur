@@ -2,6 +2,7 @@ package com.miracleas.minrute;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.NavUtils;
 
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
@@ -55,7 +56,7 @@ public class TripSuggestionsActivity extends SherlockFragmentActivity implements
 			//
 			// http://developer.android.com/design/patterns/navigation.html#up-vs-back
 			//
-			finish();
+			NavUtils.navigateUpFromSameTask(this);
 			return true;
 		
 		default:

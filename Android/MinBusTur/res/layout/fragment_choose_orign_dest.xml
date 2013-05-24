@@ -58,7 +58,7 @@
 
         <TextView
             android:id="@+id/btnDate"
-            android:layout_width="0dp"
+            android:layout_width="0dp" 
             android:layout_height="wrap_content"
             android:layout_weight="0.8"
             android:background="@drawable/spinner_background_holo_light1"
@@ -81,7 +81,7 @@
         android:orientation="horizontal" >
 
         <RadioButton
-            android:id="@+id/radio_departue"
+            android:id="@+id/radio_departue" 
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:checked="true"

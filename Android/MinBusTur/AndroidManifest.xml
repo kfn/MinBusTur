@@ -46,22 +46,51 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name="com.miracleas.minrute.TripSuggestionsActivity"
-            android:label="@string/trip_suggestions" android:screenOrientation="portrait"/>
-        <activity android:name="com.miracleas.minrute.TripGuideActivity"
-            android:label="@string/trip_guide" android:screenOrientation="portrait"/>
+        <activity android:name="com.miracleas.minrute.TripSuggestionsActivity" android:parentActivityName="com.miracleas.minrute.ChooseOriginDestActivity"
+            android:label="@string/trip_suggestions" android:screenOrientation="portrait">
+            
+            <!-- Parent activity meta-data to support 4.0 and lower -->
+        <meta-data
+            android:name="android.support.PARENT_ACTIVITY"
+            android:value="com.miracleas.minrute.ChooseOriginDestActivity" />
+            
+            </activity>
         
-        <activity android:name="com.miracleas.minrute.TripLegDetailsActivity"
-            android:label="@string/trip_leg_details" android:screenOrientation="portrait"/>
         
-        <activity android:name="com.miracleas.minrute.TripLegMapActivity"
-            android:label="@string/trip_leg_details" android:screenOrientation="portrait"/>
+        <activity android:name="com.miracleas.minrute.TripGuideActivity" android:parentActivityName="com.miracleas.minrute.TripSuggestionsActivity"
+            android:label="@string/trip_guide" android:screenOrientation="portrait">
+         <meta-data
+            android:name="android.support.PARENT_ACTIVITY"
+            android:value="com.miracleas.minrute.TripSuggestionsActivity" />
+            </activity>
         
-        <activity android:name="com.miracleas.minrute.TripStopDetailsActivity"
-            android:label="@string/trip_stop_details" android:screenOrientation="portrait"/>
+        <activity android:name="com.miracleas.minrute.TripLegDetailsActivity" android:parentActivityName="com.miracleas.minrute.TripGuideActivity"
+            android:label="@string/trip_leg_details" android:screenOrientation="portrait">
+         <meta-data
+            android:name="android.support.PARENT_ACTIVITY"
+            android:value="com.miracleas.minrute.TripGuideActivity" />
+            </activity>
         
-        <activity android:name="com.miracleas.minrute.TripStopDetailsImagePagerActivity"
-            android:label="@string/trip_stop_details_image" android:screenOrientation="portrait"/>
+        <activity android:name="com.miracleas.minrute.TripLegMapActivity" android:parentActivityName="com.miracleas.minrute.TripGuideActivity"
+            android:label="@string/trip_leg_details" android:screenOrientation="portrait">
+         <meta-data
+            android:name="android.support.PARENT_ACTIVITY"
+            android:value="com.miracleas.minrute.TripGuideActivity" />
+            </activity>
+        
+        <activity android:name="com.miracleas.minrute.TripStopDetailsActivity" android:parentActivityName="com.miracleas.minrute.TripGuideActivity"
+            android:label="@string/trip_stop_details" android:screenOrientation="portrait">
+          <meta-data
+            android:name="android.support.PARENT_ACTIVITY"
+            android:value="com.miracleas.minrute.TripGuideActivity" />
+            </activity>
+        
+        <activity android:name="com.miracleas.minrute.TripStopDetailsImagePagerActivity" android:parentActivityName="com.miracleas.minrute.TripStopDetailsActivity"
+            android:label="@string/trip_stop_details_image" android:screenOrientation="portrait">
+          <meta-data
+            android:name="android.support.PARENT_ACTIVITY"
+            android:value="com.miracleas.minrute.TripStopDetailsActivity" />
+          </activity>
         
         
         

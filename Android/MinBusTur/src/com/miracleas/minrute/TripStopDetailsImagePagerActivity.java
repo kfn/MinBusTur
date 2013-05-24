@@ -136,8 +136,9 @@ public class TripStopDetailsImagePagerActivity extends PhotoGoogleDriveActivity 
 		switch (item.getItemId())
 		{
 		case android.R.id.home:
-			// NavUtils.navigateUpFromSameTask(this);
-			finish();
+			
+			//NavUtils.navigateUpFromSameTask(this, );
+			NavUtils.navigateUpTo(this, getIntent());
 			return true;
 		}
 		return super.onOptionsItemSelected(item);

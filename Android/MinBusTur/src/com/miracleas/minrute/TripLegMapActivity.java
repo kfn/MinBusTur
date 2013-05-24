@@ -2,6 +2,7 @@ package com.miracleas.minrute;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.NavUtils;
 
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
@@ -71,7 +72,9 @@ public class TripLegMapActivity extends GeofenceActivity implements TripLegMapFr
 			//
 			// http://developer.android.com/design/patterns/navigation.html#up-vs-back
 			//
-			finish();
+			//finish();
+			//NavUtils.navigateUpFromSameTask(this);
+			NavUtils.navigateUpTo(this, getIntent());
 			return true;
 		
 		default:

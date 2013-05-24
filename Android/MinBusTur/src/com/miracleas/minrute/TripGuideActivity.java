@@ -3,6 +3,7 @@ package com.miracleas.minrute;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.NavUtils;
 import android.text.TextUtils;
 
 import com.actionbarsherlock.app.ActionBar;
@@ -74,7 +75,9 @@ public class TripGuideActivity extends GeofenceActivity implements TripGuideFrag
 			//
 			// http://developer.android.com/design/patterns/navigation.html#up-vs-back
 			//
-			finish();
+			//finish();
+			NavUtils.navigateUpFromSameTask(this);
+
 			return true;
 		
 		default:

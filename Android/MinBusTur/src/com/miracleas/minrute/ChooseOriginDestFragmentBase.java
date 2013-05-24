@@ -113,10 +113,13 @@ public abstract class ChooseOriginDestFragmentBase extends SherlockFragment impl
 			public void onItemClick(AdapterView<?> arg0, View v, int position, long id)
 			{
 				mSelectedAddressToPosition = position;
+				mAutoCompleteTextViewToAddress.clearFocus();
+				
 				//ViewHelper.hideKeyboard(getActivity(), mAutoCompleteTextViewToAddress);
 			}			
 		});
 		initAutoComplete(mAutoCompleteTextViewFromAddress);
+		initAutoComplete(mAutoCompleteTextViewToAddress);
 		
 		mProgressBarToAddress = (ProgressBar) rootView.findViewById(R.id.progressBarToAddress);
 		mProgressBarFromAddress = (ProgressBar) rootView.findViewById(R.id.progressBarFromAddress);
