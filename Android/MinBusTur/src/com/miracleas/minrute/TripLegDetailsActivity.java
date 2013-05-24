@@ -10,6 +10,7 @@ import com.actionbarsherlock.view.MenuItem;
 
 import com.miracleas.minrute.model.TripRequest;
 import com.miracleas.minrute.provider.JourneyDetailMetaData;
+import com.miracleas.minrute.provider.JourneyDetailStopImagesMetaData;
 import com.miracleas.minrute.provider.JourneyDetailStopMetaData;
 import com.miracleas.minrute.provider.TripLegMetaData;
 
@@ -98,13 +99,14 @@ public class TripLegDetailsActivity extends GeofenceActivity implements TripLegD
 	}
 
 	@Override
-	public void onStopSelected(String stopId, String lat, String lng, String transportType)
+	public void onStopSelected(String stopId, String lat, String lng, String transportType, String stopName)
 	{
 		Intent activity = new Intent(this, TripStopDetailsActivity.class);
 		activity.putExtra(JourneyDetailStopMetaData.TableMetaData.LATITUDE, lat);
 		activity.putExtra(JourneyDetailStopMetaData.TableMetaData.LONGITUDE, lng);
 		activity.putExtra(JourneyDetailStopMetaData.TableMetaData._ID, stopId);
 		activity.putExtra(JourneyDetailMetaData.TableMetaData.TYPE, transportType);
+		activity.putExtra(JourneyDetailStopImagesMetaData.TableMetaData.STOP_NAME, stopName);
 		startActivity(activity);
 		
 	}

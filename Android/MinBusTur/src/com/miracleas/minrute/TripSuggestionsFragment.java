@@ -138,16 +138,15 @@ public class TripSuggestionsFragment extends SherlockFragment implements LoaderC
 		public void bindView(View v, Context context, Cursor cursor)
 		{
 			TextView textViewDepatureIn = (TextView)v.findViewById(R.id.textViewDepatureIn);
-			TextView textViewDepatureTime = (TextView)v.findViewById(R.id.textViewDepatureTime);
+			TextView textViewDepatureTime = (TextView)v.findViewById(R.id.textViewDepature);
 			TextView textViewDuration = (TextView)v.findViewById(R.id.textViewDuration);
-			TextView textViewArrivalAt = (TextView)v.findViewById(R.id.textViewArrivalAt);
-			TextView textViewArrivalTime = (TextView)v.findViewById(R.id.textViewArrivalTime);
+			TextView textViewArrivalAt = (TextView)v.findViewById(R.id.textViewArrival);			
 			TextView textViewTransport = (TextView)v.findViewById(R.id.textViewTransport);			
-			textViewDepatureTime.setText(String.format(getString(R.string.parenthese_value), cursor.getString(iDepatureTime)));
+			
+			textViewDepatureTime.setText( cursor.getString(iDepatureTime));
 			textViewDepatureIn.setText(String.format(getString(R.string.departure), cursor.getString(iDepatureInTime)));
 			textViewDuration.setText(String.format(getString(R.string.duration), cursor.getString(iDuration)));
-			textViewArrivalTime.setText(String.format(getString(R.string.parenthese_value), cursor.getString(iArrivalTime)));
-			textViewArrivalAt.setText(String.format(getString(R.string.arrival_within), cursor.getString(iArrivalInTime)));
+			textViewArrivalAt.setText(cursor.getString(iArrivalTime));		
 			textViewTransport.setText(cursor.getString(iLegNames));	
 		}
 

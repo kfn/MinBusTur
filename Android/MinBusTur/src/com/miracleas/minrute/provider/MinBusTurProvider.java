@@ -45,6 +45,7 @@ public class MinBusTurProvider extends ContentProvider
 	private static final int INCOMING_GEOFENCE_COLLECTION_URI_INDICATOR = 15;
 	private static final int INCOMING_SINGLE_GEOFENCE_URI_INDICATOR = 16;
 	private static final int INCOMING_STOP_IMAGE_COLLECTION_URI_INDICATOR = 17;
+	private static final int INCOMING_SINGLE_STOP_IMAGE_URI_INDICATOR = 19;
 	private static final int INCOMING_STOP_DEPARTURES_COLLECTION_URI_INDICATOR = 18;
 	
 
@@ -67,6 +68,7 @@ public class MinBusTurProvider extends ContentProvider
 		sUriMatcher.addURI(GeofenceMetaData.AUTHORITY, GeofenceMetaData.COLLECTION_TYPE, INCOMING_GEOFENCE_COLLECTION_URI_INDICATOR);
 		sUriMatcher.addURI(GeofenceMetaData.AUTHORITY, GeofenceMetaData.COLLECTION_TYPE + "/#", INCOMING_SINGLE_GEOFENCE_URI_INDICATOR);
 		sUriMatcher.addURI(JourneyDetailStopImagesMetaData.AUTHORITY, JourneyDetailStopImagesMetaData.COLLECTION_TYPE, INCOMING_STOP_IMAGE_COLLECTION_URI_INDICATOR);
+		sUriMatcher.addURI(JourneyDetailStopImagesMetaData.AUTHORITY, JourneyDetailStopImagesMetaData.COLLECTION_TYPE+ "/#", INCOMING_SINGLE_STOP_IMAGE_URI_INDICATOR);
 		sUriMatcher.addURI(JourneyDetailStopDeparturesMetaData.AUTHORITY, JourneyDetailStopDeparturesMetaData.COLLECTION_TYPE, INCOMING_STOP_DEPARTURES_COLLECTION_URI_INDICATOR);
 	}
 
@@ -215,6 +217,11 @@ public class MinBusTurProvider extends ContentProvider
 		case INCOMING_STOP_IMAGE_COLLECTION_URI_INDICATOR:
 			qb.setTables(JourneyDetailStopImagesMetaData.TABLE_NAME);
 			break;
+		case INCOMING_SINGLE_STOP_IMAGE_URI_INDICATOR:
+			qb.setTables(JourneyDetailStopImagesMetaData.TABLE_NAME);
+			qb.appendWhere(JourneyDetailStopImagesMetaData.TableMetaData._ID + "=" + uri.getPathSegments().get(1));
+			break;	
+			
 		case INCOMING_STOP_DEPARTURES_COLLECTION_URI_INDICATOR:
 			qb.setTables(JourneyDetailStopDeparturesMetaData.TABLE_NAME);
 			break;
@@ -404,6 +411,11 @@ public class MinBusTurProvider extends ContentProvider
 		case INCOMING_STOP_IMAGE_COLLECTION_URI_INDICATOR:
 			count = db.delete(JourneyDetailStopImagesMetaData.TABLE_NAME, where, whereArgs);
 			break;
+		case INCOMING_SINGLE_STOP_IMAGE_URI_INDICATOR:
+			String rowId7 = uri.getPathSegments().get(1);
+			count = db.delete(JourneyDetailStopImagesMetaData.TABLE_NAME, JourneyDetailStopImagesMetaData.TableMetaData._ID + "=" + rowId7 + (!TextUtils.isEmpty(where) ? " AND (" + where + ')' : ""), whereArgs);
+			break;
+			
 		case INCOMING_STOP_DEPARTURES_COLLECTION_URI_INDICATOR:
 			count = db.delete(JourneyDetailStopDeparturesMetaData.TABLE_NAME, where, whereArgs);
 			break;
@@ -481,6 +493,11 @@ public class MinBusTurProvider extends ContentProvider
 		case INCOMING_STOP_IMAGE_COLLECTION_URI_INDICATOR:
 			count = db.update(JourneyDetailStopImagesMetaData.TABLE_NAME, values, where, whereArgs);
 			break;
+		case INCOMING_SINGLE_STOP_IMAGE_URI_INDICATOR:
+			String rowId7 = uri.getPathSegments().get(1);
+			count = db.update(JourneyDetailStopImagesMetaData.TABLE_NAME, values, JourneyDetailStopImagesMetaData.TableMetaData._ID + "=" + rowId7 + (!TextUtils.isEmpty(where) ? " AND (" + where + ')' : ""), whereArgs);
+			break;
+			
 		default:
 			throw new IllegalArgumentException("Unknown URI " + uri);
 		}

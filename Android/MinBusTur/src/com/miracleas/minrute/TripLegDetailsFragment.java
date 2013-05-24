@@ -273,14 +273,25 @@ public class TripLegDetailsFragment extends SherlockListFragment implements Load
 			}
 			return lng;
 		}
+		public String getStopName(int position)
+		{
+			String name = "";
+			Cursor c = getCursor();
+			if(c.moveToPosition(position))
+			{
+				name = c.getString(iName);
+			}
+			return name;
+		}
 	}
 	@Override
 	public void onItemClick(AdapterView<?> parent, View view, int position, long id)
 	{
 		String lat = mTripAdapter.getLat(position);
 		String lng = mTripAdapter.getLng(position);
+		String name = mTripAdapter.getStopName(position);
 		String transportType = getArguments().getString(TripLegMetaData.TableMetaData.TYPE);
-		mCallbacks.onStopSelected(id+"", lat, lng, transportType);		
+		mCallbacks.onStopSelected(id+"", lat, lng, transportType, name);		
 	}
 	
 	@Override
@@ -311,7 +322,7 @@ public class TripLegDetailsFragment extends SherlockListFragment implements Load
 	 */
 	public interface Callbacks
 	{
-		public void onStopSelected(String stopId, String lat, String lng, String transportType);
+		public void onStopSelected(String stopId, String lat, String lng, String transportType, String stopName);
 		public void setJourneyDetailId(long id, String LegId, String transportType);
 	}
 
@@ -323,7 +334,7 @@ public class TripLegDetailsFragment extends SherlockListFragment implements Load
 	{
 
 		@Override
-		public void onStopSelected(String stopId, String lat, String lng, String transportType)
+		public void onStopSelected(String stopId, String lat, String lng, String transportType, String stopName)
 		{
 			
 		}

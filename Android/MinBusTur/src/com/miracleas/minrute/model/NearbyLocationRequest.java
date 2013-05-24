@@ -12,18 +12,16 @@ public class NearbyLocationRequest implements Parcelable
 	public int maxNumber;
 	private double lat;
 	private double lng;
+	public String stopName;
 	
-	public NearbyLocationRequest()
+	public NearbyLocationRequest(){}
+	
+	public NearbyLocationRequest(String stopId, String coordX,  String coordY, String stopName)
 	{
-		
+		this(stopId, coordX, coordY, 10, 1, stopName);
 	}
 	
-	public NearbyLocationRequest(String stopId, String coordX,  String coordY)
-	{
-		this(stopId, coordX, coordY, 10, 1);
-	}
-	
-	public NearbyLocationRequest(String stopId, String coordX, String coordY, int maxRadius, int maxNumber)
+	public NearbyLocationRequest(String stopId, String coordX, String coordY, int maxRadius, int maxNumber, String stopName)
 	{
 		super();
 		this.stopId = stopId;
@@ -31,6 +29,7 @@ public class NearbyLocationRequest implements Parcelable
 		this.coordY = coordY;
 		this.maxRadius = maxRadius;
 		this.maxNumber = maxNumber;
+		this.stopName = stopName;
 		
 		lat = (double)(Integer.parseInt(coordY) / 1000000d);
 		lng = (double)(Integer.parseInt(coordX) / 1000000d);
@@ -57,6 +56,7 @@ public class NearbyLocationRequest implements Parcelable
 		coordY = in.readString();
 		maxRadius = in.readInt();
 		maxNumber = in.readInt();
+		stopName = in.readString();
 	}
 	
 	@Override
@@ -73,6 +73,7 @@ public class NearbyLocationRequest implements Parcelable
 		dest.writeString(this.coordY);
 		dest.writeInt(this.maxRadius);
 		dest.writeInt(this.maxNumber);	
+		dest.writeString(stopName);
 	}
 	
 	public static final Parcelable.Creator<NearbyLocationRequest> CREATOR = new Parcelable.Creator<NearbyLocationRequest>()

@@ -20,7 +20,7 @@ import android.annotation.TargetApi;
 import android.os.Build;
 import android.os.StrictMode;
 
-import com.miracleas.minrute.FindTripSuggestionsActivity;
+import com.miracleas.minrute.ChooseOriginDestActivity;
 
 /**
  * Class containing some static utility methods.
@@ -45,7 +45,7 @@ public class Utils
 			if (Utils.hasHoneycomb())
 			{
 				threadPolicyBuilder.penaltyFlashScreen();
-				vmPolicyBuilder.setClassInstanceLimit(FindTripSuggestionsActivity.class, 1);
+				vmPolicyBuilder.setClassInstanceLimit(ChooseOriginDestActivity.class, 1);
 			}
 			StrictMode.setThreadPolicy(threadPolicyBuilder.build());
 			StrictMode.setVmPolicy(vmPolicyBuilder.build());

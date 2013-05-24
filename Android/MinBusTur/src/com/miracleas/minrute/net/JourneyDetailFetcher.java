@@ -124,13 +124,16 @@ public class JourneyDetailFetcher extends BaseFetcher
 							String id = results[i].uri.getLastPathSegment();
 							if (!TextUtils.isEmpty(id))
 							{
-								Log.d(tag, "get img in index: "+imgCount);
+								//Log.d(tag, "get img in index: "+imgCount);
 								MyImage img = mUrls.get(imgCount);
 								
 								ContentValues values = new ContentValues();
 								values.put(JourneyDetailStopImagesMetaData.TableMetaData.URL, img.url);								
 								values.put(JourneyDetailStopImagesMetaData.TableMetaData.LAT, img.lat);
 								values.put(JourneyDetailStopImagesMetaData.TableMetaData.LNG, img.lng);
+								values.put(JourneyDetailStopImagesMetaData.TableMetaData.UPLOADED, "1");
+								values.put(JourneyDetailStopImagesMetaData.TableMetaData.IS_UPLOADING, "0");
+								values.put(JourneyDetailStopImagesMetaData.TableMetaData.STOP_NAME, img.stopName);
 								
 								String selection = JourneyDetailStopImagesMetaData.TableMetaData.URL + "=?";
 								String[] selectionArgs = {img.url};
@@ -258,7 +261,7 @@ public class JourneyDetailFetcher extends BaseFetcher
 			url.append("http://maps.googleapis.com/maps/api/streetview?size=600x300&heading=151.78&pitch=-0.76&sensor=false&location=").append(lat).append(",").append(lng);
 			
 			
-			MyImage img = new MyImage(y, x, url.toString());
+			MyImage img = new MyImage(y, x, url.toString(), name);
 			mUrls.add(img);
 
 			b.withValue(JourneyDetailStopMetaData.TableMetaData.LONGITUDE, x);
@@ -347,12 +350,14 @@ public class JourneyDetailFetcher extends BaseFetcher
 		public String lat;
 		public String lng;
 		public String url;
-		public MyImage(String lat, String lng, String url)
+		public String stopName;
+		public MyImage(String lat, String lng, String url, String stopName)
 		{
 			super();
 			this.lat = lat;
 			this.lng = lng;
 			this.url = url;
+			this.stopName = stopName;
 		}
 		
 	}

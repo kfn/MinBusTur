@@ -19,6 +19,9 @@
     <string name="minutes">minutter</string>
     <string name="hours">timer</string>
     <string name="days">dage</string>
+    <string name="departure1">Afgang</string>
+    <string name="arrival">Ankomst</string>
+    
     <string name="geocoding_service_not_available">geocoding_service_not_available</string>
     <string name="departure">Afgang <xliff:g ID="time_label">%1$s</xliff:g></string>
     <string name="parenthese_value">(<xliff:g ID="time_label">%1$s</xliff:g>)</string>
@@ -40,6 +43,9 @@
 	<string name="fetch_departure_board">Hent afgangstavle</string>
 	<string name="transport_direction">Retning: <xliff:g ID="direction">%1$s</xliff:g></string>
 	<string name="add_picture">Tilføj billede</string>
-	
-	
+	<string name="upload_pictures">Upload billeder</string>
+	<string name="uploading_pictures">Gemmer billeder på Google Drive</string>
+	<string name="uploading_finished">Billeder uploaded</string>
+	<string name="startaddress">Startadresse</string>
+	<string name="destination_address">Slutadresse</string>
 </resources>

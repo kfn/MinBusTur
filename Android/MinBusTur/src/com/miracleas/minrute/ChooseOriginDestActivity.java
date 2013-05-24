@@ -2,6 +2,9 @@ package com.miracleas.minrute;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.widget.DatePicker;
+import android.widget.TimePicker;
 import android.widget.Toast;
 
 import com.actionbarsherlock.app.ActionBar;
@@ -12,13 +15,13 @@ import com.miracleas.minrute.model.TripRequest;
 import com.miracleas.minrute.net.TripFetcher;
 import com.miracleas.minrute.service.TripService;
 
-public class FindTripSuggestionsActivity extends GeofenceActivity implements FindTripSuggestionsFragment.Callbacks
+public class ChooseOriginDestActivity extends GeofenceActivity implements ChooseOriginDestFragment.Callbacks, android.app.DatePickerDialog.OnDateSetListener, android.app.TimePickerDialog.OnTimeSetListener
 {
 	@Override
 	public void onCreate(Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_find_trip_suggestions);
+		setContentView(R.layout.activity_choose_origin_dest);
 
 		// Set up the action bar.
 		final ActionBar actionBar = getSupportActionBar();
@@ -97,5 +100,25 @@ public class FindTripSuggestionsActivity extends GeofenceActivity implements Fin
 		{
 			Toast.makeText(this, "Not valid", Toast.LENGTH_SHORT).show();
 		}	
+	}
+	@Override
+	public void onTimeSet(TimePicker view, int hourOfDay, int minute)
+	{
+		Fragment f = getSupportFragmentManager().findFragmentById(R.id.fragmentEnterAddresses);
+		if(f!=null)
+		{
+			((ChooseOriginDestFragment)f).onTimeSet(view, hourOfDay, minute);
+		}
+		
+	}
+	@Override
+	public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth)
+	{
+		Fragment f = getSupportFragmentManager().findFragmentById(R.id.fragmentEnterAddresses);
+		if(f!=null)
+		{
+			((ChooseOriginDestFragment)f).onDateSet(view, year, monthOfYear, dayOfMonth);
+		}
+		
 	}
 }

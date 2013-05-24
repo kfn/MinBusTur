@@ -41,9 +41,9 @@ import com.miracleas.minrute.provider.AddressProviderMetaData;
 import com.miracleas.minrute.service.TripService;
 import com.miracleas.minrute.utils.ViewHelper;
 
-public class FindTripSuggestionsFragment extends FindTripSuggestionsFragmentBase
+public class ChooseOriginDestFragment extends ChooseOriginDestFragmentBase
 {
-	public static final String tag = FindTripSuggestionsFragment.class.getName();
+	public static final String tag = ChooseOriginDestFragment.class.getName();
 	private AutoCompleteAddressAdapter mAutoCompleteAdapterFrom = null;
 	private AutoCompleteAddressAdapter mAutoCompleteAdapterTo = null;	
 	private LoadAddressesRun mLoadAddressesRun = null;
@@ -56,9 +56,9 @@ public class FindTripSuggestionsFragment extends FindTripSuggestionsFragmentBase
 	private boolean mItemClicked = false;
 	
 
-	public static FindTripSuggestionsFragment createInstance()
+	public static ChooseOriginDestFragment createInstance()
 	{
-		FindTripSuggestionsFragment fragment = new FindTripSuggestionsFragment();
+		ChooseOriginDestFragment fragment = new ChooseOriginDestFragment();
 		Bundle args = new Bundle();
 		fragment.setArguments(args);
 		return fragment;
@@ -80,7 +80,7 @@ public class FindTripSuggestionsFragment extends FindTripSuggestionsFragmentBase
 	 * Mandatory empty constructor for the fragment manager to instantiate the
 	 * fragment (e.g. upon screen orientation changes).
 	 */
-	public FindTripSuggestionsFragment()
+	public ChooseOriginDestFragment()
 	{
 	}
 
@@ -217,19 +217,6 @@ public class FindTripSuggestionsFragment extends FindTripSuggestionsFragmentBase
 
 	}
 
-	@Override
-	protected void onAddressFromSelected(int position)
-	{
-		//onAddressSelected(mAutoCompleteAdapterFrom, true, position);
-	}
-	@Override
-	protected void onAddressToSelected(int position)
-	{
-		//onAddressSelected(mAutoCompleteAdapterTo, false, position);
-	}
-
-
-
 	private LoadAddresses mLoadAddresses = null;
 
 	private void loadAddress(String query, int loaderId)
@@ -336,7 +323,7 @@ public class FindTripSuggestionsFragment extends FindTripSuggestionsFragmentBase
 		
 		public AutoCompleteAddressAdapter(Context context, Cursor c, int flags, final int loaderId)
 		{
-			super(context, c, flags);
+			super(context, c, FLAG_REGISTER_CONTENT_OBSERVER);
 			mInf = LayoutInflater.from(context);
 
 			setFilterQueryProvider(new FilterQueryProvider()
@@ -355,9 +342,10 @@ public class FindTripSuggestionsFragment extends FindTripSuggestionsFragmentBase
 					}
 
 					Log.d(tag, "autocomplete: "+constraint);
+					//) GROUP BY (").append(AddressProviderMetaData.TableMetaData.address);
 					StringBuilder b = new StringBuilder();
 					b.append(AddressProviderMetaData.TableMetaData.address).append(" LIKE '").append(constraint).append("%') GROUP BY (").append(AddressProviderMetaData.TableMetaData.address);
-					return getActivity().getContentResolver().query(AddressProviderMetaData.TableMetaData.CONTENT_URI, PROJECTION, b.toString(), null, AddressProviderMetaData.TableMetaData.address+" LIMIT 20");
+					return getActivity().getContentResolver().query(AddressProviderMetaData.TableMetaData.CONTENT_URI, PROJECTION, b.toString(), null, AddressProviderMetaData.TableMetaData.address+" LIMIT 10");
 				}
 			});
 			
@@ -380,6 +368,7 @@ public class FindTripSuggestionsFragment extends FindTripSuggestionsFragmentBase
 			{
 				// adapter has already dealt with closing the cursor
 				getActivity().stopManagingCursor(oldCursor);
+				oldCursor.close();
 			}
 			getActivity().startManagingCursor(newCursor);
 		}
@@ -548,6 +537,7 @@ public class FindTripSuggestionsFragment extends FindTripSuggestionsFragmentBase
 	@Override
 	public void onClick(View v)
 	{
+		super.onClick(v);
 		if (v.getId() == R.id.btnFindRoute)
 		{		
 			int posFrom = mSelectedAddressFromPosition;

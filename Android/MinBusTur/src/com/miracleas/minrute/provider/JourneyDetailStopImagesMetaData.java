@@ -23,16 +23,20 @@ public class JourneyDetailStopImagesMetaData
 				+ TableMetaData.LAT + " TEXT,"
 				+ TableMetaData.LNG + " TEXT,"
 				+ TableMetaData.FILE_ID + " TEXT,"
-				+ TableMetaData.UPLOADED + " INTEGER,"
+				+ TableMetaData.UPLOADED + " INTEGER INTEGER DEFAULT 0,"
+				+ TableMetaData.IS_UPLOADING + " INTEGER DEFAULT 0,"
 				+ TableMetaData.FILE_LOCALE_PATH + " TEXT,"
 				+ TableMetaData.FILE_TITLE + " TEXT,"
-				+ TableMetaData.FILE_MIME_TYPE + " TEXT"
+				+ TableMetaData.FILE_MIME_TYPE + " TEXT,"
+				+ TableMetaData.STOP_NAME + " TEXT"
 				;
 	}
 
 	// inner class describing columns and their types
 	public static final class TableMetaData implements BaseColumns
 	{		
+		
+		
 		private TableMetaData()
 		{
 		}
@@ -48,9 +52,11 @@ public class JourneyDetailStopImagesMetaData
 		public static final String LNG = "lng";
 		public static final String FILE_ID = "file_id";
 		public static final String UPLOADED = "uploaded";
+		public static final String IS_UPLOADING = "is_uploading";
 		public static final String FILE_MIME_TYPE = "mime_type";
 		public static final String FILE_TITLE = "file_title";
 		public static final String FILE_LOCALE_PATH = "file_locale_path";
+		public static final String STOP_NAME = "stop_name";
 	
 	}
 }

@@ -33,9 +33,9 @@ import com.miracleas.minrute.model.MyLittleImage;
 
 
 /**
- * This fragment will populate the children of the ViewPager from {@link TripStopDetailsImageActivity}.
+ * This fragment will populate the children of the ViewPager from {@link TripStopDetailsImagePagerActivity}.
  */
-public class TripStopDetailsImageFragment extends LocaleImageHandlerFragment {
+public class TripStopDetailsImagePagerFragmentItem extends LocaleImageHandlerFragment {
     private static final String IMAGE_DATA_EXTRA = "extra_image_data";
     private MyLittleImage mImg;
     private ImageView mImageView;
@@ -49,8 +49,8 @@ public class TripStopDetailsImageFragment extends LocaleImageHandlerFragment {
      * @param imageUrl The image url to load
      * @return A new instance of ImageDetailFragment with imageNum extras
      */
-    public static TripStopDetailsImageFragment newInstance(MyLittleImage img) {
-        final TripStopDetailsImageFragment f = new TripStopDetailsImageFragment();
+    public static TripStopDetailsImagePagerFragmentItem newInstance(MyLittleImage img) {
+        final TripStopDetailsImagePagerFragmentItem f = new TripStopDetailsImagePagerFragmentItem();
         final Bundle args = new Bundle();
         args.putParcelable(IMAGE_DATA_EXTRA, img);
         f.setArguments(args);
@@ -60,7 +60,7 @@ public class TripStopDetailsImageFragment extends LocaleImageHandlerFragment {
     /**
      * Empty constructor as per the Fragment documentation
      */
-    public TripStopDetailsImageFragment() {}
+    public TripStopDetailsImagePagerFragmentItem() {}
     
 	public void onAttach(Activity activity)
 	{
@@ -70,7 +70,7 @@ public class TripStopDetailsImageFragment extends LocaleImageHandlerFragment {
 
     /**
      * Populate image using a url from extras, use the convenience factory method
-     * {@link TripStopDetailsImageFragment#newInstance(String)} to create this fragment.
+     * {@link TripStopDetailsImagePagerFragmentItem#newInstance(String)} to create this fragment.
      */
     @Override
     public void onCreate(Bundle savedInstanceState) {

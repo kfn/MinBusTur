@@ -32,7 +32,7 @@ import android.widget.AutoCompleteTextView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-public abstract class FindTripSuggestionsFragmentContactsBase extends FindTripSuggestionsFragmentBase implements LoaderCallbacks<Cursor>, OnClickListener, OnFocusChangeListener
+public abstract class ChooseOriginDestFragmentContactsBase extends ChooseOriginDestFragmentBase implements LoaderCallbacks<Cursor>, OnClickListener, OnFocusChangeListener
 {
 	protected static LruCache<Long, Drawable> cache;
 	protected ArrayList<Long> id_list = new ArrayList<Long>();
@@ -50,7 +50,7 @@ public abstract class FindTripSuggestionsFragmentContactsBase extends FindTripSu
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
 	{
 		View rootView = super.onCreateView(inflater, container, savedInstanceState);
-		mAutoCompleteContactsAdapterTo = new AutoCompleteContactsAdapter(getActivity(), null, 0);
+		/*mAutoCompleteContactsAdapterTo = new AutoCompleteContactsAdapter(getActivity(), null, 0);
 		mAutoCompleteContactsAdapterFrom = new AutoCompleteContactsAdapter(getActivity(), null, 0);
 		mAutoCompleteTextViewToTitle = (AutoCompleteTextView) rootView.findViewById(R.id.autoCompleteTextViewToTitle);
 		mAutoCompleteTextViewFromTitle = (AutoCompleteTextView) rootView.findViewById(R.id.autoCompleteTextViewFromTitle);
@@ -58,7 +58,7 @@ public abstract class FindTripSuggestionsFragmentContactsBase extends FindTripSu
 		mAutoCompleteTextViewFromTitle.setAdapter(mAutoCompleteContactsAdapterFrom);
 		mProgressBarFromTitle = (ProgressBar) rootView.findViewById(R.id.progressBarFromTitle);
 		mProgressBarToTitle = (ProgressBar) rootView.findViewById(R.id.progressBarToTitle);
-		
+		*/
 		
 		return rootView;
 	}

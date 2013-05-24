@@ -18,4 +18,5 @@ public class LoaderConstants
 	public static final int LOADER_TRIP_STOP_DETAILS = 23;
 	public static final int LOADER_TRIP_STOP_IMAGES = 24;
 	public static final int LOADER_STOP_DEPARTURES = 25;
+	public static final int LOADER_COUNT_OF_NOT_UPLOADED_IMAGES = 26;
 }

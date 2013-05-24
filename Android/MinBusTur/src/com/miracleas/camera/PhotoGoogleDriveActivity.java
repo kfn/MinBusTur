@@ -40,6 +40,7 @@ import com.miracleas.imagedownloader.ImageDownloaderActivity;
 import com.miracleas.imagedownloader.ImageFetcher;
 import com.miracleas.minrute.R;
 import com.miracleas.minrute.provider.JourneyDetailStopImagesMetaData;
+import com.miracleas.minrute.service.UploadImagesService;
 import com.miracleas.minrute.utils.MyPrefs;
 
 public class PhotoGoogleDriveActivity extends SherlockFragmentActivity implements IImageDownloader
@@ -47,6 +48,8 @@ public class PhotoGoogleDriveActivity extends SherlockFragmentActivity implement
 	private static final String FILE_URI = "viewbitmap";
 	private static final String LAT = "lat";
 	private static final String LNG = "lng";
+	private String mAccountName = null;
+	
 	static final int REQUEST_ACCOUNT_PICKER = 1;
 	static final int REQUEST_AUTHORIZATION = 2;
 	static final int CAPTURE_IMAGE = 3;
@@ -59,6 +62,7 @@ public class PhotoGoogleDriveActivity extends SherlockFragmentActivity implement
 	private static Drive service;
 	protected GoogleAccountCredential credential;
 	private String mAuth = null;
+	private String mStopName;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState)
@@ -76,12 +80,12 @@ public class PhotoGoogleDriveActivity extends SherlockFragmentActivity implement
 		case REQUEST_ACCOUNT_PICKER:
 			if (resultCode == RESULT_OK && data != null && data.getExtras() != null)
 			{
-				String accountName = data.getStringExtra(AccountManager.KEY_ACCOUNT_NAME);
-				if (accountName != null)
+				mAccountName = data.getStringExtra(AccountManager.KEY_ACCOUNT_NAME);
+				if (mAccountName != null)
 				{
-					credential.setSelectedAccountName(accountName);
+					credential.setSelectedAccountName(mAccountName);
 					service = getDriveService(credential);
-
+					
 					new Thread()
 					{
 						public void run()
@@ -103,7 +107,7 @@ public class PhotoGoogleDriveActivity extends SherlockFragmentActivity implement
 						}
 					}.start();
 
-					startCameraIntent();
+					startUploadServiceHelper();
 				}
 			}
 			break;
@@ -111,7 +115,7 @@ public class PhotoGoogleDriveActivity extends SherlockFragmentActivity implement
 			if (resultCode == Activity.RESULT_OK)
 			{
 				//saveFileToDrive();
-				saveFileToDb();
+				//saveFileToDb();
 			} else
 			{
 				startActivityForResult(credential.newChooseAccountIntent(), REQUEST_ACCOUNT_PICKER);
@@ -125,6 +129,8 @@ public class PhotoGoogleDriveActivity extends SherlockFragmentActivity implement
 			}
 		}
 	}
+
+
 
 	private void startCameraIntent()
 	{
@@ -160,9 +166,11 @@ public class PhotoGoogleDriveActivity extends SherlockFragmentActivity implement
 					ContentValues values = new ContentValues();
 					values.put(JourneyDetailStopImagesMetaData.TableMetaData.LAT, mLat);
 					values.put(JourneyDetailStopImagesMetaData.TableMetaData.LNG, mLng);
+					values.put(JourneyDetailStopImagesMetaData.TableMetaData.STOP_NAME, mStopName);
 					values.put(JourneyDetailStopImagesMetaData.TableMetaData.FILE_LOCALE_PATH, fileUri.getPath());
 					values.put(JourneyDetailStopImagesMetaData.TableMetaData.FILE_MIME_TYPE, "image/jpeg");
 					values.put(JourneyDetailStopImagesMetaData.TableMetaData.FILE_TITLE, fileContent.getName());
+					values.put(JourneyDetailStopImagesMetaData.TableMetaData.UPLOADED, "0");
 					cr.insert(JourneyDetailStopImagesMetaData.TableMetaData.CONTENT_URI, values);
 				}
 			}
@@ -174,6 +182,8 @@ public class PhotoGoogleDriveActivity extends SherlockFragmentActivity implement
 	{
 		Thread t = new Thread(new Runnable()
 		{
+			
+
 			@Override
 			public void run()
 			{
@@ -196,6 +206,7 @@ public class PhotoGoogleDriveActivity extends SherlockFragmentActivity implement
 						ContentValues values = new ContentValues();
 						values.put(JourneyDetailStopImagesMetaData.TableMetaData.LAT, mLat);
 						values.put(JourneyDetailStopImagesMetaData.TableMetaData.LNG, mLng);
+						values.put(JourneyDetailStopImagesMetaData.TableMetaData.STOP_NAME, mStopName);
 						values.put(JourneyDetailStopImagesMetaData.TableMetaData.URL, file.getDownloadUrl());
 						values.put(JourneyDetailStopImagesMetaData.TableMetaData.FILE_ID, file.getId());
 						cr.insert(JourneyDetailStopImagesMetaData.TableMetaData.CONTENT_URI, values);
@@ -229,25 +240,19 @@ public class PhotoGoogleDriveActivity extends SherlockFragmentActivity implement
 		});
 	}
 
-	public void setBtnListenerOrDisable(Button btn, final String lat, final String lng)
+	public void setBtnListenerOrDisable(Button btn, final String lat, final String lng, final String stopName)
 	{
 		if (isIntentAvailable(this, MediaStore.ACTION_IMAGE_CAPTURE))
 		{
 			mLat = lat;
 			mLng = lng;
+			mStopName = stopName;
 			btn.setOnClickListener(new OnClickListener()
 			{
 				@Override
 				public void onClick(View v)
 				{
-					if (credential == null)
-					{
-						credential = GoogleAccountCredential.usingOAuth2(PhotoGoogleDriveActivity.this, DriveScopes.DRIVE);
-						startActivityForResult(credential.newChooseAccountIntent(), REQUEST_ACCOUNT_PICKER);
-					} else
-					{
-						startCameraIntent();
-					}
+					startCameraIntent();
 				}
 			});
 		} else
@@ -287,6 +292,8 @@ public class PhotoGoogleDriveActivity extends SherlockFragmentActivity implement
 		outState.putString(LAT, mLat);
 		outState.putString(LNG, mLng);
 		outState.putString(AUTH_TOKEN, mAuth);
+		outState.putString("account", mAccountName);
+		outState.putString("stopName", mStopName);
 		super.onSaveInstanceState(outState);
 	}
 
@@ -298,6 +305,8 @@ public class PhotoGoogleDriveActivity extends SherlockFragmentActivity implement
 		mLat = savedInstanceState.getString(LAT);
 		mLng = savedInstanceState.getString(LNG);
 		mAuth = savedInstanceState.getString(AUTH_TOKEN);
+		mAccountName = savedInstanceState.getString("account");
+		mStopName = savedInstanceState.getString("stopName");
 	}
 
 	public IImageDownloader getIImageDownloader()
@@ -436,5 +445,27 @@ public class PhotoGoogleDriveActivity extends SherlockFragmentActivity implement
 			mAuth = MyPrefs.getString(this, MyPrefs.GOOGLE_DRIVE_AUTH, null);
 		}
 		return mAuth;
+	}
+	
+	public void startUploadService()
+	{
+		if(service==null)
+		{
+			credential = GoogleAccountCredential.usingOAuth2(PhotoGoogleDriveActivity.this, DriveScopes.DRIVE);
+			startActivityForResult(credential.newChooseAccountIntent(), REQUEST_ACCOUNT_PICKER);
+		}
+		else
+		{
+			startUploadServiceHelper();
+		}
+	}
+	
+	private void startUploadServiceHelper()
+	{
+		Toast.makeText(this, getString(R.string.uploading_pictures), Toast.LENGTH_LONG).show();
+		Intent service = new Intent(this, UploadImagesService.class);
+		service.putExtra(AccountManager.KEY_ACCOUNT_NAME, mAccountName);
+		startService(service);
+		
 	}
 }

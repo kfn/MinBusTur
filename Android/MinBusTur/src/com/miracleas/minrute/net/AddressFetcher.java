@@ -117,20 +117,23 @@ public class AddressFetcher extends BaseFetcher
 
 		xpp.setInput(in, null);
 		int eventType = xpp.getEventType();
+		int count = 0;
 		while (eventType != XmlPullParser.END_DOCUMENT)
 		{
-			if (eventType == XmlPullParser.START_TAG && xpp.getName().equals("LocationList"))
+			if (count<11 && eventType == XmlPullParser.START_TAG && xpp.getName().equals("LocationList"))
 			{
 				eventType = xpp.next();
-				while (!(eventType == XmlPullParser.END_TAG && xpp.getName().equals("LocationList")))
+				while (count<11 && !(eventType == XmlPullParser.END_TAG && xpp.getName().equals("LocationList")))
 				{
 					if (eventType == XmlPullParser.START_TAG && xpp.getName().equals("StopLocation"))
 					{						
 						saveLocation(xpp, AddressSearch.TYPE_STATION_STOP);
+						count++;
 					}
 					else if (eventType == XmlPullParser.START_TAG && xpp.getName().equals("CoordLocation"))
 					{						
 						saveLocation(xpp, AddressSearch.TYPE_ADRESSE);
+						count++;
 					}
 					eventType = xpp.next();				
 				}				
@@ -150,10 +153,10 @@ public class AddressFetcher extends BaseFetcher
 		}
 		b.withValue(AddressProviderMetaData.TableMetaData.updated, mUpdated);
 		b.withValue(AddressProviderMetaData.TableMetaData.searchTerm, mSearchTerm);
-		if(log)
+		/*if(log)
 		{
 			log(tag, xpp.getAttributeValue(null, "name"));
-		}
+		}*/
 		mDbOperations.add(b.build());
 	}
 

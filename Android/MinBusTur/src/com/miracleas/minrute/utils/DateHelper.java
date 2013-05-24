@@ -9,6 +9,8 @@ public class DateHelper
 {
 	public static SimpleDateFormat formatter = new SimpleDateFormat("dd.MM.yy HH:mm", Locale.getDefault());
 	public static SimpleDateFormat formatterInternational = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+	public static SimpleDateFormat formatterTime = new SimpleDateFormat("HH:mm", Locale.getDefault());
+	public static SimpleDateFormat formatterDateRejseplanen = new SimpleDateFormat("dd.MM.yy", Locale.getDefault());
 	
 	private String mDays;
 	private String mHours;

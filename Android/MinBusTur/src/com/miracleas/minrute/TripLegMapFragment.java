@@ -247,9 +247,8 @@ public class TripLegMapFragment extends SupportMapFragment implements LoaderCall
 	public void onInfoWindowClick(Marker marker)
 	{
 		LegStop wrap = mMarkers.get(marker.getPosition());
-		LatLng latLng = marker.getPosition();
 		String transportType = getArguments().getString(JourneyDetailMetaData.TableMetaData.TYPE);
-		mCallbacks.onStopSelected(wrap.dbId+"", wrap.latitude+"", wrap.longitude+"", transportType);
+		mCallbacks.onStopSelected(wrap.dbId+"", wrap.latitude+"", wrap.longitude+"", transportType, marker.getSnippet());
 	}
 
 	@Override
@@ -506,7 +505,7 @@ public class TripLegMapFragment extends SupportMapFragment implements LoaderCall
 		/**
 		 * Callback for when an item has been selected.
 		 */
-		public void onStopSelected(String stopId, String lat, String lng, String transportType);
+		public void onStopSelected(String stopId, String lat, String lng, String transportType, String stopName);
 
 	}
 
@@ -517,7 +516,7 @@ public class TripLegMapFragment extends SupportMapFragment implements LoaderCall
 	private static Callbacks sDummyCallbacks = new Callbacks()
 	{
 		@Override
-		public void onStopSelected(String stopId, String lat, String lng, String transportType)
+		public void onStopSelected(String stopId, String lat, String lng, String transportType, String stopName)
 		{
 		}
 	};

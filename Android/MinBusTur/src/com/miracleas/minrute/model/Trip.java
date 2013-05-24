@@ -33,7 +33,7 @@ public class Trip
 	{
 		if(!type.equals(TripLeg.TYPE_WALK))
 		{
-			names.append(name).append(",");
+			names.append(name).append(", ");
 		}		
 	}
 	

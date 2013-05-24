@@ -42,6 +42,7 @@ public abstract class BaseFetcher
 
 	public static final String BROADCAST_SERVER_RESPONSE_ACTION = "BROADCAST_MSG_FROM_HTTP_REQUEST_ACTION";
 	public static final String BROADCAST_MSG = "BROADCAST_MSG";
+	public static final String BROADCAST_SHOW_PROGRESS = "BROADCAST_SHOW_PROGRESS";
 	public static final String BROADCAST_MSG_SUCCESS_BOOLEAN = "BROADCAST_MSG_SUCCESS_BOOLEAN";
 	public static final String BROADCAST_UNAUTHORIZED_BOOLEAN = "BROADCAST_UNAUTHORIZED_BOOLEAN";
 	public static final String LOADING_DATA = "LOADING_DATA";

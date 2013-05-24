@@ -1,66 +1,59 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent" android:paddingTop="4dp">
+    android:layout_height="match_parent"
+    android:padding="4dp" >
 
     <TextView
-        android:id="@+id/textViewDepatureIn"
+        android:id="@+id/textViewDepature"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:drawableLeft="@drawable/ic_menu_home"
         android:gravity="center_vertical"
-        android:text="@string/departure"
+        android:text="Afg. 16:11"
         android:textSize="19sp" />
 
-    <TextView
-        android:id="@+id/textViewDepatureTime"
+    <TextView 
+        android:id="@+id/textViewArrival"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/textViewDepatureIn"
-        android:layout_marginBottom="2dp"
-        android:layout_marginLeft="4dp"
-        android:layout_toRightOf="@+id/textViewDepatureIn"
+        android:layout_below="@+id/textViewDepature"
+        android:drawableLeft="@drawable/ic_menu_myplaces"
         android:gravity="center_vertical"
-        android:text="@string/parenthese_value"
-        android:textSize="14sp" />
-    
-    <TextView
-        android:id="@+id/textViewDuration"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/textViewDepatureIn"
-        android:layout_marginTop="4dp"
-        android:gravity="center_vertical"
-        android:text="@string/duration"
-        android:textSize="17sp" />
-
-    <TextView
-        android:id="@+id/textViewArrivalAt"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/textViewDuration"
-        android:layout_marginTop="4dp"
-        android:gravity="center_vertical"
-        android:text="@string/arrival_within"
-        android:textSize="17sp" />
-
-    <TextView
-        android:id="@+id/textViewArrivalTime"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/textViewArrivalAt"
-        android:layout_marginBottom="2dp"
-        android:layout_marginLeft="4dp"
-        android:layout_toRightOf="@+id/textViewArrivalAt"
-        android:gravity="center_vertical"
-        android:text="@string/parenthese_value"
-        android:textSize="14sp" />
+        android:text="Ank. 17:11"
+        android:textSize="19sp" />
 
     <TextView
         android:id="@+id/textViewTransport"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/textViewArrivalAt"
+        android:layout_below="@+id/textViewArrival"
         android:layout_marginTop="4dp"
-        android:gravity="center_vertical"        
-        android:textSize="14sp" />
+        android:drawableLeft="@drawable/ic_menu_info_details"
+        android:gravity="center_vertical"
+        android:text="Bus 15, IC3400"
+        android:textSize="19sp" />
+
+    <TextView
+        android:id="@+id/textViewDuration"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/textViewTransport"
+        android:layout_marginTop="4dp"
+        android:drawableLeft="@drawable/ic_menu_recent_history"
+        android:gravity="center_vertical"
+        android:text="@string/duration"
+        android:textSize="19sp" />
+
+    <TextView
+        android:id="@+id/textViewDepatureIn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/textViewDuration"
+        android:layout_marginTop="4dp"
+        android:drawableLeft="@drawable/ic_menu_recent_history"
+        android:gravity="center_vertical"
+        android:text="@string/departure"
+        android:textSize="19sp" />
+
 </RelativeLayout>

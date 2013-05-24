@@ -2,18 +2,22 @@ package com.miracleas.minrute;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.widget.CursorAdapter;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
 import android.view.ViewTreeObserver;
@@ -23,6 +27,9 @@ import android.widget.Button;
 import android.widget.GridView;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
+import android.widget.Toast;
 
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
@@ -30,6 +37,7 @@ import com.actionbarsherlock.view.MenuItem;
 import com.miracleas.camera.PhotoGoogleDriveActivity;
 import com.miracleas.imagedownloader.IImageDownloader;
 import com.miracleas.imagedownloader.Utils;
+import com.miracleas.minrute.net.BaseFetcher;
 import com.miracleas.minrute.provider.JourneyDetailStopImagesMetaData;
 import com.miracleas.minrute.provider.JourneyDetailStopMetaData;
 
@@ -38,7 +46,7 @@ import com.miracleas.minrute.provider.JourneyDetailStopMetaData;
  * either contained in a {@link PrisniveauActivity} in two-pane mode (on
  * tablets) or a {@link ToiletDetailActivity} on handsets.
  */
-public class TripStopDetailsImagesFragment extends LocaleImageHandlerFragment implements LoaderCallbacks<Cursor>, AdapterView.OnItemClickListener
+public class TripStopDetailsImagesFragment extends LocaleImageHandlerFragment implements LoaderCallbacks<Cursor>, AdapterView.OnItemClickListener, OnClickListener
 {
 	public static final String tag = TripStopDetailsImagesFragment.class.getName();
 	private ImageButton btnClose = null;
@@ -51,8 +59,10 @@ public class TripStopDetailsImagesFragment extends LocaleImageHandlerFragment im
     private ImageAdapter mAdapter;
     private IImageDownloader mImageDownloaderActivity = null;
     private Button mBtnTakePicture;
+    private Button mBtnUploadPictures;
     private int mItemHeight = 0;
-    
+    private boolean mHasImagesNotUploaded = false;
+    private ProgressBar mProgressBarUpload = null;
     
 	/**
 	 * The columns needed by the cursor adapter
@@ -63,12 +73,13 @@ public class TripStopDetailsImagesFragment extends LocaleImageHandlerFragment im
 		JourneyDetailStopImagesMetaData.TableMetaData.FILE_LOCALE_PATH
 	};
 	
-	public static TripStopDetailsImagesFragment createInstance(String stopId, String lat, String lng)
+	public static TripStopDetailsImagesFragment createInstance(String stopId, String lat, String lng, String stopName)
 	{
 		Bundle args = new Bundle();
 		args.putString(JourneyDetailStopMetaData.TableMetaData._ID, stopId);
 		args.putString(JourneyDetailStopMetaData.TableMetaData.LATITUDE, lat);
 		args.putString(JourneyDetailStopMetaData.TableMetaData.LONGITUDE, lng);
+		args.putString(JourneyDetailStopImagesMetaData.TableMetaData.STOP_NAME, stopName);
 		TripStopDetailsImagesFragment fragment = new TripStopDetailsImagesFragment();
 		fragment.setArguments(args);
 		return fragment;
@@ -101,14 +112,17 @@ public class TripStopDetailsImagesFragment extends LocaleImageHandlerFragment im
 		mImageThumbSize = getResources().getDimensionPixelSize(R.dimen.image_thumbnail_size);
         mImageThumbSpacing = getResources().getDimensionPixelSize(R.dimen.image_thumbnail_spacing);
        
+        initUploadServiceBroadcastReceiver();
 		getSherlockActivity().getSupportLoaderManager().initLoader(LoaderConstants.LOADER_TRIP_STOP_IMAGES, getArguments(), this);
+		getSherlockActivity().getSupportLoaderManager().initLoader(LoaderConstants.LOADER_COUNT_OF_NOT_UPLOADED_IMAGES, getArguments(), this);
 	}
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
 	{
 		final View v = inflater.inflate(R.layout.fragment_trip_stop_detail_images, container, false);
-		mAdapter = new ImageAdapter(getActivity(), null);		
+		mAdapter = new ImageAdapter(getActivity(), null);	
+		mProgressBarUpload = (ProgressBar)v.findViewById(R.id.progressBarUpload);
 		mGridView = (GridView) v.findViewById(R.id.gridView);		
 		mGridView.setAdapter(mAdapter);
 		mGridView.setOnItemClickListener(this);
@@ -162,11 +176,14 @@ public class TripStopDetailsImagesFragment extends LocaleImageHandlerFragment im
 			}
 		});
 		mBtnTakePicture = (Button)v.findViewById(R.id.btnAddPicture);
+		mBtnUploadPictures = (Button)v.findViewById(R.id.btnUploadPictures);
+		mBtnUploadPictures.setOnClickListener(this);
 		PhotoGoogleDriveActivity activity = (PhotoGoogleDriveActivity)getActivity();
 		Bundle args = getArguments();
 		String lat = args.getString(JourneyDetailStopMetaData.TableMetaData.LATITUDE);
-		String lng = args.getString(JourneyDetailStopMetaData.TableMetaData.LONGITUDE);		
-		activity.setBtnListenerOrDisable(mBtnTakePicture, lat, lng);
+		String lng = args.getString(JourneyDetailStopMetaData.TableMetaData.LONGITUDE);	
+		String stopName = args.getString(JourneyDetailStopImagesMetaData.TableMetaData.STOP_NAME);
+		activity.setBtnListenerOrDisable(mBtnTakePicture, lat, lng, stopName);
 		return v;
 	}
 	
@@ -179,6 +196,12 @@ public class TripStopDetailsImagesFragment extends LocaleImageHandlerFragment im
 			String[] selectionArgs = {args.getString(JourneyDetailStopMetaData.TableMetaData.LATITUDE), args.getString(JourneyDetailStopMetaData.TableMetaData.LONGITUDE)};				
 			return new CursorLoader(getActivity(), JourneyDetailStopImagesMetaData.TableMetaData.CONTENT_URI, PROJECTION, selection, selectionArgs, null);
 		}
+		else if (id == LoaderConstants.LOADER_COUNT_OF_NOT_UPLOADED_IMAGES && args.containsKey(JourneyDetailStopMetaData.TableMetaData.LATITUDE))
+		{
+			String selection = JourneyDetailStopImagesMetaData.TableMetaData.LAT + "=? AND "+JourneyDetailStopImagesMetaData.TableMetaData.LNG+"=? AND "+JourneyDetailStopImagesMetaData.TableMetaData.UPLOADED+"=?";
+			String[] selectionArgs = {args.getString(JourneyDetailStopMetaData.TableMetaData.LATITUDE), args.getString(JourneyDetailStopMetaData.TableMetaData.LONGITUDE), "0"};				
+			return new CursorLoader(getActivity(), JourneyDetailStopImagesMetaData.TableMetaData.CONTENT_URI, PROJECTION, selection, selectionArgs, null);
+		}
 		return null;
 	}
 
@@ -188,7 +211,29 @@ public class TripStopDetailsImagesFragment extends LocaleImageHandlerFragment im
 		if(loader.getId()==LoaderConstants.LOADER_TRIP_STOP_IMAGES)
 		{
 			mAdapter.swapCursor(cursor);
-		}					
+		}				
+		else if (loader.getId() == LoaderConstants.LOADER_COUNT_OF_NOT_UPLOADED_IMAGES)
+		{
+			RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+			if(cursor.moveToFirst())
+			{	
+				params.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
+				mBtnUploadPictures.setVisibility(View.VISIBLE);
+				mHasImagesNotUploaded = true;
+			}
+			else
+			{
+				params.addRule(RelativeLayout.CENTER_HORIZONTAL);
+				mBtnUploadPictures.setVisibility(View.GONE);
+				if(mHasImagesNotUploaded)
+				{
+					Toast.makeText(getActivity(), getString(R.string.uploading_finished), Toast.LENGTH_LONG).show();
+					mHasImagesNotUploaded = false;
+					mProgressBarUpload.setVisibility(View.GONE);
+				}
+			}
+			mBtnTakePicture.setLayoutParams(params);
+		}
 	}
 
 	@Override
@@ -198,7 +243,7 @@ public class TripStopDetailsImagesFragment extends LocaleImageHandlerFragment im
 		{
 			mAdapter.swapCursor(null);
 		}
-				
+
 	}
 
 	public void resetLoader(Bundle args)
@@ -225,8 +270,8 @@ public class TripStopDetailsImagesFragment extends LocaleImageHandlerFragment im
 	@Override
 	public void onItemClick(AdapterView<?> parent, View v, int position, long id)
 	{
-		final Intent i = new Intent(getActivity(), TripStopDetailsImageActivity.class);
-		i.putExtra(TripStopDetailsImageActivity.EXTRA_IMAGE, (int) id);
+		final Intent i = new Intent(getActivity(), TripStopDetailsImagePagerActivity.class);
+		i.putExtra(TripStopDetailsImagePagerActivity.EXTRA_IMAGE_POSITION, position);
 		Bundle args = getArguments();
 		i.putExtra(JourneyDetailStopMetaData.TableMetaData.LATITUDE, args.getString(JourneyDetailStopMetaData.TableMetaData.LATITUDE));
 		i.putExtra(JourneyDetailStopMetaData.TableMetaData.LONGITUDE, args.getString(JourneyDetailStopMetaData.TableMetaData.LONGITUDE));
@@ -366,7 +411,68 @@ public class TripStopDetailsImagesFragment extends LocaleImageHandlerFragment im
 	{
 		return mItemHeight;
 	}
+
+	@Override
+	public void onClick(View v)
+	{
+		if(v.getId()==R.id.btnUploadPictures)
+		{
+			((PhotoGoogleDriveActivity)getActivity()).startUploadService();
+		}
+		
+	}
 	
+	@Override
+	public void onDestroy()
+	{
+		super.onDestroy();
+		removeBroadcastReceiver();
+	}
+	
+	private void removeBroadcastReceiver()
+	{
+		if(mServerResponseReceiver!=null)
+		{
+			LocalBroadcastManager r = LocalBroadcastManager.getInstance(getActivity());
+			r.unregisterReceiver(mServerResponseReceiver);
+		}
+	}
+	
+	protected void initUploadServiceBroadcastReceiver()
+	{
+		LocalBroadcastManager r = LocalBroadcastManager.getInstance(getActivity());
+		IntentFilter filter = new IntentFilter();
+		filter.addAction(BaseFetcher.BROADCAST_SERVER_RESPONSE_ACTION);
+		r.registerReceiver(mServerResponseReceiver, filter);
+	}
+	
+	   BroadcastReceiver mServerResponseReceiver = new BroadcastReceiver()
+		{
+
+			@Override
+			public void onReceive(Context context, Intent intent)
+			{
+				String action = intent.getAction();
+				if (action.equals(BaseFetcher.BROADCAST_SERVER_RESPONSE_ACTION))
+				{						
+					boolean showProgress = intent.getBooleanExtra(BaseFetcher.BROADCAST_SHOW_PROGRESS, false);
+					String msg = intent.getStringExtra(BaseFetcher.BROADCAST_MSG);
+					if(!TextUtils.isEmpty(msg))
+					{						
+						Toast.makeText(getActivity(), msg, Toast.LENGTH_LONG).show();
+					}	
+					if(showProgress)
+					{
+						mProgressBarUpload.setVisibility(View.VISIBLE);
+					}
+					else
+					{
+						mProgressBarUpload.setVisibility(View.GONE);
+					}
+					
+				} 
+			}
+		};
 	
 
 

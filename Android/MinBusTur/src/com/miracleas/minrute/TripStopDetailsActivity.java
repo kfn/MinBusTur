@@ -25,6 +25,7 @@ import com.miracleas.imagedownloader.ImageFetcher;
 
 import com.miracleas.minrute.model.NearbyLocationRequest;
 import com.miracleas.minrute.provider.JourneyDetailMetaData;
+import com.miracleas.minrute.provider.JourneyDetailStopImagesMetaData;
 import com.miracleas.minrute.provider.JourneyDetailStopMetaData;
 
 public class TripStopDetailsActivity extends PhotoGoogleDriveActivity implements com.actionbarsherlock.app.ActionBar.TabListener
@@ -97,8 +98,9 @@ public class TripStopDetailsActivity extends PhotoGoogleDriveActivity implements
 		String lat = getIntent().getStringExtra(JourneyDetailStopMetaData.TableMetaData.LATITUDE);
 		String lng = getIntent().getStringExtra(JourneyDetailStopMetaData.TableMetaData.LONGITUDE);
 		String id = getIntent().getStringExtra(JourneyDetailStopMetaData.TableMetaData._ID);
+		String stopName = getIntent().getStringExtra(JourneyDetailStopImagesMetaData.TableMetaData.STOP_NAME);
 		mTransportType = getIntent().getStringExtra(JourneyDetailMetaData.TableMetaData.TYPE);
-		mNearbyLocationRequest = new NearbyLocationRequest(id, lng, lat);
+		mNearbyLocationRequest = new NearbyLocationRequest(id, lng, lat, stopName);
 	}
 
 	@Override
@@ -202,7 +204,7 @@ public class TripStopDetailsActivity extends PhotoGoogleDriveActivity implements
 			}
 			else if (position == 1)
 			{
-				fragment = TripStopDetailsImagesFragment.createInstance(getIntent().getStringExtra(JourneyDetailStopMetaData.TableMetaData._ID),  mNearbyLocationRequest.coordY, mNearbyLocationRequest.coordX);
+				fragment = TripStopDetailsImagesFragment.createInstance(getIntent().getStringExtra(JourneyDetailStopMetaData.TableMetaData._ID),  mNearbyLocationRequest.coordY, mNearbyLocationRequest.coordX, mNearbyLocationRequest.stopName);
 			}
 			else if (position == 2)
 			{

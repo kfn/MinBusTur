@@ -47,10 +47,10 @@ import com.miracleas.minrute.model.MyLittleImage;
 import com.miracleas.minrute.provider.JourneyDetailStopImagesMetaData;
 import com.miracleas.minrute.provider.JourneyDetailStopMetaData;
 
-public class TripStopDetailsImageActivity extends PhotoGoogleDriveActivity implements OnClickListener, LoaderCallbacks<Cursor>
+public class TripStopDetailsImagePagerActivity extends PhotoGoogleDriveActivity implements OnClickListener, LoaderCallbacks<Cursor>
 {
 	private static final String CACHE_DIR = "images";
-	public static final String EXTRA_IMAGE = "extra_image";
+	public static final String EXTRA_IMAGE_POSITION = "extra_image";
 	public static final String EXTRA_IMAGES = "extra_images";
 
 	private static final int LOAD_TOILET_IMAGES = 5;
@@ -168,7 +168,7 @@ public class TripStopDetailsImageActivity extends PhotoGoogleDriveActivity imple
 		@Override
 		public Fragment getItem(int position)
 		{
-			return TripStopDetailsImageFragment.newInstance(mImages[position]);
+			return TripStopDetailsImagePagerFragmentItem.newInstance(mImages[position]);
 		}
 	}
 
@@ -238,7 +238,7 @@ public class TripStopDetailsImageActivity extends PhotoGoogleDriveActivity imple
 
 			// Set the current item based on the extra passed in to this
 			// activity
-			final int extraCurrentItem = getIntent().getIntExtra(EXTRA_IMAGE, -1);
+			final int extraCurrentItem = getIntent().getIntExtra(EXTRA_IMAGE_POSITION, -1);
 			if (extraCurrentItem != -1)
 			{
 				mPager.setCurrentItem(extraCurrentItem);
