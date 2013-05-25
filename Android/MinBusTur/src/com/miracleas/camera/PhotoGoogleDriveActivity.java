@@ -38,12 +38,13 @@ import com.google.api.services.drive.model.File;
 import com.miracleas.imagedownloader.IImageDownloader;
 import com.miracleas.imagedownloader.ImageDownloaderActivity;
 import com.miracleas.imagedownloader.ImageFetcher;
+import com.miracleas.minrute.MinRuteBaseActivity;
 import com.miracleas.minrute.R;
 import com.miracleas.minrute.provider.JourneyDetailStopImagesMetaData;
 import com.miracleas.minrute.service.UploadImagesService;
 import com.miracleas.minrute.utils.MyPrefs;
 
-public class PhotoGoogleDriveActivity extends SherlockFragmentActivity implements IImageDownloader
+public class PhotoGoogleDriveActivity extends MinRuteBaseActivity implements IImageDownloader
 {
 	private static final String FILE_URI = "viewbitmap";
 	private static final String LAT = "lat";
@@ -466,6 +467,13 @@ public class PhotoGoogleDriveActivity extends SherlockFragmentActivity implement
 		Intent service = new Intent(this, UploadImagesService.class);
 		service.putExtra(AccountManager.KEY_ACCOUNT_NAME, mAccountName);
 		startService(service);
+		
+	}
+
+	@Override
+	public void onConnectedService()
+	{
+		// TODO Auto-generated method stub
 		
 	}
 }

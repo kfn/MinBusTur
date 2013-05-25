@@ -15,7 +15,7 @@ import com.miracleas.minrute.provider.JourneyDetailStopImagesMetaData;
 import com.miracleas.minrute.provider.JourneyDetailStopMetaData;
 import com.miracleas.minrute.provider.TripLegMetaData;
 
-public class TripLegMapActivity extends GeofenceActivity implements TripLegMapFragment.Callbacks
+public class TripLegMapActivity extends MinRuteBaseActivity implements TripLegMapFragment.Callbacks
 {
 	@Override
 	public void onCreate(Bundle savedInstanceState)
@@ -92,6 +92,13 @@ public class TripLegMapActivity extends GeofenceActivity implements TripLegMapFr
 		activity.putExtra(JourneyDetailMetaData.TableMetaData.TYPE, transportType);
 		activity.putExtra(JourneyDetailStopImagesMetaData.TableMetaData.STOP_NAME, stopName);
 		startActivity(activity);
+	}
+
+	@Override
+	public void onConnectedService()
+	{
+		// TODO Auto-generated method stub
+		
 	}
 
 

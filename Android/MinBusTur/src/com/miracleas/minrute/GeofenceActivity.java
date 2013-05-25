@@ -54,7 +54,7 @@ public class GeofenceActivity extends GoogleServiceActivity implements GooglePla
 	private List<String> mGeofencesToRemove;
 
 	@Override
-	protected void onCreate(Bundle savedInstanceState)
+	public void onCreate(Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);
 		// Start with the request flag set to false

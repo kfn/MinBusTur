@@ -76,6 +76,16 @@ public class TripLeg
 		return s;
 	}
 	
+	public long getDepartures()
+	{
+		long s = 0l;
+		if(start!=null)
+		{
+			s = start.getTimeInMillis();
+		}
+		return s;
+	}
+	
 	public long getArrivesIn()
 	{
 		long s = 0l;

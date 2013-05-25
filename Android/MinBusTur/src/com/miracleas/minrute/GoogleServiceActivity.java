@@ -14,7 +14,7 @@ import com.google.android.gms.common.GooglePlayServicesClient.OnConnectionFailed
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.miracleas.minrute.service.ReceiveTransitionsIntentService;
 
-public class GoogleServiceActivity extends SherlockFragmentActivity implements OnConnectionFailedListener
+public class GoogleServiceActivity extends MinRuteBaseActivity implements OnConnectionFailedListener
 {
 	private static final String tag = GoogleServiceActivity.class.getName();
 	// Global constants
@@ -132,6 +132,13 @@ public class GoogleServiceActivity extends SherlockFragmentActivity implements O
 			return mDialog;
 		}
 
+	}
+
+	@Override
+	public void onConnectedService()
+	{
+		// TODO Auto-generated method stub
+		
 	}
 
 }

@@ -40,12 +40,13 @@ import com.miracleas.minrute.provider.JourneyDetailStopMetaData;
 import com.miracleas.minrute.provider.TripLegMetaData;
 import com.miracleas.minrute.provider.TripMetaData;
 import com.miracleas.minrute.provider.TripMetaData.TableMetaData;
+import com.miracleas.minrute.provider.TripVoiceMetaData;
 import com.miracleas.minrute.service.JourneyDetailsGeofenceService;
 import com.miracleas.minrute.service.JourneyDetailsService;
 import com.miracleas.minrute.service.ReceiveTransitionsIntentService;
 import com.miracleas.minrute.utils.App;
 
-public class TripGuideFragment extends SherlockListFragment implements LoaderCallbacks<Cursor>, OnItemClickListener, android.speech.tts.TextToSpeech.OnInitListener
+public class TripGuideFragment extends SherlockListFragment implements LoaderCallbacks<Cursor>, OnItemClickListener, com.miracleas.minrute.service.UpdateVoiceTripService.OnVoiceServiceReadyListener
 {
 	private static final String[] PROJECTION = { TripLegMetaData.TableMetaData._ID, TripLegMetaData.TableMetaData.DEST_DATE, TripLegMetaData.TableMetaData.DEST_NAME, TripLegMetaData.TableMetaData.DEST_ROUTE_ID, TripLegMetaData.TableMetaData.DEST_TIME,
 			TripLegMetaData.TableMetaData.DEST_TYPE, TripLegMetaData.TableMetaData.ORIGIN_DATE, TripLegMetaData.TableMetaData.ORIGIN_NAME, TripLegMetaData.TableMetaData.ORIGIN_ROUTE_ID, TripLegMetaData.TableMetaData.ORIGIN_TIME, TripLegMetaData.TableMetaData.ORIGIN_TYPE,
@@ -59,11 +60,10 @@ public class TripGuideFragment extends SherlockListFragment implements LoaderCal
 			JourneyDetailStopMetaData.TableMetaData.DEP_DATE, JourneyDetailStopMetaData.TableMetaData.DEP_TIME };
 	
 	private static final String[] PROJECTION_TRIP = { 
-		TripMetaData.TableMetaData.DEPATURES_IN_TIME_LABEL
+		TripVoiceMetaData.TableMetaData.DEPARTURES_IN
 	};
 	private TripAdapter mTripAdapter = null;
 	private long[] mLegIds;
-	private boolean mHasSpoken;
 	private String mTextToSpeak;
 
 	public static TripGuideFragment createInstance(String tripId, int stepCount, TripRequest tripRequest)
@@ -83,7 +83,14 @@ public class TripGuideFragment extends SherlockListFragment implements LoaderCal
 
 	public void onCreate(Bundle savedInstanceState)
 	{
-		super.onCreate(savedInstanceState);
+		super.onCreate(savedInstanceState);	
+		
+	}
+	
+	public void onSaveInstanceState(Bundle outState)
+	{
+		super.onSaveInstanceState(outState);
+		outState.putString("mTextToSpeak", mTextToSpeak);
 	}
 
 	@Override
@@ -93,7 +100,11 @@ public class TripGuideFragment extends SherlockListFragment implements LoaderCal
 		View rootView = inflater.inflate(R.layout.fragment_trip_guide, container, false);
 		FrameLayout frame = (FrameLayout) rootView.findViewById(R.id.listContainer);
 		frame.addView(listView);
-
+		if(savedInstanceState!=null)
+		{
+			mTextToSpeak = savedInstanceState.getString("mTextToSpeak");
+		}
+		
 		return rootView;
 
 	}
@@ -109,7 +120,7 @@ public class TripGuideFragment extends SherlockListFragment implements LoaderCal
 		getLoaderManager().initLoader(LoaderConstants.LOAD_TRIP_LEGS, getArguments(), this);
 		getLoaderManager().initLoader(LoaderConstants.LOAD_TRIP_LEG_FIRST_LAST, getArguments(), this);
 		getLoaderManager().initLoader(LoaderConstants.LOAD_START_END_POSITION, getArguments(), this);
-		getLoaderManager().initLoader(LoaderConstants.LOAD_GUIDE_TRIP, getArguments(), this);
+		
 	}
 
 	@Override
@@ -131,11 +142,12 @@ public class TripGuideFragment extends SherlockListFragment implements LoaderCal
 			String[] selectionArgs = { args.getString(TripMetaData.TableMetaData._ID) };
 			return new CursorLoader(getActivity(), JourneyDetailStopMetaData.TableMetaData.CONTENT_URI, PROJECTION_JORNEY_DETAILS, selection, selectionArgs, null);
 		}
-		else if (id == LoaderConstants.LOAD_GUIDE_TRIP)
+		/*else if (id == LoaderConstants.LOAD_GUIDE_VOICE_TRIP)
 		{
-			Uri uri = Uri.withAppendedPath(TripMetaData.TableMetaData.CONTENT_URI, args.getString(TripMetaData.TableMetaData._ID));
-			return new CursorLoader(getActivity(), uri, PROJECTION_TRIP, null, null, null);
-		}
+			String selection =  TripVoiceMetaData.TableMetaData.TRIP_ID + "=?";
+			String[] selectionArgs = {args.getString(TripMetaData.TableMetaData._ID)};
+			return new CursorLoader(getActivity(), TripVoiceMetaData.TableMetaData.CONTENT_URI, PROJECTION_TRIP, selection, selectionArgs, TripVoiceMetaData.TableMetaData._ID+" LIMIT 1");
+		}*/
 		return null;
 	}
 
@@ -184,15 +196,24 @@ public class TripGuideFragment extends SherlockListFragment implements LoaderCal
 			}
 
 		}
-		else if(loader.getId() == LoaderConstants.LOAD_GUIDE_TRIP)
+		/*else if(loader.getId() == LoaderConstants.LOAD_GUIDE_VOICE_TRIP)
 		{
-			if(!mHasSpoken && newCursor.moveToFirst())
+			if(newCursor.moveToFirst())
 			{
-				mHasSpoken = true;
-				mTextToSpeak = newCursor.getString(newCursor.getColumnIndex(TripMetaData.TableMetaData.DEPATURES_IN_TIME_LABEL));
-				startTextSpeach();
+				String s = newCursor.getString(newCursor.getColumnIndex(TripVoiceMetaData.TableMetaData.DEPARTURES_IN));
+				mTextToSpeak = String.format(getString(R.string.voice_departure), s);
+				MinRuteBaseActivity base = (MinRuteBaseActivity)getActivity();
+				if(base.mService.isVoiceInitialized())
+				{
+					base.mService.playVoice(mTextToSpeak);
+				}
+				else
+				{
+					base.mService.setTextToSpeak(mTextToSpeak);
+					startTextSpeach();
+				}				
 			}
-		}
+		}*/
 	}
 
 	private void loadTripLegs(Cursor newCursor, Intent service, boolean first)
@@ -496,11 +517,16 @@ public class TripGuideFragment extends SherlockListFragment implements LoaderCal
 		{
 			throw new IllegalStateException("Activity must be a GeofenceActivity.");
 		}
+		if (!(activity instanceof MinRuteBaseActivity))
+		{
+			throw new IllegalStateException("Activity must be a MinRuteBaseActivity.");
+		}
 		// Activities containing this fragment must implement its callbacks.
 		if (!(activity instanceof Callbacks))
 		{
 			throw new IllegalStateException("Activity must implement fragment's callbacks.");
 		}
+
 		mCallbacks = (Callbacks) activity;
 	}
 
@@ -545,7 +571,6 @@ public class TripGuideFragment extends SherlockListFragment implements LoaderCal
 		getActivity().startActivityForResult(checkIntent, MY_DATA_CHECK_CODE);
 	}
 
-	private TextToSpeech mTts;
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data)
 	{	
@@ -554,7 +579,8 @@ public class TripGuideFragment extends SherlockListFragment implements LoaderCal
 			if (App.SUPPORTS_JELLY_BEAN || resultCode == TextToSpeech.Engine.CHECK_VOICE_DATA_PASS)
 			{
 				// success, create the TTS instance
-				mTts = new TextToSpeech(getActivity(), this);
+				MinRuteBaseActivity base = (MinRuteBaseActivity)getActivity();
+				base.mService.startTextToSpeech();
 			} else
 			{
 				// missing data, install it
@@ -568,37 +594,20 @@ public class TripGuideFragment extends SherlockListFragment implements LoaderCal
 	@Override
 	public void onDestroy()
 	{
-		super.onDestroy();
-		if(mTts!=null)
-		{
-			mTts.shutdown();
-		}
+		super.onDestroy();	
+	}
+
+	public void onConnectedService()
+	{
+		String id = getArguments().getString(TripMetaData.TableMetaData._ID);
+		((MinRuteBaseActivity)getActivity()).mService.initVoiceService(id, this);
 		
 	}
 
 	@Override
-	public void onInit(int status)
+	public void onVoiceServiceReady()
 	{
-		if(status==TextToSpeech.SUCCESS)
-		{
-			Locale locale = Locale.getDefault();
-			if(mTts.isLanguageAvailable(locale)==android.speech.tts.TextToSpeech.LANG_AVAILABLE)
-			{
-				//mTts.setLanguage(locale);
-				mTts.setLanguage(Locale.US);
-			}
-			else
-			{
-				mTts.setLanguage(Locale.US);
-			}
-			
-			if(mTextToSpeak!=null)
-			{
-				mTts.speak(mTextToSpeak, TextToSpeech.QUEUE_FLUSH, null);
-				mTextToSpeak = null;
-			}
-		}
-		
-		
+		//getLoaderManager().initLoader(LoaderConstants.LOAD_GUIDE_VOICE_TRIP, getArguments(), this);	
+		startTextSpeach();
 	}
 }

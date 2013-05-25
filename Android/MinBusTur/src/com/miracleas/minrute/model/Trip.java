@@ -8,10 +8,6 @@ import android.text.TextUtils;
 
 public class Trip
 {
-
-	
-	
-	
 	public String id = "";
 	private long durationWalk = 0;
 	private long durationBus = 0;
@@ -145,6 +141,16 @@ public class Trip
 		if(!legs.isEmpty())
 		{
 			s = legs.get(0).origin.time;
+		}
+		return s;
+	}
+	
+	public long getDepatureTimeLong()
+	{
+		long s = 0;
+		if(!legs.isEmpty())
+		{
+			s = legs.get(0).getDepartures();
 		}
 		return s;
 	}

@@ -5,25 +5,24 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
+import com.miracleas.minrute.R;
+
+import android.content.Context;
+import android.text.format.DateUtils;
+
 public class DateHelper
 {
 	public static SimpleDateFormat formatter = new SimpleDateFormat("dd.MM.yy HH:mm", Locale.getDefault());
 	public static SimpleDateFormat formatterInternational = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
 	public static SimpleDateFormat formatterTime = new SimpleDateFormat("HH:mm", Locale.getDefault());
 	public static SimpleDateFormat formatterDateRejseplanen = new SimpleDateFormat("dd.MM.yy", Locale.getDefault());
-	
-	private String mDays;
-	private String mHours;
-	private String mMinutes;
-	private String mSeconds;
-	
 
-	public DateHelper(String days, String hours, String minutes, String seconds)
+	private Context c = null;
+	private boolean mVoice = false;
+
+	public DateHelper(Context c)
 	{
-		this.mDays = days;
-		this.mHours = hours;
-		this.mMinutes = minutes;
-		this.mSeconds = seconds;
+		this.c = c;
 	}
 
 	public static Calendar parseToCalendar(String date, SimpleDateFormat format) throws java.text.ParseException
@@ -33,6 +32,18 @@ public class DateHelper
 		cal.setTime(d);
 		return cal;
 
+	}
+	
+	
+
+	public boolean isVoice()
+	{
+		return mVoice;
+	}
+
+	public void setVoice(boolean voice)
+	{
+		this.mVoice = voice;
 	}
 
 	public static String convertDateToString(Calendar date, SimpleDateFormat format)
@@ -54,6 +65,12 @@ public class DateHelper
 
 	}
 	
+	public void setVoices(String days, String hours, String minutes, String seconds)
+	{
+		
+	}
+	
+	
 	public String getDurationLabel(long time, boolean isTripTime)
 	{		
 		StringBuilder b = new StringBuilder();
@@ -62,15 +79,13 @@ public class DateHelper
 		{
 			time = time * -1;
 		}
-		else if(isTripTime)
-		{
-			b.append("om ");
-		}
+
 		if(time>0)
 		{
 			int tempDays = (int)(time / 1000 / 60 / 60 / 24);
 			int tempHours = (int)(time / 1000 / 60 / 60) - (tempDays * 24);
 			int tempMinutes = (int)(time / 1000 / 60) - (tempHours * 60);
+			
 			//tempMinutes = (int) (Math.ceil(tempMinutes / 5d) * 5);
 			if(tempMinutes==60)
 			{
@@ -80,23 +95,14 @@ public class DateHelper
 			
 			if(tempDays>0)
 			{
-				String days = mDays;
-				if(tempDays==1)
-				{
-					days = mDays.substring(0, mDays.length()-1);
-				}
+				String days = getDay(tempDays);
 				b.append(tempDays).append(" ").append(days);
 			}
 			else
 			{
 				if(tempHours>0)
 				{
-					String hours = mHours;
-					if(tempHours==1)
-					{
-						hours = mHours.substring(0, mHours.length()-1);
-					}
-						
+					String hours = getHour(tempHours);											
 					b.append(tempHours).append(" ").append(hours);
 				}
 				if(tempMinutes>0)
@@ -105,12 +111,14 @@ public class DateHelper
 					{
 						b.append(" ");
 					}
-					
-					b.append(tempMinutes).append(" ").append(mMinutes);
+					String minutes = getMintues(tempMinutes);
+					b.append(tempMinutes).append(" ").append(minutes);
 				}
 				if(b.length()==0)
 				{
-					b.append(mSeconds);
+					String seconds = getSeconds((int)time);
+					b.append(time / DateUtils.SECOND_IN_MILLIS).append(" ").append(seconds);
+					
 				}
 			}
 		}
@@ -118,7 +126,15 @@ public class DateHelper
 		{
 			if(isTripTime)
 			{
-				b.append("Lige nu");
+				if(mVoice)
+				{
+					b.append(c.getString(R.string.voice_departure_now));
+				}
+				else
+				{
+					b.append(c.getString(R.string.voice_departure));
+				}
+				
 			}
 			else
 			{
@@ -128,9 +144,128 @@ public class DateHelper
 		}	
 		if(!inFuture)
 		{
-			b.append(" siden");
+			if(mVoice)
+			{
+				b.append(c.getString(R.string.voice_departured));
+			}
+			else
+			{
+				b.append(c.getString(R.string.departured));
+			}
+		
 		}
 		return b.toString();
+	}
+	
+	private String getDay(int day)
+	{
+		String s = null;
+		if(day==1)
+		{
+			if(mVoice)
+			{
+				s = c.getString(R.string.voice_days_one);
+			}
+			else
+			{
+				s = c.getString(R.string.days_one);
+			}
+		}
+		else
+		{
+			if(mVoice)
+			{
+				s = c.getString(R.string.voice_days_more);
+			}
+			else
+			{
+				s = c.getString(R.string.days);
+			}
+		}
+		return s;
+	}
+	private String getHour(int hour)
+	{
+		String s = null;
+		if(hour==1)
+		{
+			if(mVoice)
+			{
+				s = c.getString(R.string.voice_hours_one);
+			}
+			else
+			{
+				s = c.getString(R.string.hours_one);
+			}
+		}
+		else
+		{
+			if(mVoice)
+			{
+				s = c.getString(R.string.voice_hours_more);
+			}
+			else
+			{
+				s = c.getString(R.string.hours);
+			}
+		}
+		return s;
+	}
+	
+	private String getMintues(int min)
+	{
+		String s = null;
+		if(min==1)
+		{
+			if(mVoice)
+			{
+				s = c.getString(R.string.voice_minutes_one);
+			}
+			else
+			{
+				s = c.getString(R.string.minutes_one);
+			}
+		}
+		else
+		{
+			if(mVoice)
+			{
+				s = c.getString(R.string.voice_minutes_more);
+			}
+			else
+			{
+				s = c.getString(R.string.minutes);
+			}
+		}
+		return s;
+	}
+	
+	private String getSeconds(int min)
+	{
+		String s = null;
+		if(min==1)
+		{
+			if(mVoice)
+			{
+				s = c.getString(R.string.voice_seconds_one);
+			}
+			else
+			{
+				s = c.getString(R.string.seconds_one);
+			}
+		}
+		else
+		{
+			if(mVoice)
+			{
+				s = c.getString(R.string.voice_seconds_more);
+			}
+			else
+			{
+				s = c.getString(R.string.seconds);
+			}
+		}
+		return s;
 	}
 
 }

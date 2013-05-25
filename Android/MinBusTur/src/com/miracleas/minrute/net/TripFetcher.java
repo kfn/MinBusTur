@@ -22,6 +22,7 @@ import com.miracleas.minrute.model.TripLocation;
 import com.miracleas.minrute.model.TripRequest;
 import com.miracleas.minrute.provider.TripLegMetaData;
 import com.miracleas.minrute.provider.TripMetaData;
+import com.miracleas.minrute.provider.TripVoiceMetaData;
 import com.miracleas.minrute.utils.DateHelper;
 
 public class TripFetcher extends BaseFetcher
@@ -89,7 +90,7 @@ public class TripFetcher extends BaseFetcher
 			if (repsonseCode == HttpURLConnection.HTTP_OK)
 			{
 				mUpdated = System.currentTimeMillis();		
-				mDateHelper = new DateHelper(mContext.getString(R.string.days), mContext.getString(R.string.hours), mContext.getString(R.string.minutes), mContext.getString(R.string.seconds));
+				mDateHelper = new DateHelper(mContext);
 				InputStream input = urlConnection.getInputStream();
 				parse(input);
 				if (!mDbOperations.isEmpty())
@@ -200,22 +201,29 @@ public class TripFetcher extends BaseFetcher
 		Uri uri = Uri.withAppendedPath(TripMetaData.TableMetaData.CONTENT_URI, t.id);
 		ContentProviderOperation.Builder b = ContentProviderOperation.newUpdate(uri);
 		long duration = t.getTotalDuration();
+		long departures = t.getDepatureTimeLong();
 		b.withValue(TripMetaData.TableMetaData.DURATION, duration);
 		b.withValue(TripMetaData.TableMetaData.DURATION_LABEL, mDateHelper.getDurationLabel(duration, false));
 		b.withValue(TripMetaData.TableMetaData.LEG_COUNT, t.getLegCount());
 		b.withValue(TripMetaData.TableMetaData.LEG_NAMES, t.getNames());
 		b.withValue(TripMetaData.TableMetaData.LEG_TYPES, t.getTypes());
 		b.withValue(TripMetaData.TableMetaData.DEPATURE_TIME, t.getDepatureTime());
+		b.withValue(TripMetaData.TableMetaData.DEPATURES_TIME_LONG, departures);
 		b.withValue(TripMetaData.TableMetaData.ARRIVAL_TIME, t.getArrivalTime());
 		b.withValue(TripMetaData.TableMetaData.TRANSPORT_CHANGES, t.getTransportChanges());
-		b.withValue(TripMetaData.TableMetaData.DURATION_BUS, mDateHelper.getDurationLabel(t.getDurationBus(), false));
-		b.withValue(TripMetaData.TableMetaData.DURATION_TRAIN, mDateHelper.getDurationLabel(t.getDurationTrain(), false));
-		b.withValue(TripMetaData.TableMetaData.DURATION_WALK, mDateHelper.getDurationLabel(t.getDurationWalk(), false));
-		b.withValue(TripMetaData.TableMetaData.ARRIVES_IN_TIME_LABEL, mDateHelper.getDurationLabel(t.getArrivesInTime(), true));
-		long departures = t.getDeparturesInTime();
-		b.withValue(TripMetaData.TableMetaData.DEPATURES_IN_TIME_LABEL, mDateHelper.getDurationLabel(departures, true));
-		b.withValue(TripMetaData.TableMetaData.DEPATURES_IN_TIME, departures);
+		//b.withValue(TripMetaData.TableMetaData.DURATION_BUS, mDateHelper.getDurationLabel(t.getDurationBus(), false));
+		//b.withValue(TripMetaData.TableMetaData.DURATION_TRAIN, mDateHelper.getDurationLabel(t.getDurationTrain(), false));
+		//b.withValue(TripMetaData.TableMetaData.DURATION_WALK, mDateHelper.getDurationLabel(t.getDurationWalk(), false));
 		mDbOperations.add(b.build());
+				
+		//IF VOICE ON	
+		mDateHelper.setVoice(true);
+		departures = departures - System.currentTimeMillis();
+		b = ContentProviderOperation.newInsert(TripVoiceMetaData.TableMetaData.CONTENT_URI);
+		b.withValue(TripVoiceMetaData.TableMetaData.TRIP_ID, t.id);
+		b.withValue(TripVoiceMetaData.TableMetaData.DEPARTURES_IN, mDateHelper.getDurationLabel(departures, true));
+		mDbOperations.add(b.build());
+		mDateHelper.setVoice(false);
 	}
 	
 	private void saveLeg(TripLeg leg, int stepNumber)

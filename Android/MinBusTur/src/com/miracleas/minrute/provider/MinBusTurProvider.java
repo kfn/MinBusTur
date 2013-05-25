@@ -48,6 +48,9 @@ public class MinBusTurProvider extends ContentProvider
 	private static final int INCOMING_SINGLE_STOP_IMAGE_URI_INDICATOR = 19;
 	private static final int INCOMING_STOP_DEPARTURES_COLLECTION_URI_INDICATOR = 18;
 	
+	private static final int INCOMING_TRIP_VOICE_COLLECTION_URI_INDICATOR = 20;
+	private static final int INCOMING_SINGLE_TRIP_VOICE_URI_INDICATOR = 21;
+	
 
 	static
 	{
@@ -70,6 +73,9 @@ public class MinBusTurProvider extends ContentProvider
 		sUriMatcher.addURI(JourneyDetailStopImagesMetaData.AUTHORITY, JourneyDetailStopImagesMetaData.COLLECTION_TYPE, INCOMING_STOP_IMAGE_COLLECTION_URI_INDICATOR);
 		sUriMatcher.addURI(JourneyDetailStopImagesMetaData.AUTHORITY, JourneyDetailStopImagesMetaData.COLLECTION_TYPE+ "/#", INCOMING_SINGLE_STOP_IMAGE_URI_INDICATOR);
 		sUriMatcher.addURI(JourneyDetailStopDeparturesMetaData.AUTHORITY, JourneyDetailStopDeparturesMetaData.COLLECTION_TYPE, INCOMING_STOP_DEPARTURES_COLLECTION_URI_INDICATOR);
+		sUriMatcher.addURI(TripVoiceMetaData.AUTHORITY, TripVoiceMetaData.COLLECTION_TYPE, INCOMING_TRIP_VOICE_COLLECTION_URI_INDICATOR);
+		sUriMatcher.addURI(TripVoiceMetaData.AUTHORITY, TripVoiceMetaData.COLLECTION_TYPE + "/#", INCOMING_SINGLE_TRIP_VOICE_URI_INDICATOR);
+		
 	}
 
 	/**
@@ -97,6 +103,7 @@ public class MinBusTurProvider extends ContentProvider
 			db.execSQL("CREATE TABLE IF NOT EXISTS " + GeofenceMetaData.TABLE_NAME + getTableSchemaStart() + GeofenceMetaData.getTableSchema() + getTableSchemaEnd());
 			db.execSQL("CREATE TABLE IF NOT EXISTS " + JourneyDetailStopImagesMetaData.TABLE_NAME + getTableSchemaStart() + JourneyDetailStopImagesMetaData.getTableSchema() + getTableSchemaEnd());
 			db.execSQL("CREATE TABLE IF NOT EXISTS " + JourneyDetailStopDeparturesMetaData.TABLE_NAME + getTableSchemaStart() + JourneyDetailStopDeparturesMetaData.getTableSchema() + getTableSchemaEnd());
+			db.execSQL("CREATE TABLE IF NOT EXISTS " + TripVoiceMetaData.TABLE_NAME + getTableSchemaStart() + TripVoiceMetaData.getTableSchema() + getTableSchemaEnd());
 		}
 
 		protected static String getTableSchemaStart()
@@ -124,6 +131,7 @@ public class MinBusTurProvider extends ContentProvider
 			db.execSQL("DROP TABLE IF EXISTS " + GeofenceMetaData.TABLE_NAME);
 			db.execSQL("DROP TABLE IF EXISTS " + JourneyDetailStopImagesMetaData.TABLE_NAME);
 			db.execSQL("DROP TABLE IF EXISTS " + JourneyDetailStopDeparturesMetaData.TABLE_NAME);
+			db.execSQL("DROP TABLE IF EXISTS " + TripVoiceMetaData.TABLE_NAME);
 			onCreate(db);
 		}
 	}
@@ -225,6 +233,13 @@ public class MinBusTurProvider extends ContentProvider
 		case INCOMING_STOP_DEPARTURES_COLLECTION_URI_INDICATOR:
 			qb.setTables(JourneyDetailStopDeparturesMetaData.TABLE_NAME);
 			break;
+		case INCOMING_TRIP_VOICE_COLLECTION_URI_INDICATOR:
+			qb.setTables(TripVoiceMetaData.TABLE_NAME);
+			break;
+		case INCOMING_SINGLE_TRIP_VOICE_URI_INDICATOR:
+			qb.setTables(TripVoiceMetaData.TABLE_NAME);
+			qb.appendWhere(TripVoiceMetaData.TableMetaData._ID + "=" + uri.getPathSegments().get(1));
+			break;
 		default:
 			throw new IllegalArgumentException("Unknown URI " + uri);
 		}
@@ -313,6 +328,11 @@ public class MinBusTurProvider extends ContentProvider
 		{
 			tbl = JourneyDetailStopDeparturesMetaData.TABLE_NAME;
 			contentUri = JourneyDetailStopDeparturesMetaData.TableMetaData.CONTENT_URI;
+		}
+		else if (sUriMatcher.match(uri) == INCOMING_TRIP_VOICE_COLLECTION_URI_INDICATOR)
+		{
+			tbl = TripVoiceMetaData.TABLE_NAME;
+			contentUri = TripVoiceMetaData.TableMetaData.CONTENT_URI;
 		}
 		else
 		{
@@ -419,6 +439,9 @@ public class MinBusTurProvider extends ContentProvider
 		case INCOMING_STOP_DEPARTURES_COLLECTION_URI_INDICATOR:
 			count = db.delete(JourneyDetailStopDeparturesMetaData.TABLE_NAME, where, whereArgs);
 			break;
+		case INCOMING_TRIP_VOICE_COLLECTION_URI_INDICATOR:
+			count = db.delete(TripVoiceMetaData.TABLE_NAME, where, whereArgs);
+			break;
 		default:
 			throw new IllegalArgumentException("Unknown URI " + uri);
 		}
@@ -496,6 +519,13 @@ public class MinBusTurProvider extends ContentProvider
 		case INCOMING_SINGLE_STOP_IMAGE_URI_INDICATOR:
 			String rowId7 = uri.getPathSegments().get(1);
 			count = db.update(JourneyDetailStopImagesMetaData.TABLE_NAME, values, JourneyDetailStopImagesMetaData.TableMetaData._ID + "=" + rowId7 + (!TextUtils.isEmpty(where) ? " AND (" + where + ')' : ""), whereArgs);
+			break;
+		case INCOMING_TRIP_VOICE_COLLECTION_URI_INDICATOR:
+			count = db.update(TripVoiceMetaData.TABLE_NAME, values, where, whereArgs);
+			break;
+		case INCOMING_SINGLE_TRIP_VOICE_URI_INDICATOR:
+			String rowId8 = uri.getPathSegments().get(1);
+			count = db.update(TripVoiceMetaData.TABLE_NAME, values, TripVoiceMetaData.TableMetaData._ID + "=" + rowId8 + (!TextUtils.isEmpty(where) ? " AND (" + where + ')' : ""), whereArgs);
 			break;
 			
 		default:

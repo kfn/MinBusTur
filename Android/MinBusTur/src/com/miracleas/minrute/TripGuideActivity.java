@@ -107,7 +107,16 @@ public class TripGuideActivity extends GeofenceActivity implements TripGuideFrag
 			activity.putExtra(JourneyDetailMetaData.TableMetaData.REF, ref);
 			activity.putExtra(TripLegMetaData.TableMetaData.TYPE, transportType);
 			startActivity(activity);
+		}		
+	}
+	
+	@Override
+	public void onConnectedService()
+	{		
+		TripGuideFragment f = (TripGuideFragment)getSupportFragmentManager().findFragmentById(R.id.fragmentTripGuideContainer);
+		if(f!=null)
+		{
+			f.onConnectedService();
 		}
-		
 	}
 }

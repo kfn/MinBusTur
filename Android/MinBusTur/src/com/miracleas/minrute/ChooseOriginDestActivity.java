@@ -15,7 +15,7 @@ import com.miracleas.minrute.model.TripRequest;
 import com.miracleas.minrute.net.TripFetcher;
 import com.miracleas.minrute.service.TripService;
 
-public class ChooseOriginDestActivity extends GeofenceActivity implements ChooseOriginDestFragment.Callbacks, android.app.DatePickerDialog.OnDateSetListener, android.app.TimePickerDialog.OnTimeSetListener
+public class ChooseOriginDestActivity extends SherlockFragmentActivity implements ChooseOriginDestFragment.Callbacks, android.app.DatePickerDialog.OnDateSetListener, android.app.TimePickerDialog.OnTimeSetListener
 {
 	@Override
 	public void onCreate(Bundle savedInstanceState)
@@ -54,7 +54,6 @@ public class ChooseOriginDestActivity extends GeofenceActivity implements Choose
 	public void onStart()
 	{
 		super.onStart();
-		removeAllGeofences();
 	}
 	
 	@Override

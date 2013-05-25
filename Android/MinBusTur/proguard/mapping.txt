@@ -613,12 +613,36 @@ android.support.v4.app.LoaderManagerImpl$LoaderInfo -> android.support.v4.app.ai
     void callOnLoadFinished(android.support.v4.content.Loader,java.lang.Object) -> b
     java.lang.String toString() -> toString
     void dump(java.lang.String,java.io.FileDescriptor,java.io.PrintWriter,java.lang.String[]) -> a
-android.support.v4.app.NoSaveStateFrameLayout -> android.support.v4.app.aj:
+android.support.v4.app.NavUtils -> android.support.v4.app.aj:
+    android.support.v4.app.NavUtils$NavUtilsImpl IMPL -> a
+    void navigateUpFromSameTask(android.app.Activity) -> a
+    void navigateUpTo(android.app.Activity,android.content.Intent) -> a
+    android.content.Intent getParentActivityIntent(android.app.Activity) -> b
+    java.lang.String getParentActivityName(android.app.Activity) -> c
+    java.lang.String getParentActivityName(android.content.Context,android.content.ComponentName) -> a
+android.support.v4.app.NavUtils$NavUtilsImpl -> android.support.v4.app.ak:
+    android.content.Intent getParentActivityIntent(android.app.Activity) -> a
+    void navigateUpTo(android.app.Activity,android.content.Intent) -> a
+    java.lang.String getParentActivityName(android.content.Context,android.content.pm.ActivityInfo) -> a
+android.support.v4.app.NavUtils$NavUtilsImplBase -> android.support.v4.app.al:
+    android.content.Intent getParentActivityIntent(android.app.Activity) -> a
+    void navigateUpTo(android.app.Activity,android.content.Intent) -> a
+    java.lang.String getParentActivityName(android.content.Context,android.content.pm.ActivityInfo) -> a
+android.support.v4.app.NavUtils$NavUtilsImplJB -> android.support.v4.app.am:
+    android.content.Intent getParentActivityIntent(android.app.Activity) -> a
+    android.content.Intent superGetParentActivityIntent(android.app.Activity) -> b
+    void navigateUpTo(android.app.Activity,android.content.Intent) -> a
+    java.lang.String getParentActivityName(android.content.Context,android.content.pm.ActivityInfo) -> a
+android.support.v4.app.NavUtilsJB -> android.support.v4.app.an:
+    android.content.Intent getParentActivityIntent(android.app.Activity) -> a
+    void navigateUpTo(android.app.Activity,android.content.Intent) -> a
+    java.lang.String getParentActivityName(android.content.pm.ActivityInfo) -> a
+android.support.v4.app.NoSaveStateFrameLayout -> android.support.v4.app.ao:
     android.view.ViewGroup wrap(android.view.View) -> a
     void dispatchSaveInstanceState(android.util.SparseArray) -> dispatchSaveInstanceState
     void dispatchRestoreInstanceState(android.util.SparseArray) -> dispatchRestoreInstanceState
-android.support.v4.app.SuperNotCalledException -> android.support.v4.app.ak:
-android.support.v4.app.Watson -> android.support.v4.app.al:
+android.support.v4.app.SuperNotCalledException -> android.support.v4.app.ap:
+android.support.v4.app.Watson -> android.support.v4.app.aq:
     java.util.ArrayList mCreatedMenus -> n
     boolean onCreatePanelMenu(int,com.actionbarsherlock.view.Menu) -> a
     boolean onPreparePanel(int,android.view.View,com.actionbarsherlock.view.Menu) -> a
@@ -627,11 +651,11 @@ android.support.v4.app.Watson -> android.support.v4.app.al:
     boolean onPrepareOptionsMenu(com.actionbarsherlock.view.Menu) -> b
     boolean onOptionsItemSelected(com.actionbarsherlock.view.MenuItem) -> a
     com.actionbarsherlock.view.MenuInflater getSupportMenuInflater() -> g
-android.support.v4.app.Watson$OnCreateOptionsMenuListener -> android.support.v4.app.am:
+android.support.v4.app.Watson$OnCreateOptionsMenuListener -> android.support.v4.app.ar:
     void onCreateOptionsMenu(com.actionbarsherlock.view.Menu,com.actionbarsherlock.view.MenuInflater) -> a
-android.support.v4.app.Watson$OnOptionsItemSelectedListener -> android.support.v4.app.an:
+android.support.v4.app.Watson$OnOptionsItemSelectedListener -> android.support.v4.app.as:
     boolean onOptionsItemSelected(com.actionbarsherlock.view.MenuItem) -> a
-android.support.v4.app.Watson$OnPrepareOptionsMenuListener -> android.support.v4.app.ao:
+android.support.v4.app.Watson$OnPrepareOptionsMenuListener -> android.support.v4.app.at:
     void onPrepareOptionsMenu(com.actionbarsherlock.view.Menu) -> a
 android.support.v4.content.AsyncTaskLoader -> android.support.v4.a.a:
     android.support.v4.content.AsyncTaskLoader$LoadTask mTask -> a
@@ -677,7 +701,19 @@ android.support.v4.content.CursorLoader -> android.support.v4.a.c:
     java.lang.Object loadInBackground() -> d
     void onCanceled(java.lang.Object) -> a
     void deliverResult(java.lang.Object) -> b
-android.support.v4.content.Loader -> android.support.v4.a.d:
+android.support.v4.content.IntentCompat -> android.support.v4.a.d:
+    android.support.v4.content.IntentCompat$IntentCompatImpl IMPL -> a
+    android.content.Intent makeMainActivity(android.content.ComponentName) -> a
+android.support.v4.content.IntentCompat$IntentCompatImpl -> android.support.v4.a.e:
+    android.content.Intent makeMainActivity(android.content.ComponentName) -> a
+android.support.v4.content.IntentCompat$IntentCompatImplBase -> android.support.v4.a.f:
+    android.content.Intent makeMainActivity(android.content.ComponentName) -> a
+android.support.v4.content.IntentCompat$IntentCompatImplHC -> android.support.v4.a.g:
+    android.content.Intent makeMainActivity(android.content.ComponentName) -> a
+android.support.v4.content.IntentCompat$IntentCompatImplIcsMr1 -> android.support.v4.a.h:
+android.support.v4.content.IntentCompatHoneycomb -> android.support.v4.a.i:
+    android.content.Intent makeMainActivity(android.content.ComponentName) -> a
+android.support.v4.content.Loader -> android.support.v4.a.j:
     int mId -> m
     android.support.v4.content.Loader$OnLoadCompleteListener mListener -> n
     android.content.Context mContext -> o
@@ -708,13 +744,13 @@ android.support.v4.content.Loader -> android.support.v4.a.d:
     java.lang.String dataToString(java.lang.Object) -> c
     java.lang.String toString() -> toString
     void dump(java.lang.String,java.io.FileDescriptor,java.io.PrintWriter,java.lang.String[]) -> a
-android.support.v4.content.Loader$ForceLoadContentObserver -> android.support.v4.a.e:
+android.support.v4.content.Loader$ForceLoadContentObserver -> android.support.v4.a.k:
     android.support.v4.content.Loader this$0 -> a
     boolean deliverSelfNotifications() -> deliverSelfNotifications
     void onChange(boolean) -> onChange
-android.support.v4.content.Loader$OnLoadCompleteListener -> android.support.v4.a.f:
+android.support.v4.content.Loader$OnLoadCompleteListener -> android.support.v4.a.l:
     void onLoadComplete(android.support.v4.content.Loader,java.lang.Object) -> a
-android.support.v4.content.LocalBroadcastManager -> android.support.v4.a.g:
+android.support.v4.content.LocalBroadcastManager -> android.support.v4.a.m:
     android.content.Context mAppContext -> a
     java.util.HashMap mReceivers -> b
     java.util.HashMap mActions -> c
@@ -728,18 +764,18 @@ android.support.v4.content.LocalBroadcastManager -> android.support.v4.a.g:
     boolean sendBroadcast(android.content.Intent) -> a
     void executePendingBroadcasts() -> a
     void access$000(android.support.v4.content.LocalBroadcastManager) -> a
-android.support.v4.content.LocalBroadcastManager$1 -> android.support.v4.a.h:
+android.support.v4.content.LocalBroadcastManager$1 -> android.support.v4.a.n:
     android.support.v4.content.LocalBroadcastManager this$0 -> a
     void handleMessage(android.os.Message) -> handleMessage
-android.support.v4.content.LocalBroadcastManager$BroadcastRecord -> android.support.v4.a.i:
+android.support.v4.content.LocalBroadcastManager$BroadcastRecord -> android.support.v4.a.o:
     android.content.Intent intent -> a
     java.util.ArrayList receivers -> b
-android.support.v4.content.LocalBroadcastManager$ReceiverRecord -> android.support.v4.a.j:
+android.support.v4.content.LocalBroadcastManager$ReceiverRecord -> android.support.v4.a.p:
     android.content.IntentFilter filter -> a
     android.content.BroadcastReceiver receiver -> b
     boolean broadcasting -> c
     java.lang.String toString() -> toString
-android.support.v4.content.ModernAsyncTask -> android.support.v4.a.k:
+android.support.v4.content.ModernAsyncTask -> android.support.v4.a.q:
     java.util.concurrent.ThreadFactory sThreadFactory -> a
     java.util.concurrent.BlockingQueue sPoolWorkQueue -> b
     java.util.concurrent.Executor THREAD_POOL_EXECUTOR -> d
@@ -765,30 +801,30 @@ android.support.v4.content.ModernAsyncTask -> android.support.v4.a.k:
     java.lang.Object access$300(android.support.v4.content.ModernAsyncTask,java.lang.Object) -> a
     void access$400(android.support.v4.content.ModernAsyncTask,java.lang.Object) -> b
     void access$500(android.support.v4.content.ModernAsyncTask,java.lang.Object) -> c
-android.support.v4.content.ModernAsyncTask$1 -> android.support.v4.a.l:
+android.support.v4.content.ModernAsyncTask$1 -> android.support.v4.a.r:
     java.util.concurrent.atomic.AtomicInteger mCount -> a
     java.lang.Thread newThread(java.lang.Runnable) -> newThread
-android.support.v4.content.ModernAsyncTask$2 -> android.support.v4.a.m:
+android.support.v4.content.ModernAsyncTask$2 -> android.support.v4.a.s:
     android.support.v4.content.ModernAsyncTask this$0 -> a
     java.lang.Object call() -> call
-android.support.v4.content.ModernAsyncTask$3 -> android.support.v4.a.n:
+android.support.v4.content.ModernAsyncTask$3 -> android.support.v4.a.t:
     android.support.v4.content.ModernAsyncTask this$0 -> a
     void done() -> done
-android.support.v4.content.ModernAsyncTask$4 -> android.support.v4.a.o:
+android.support.v4.content.ModernAsyncTask$4 -> android.support.v4.a.u:
     int[] $SwitchMap$android$support$v4$content$ModernAsyncTask$Status -> a
-android.support.v4.content.ModernAsyncTask$AsyncTaskResult -> android.support.v4.a.p:
+android.support.v4.content.ModernAsyncTask$AsyncTaskResult -> android.support.v4.a.v:
     android.support.v4.content.ModernAsyncTask mTask -> a
     java.lang.Object[] mData -> b
-android.support.v4.content.ModernAsyncTask$InternalHandler -> android.support.v4.a.q:
+android.support.v4.content.ModernAsyncTask$InternalHandler -> android.support.v4.a.w:
     void handleMessage(android.os.Message) -> handleMessage
-android.support.v4.content.ModernAsyncTask$Status -> android.support.v4.a.r:
+android.support.v4.content.ModernAsyncTask$Status -> android.support.v4.a.x:
     android.support.v4.content.ModernAsyncTask$Status PENDING -> a
     android.support.v4.content.ModernAsyncTask$Status RUNNING -> b
     android.support.v4.content.ModernAsyncTask$Status FINISHED -> c
     android.support.v4.content.ModernAsyncTask$Status[] $VALUES -> d
     android.support.v4.content.ModernAsyncTask$Status[] values() -> values
     android.support.v4.content.ModernAsyncTask$Status valueOf(java.lang.String) -> valueOf
-android.support.v4.content.ModernAsyncTask$WorkerRunnable -> android.support.v4.a.s:
+android.support.v4.content.ModernAsyncTask$WorkerRunnable -> android.support.v4.a.y:
     java.lang.Object[] mParams -> b
 android.support.v4.os.ParcelableCompat -> android.support.v4.b.a:
     android.os.Parcelable$Creator newCreator(android.support.v4.os.ParcelableCompatCreatorCallbacks) -> a

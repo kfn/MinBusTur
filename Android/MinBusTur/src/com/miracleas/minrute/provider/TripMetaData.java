@@ -26,13 +26,11 @@ public class TripMetaData
 				+ TableMetaData.LEG_TYPES + " TEXT,"
 				+ TableMetaData.TRANSPORT_CHANGES + " INTEGER,"
 				+ TableMetaData.DEPATURE_TIME + " TEXT,"
-				+ TableMetaData.DEPATURES_IN_TIME_LABEL + " TEXT,"
-				+ TableMetaData.DEPATURES_IN_TIME + " LONG,"
+				+ TableMetaData.DEPATURES_TIME_LONG + " LONG,"
 				+ TableMetaData.DURATION_WALK + " TEXT,"
 				+ TableMetaData.DURATION_BUS + " TEXT,"
 				+ TableMetaData.DURATION_TRAIN + " TEXT,"
 				+ TableMetaData.ARRIVAL_TIME + " TEXT,"
-				+ TableMetaData.ARRIVES_IN_TIME_LABEL + " TEXT,"
 				+ TableMetaData.updated + " LONG"
 				;
 	}
@@ -42,6 +40,7 @@ public class TripMetaData
 	{
 		
 
+		
 		
 		private TableMetaData()
 		{
@@ -64,9 +63,7 @@ public class TripMetaData
 		public static final String DURATION_BUS = "depature_bus";
 		public static final String DURATION_WALK = "depature_walk";
 		public static final String updated = "updated";
-		public static final String ARRIVES_IN_TIME_LABEL = "arrives_in";
-		public static final String DEPATURES_IN_TIME_LABEL = "departures_in_time_label";
-		public static final String DEPATURES_IN_TIME = "departures_in_time";
+		public static final String DEPATURES_TIME_LONG = "departures_time_long";
 
 	}
 }

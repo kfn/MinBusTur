@@ -45,15 +45,4 @@
         android:text="@string/duration"
         android:textSize="19sp" />
 
-    <TextView
-        android:id="@+id/textViewDepatureIn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/textViewDuration"
-        android:layout_marginTop="4dp"
-        android:drawableLeft="@drawable/ic_menu_recent_history"
-        android:gravity="center_vertical"
-        android:text="@string/departure"
-        android:textSize="19sp" />
-
 </RelativeLayout>

@@ -15,12 +15,32 @@
     <string name="title_section1">Info</string>
     <string name="title_section2">Billeder</string>
     <string name="title_section3">Afgange</string>
+    
+    
+    <string name="voice_seconds_more">seconds</string>
+    <string name="voice_seconds_one">second</string>
+    <string name="voice_minutes_more">minutes</string>
+    <string name="voice_minutes_one">minute</string>
+    <string name="voice_hours_more">hours</string>
+    <string name="voice_hours_one">hour</string>
+    <string name="voice_days_more">days</string>
+    <string name="voice_days_one">day</string>
+    <string name="voice_departure">departures in <xliff:g ID="time_label">%1$s</xliff:g></string>
+    <string name="voice_departure_now">right now</string>
+    <string name="voice_departured">ago</string>
+    
     <string name="seconds">sekunder</string>
     <string name="minutes">minutter</string>
     <string name="hours">timer</string>
     <string name="days">dage</string>
+    <string name="seconds_one">sekund</string>
+    <string name="minutes_one">minut</string>
+    <string name="hours_one">time</string>
+    <string name="days_one">dag</string>
     <string name="departure1">Afgang</string>
     <string name="arrival">Ankomst</string>
+    <string name="departure_now">Lige nu</string>
+    <string name="departured">siden</string>
     
     <string name="geocoding_service_not_available">geocoding_service_not_available</string>
     <string name="departure">Afgang <xliff:g ID="time_label">%1$s</xliff:g></string>

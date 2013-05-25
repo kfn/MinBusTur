@@ -35,13 +35,12 @@ public class TripSuggestionsFragment extends SherlockFragment implements LoaderC
 				TableMetaData.LEG_TYPES,
 				TableMetaData.TRANSPORT_CHANGES,
 				TableMetaData.DEPATURE_TIME,
-				TableMetaData.DEPATURES_IN_TIME_LABEL ,
 				TableMetaData.ARRIVAL_TIME,
 				TableMetaData.DURATION_WALK,
 				TableMetaData.DURATION_BUS,
 				TableMetaData.DURATION_TRAIN,
-				TableMetaData.ARRIVAL_TIME,
-				TableMetaData.ARRIVES_IN_TIME_LABEL};
+				TableMetaData.ARRIVAL_TIME
+				};
 	private TripAdapter mTripAdapter = null;
 	
 	private ListView mListView = null;
@@ -93,7 +92,7 @@ public class TripSuggestionsFragment extends SherlockFragment implements LoaderC
 	@Override
 	public Loader<Cursor> onCreateLoader(int arg0, Bundle arg1)
 	{		
-		return new CursorLoader(getActivity(), TripMetaData.TableMetaData.CONTENT_URI, PROJECTION, null, null, TripMetaData.TableMetaData.DEPATURES_IN_TIME+","+TripMetaData.TableMetaData.DURATION);
+		return new CursorLoader(getActivity(), TripMetaData.TableMetaData.CONTENT_URI, PROJECTION, null, null, TripMetaData.TableMetaData.DEPATURES_TIME_LONG+","+TripMetaData.TableMetaData.DURATION);
 	}
 
 
@@ -115,7 +114,7 @@ public class TripSuggestionsFragment extends SherlockFragment implements LoaderC
 		private int iArrivalTime;
 		private int iArrivalInTime;
 		private int iDepatureTime;
-		private int iDepatureInTime;
+		
 		private int iDuration;
 		private int iLegCount;
 		private int iLegNames;
@@ -136,15 +135,13 @@ public class TripSuggestionsFragment extends SherlockFragment implements LoaderC
 
 		@Override
 		public void bindView(View v, Context context, Cursor cursor)
-		{
-			TextView textViewDepatureIn = (TextView)v.findViewById(R.id.textViewDepatureIn);
+		{			
 			TextView textViewDepatureTime = (TextView)v.findViewById(R.id.textViewDepature);
 			TextView textViewDuration = (TextView)v.findViewById(R.id.textViewDuration);
 			TextView textViewArrivalAt = (TextView)v.findViewById(R.id.textViewArrival);			
 			TextView textViewTransport = (TextView)v.findViewById(R.id.textViewTransport);			
 			
 			textViewDepatureTime.setText( cursor.getString(iDepatureTime));
-			textViewDepatureIn.setText(String.format(getString(R.string.departure), cursor.getString(iDepatureInTime)));
 			textViewDuration.setText(String.format(getString(R.string.duration), cursor.getString(iDuration)));
 			textViewArrivalAt.setText(cursor.getString(iArrivalTime));		
 			textViewTransport.setText(cursor.getString(iLegNames));	
@@ -167,9 +164,8 @@ public class TripSuggestionsFragment extends SherlockFragment implements LoaderC
 				iLegTypes = newCursor.getColumnIndex(TripMetaData.TableMetaData.LEG_TYPES);
 				iTransportChanges = newCursor.getColumnIndex(TripMetaData.TableMetaData.TRANSPORT_CHANGES);				
 				iDepatureTime = newCursor.getColumnIndex(TripMetaData.TableMetaData.DEPATURE_TIME);
-				iDepatureInTime = newCursor.getColumnIndex(TripMetaData.TableMetaData.DEPATURES_IN_TIME_LABEL);
-				iArrivalTime = newCursor.getColumnIndex(TripMetaData.TableMetaData.ARRIVAL_TIME);
-				iArrivalInTime = newCursor.getColumnIndex(TripMetaData.TableMetaData.ARRIVES_IN_TIME_LABEL);	
+				
+				iArrivalTime = newCursor.getColumnIndex(TripMetaData.TableMetaData.ARRIVAL_TIME);					
 				iDurationBus = newCursor.getColumnIndex(TripMetaData.TableMetaData.DURATION_BUS);
 				iDurationWalk = newCursor.getColumnIndex(TripMetaData.TableMetaData.DURATION_WALK);
 				iDurationTrain = newCursor.getColumnIndex(TripMetaData.TableMetaData.DURATION_TRAIN);
