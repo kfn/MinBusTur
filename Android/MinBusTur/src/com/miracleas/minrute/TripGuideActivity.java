@@ -43,6 +43,7 @@ public class TripGuideActivity extends GeofenceActivity implements TripGuideFrag
 
 		if (savedInstanceState == null)
 		{
+			removeAllGeofences();
 			Intent intent = getIntent();
 			String tripId = intent.getStringExtra(TripMetaData.TableMetaData._ID);
 			int stepCount = intent.getIntExtra(TripLegMetaData.TableMetaData.STEP_NUMBER, 1);			
@@ -50,7 +51,7 @@ public class TripGuideActivity extends GeofenceActivity implements TripGuideFrag
 			// Create the detail fragment and add it to the activity
 			// using a fragment transaction.
 			TripGuideFragment fragment = TripGuideFragment.createInstance(tripId, stepCount, tripRequest);
-			getSupportFragmentManager().beginTransaction().add(R.id.fragmentTripGuideContainer, fragment).commit();
+			getSupportFragmentManager().beginTransaction().add(R.id.fragmentTripGuideContainer, fragment).commit();			
 		}
 	}
 	

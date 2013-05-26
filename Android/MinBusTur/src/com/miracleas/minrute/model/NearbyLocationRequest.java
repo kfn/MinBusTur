@@ -2,6 +2,7 @@ package com.miracleas.minrute.model;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.text.TextUtils;
 
 public class NearbyLocationRequest implements Parcelable
 {
@@ -35,8 +36,15 @@ public class NearbyLocationRequest implements Parcelable
 		lng = (double)(Integer.parseInt(coordX) / 1000000d);
 	}
 	
-	
+	public boolean hasGPSChoords()
+	{
+		return !(TextUtils.isEmpty(coordX) && TextUtils.isEmpty(coordY));
+	}
 
+	public boolean hasLocationName()
+	{
+		return !TextUtils.isEmpty(stopName);
+	}
 	
 	public double getLat()
 	{

@@ -31,6 +31,7 @@ public class TripMetaData
 				+ TableMetaData.DURATION_BUS + " TEXT,"
 				+ TableMetaData.DURATION_TRAIN + " TEXT,"
 				+ TableMetaData.ARRIVAL_TIME + " TEXT,"
+				+ TableMetaData.HAS_ALL_ADDRESS_GPSES + " INTEGER DEFAULT 0,"
 				+ TableMetaData.updated + " LONG"
 				;
 	}
@@ -40,6 +41,7 @@ public class TripMetaData
 	{
 		
 
+		
 		
 		
 		private TableMetaData()
@@ -64,6 +66,7 @@ public class TripMetaData
 		public static final String DURATION_WALK = "depature_walk";
 		public static final String updated = "updated";
 		public static final String DEPATURES_TIME_LONG = "departures_time_long";
+		public static final String HAS_ALL_ADDRESS_GPSES = "has_all_address_gpses";
 
 	}
 }

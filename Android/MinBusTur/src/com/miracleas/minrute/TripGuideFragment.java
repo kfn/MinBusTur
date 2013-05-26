@@ -6,10 +6,12 @@ import java.util.Locale;
 
 import android.app.Activity;
 import android.app.PendingIntent;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.speech.tts.TextToSpeech;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
@@ -35,13 +37,14 @@ import com.miracleas.minrute.TripSuggestionsFragment.Callbacks;
 import com.miracleas.minrute.model.Trip;
 import com.miracleas.minrute.model.TripLeg;
 import com.miracleas.minrute.model.TripRequest;
+import com.miracleas.minrute.provider.AddressGPSMetaData;
 import com.miracleas.minrute.provider.JourneyDetailMetaData;
 import com.miracleas.minrute.provider.JourneyDetailStopMetaData;
 import com.miracleas.minrute.provider.TripLegMetaData;
 import com.miracleas.minrute.provider.TripMetaData;
 import com.miracleas.minrute.provider.TripMetaData.TableMetaData;
 import com.miracleas.minrute.provider.TripVoiceMetaData;
-import com.miracleas.minrute.service.JourneyDetailsGeofenceService;
+import com.miracleas.minrute.service.FetchGpsOnMissingAddressesService;
 import com.miracleas.minrute.service.JourneyDetailsService;
 import com.miracleas.minrute.service.ReceiveTransitionsIntentService;
 import com.miracleas.minrute.utils.App;
@@ -54,14 +57,10 @@ public class TripGuideFragment extends SherlockListFragment implements LoaderCal
 			TripLegMetaData.TableMetaData.ORIGIN_RT_TRACK, TripLegMetaData.TableMetaData.DEST_TRACK,
 
 			TripLegMetaData.TableMetaData.PROGRESS_BAR_PROGRESS, TripLegMetaData.TableMetaData.PROGRESS_BAR_MAX, TripLegMetaData.TableMetaData.DEPARTURES_IN_TIME_LABEL, TripLegMetaData.TableMetaData.COMPLETED };
-	private static final String[] PROJECTION_LEGS = { TripLegMetaData.TableMetaData.REF, TripLegMetaData.TableMetaData._ID };
-	
-	private static final String[] PROJECTION_JORNEY_DETAILS = { JourneyDetailStopMetaData.TableMetaData._ID, JourneyDetailStopMetaData.TableMetaData.LATITUDE, JourneyDetailStopMetaData.TableMetaData.LONGITUDE, JourneyDetailStopMetaData.TableMetaData.LEG_ID,
-			JourneyDetailStopMetaData.TableMetaData.DEP_DATE, JourneyDetailStopMetaData.TableMetaData.DEP_TIME };
-	
-	private static final String[] PROJECTION_TRIP = { 
-		TripVoiceMetaData.TableMetaData.DEPARTURES_IN
-	};
+
+	private static final String[] PROJECTION_TRIP_GPS_READY = { TripMetaData.TableMetaData._ID, TripMetaData.TableMetaData.HAS_ALL_ADDRESS_GPSES };
+
+	private static final String[] PROJECTION_TRIP = { TripVoiceMetaData.TableMetaData.DEPARTURES_IN };
 	private TripAdapter mTripAdapter = null;
 	private long[] mLegIds;
 	private String mTextToSpeak;
@@ -83,10 +82,10 @@ public class TripGuideFragment extends SherlockListFragment implements LoaderCal
 
 	public void onCreate(Bundle savedInstanceState)
 	{
-		super.onCreate(savedInstanceState);	
-		
+		super.onCreate(savedInstanceState);
+
 	}
-	
+
 	public void onSaveInstanceState(Bundle outState)
 	{
 		super.onSaveInstanceState(outState);
@@ -100,11 +99,11 @@ public class TripGuideFragment extends SherlockListFragment implements LoaderCal
 		View rootView = inflater.inflate(R.layout.fragment_trip_guide, container, false);
 		FrameLayout frame = (FrameLayout) rootView.findViewById(R.id.listContainer);
 		frame.addView(listView);
-		if(savedInstanceState!=null)
+		if (savedInstanceState != null)
 		{
 			mTextToSpeak = savedInstanceState.getString("mTextToSpeak");
 		}
-		
+
 		return rootView;
 
 	}
@@ -118,9 +117,14 @@ public class TripGuideFragment extends SherlockListFragment implements LoaderCal
 		getListView().setOnItemClickListener(this);
 		setListAdapter(mTripAdapter);
 		getLoaderManager().initLoader(LoaderConstants.LOAD_TRIP_LEGS, getArguments(), this);
-		getLoaderManager().initLoader(LoaderConstants.LOAD_TRIP_LEG_FIRST_LAST, getArguments(), this);
-		getLoaderManager().initLoader(LoaderConstants.LOAD_START_END_POSITION, getArguments(), this);
-		
+		getLoaderManager().initLoader(LoaderConstants.LOAD_HAS_ALL_ADDRESS_GPSES, getArguments(), this);
+		// getArguments(), this);
+		if (savedInstanceState == null)
+		{
+			Intent service = new Intent(getActivity(), FetchGpsOnMissingAddressesService.class);
+			service.putExtra(FetchGpsOnMissingAddressesService.TRIP_ID, getArguments().getString(TripMetaData.TableMetaData._ID));
+			getActivity().startService(service);
+		}
 	}
 
 	@Override
@@ -131,23 +135,22 @@ public class TripGuideFragment extends SherlockListFragment implements LoaderCal
 			String selection = TripLegMetaData.TableMetaData.TRIP_ID + "=?";
 			String[] selectionArgs = { args.getString(TripMetaData.TableMetaData._ID) };
 			return new CursorLoader(getActivity(), TripLegMetaData.TableMetaData.CONTENT_URI, PROJECTION, selection, selectionArgs, null);
-		} else if (id == LoaderConstants.LOAD_TRIP_LEG_FIRST_LAST)
-		{
-			String selection = TripLegMetaData.TableMetaData.TRIP_ID + "=? AND " + TripLegMetaData.TableMetaData.TYPE + " NOT LIKE ?";
-			String[] selectionArgs = { args.getString(TripMetaData.TableMetaData._ID), "WALK" };
-			return new CursorLoader(getActivity(), TripLegMetaData.TableMetaData.CONTENT_URI, PROJECTION_LEGS, selection, selectionArgs, TripLegMetaData.TableMetaData.STEP_NUMBER);
-		} else if (id == LoaderConstants.LOAD_START_END_POSITION)
-		{
-			String selection = JourneyDetailStopMetaData.TableMetaData.TRIP_ID + "=?";
-			String[] selectionArgs = { args.getString(TripMetaData.TableMetaData._ID) };
-			return new CursorLoader(getActivity(), JourneyDetailStopMetaData.TableMetaData.CONTENT_URI, PROJECTION_JORNEY_DETAILS, selection, selectionArgs, null);
 		}
-		/*else if (id == LoaderConstants.LOAD_GUIDE_VOICE_TRIP)
+
+		else if (id == LoaderConstants.LOAD_HAS_ALL_ADDRESS_GPSES)
 		{
-			String selection =  TripVoiceMetaData.TableMetaData.TRIP_ID + "=?";
-			String[] selectionArgs = {args.getString(TripMetaData.TableMetaData._ID)};
-			return new CursorLoader(getActivity(), TripVoiceMetaData.TableMetaData.CONTENT_URI, PROJECTION_TRIP, selection, selectionArgs, TripVoiceMetaData.TableMetaData._ID+" LIMIT 1");
-		}*/
+			Uri uri = Uri.withAppendedPath(TripMetaData.TableMetaData.CONTENT_URI, args.getString(TripMetaData.TableMetaData._ID));
+			return new CursorLoader(getActivity(), uri, PROJECTION_TRIP_GPS_READY, null, null, null);
+		}
+		/*
+		 * else if (id == LoaderConstants.LOAD_GUIDE_VOICE_TRIP) { String
+		 * selection = TripVoiceMetaData.TableMetaData.TRIP_ID + "=?"; String[]
+		 * selectionArgs = {args.getString(TripMetaData.TableMetaData._ID)};
+		 * return new CursorLoader(getActivity(),
+		 * TripVoiceMetaData.TableMetaData.CONTENT_URI, PROJECTION_TRIP,
+		 * selection, selectionArgs,
+		 * TripVoiceMetaData.TableMetaData._ID+" LIMIT 1"); }
+		 */
 		return null;
 	}
 
@@ -158,120 +161,84 @@ public class TripGuideFragment extends SherlockListFragment implements LoaderCal
 		{
 			mTripAdapter.swapCursor(newCursor);
 		} 
-		else if (loader.getId() == LoaderConstants.LOAD_TRIP_LEG_FIRST_LAST)
+		else if (loader.getId() == LoaderConstants.LOAD_HAS_ALL_ADDRESS_GPSES && newCursor.moveToFirst())
 		{
-			if (newCursor.moveToFirst() && getArguments() != null)
+			int i = newCursor.getColumnIndex(TripMetaData.TableMetaData.HAS_ALL_ADDRESS_GPSES);
+			boolean isGpsDownloaded = newCursor.getInt(i) == 1;
+			if (isGpsDownloaded)
 			{
-				Intent service = new Intent(getActivity(), JourneyDetailsGeofenceService.class);
-				service.putExtra(JourneyDetailsGeofenceService.TRIP_ID, getArguments().getString(TripLegMetaData.TableMetaData._ID));
-				loadTripLegs(newCursor, service, true);
-				if (newCursor.moveToLast())
-				{
-					loadTripLegs(newCursor, service, false);
-					getActivity().startService(service);
-					getLoaderManager().destroyLoader(LoaderConstants.LOAD_TRIP_LEG_FIRST_LAST);
-				}
-
+				getLoaderManager().destroyLoader(LoaderConstants.LOAD_HAS_ALL_ADDRESS_GPSES);
+				insertGeofencesForThisTrip();
 			}
 		}
-		else if (loader.getId() == LoaderConstants.LOAD_START_END_POSITION)
-		{
-			if (newCursor.moveToFirst())
-			{
+	}
 
-				Geofence g1 = loadGeofenceInfo(newCursor, true);
-				if (newCursor.moveToLast())
+	private LoadGeofencesTask mLoadGeofencesTask = null;
+
+	private void insertGeofencesForThisTrip()
+	{
+		if (mLoadGeofencesTask == null)
+		{
+			mLoadGeofencesTask = new LoadGeofencesTask();
+			mLoadGeofencesTask.execute(getArguments().getString(TripMetaData.TableMetaData._ID));
+		}
+	}
+
+	private class LoadGeofencesTask extends AsyncTask<String, Void, List<Geofence>>
+	{
+		private final String[] projection = {TripLegMetaData.TableMetaData._ID, AddressGPSMetaData.TableMetaData.LATITUDE_Y, AddressGPSMetaData.TableMetaData.LONGITUDE_X };
+
+		@Override
+		protected List<Geofence> doInBackground(String... params)
+		{
+			List<Geofence> geofences = new ArrayList<Geofence>();
+			String tripId = params[0];
+			String selection = TripLegMetaData.TableMetaData.TRIP_ID + "=? AND "+TripLegMetaData.TableMetaData.TYPE + " NOT LIKE ?";
+			String[] selectionArgs = { tripId, TripLeg.TYPE_WALK };
+			Uri uri = Uri.withAppendedPath(TripLegMetaData.TableMetaData.CONTENT_URI, AddressGPSMetaData.TABLE_NAME);
+			ContentResolver cr = getActivity().getContentResolver();
+
+			Cursor c = null;
+			try
+			{
+				c = cr.query(uri, projection, selection, selectionArgs, null);
+				if (c.moveToFirst())
 				{
-					Geofence g2 = loadGeofenceInfo(newCursor, false);
-					List<Geofence> geofences = new ArrayList<Geofence>();
-					if (loadStartAndEndGeofences(geofences))
+					int iId = c.getColumnIndex(TripLegMetaData.TableMetaData._ID);
+					int iLat = c.getColumnIndex(AddressGPSMetaData.TableMetaData.LATITUDE_Y);
+					int iLng = c.getColumnIndex(AddressGPSMetaData.TableMetaData.LONGITUDE_X);
+					do
 					{
-						geofences.add(g1);
-						geofences.add(g2);
-						GeofenceActivity geo = (GeofenceActivity) getActivity();
-						geo.addGeofences(geofences);
-						getLoaderManager().destroyLoader(LoaderConstants.LOAD_START_END_POSITION);
-					}
-				}
-			}
+						int latd = c.getInt(iLat);
+						int lngd = c.getInt(iLng);
+						if(latd!=0 && lngd!=0)
+						{
+							double lat = (double) latd / 1000000d;
+							double lng = (double) lngd / 1000000d;
+							int id = c.getInt(iId);
+							int transition = Geofence.GEOFENCE_TRANSITION_ENTER | Geofence.GEOFENCE_TRANSITION_EXIT; 
+							geofences.add(toGeofence(id + "", transition, lat, lng, 200, DateUtils.DAY_IN_MILLIS));
+						}
+						
 
-		}
-		/*else if(loader.getId() == LoaderConstants.LOAD_GUIDE_VOICE_TRIP)
-		{
-			if(newCursor.moveToFirst())
+					} while (c.moveToNext());
+				}
+			} finally
 			{
-				String s = newCursor.getString(newCursor.getColumnIndex(TripVoiceMetaData.TableMetaData.DEPARTURES_IN));
-				mTextToSpeak = String.format(getString(R.string.voice_departure), s);
-				MinRuteBaseActivity base = (MinRuteBaseActivity)getActivity();
-				if(base.mService.isVoiceInitialized())
+				if(c!=null)
 				{
-					base.mService.playVoice(mTextToSpeak);
+					c.close();
 				}
-				else
-				{
-					base.mService.setTextToSpeak(mTextToSpeak);
-					startTextSpeach();
-				}				
+				
 			}
-		}*/
-	}
-
-	private void loadTripLegs(Cursor newCursor, Intent service, boolean first)
-	{
-		int iRef = newCursor.getColumnIndex(TripLegMetaData.TableMetaData.REF);
-		int iLegId = newCursor.getColumnIndex(TripLegMetaData.TableMetaData._ID);
-		long id = newCursor.getLong(iLegId);
-		int i = first ? 0 : 1;
-		mLegIds[i] = id;
-		int count = i + 1;
-		service.putExtra(JourneyDetailsGeofenceService.URL + count, newCursor.getString(iRef));
-		service.putExtra(JourneyDetailsGeofenceService.LEG + count, id + "");
-	}
-
-	private Geofence loadGeofenceInfo(Cursor newCursor, boolean first)
-	{
-		int iId = newCursor.getColumnIndex(JourneyDetailStopMetaData.TableMetaData._ID);
-		int iLat = newCursor.getColumnIndex(JourneyDetailStopMetaData.TableMetaData.LATITUDE);
-		int iLng = newCursor.getColumnIndex(JourneyDetailStopMetaData.TableMetaData.LONGITUDE);
-		int iLegId = newCursor.getColumnIndex(JourneyDetailStopMetaData.TableMetaData.LEG_ID);
-
-		long stopId = newCursor.getLong(iId);
-		double lat = (double) newCursor.getInt(iLat) / 1000000d;
-		double lng = (double) newCursor.getInt(iLng) / 1000000d;
-		int transitionId = -1;
-		if (first) // skal laves om, saa foerste geofence er den placering hvor
-					// man er
-		{
-			transitionId = Geofence.GEOFENCE_TRANSITION_ENTER;
-		} else
-		{
-			transitionId = Geofence.GEOFENCE_TRANSITION_ENTER;
+			return geofences;
 		}
-		Geofence g = toGeofence(stopId + "", transitionId, lat, lng, 10, DateUtils.HOUR_IN_MILLIS);
-		return g;
-	}
 
-	private boolean loadStartAndEndGeofences(List<Geofence> geofences)
-	{
-		boolean savedGeofences = false;
-		TripRequest tripRequest = getArguments().getParcelable(TripRequest.tag);
-		if (tripRequest != null)
+		public void onPostExecute(List<Geofence> geofences)
 		{
-			double lat = (double) (Integer.parseInt(tripRequest.getOriginCoordY()) / 1000000d);
-			double lng = (double) (Integer.parseInt(tripRequest.getOriginCoordX()) / 1000000d);
-			Geofence origin1 = toGeofence(mLegIds[0] + "enter", Geofence.GEOFENCE_TRANSITION_ENTER, lat, lng, 10, DateUtils.HOUR_IN_MILLIS);
-			Geofence origin2 = toGeofence(mLegIds[0] + "exit", Geofence.GEOFENCE_TRANSITION_EXIT, lat, lng, 10, DateUtils.HOUR_IN_MILLIS);
-
-			lat = (double) (Integer.parseInt(tripRequest.getDestCoordY()) / 1000000d);
-			lng = (double) (Integer.parseInt(tripRequest.getDestCoordX()) / 1000000d);
-			Geofence dest = toGeofence(mLegIds[1] + "", Geofence.GEOFENCE_TRANSITION_ENTER, lat, lng, 10, DateUtils.HOUR_IN_MILLIS);
-
-			geofences.add(origin1);
-			geofences.add(origin2);
-			geofences.add(dest);
-			savedGeofences = true;
+			GeofenceActivity geo = (GeofenceActivity) getActivity();
+			geo.addGeofences(geofences);
 		}
-		return savedGeofences;
 	}
 
 	public Geofence toGeofence(String id, int transitionType, double lat, double lng, float radius, long expirationDuration)
@@ -317,7 +284,6 @@ public class TripGuideFragment extends SherlockListFragment implements LoaderCal
 		private int iDestTrack = 0;
 
 		private LayoutInflater mInf = null;
-		
 
 		public TripAdapter(Context context, Cursor c, int flags)
 		{
@@ -329,7 +295,6 @@ public class TripGuideFragment extends SherlockListFragment implements LoaderCal
 		public void bindView(View v, Context context, Cursor cursor)
 		{
 
-			
 			String originTime = cursor.getString(iOriginTime);
 			TextView textViewTime = (TextView) v.findViewById(R.id.textViewTime);
 			textViewTime.setText(originTime);
@@ -573,13 +538,13 @@ public class TripGuideFragment extends SherlockListFragment implements LoaderCal
 
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data)
-	{	
+	{
 		if (App.SUPPORTS_JELLY_BEAN || requestCode == MY_DATA_CHECK_CODE)
 		{
 			if (App.SUPPORTS_JELLY_BEAN || resultCode == TextToSpeech.Engine.CHECK_VOICE_DATA_PASS)
 			{
 				// success, create the TTS instance
-				MinRuteBaseActivity base = (MinRuteBaseActivity)getActivity();
+				MinRuteBaseActivity base = (MinRuteBaseActivity) getActivity();
 				base.mService.startTextToSpeech();
 			} else
 			{
@@ -589,25 +554,27 @@ public class TripGuideFragment extends SherlockListFragment implements LoaderCal
 				startActivity(installIntent);
 			}
 		}
-		
+
 	}
+
 	@Override
 	public void onDestroy()
 	{
-		super.onDestroy();	
+		super.onDestroy();
 	}
 
 	public void onConnectedService()
 	{
 		String id = getArguments().getString(TripMetaData.TableMetaData._ID);
-		((MinRuteBaseActivity)getActivity()).mService.initVoiceService(id, this);
-		
+		((MinRuteBaseActivity) getActivity()).mService.initVoiceService(id, this);
+
 	}
 
 	@Override
 	public void onVoiceServiceReady()
 	{
-		//getLoaderManager().initLoader(LoaderConstants.LOAD_GUIDE_VOICE_TRIP, getArguments(), this);	
+		// getLoaderManager().initLoader(LoaderConstants.LOAD_GUIDE_VOICE_TRIP,
+		// getArguments(), this);
 		startTextSpeach();
 	}
 }

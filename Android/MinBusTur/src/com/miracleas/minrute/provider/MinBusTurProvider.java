@@ -50,6 +50,12 @@ public class MinBusTurProvider extends ContentProvider
 	
 	private static final int INCOMING_TRIP_VOICE_COLLECTION_URI_INDICATOR = 20;
 	private static final int INCOMING_SINGLE_TRIP_VOICE_URI_INDICATOR = 21;
+	private static final int INCOMING_ADDRESS_GPS_COLLECTION_URI_INDICATOR = 22;
+	
+	private static final int INCOMING_TRIP_LEG_ADDRESS_GPS_JOIN_URI_INDICATOR = 23;
+	
+	
+	
 	
 
 	static
@@ -75,7 +81,8 @@ public class MinBusTurProvider extends ContentProvider
 		sUriMatcher.addURI(JourneyDetailStopDeparturesMetaData.AUTHORITY, JourneyDetailStopDeparturesMetaData.COLLECTION_TYPE, INCOMING_STOP_DEPARTURES_COLLECTION_URI_INDICATOR);
 		sUriMatcher.addURI(TripVoiceMetaData.AUTHORITY, TripVoiceMetaData.COLLECTION_TYPE, INCOMING_TRIP_VOICE_COLLECTION_URI_INDICATOR);
 		sUriMatcher.addURI(TripVoiceMetaData.AUTHORITY, TripVoiceMetaData.COLLECTION_TYPE + "/#", INCOMING_SINGLE_TRIP_VOICE_URI_INDICATOR);
-		
+		sUriMatcher.addURI(AddressGPSMetaData.AUTHORITY, AddressGPSMetaData.COLLECTION_TYPE, INCOMING_ADDRESS_GPS_COLLECTION_URI_INDICATOR);
+		sUriMatcher.addURI(TripLegMetaData.AUTHORITY, TripLegMetaData.COLLECTION_TYPE + "/"+AddressGPSMetaData.TABLE_NAME, INCOMING_TRIP_LEG_ADDRESS_GPS_JOIN_URI_INDICATOR);
 	}
 
 	/**
@@ -104,6 +111,7 @@ public class MinBusTurProvider extends ContentProvider
 			db.execSQL("CREATE TABLE IF NOT EXISTS " + JourneyDetailStopImagesMetaData.TABLE_NAME + getTableSchemaStart() + JourneyDetailStopImagesMetaData.getTableSchema() + getTableSchemaEnd());
 			db.execSQL("CREATE TABLE IF NOT EXISTS " + JourneyDetailStopDeparturesMetaData.TABLE_NAME + getTableSchemaStart() + JourneyDetailStopDeparturesMetaData.getTableSchema() + getTableSchemaEnd());
 			db.execSQL("CREATE TABLE IF NOT EXISTS " + TripVoiceMetaData.TABLE_NAME + getTableSchemaStart() + TripVoiceMetaData.getTableSchema() + getTableSchemaEnd());
+			db.execSQL("CREATE TABLE IF NOT EXISTS " + AddressGPSMetaData.TABLE_NAME + getTableSchemaStart() + AddressGPSMetaData.getTableSchema() + getTableSchemaEnd());
 		}
 
 		protected static String getTableSchemaStart()
@@ -132,6 +140,7 @@ public class MinBusTurProvider extends ContentProvider
 			db.execSQL("DROP TABLE IF EXISTS " + JourneyDetailStopImagesMetaData.TABLE_NAME);
 			db.execSQL("DROP TABLE IF EXISTS " + JourneyDetailStopDeparturesMetaData.TABLE_NAME);
 			db.execSQL("DROP TABLE IF EXISTS " + TripVoiceMetaData.TABLE_NAME);
+			db.execSQL("DROP TABLE IF EXISTS " + AddressGPSMetaData.TABLE_NAME);
 			onCreate(db);
 		}
 	}
@@ -240,6 +249,16 @@ public class MinBusTurProvider extends ContentProvider
 			qb.setTables(TripVoiceMetaData.TABLE_NAME);
 			qb.appendWhere(TripVoiceMetaData.TableMetaData._ID + "=" + uri.getPathSegments().get(1));
 			break;
+		case INCOMING_ADDRESS_GPS_COLLECTION_URI_INDICATOR:
+			qb.setTables(AddressGPSMetaData.TABLE_NAME);
+			break;
+		case INCOMING_TRIP_LEG_ADDRESS_GPS_JOIN_URI_INDICATOR:
+			StringBuilder b = new StringBuilder();
+			b.append(TripLegMetaData.TABLE_NAME).append(" LEFT JOIN ").append(AddressGPSMetaData.TABLE_NAME)
+			.append(" ON (").append(TripLegMetaData.TableMetaData.DEST_NAME).append("=")
+			.append(AddressGPSMetaData.TableMetaData.ADDRESS).append(")");			
+			qb.setTables(b.toString());
+			break;
 		default:
 			throw new IllegalArgumentException("Unknown URI " + uri);
 		}
@@ -333,6 +352,11 @@ public class MinBusTurProvider extends ContentProvider
 		{
 			tbl = TripVoiceMetaData.TABLE_NAME;
 			contentUri = TripVoiceMetaData.TableMetaData.CONTENT_URI;
+		}
+		else if (sUriMatcher.match(uri) == INCOMING_ADDRESS_GPS_COLLECTION_URI_INDICATOR)
+		{
+			tbl = AddressGPSMetaData.TABLE_NAME;
+			contentUri = AddressGPSMetaData.TableMetaData.CONTENT_URI;
 		}
 		else
 		{
@@ -442,6 +466,9 @@ public class MinBusTurProvider extends ContentProvider
 		case INCOMING_TRIP_VOICE_COLLECTION_URI_INDICATOR:
 			count = db.delete(TripVoiceMetaData.TABLE_NAME, where, whereArgs);
 			break;
+		case INCOMING_ADDRESS_GPS_COLLECTION_URI_INDICATOR:
+			count = db.delete(AddressGPSMetaData.TABLE_NAME, where, whereArgs);
+			break;
 		default:
 			throw new IllegalArgumentException("Unknown URI " + uri);
 		}
@@ -527,7 +554,9 @@ public class MinBusTurProvider extends ContentProvider
 			String rowId8 = uri.getPathSegments().get(1);
 			count = db.update(TripVoiceMetaData.TABLE_NAME, values, TripVoiceMetaData.TableMetaData._ID + "=" + rowId8 + (!TextUtils.isEmpty(where) ? " AND (" + where + ')' : ""), whereArgs);
 			break;
-			
+		case INCOMING_ADDRESS_GPS_COLLECTION_URI_INDICATOR:
+			count = db.update(AddressGPSMetaData.TABLE_NAME, values, where, whereArgs);
+			break;
 		default:
 			throw new IllegalArgumentException("Unknown URI " + uri);
 		}
