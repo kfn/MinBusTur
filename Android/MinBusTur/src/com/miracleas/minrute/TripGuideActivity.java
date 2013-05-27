@@ -112,12 +112,18 @@ public class TripGuideActivity extends GeofenceActivity implements TripGuideFrag
 	}
 	
 	@Override
-	public void onConnectedService()
+	public void onConnectedServiceVoice()
 	{		
 		TripGuideFragment f = (TripGuideFragment)getSupportFragmentManager().findFragmentById(R.id.fragmentTripGuideContainer);
 		if(f!=null)
 		{
 			f.onConnectedService();
 		}
+	}
+	
+	@Override
+	public void onConnectedServiceLocation()
+	{
+		mServiceLocation.startLocationListening();		
 	}
 }

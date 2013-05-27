@@ -11,6 +11,7 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.text.TextUtils;
 
+import com.miracleas.minrute.model.TripRequest;
 import com.miracleas.minrute.net.AddressToGPSFetcher;
 import com.miracleas.minrute.provider.AddressGPSMetaData;
 import com.miracleas.minrute.provider.TripLegMetaData;
@@ -43,13 +44,15 @@ public class FetchGpsOnMissingAddressesService extends IntentService
 	@Override
 	protected void onHandleIntent(Intent intent)
 	{	
+		TripRequest tripRequest = intent.getParcelableExtra(TripRequest.tag);
+		insertStartAndEndLocationsForTrip(tripRequest);
+		
 		fetchGpsOnMissingAddresses(intent.getStringExtra(TRIP_ID));	
 		stopSelf();
 	}
 	
 	private void fetchGpsOnMissingAddresses(String tripId)
 	{
-		//TO-DO Fetch first and last GPS from Db!!!
 		if(!TextUtils.isEmpty(tripId))
 		{
 			List<String> addresses = fetchStopLocationNames(tripId);			
@@ -66,6 +69,34 @@ public class FetchGpsOnMissingAddressesService extends IntentService
 			markAllGpsAddressesIsLoaded(tripId);			
 		}
 	}
+	
+	private void insertStartAndEndLocationsForTrip(TripRequest tripRequest)
+	{
+		insertAddress(tripRequest.originCoordNameNotEncoded, tripRequest.getOriginCoordY(), tripRequest.getOriginCoordX());
+		insertAddress(tripRequest.destCoordNameNotEncoded, tripRequest.getDestCoordY(), tripRequest.getDestCoordX());
+	}
+	
+	private boolean insertAddress(String address, String latY, String lngX)
+	{
+		boolean hasAddressCached = false;
+		
+		ContentResolver cr = getContentResolver();
+		ContentValues values = new ContentValues();
+		values.put(AddressGPSMetaData.TableMetaData.ADDRESS, address);
+		values.put(AddressGPSMetaData.TableMetaData.LATITUDE_Y, latY);
+		values.put(AddressGPSMetaData.TableMetaData.LONGITUDE_X, lngX);
+		
+		String where = AddressGPSMetaData.TableMetaData.ADDRESS + "=?";
+		String[] selectionArgs = {address};
+		hasAddressCached = cr.update(AddressGPSMetaData.TableMetaData.CONTENT_URI, values, where, selectionArgs) > 0;
+		if(!hasAddressCached)
+		{
+			cr.insert(AddressGPSMetaData.TableMetaData.CONTENT_URI, values);
+		}
+		return hasAddressCached;
+		
+	}
+	
 	
 	private void markAllGpsAddressesIsLoaded(String tripId)
 	{

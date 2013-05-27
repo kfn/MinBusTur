@@ -13,7 +13,7 @@ import com.miracleas.minrute.model.TripRequest;
 import com.miracleas.minrute.provider.TripLegMetaData;
 import com.miracleas.minrute.provider.TripMetaData;
 
-public class TripSuggestionsActivity extends SherlockFragmentActivity implements TripSuggestionsFragment.Callbacks
+public class TripSuggestionsActivity extends MinRuteBaseActivity implements TripSuggestionsFragment.Callbacks
 {
 	@Override
 	public void onCreate(Bundle savedInstanceState)
@@ -66,10 +66,27 @@ public class TripSuggestionsActivity extends SherlockFragmentActivity implements
 	@Override
 	public void onTripSuggestionSelected(String id, int stepCount, TripRequest tripRequest)
 	{
+		if(mBoundVoice)
+		{
+			mServiceVoice.stopVoices();
+		}
 		Intent intent = new Intent(this, TripGuideActivity.class);
 		intent.putExtra(TripMetaData.TableMetaData._ID, id);
 		intent.putExtra(TripLegMetaData.TableMetaData.STEP_NUMBER, stepCount);	
 		intent.putExtra(TripRequest.tag, tripRequest);
 		startActivity(intent);
+	}
+	
+	@Override
+	public void onConnectedServiceLocation()
+	{
+		mServiceLocation.stopLocationListening();
+	}
+
+	@Override
+	public void onConnectedServiceVoice()
+	{
+		// TODO Auto-generated method stub
+		
 	}
 }

@@ -138,6 +138,11 @@ public class UpdateVoiceTripService extends Service implements android.speech.tt
 		}
 	}
 	
+	public void stopVoices()
+	{
+		stopDepartureHandler();
+	}
+	
 	
 
 	public String getTextToSpeak()
@@ -245,7 +250,7 @@ public class UpdateVoiceTripService extends Service implements android.speech.tt
 
 	public void stopDepartureHandler()
 	{
-		if (handler == null)
+		if (handler != null)
 		{
 			handler.removeCallbacks(runnable);
 			handler = null;

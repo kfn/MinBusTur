@@ -95,7 +95,14 @@ public class TripLegMapActivity extends MinRuteBaseActivity implements TripLegMa
 	}
 
 	@Override
-	public void onConnectedService()
+	public void onConnectedServiceVoice()
+	{
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onConnectedServiceLocation()
 	{
 		// TODO Auto-generated method stub
 		

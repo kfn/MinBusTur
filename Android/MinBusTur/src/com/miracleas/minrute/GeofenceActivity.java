@@ -12,9 +12,9 @@ import android.content.IntentSender.SendIntentException;
 import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.text.format.DateUtils;
 import android.util.Log;
 import android.widget.Toast;
-
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesClient;
@@ -24,12 +24,13 @@ import com.google.android.gms.location.LocationClient;
 import com.google.android.gms.location.LocationClient.OnAddGeofencesResultListener;
 import com.google.android.gms.location.LocationClient.OnRemoveGeofencesResultListener;
 import com.google.android.gms.location.LocationListener;
+import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationStatusCodes;
 import com.miracleas.minrute.provider.GeofenceMetaData;
 import com.miracleas.minrute.service.ReceiveTransitionsIntentService;
 import com.miracleas.minrute.service.RemoveGeofencesService;
 
-public class GeofenceActivity extends GoogleServiceActivity implements GooglePlayServicesClient.ConnectionCallbacks, LocationListener, OnAddGeofencesResultListener, OnRemoveGeofencesResultListener
+public class GeofenceActivity extends GoogleServiceActivity implements GooglePlayServicesClient.ConnectionCallbacks, OnAddGeofencesResultListener, OnRemoveGeofencesResultListener
 {
 	public static final String tag = GeofenceActivity.class.getName();
 	public int CONNECTION_FAILURE_RESOLUTION_REQUEST = 251;
@@ -53,6 +54,8 @@ public class GeofenceActivity extends GoogleServiceActivity implements GooglePla
 	// Store the list of geofence Ids to remove
 	private List<String> mGeofencesToRemove;
 
+	
+
 	@Override
 	public void onCreate(Bundle savedInstanceState)
 	{
@@ -60,6 +63,9 @@ public class GeofenceActivity extends GoogleServiceActivity implements GooglePla
 		// Start with the request flag set to false
 		mInProgress = false;
 		mCurrentGeofences = new ArrayList<Geofence>();
+
+		
+
 	}
 
 	/*
@@ -94,7 +100,8 @@ public class GeofenceActivity extends GoogleServiceActivity implements GooglePla
 
 	/**
 	 * Create a PendingIntent that triggers an IntentService in your app when a
-	 * geofence transition occurs. 
+	 * geofence transition occurs.
+	 * 
 	 * @return
 	 */
 	private PendingIntent getTransitionPendingIntent()
@@ -106,7 +113,7 @@ public class GeofenceActivity extends GoogleServiceActivity implements GooglePla
 		 */
 		return PendingIntent.getService(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 	}
-	
+
 	/*
 	 * Create a PendingIntent
 	 */
@@ -176,7 +183,7 @@ public class GeofenceActivity extends GoogleServiceActivity implements GooglePla
 		{
 			return;
 		}
-		
+
 		/*
 		 * Create a new location client object. Since the current activity class
 		 * implements ConnectionCallbacks and OnConnectionFailedListener, pass
@@ -275,13 +282,6 @@ public class GeofenceActivity extends GoogleServiceActivity implements GooglePla
 		mLocationClient.disconnect();
 	}
 
-	@Override
-	public void onLocationChanged(Location location)
-	{
-		// TODO Auto-generated method stub
-
-	}
-
 	/*
 	 * Implement ConnectionCallbacks.onDisconnected() Called by Location
 	 * Services once the location client is disconnected.
@@ -378,32 +378,31 @@ public class GeofenceActivity extends GoogleServiceActivity implements GooglePla
 		// TODO Auto-generated method stub
 
 	}
-	
+
 	private void saveGeofences(boolean save)
 	{
-		if(mCurrentGeofences!=null && !mCurrentGeofences.isEmpty() && (mSaveGeofences==null || mSaveGeofences.getStatus()==AsyncTask.Status.FINISHED))
+		if (mCurrentGeofences != null && !mCurrentGeofences.isEmpty() && (mSaveGeofences == null || mSaveGeofences.getStatus() == AsyncTask.Status.FINISHED))
 		{
 			mSaveGeofences = new SaveGeofences();
 			mSaveGeofences.execute(save, null, null);
 		}
 	}
-	
+
 	private class SaveGeofences extends AsyncTask<Boolean, Void, Void>
 	{
 		@Override
 		protected Void doInBackground(Boolean... params)
 		{
 			ContentResolver cr = getContentResolver();
-			if(params[0])
+			if (params[0])
 			{
-				for(Geofence g : mCurrentGeofences)
+				for (Geofence g : mCurrentGeofences)
 				{
 					ContentValues values = new ContentValues();
 					values.put(GeofenceMetaData.TableMetaData.geofence_id, g.getRequestId());
 					cr.insert(GeofenceMetaData.TableMetaData.CONTENT_URI, values);
 				}
-			}
-			else
+			} else
 			{
 				cr.delete(GeofenceMetaData.TableMetaData.CONTENT_URI, null, null);
 			}

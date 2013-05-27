@@ -135,7 +135,14 @@ public class GoogleServiceActivity extends MinRuteBaseActivity implements OnConn
 	}
 
 	@Override
-	public void onConnectedService()
+	public void onConnectedServiceVoice()
+	{
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onConnectedServiceLocation()
 	{
 		// TODO Auto-generated method stub
 		

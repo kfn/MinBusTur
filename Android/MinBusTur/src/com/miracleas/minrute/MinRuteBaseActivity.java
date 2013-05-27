@@ -1,6 +1,7 @@
 package com.miracleas.minrute;
 
 import com.actionbarsherlock.app.SherlockFragmentActivity;
+import com.miracleas.minrute.service.LocationService;
 import com.miracleas.minrute.service.UpdateVoiceTripService;
 
 import android.content.ComponentName;
@@ -13,24 +14,53 @@ import android.os.IBinder;
 
 public abstract class MinRuteBaseActivity extends SherlockFragmentActivity
 {
-	protected UpdateVoiceTripService mService = null;
-	protected boolean mBound = false;
+	protected UpdateVoiceTripService mServiceVoice = null;
+	protected boolean mBoundVoice = false;
+	
+	protected LocationService mServiceLocation = null;
+	protected boolean mBoundLocation = false;
 	
 	public void onCreate(Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);
-		connectToService();
+		connectToVoiceService();
+		connectToLocationService();
 	}
 	
-	/**
-	 * connects to the Android service that communicates with the container
-	 */
-	private void connectToService()
+
+	private void connectToVoiceService()
 	{
 		Intent intent = new Intent(this, UpdateVoiceTripService.class);
-		bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
+		bindService(intent, mConnectionVoice, Context.BIND_AUTO_CREATE);
 	}
-	private ServiceConnection mConnection = new ServiceConnection()
+	private void connectToLocationService()
+	{
+		Intent intent = new Intent(this, LocationService.class);
+		bindService(intent, mConnectionLocation, Context.BIND_AUTO_CREATE);
+	}
+	
+	private ServiceConnection mConnectionLocation = new ServiceConnection()
+	{
+		@Override
+		public void onServiceConnected(ComponentName className, IBinder service)
+		{
+			// We've bound to LocalService, cast the IBinder and get
+			// LocalService instance
+			LocationService.LocalBinder binder = (LocationService.LocalBinder) service;
+			mServiceLocation = binder.getService();
+			mBoundLocation = true;
+			onConnectedServiceLocation();
+		}
+
+		@Override
+		public void onServiceDisconnected(ComponentName arg0)
+		{
+			mBoundLocation = false;
+		}
+	};
+	
+	
+	private ServiceConnection mConnectionVoice = new ServiceConnection()
 	{
 		@Override
 		public void onServiceConnected(ComponentName className, IBinder service)
@@ -38,28 +68,34 @@ public abstract class MinRuteBaseActivity extends SherlockFragmentActivity
 			// We've bound to LocalService, cast the IBinder and get
 			// LocalService instance
 			UpdateVoiceTripService.LocalBinder binder = (UpdateVoiceTripService.LocalBinder) service;
-			mService = binder.getService();
-			mBound = true;
-			onConnectedService();
+			mServiceVoice = binder.getService();
+			mBoundVoice = true;
+			onConnectedServiceVoice();
 		}
 
 		@Override
 		public void onServiceDisconnected(ComponentName arg0)
 		{
-			mBound = false;
+			mBoundVoice = false;
 		}
 	};
 	@Override
 	public void onDestroy()
 	{
 		super.onDestroy();
-		if (mBound)
+		if (mBoundVoice)
 		{
-			unbindService(mConnection);
-			mBound = false;
-		}		
+			unbindService(mConnectionVoice);
+			mBoundVoice = false;
+		}
+		if (mBoundLocation)
+		{
+			unbindService(mConnectionLocation);
+			mBoundLocation = false;
+		}
 	}
 	
-	public abstract void onConnectedService();
+	public abstract void onConnectedServiceVoice();
+	public abstract void onConnectedServiceLocation();
 	
 }

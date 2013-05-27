@@ -20,6 +20,7 @@ import android.support.v4.content.Loader;
 import android.support.v4.widget.CursorAdapter;
 import android.text.TextUtils;
 import android.text.format.DateUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -60,10 +61,11 @@ public class TripGuideFragment extends SherlockListFragment implements LoaderCal
 
 	private static final String[] PROJECTION_TRIP_GPS_READY = { TripMetaData.TableMetaData._ID, TripMetaData.TableMetaData.HAS_ALL_ADDRESS_GPSES };
 
-	private static final String[] PROJECTION_TRIP = { TripVoiceMetaData.TableMetaData.DEPARTURES_IN };
+	
 	private TripAdapter mTripAdapter = null;
-	private long[] mLegIds;
 	private String mTextToSpeak;
+	
+	public static final String tag = TripGuideFragment.class.getName();
 
 	public static TripGuideFragment createInstance(String tripId, int stepCount, TripRequest tripRequest)
 	{
@@ -113,7 +115,6 @@ public class TripGuideFragment extends SherlockListFragment implements LoaderCal
 	{
 		super.onActivityCreated(savedInstanceState);
 		mTripAdapter = new TripAdapter(getActivity(), null, 0);
-		mLegIds = new long[2];
 		getListView().setOnItemClickListener(this);
 		setListAdapter(mTripAdapter);
 		getLoaderManager().initLoader(LoaderConstants.LOAD_TRIP_LEGS, getArguments(), this);
@@ -123,6 +124,7 @@ public class TripGuideFragment extends SherlockListFragment implements LoaderCal
 		{
 			Intent service = new Intent(getActivity(), FetchGpsOnMissingAddressesService.class);
 			service.putExtra(FetchGpsOnMissingAddressesService.TRIP_ID, getArguments().getString(TripMetaData.TableMetaData._ID));
+			service.putExtra(TripRequest.tag, getArguments().getParcelable(TripRequest.tag));
 			getActivity().startService(service);
 		}
 	}
@@ -207,17 +209,19 @@ public class TripGuideFragment extends SherlockListFragment implements LoaderCal
 					int iId = c.getColumnIndex(TripLegMetaData.TableMetaData._ID);
 					int iLat = c.getColumnIndex(AddressGPSMetaData.TableMetaData.LATITUDE_Y);
 					int iLng = c.getColumnIndex(AddressGPSMetaData.TableMetaData.LONGITUDE_X);
+					int iAddress = c.getColumnIndex(AddressGPSMetaData.TableMetaData.ADDRESS);
 					do
 					{
 						int latd = c.getInt(iLat);
 						int lngd = c.getInt(iLng);
+						Log.d(tag, c.getString(iAddress));
 						if(latd!=0 && lngd!=0)
 						{
 							double lat = (double) latd / 1000000d;
 							double lng = (double) lngd / 1000000d;
 							int id = c.getInt(iId);
 							int transition = Geofence.GEOFENCE_TRANSITION_ENTER | Geofence.GEOFENCE_TRANSITION_EXIT; 
-							geofences.add(toGeofence(id + "", transition, lat, lng, 200, DateUtils.DAY_IN_MILLIS));
+							geofences.add(toGeofence(id + "", transition, lat, lng, 100, DateUtils.DAY_IN_MILLIS));
 						}
 						
 
@@ -545,7 +549,7 @@ public class TripGuideFragment extends SherlockListFragment implements LoaderCal
 			{
 				// success, create the TTS instance
 				MinRuteBaseActivity base = (MinRuteBaseActivity) getActivity();
-				base.mService.startTextToSpeech();
+				base.mServiceVoice.startTextToSpeech();
 			} else
 			{
 				// missing data, install it
@@ -566,7 +570,7 @@ public class TripGuideFragment extends SherlockListFragment implements LoaderCal
 	public void onConnectedService()
 	{
 		String id = getArguments().getString(TripMetaData.TableMetaData._ID);
-		((MinRuteBaseActivity) getActivity()).mService.initVoiceService(id, this);
+		((MinRuteBaseActivity) getActivity()).mServiceVoice.initVoiceService(id, this);
 
 	}
 
