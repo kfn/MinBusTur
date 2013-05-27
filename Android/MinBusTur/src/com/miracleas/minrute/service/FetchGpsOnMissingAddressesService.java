@@ -22,6 +22,8 @@ public class FetchGpsOnMissingAddressesService extends IntentService
 	public static final String TRIP_ID = "trip_id";
 	private static final String[] PROJECTION_LEGS = { TripLegMetaData.TableMetaData.DEST_NAME, TripLegMetaData.TableMetaData._ID};
 	private static final String[] PROJECTION_ADDRESS = {AddressGPSMetaData.TableMetaData.ADDRESS};
+	private boolean mHasStartLocation = false;
+	private boolean mHasStopLocation = false;
 	
 	private ContentResolver cr;
 	
@@ -72,26 +74,28 @@ public class FetchGpsOnMissingAddressesService extends IntentService
 	
 	private void insertStartAndEndLocationsForTrip(TripRequest tripRequest)
 	{
-		insertAddress(tripRequest.originCoordNameNotEncoded, tripRequest.getOriginCoordY(), tripRequest.getOriginCoordX());
-		insertAddress(tripRequest.destCoordNameNotEncoded, tripRequest.getDestCoordY(), tripRequest.getDestCoordX());
+		mHasStartLocation = insertAddress(tripRequest.originCoordNameNotEncoded, tripRequest.getOriginCoordY(), tripRequest.getOriginCoordX());
+		mHasStopLocation = insertAddress(tripRequest.destCoordNameNotEncoded, tripRequest.getDestCoordY(), tripRequest.getDestCoordX());
 	}
 	
 	private boolean insertAddress(String address, String latY, String lngX)
 	{
 		boolean hasAddressCached = false;
-		
-		ContentResolver cr = getContentResolver();
-		ContentValues values = new ContentValues();
-		values.put(AddressGPSMetaData.TableMetaData.ADDRESS, address);
-		values.put(AddressGPSMetaData.TableMetaData.LATITUDE_Y, latY);
-		values.put(AddressGPSMetaData.TableMetaData.LONGITUDE_X, lngX);
-		
-		String where = AddressGPSMetaData.TableMetaData.ADDRESS + "=?";
-		String[] selectionArgs = {address};
-		hasAddressCached = cr.update(AddressGPSMetaData.TableMetaData.CONTENT_URI, values, where, selectionArgs) > 0;
-		if(!hasAddressCached)
+		if(!(TextUtils.isEmpty(address) && TextUtils.isEmpty(latY) && TextUtils.isEmpty(lngX)))
 		{
-			cr.insert(AddressGPSMetaData.TableMetaData.CONTENT_URI, values);
+			ContentResolver cr = getContentResolver();
+			ContentValues values = new ContentValues();
+			values.put(AddressGPSMetaData.TableMetaData.ADDRESS, address);
+			values.put(AddressGPSMetaData.TableMetaData.LATITUDE_Y, latY);
+			values.put(AddressGPSMetaData.TableMetaData.LONGITUDE_X, lngX);
+			
+			String where = AddressGPSMetaData.TableMetaData.ADDRESS + "=?";
+			String[] selectionArgs = {address};
+			hasAddressCached = cr.update(AddressGPSMetaData.TableMetaData.CONTENT_URI, values, where, selectionArgs) > 0;
+			if(!hasAddressCached)
+			{
+				hasAddressCached = cr.insert(AddressGPSMetaData.TableMetaData.CONTENT_URI, values)!=null;
+			}
 		}
 		return hasAddressCached;
 		
@@ -148,7 +152,7 @@ public class FetchGpsOnMissingAddressesService extends IntentService
 
 			int i = c.getColumnIndex(TripLegMetaData.TableMetaData.DEST_NAME);
 			do{	
-				if(!(c.isFirst() || c.isLast()))
+				if(!((c.isFirst() && mHasStartLocation) || (c.isLast() && mHasStopLocation)))
 				{
 					addresses.add(c.getString(i));
 				}

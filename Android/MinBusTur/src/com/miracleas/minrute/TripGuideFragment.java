@@ -188,15 +188,15 @@ public class TripGuideFragment extends SherlockListFragment implements LoaderCal
 
 	private class LoadGeofencesTask extends AsyncTask<String, Void, List<Geofence>>
 	{
-		private final String[] projection = {TripLegMetaData.TableMetaData._ID, AddressGPSMetaData.TableMetaData.LATITUDE_Y, AddressGPSMetaData.TableMetaData.LONGITUDE_X };
+		private final String[] projection = {TripLegMetaData.TableMetaData._ID,AddressGPSMetaData.TableMetaData.ADDRESS ,AddressGPSMetaData.TableMetaData.LATITUDE_Y, AddressGPSMetaData.TableMetaData.LONGITUDE_X };
 
 		@Override
 		protected List<Geofence> doInBackground(String... params)
 		{
 			List<Geofence> geofences = new ArrayList<Geofence>();
 			String tripId = params[0];
-			String selection = TripLegMetaData.TableMetaData.TRIP_ID + "=? AND "+TripLegMetaData.TableMetaData.TYPE + " NOT LIKE ?";
-			String[] selectionArgs = { tripId, TripLeg.TYPE_WALK };
+			String selection = TripLegMetaData.TableMetaData.TRIP_ID + "=?";
+			String[] selectionArgs = { tripId};
 			Uri uri = Uri.withAppendedPath(TripLegMetaData.TableMetaData.CONTENT_URI, AddressGPSMetaData.TABLE_NAME);
 			ContentResolver cr = getActivity().getContentResolver();
 
@@ -214,7 +214,17 @@ public class TripGuideFragment extends SherlockListFragment implements LoaderCal
 					{
 						int latd = c.getInt(iLat);
 						int lngd = c.getInt(iLng);
-						Log.d(tag, c.getString(iAddress));
+						String address = c.getString(iAddress);
+						if(address!=null)
+						{
+							Log.d(tag, address);
+						}
+						else
+						{
+							Log.e(tag, "address was null");
+							Log.e(tag, "lat:"+latd+",lng:"+lngd);
+						}
+						
 						if(latd!=0 && lngd!=0)
 						{
 							double lat = (double) latd / 1000000d;
