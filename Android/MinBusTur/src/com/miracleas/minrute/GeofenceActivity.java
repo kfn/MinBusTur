@@ -5,16 +5,10 @@ import java.util.List;
 
 import android.app.Dialog;
 import android.app.PendingIntent;
-import android.content.ContentResolver;
-import android.content.ContentValues;
 import android.content.Intent;
 import android.content.IntentSender.SendIntentException;
-import android.location.Location;
-import android.os.AsyncTask;
 import android.os.Bundle;
-import android.text.format.DateUtils;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesClient;
@@ -23,10 +17,7 @@ import com.google.android.gms.location.Geofence;
 import com.google.android.gms.location.LocationClient;
 import com.google.android.gms.location.LocationClient.OnAddGeofencesResultListener;
 import com.google.android.gms.location.LocationClient.OnRemoveGeofencesResultListener;
-import com.google.android.gms.location.LocationListener;
-import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationStatusCodes;
-import com.miracleas.minrute.provider.GeofenceMetaData;
 import com.miracleas.minrute.service.ReceiveTransitionsIntentService;
 import com.miracleas.minrute.service.RemoveGeofencesService;
 
@@ -38,7 +29,6 @@ public class GeofenceActivity extends GoogleServiceActivity implements GooglePla
 	private LocationClient mLocationClient;
 	// Stores the PendingIntent used to request geofence monitoring
 	private PendingIntent mGeofenceRequestIntent;
-	private SaveGeofences mSaveGeofences = null;
 
 	// Defines the allowable request types.
 	// Enum type for controlling the type of removal requested
@@ -265,9 +255,8 @@ public class GeofenceActivity extends GoogleServiceActivity implements GooglePla
 			 * broadcast intent or update the UI. geofences into the Intent's
 			 * extended data.
 			 */
-			saveGeofences(true);
+			
 			Log.d(tag, "added geofences!");
-			Toast.makeText(this, "added geofences!", Toast.LENGTH_SHORT).show();
 		} else
 		{
 			// If adding the geofences failed
@@ -355,7 +344,7 @@ public class GeofenceActivity extends GoogleServiceActivity implements GooglePla
 			 * broadcast intent or update the UI. geofences into the Intent's
 			 * extended data.
 			 */
-			saveGeofences(false);
+			Log.d(tag, "removed geofences!");
 		} else
 		{
 			// If adding the geocodes failed
@@ -376,43 +365,8 @@ public class GeofenceActivity extends GoogleServiceActivity implements GooglePla
 	public void onRemoveGeofencesByRequestIdsResult(int arg0, String[] arg1)
 	{
 		// TODO Auto-generated method stub
-
+		Log.d(tag, "removed geofences!");
 	}
-
-	private void saveGeofences(boolean save)
-	{
-		if (mCurrentGeofences != null && !mCurrentGeofences.isEmpty() && (mSaveGeofences == null || mSaveGeofences.getStatus() == AsyncTask.Status.FINISHED))
-		{
-			mSaveGeofences = new SaveGeofences();
-			mSaveGeofences.execute(save, null, null);
-		}
-	}
-
-	private class SaveGeofences extends AsyncTask<Boolean, Void, Void>
-	{
-		@Override
-		protected Void doInBackground(Boolean... params)
-		{
-			ContentResolver cr = getContentResolver();
-			if (params[0])
-			{
-				for (Geofence g : mCurrentGeofences)
-				{
-					ContentValues values = new ContentValues();
-					values.put(GeofenceMetaData.TableMetaData.geofence_id, g.getRequestId());
-					cr.insert(GeofenceMetaData.TableMetaData.CONTENT_URI, values);
-				}
-			} else
-			{
-				cr.delete(GeofenceMetaData.TableMetaData.CONTENT_URI, null, null);
-			}
-			return null;
-		}
-
-		protected void onPostExecute(Void result)
-		{
-
-		}
-	}
+	
 
 }

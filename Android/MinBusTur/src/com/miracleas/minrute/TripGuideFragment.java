@@ -44,7 +44,7 @@ import com.miracleas.minrute.provider.JourneyDetailStopMetaData;
 import com.miracleas.minrute.provider.TripLegMetaData;
 import com.miracleas.minrute.provider.TripMetaData;
 import com.miracleas.minrute.provider.TripMetaData.TableMetaData;
-import com.miracleas.minrute.provider.TripVoiceMetaData;
+import com.miracleas.minrute.provider.GeofenceTransitionMetaData;
 import com.miracleas.minrute.service.FetchGpsOnMissingAddressesService;
 import com.miracleas.minrute.service.JourneyDetailsService;
 import com.miracleas.minrute.service.ReceiveTransitionsIntentService;
@@ -56,7 +56,7 @@ public class TripGuideFragment extends SherlockListFragment implements LoaderCal
 			TripLegMetaData.TableMetaData.DEST_TYPE, TripLegMetaData.TableMetaData.ORIGIN_DATE, TripLegMetaData.TableMetaData.ORIGIN_NAME, TripLegMetaData.TableMetaData.ORIGIN_ROUTE_ID, TripLegMetaData.TableMetaData.ORIGIN_TIME, TripLegMetaData.TableMetaData.ORIGIN_TYPE,
 			TripLegMetaData.TableMetaData.DURATION, TripLegMetaData.TableMetaData.DURATION_FORMATTED, TripLegMetaData.TableMetaData.NAME, TripLegMetaData.TableMetaData.NOTES, TripLegMetaData.TableMetaData.REF, TripLegMetaData.TableMetaData.TYPE,
 			TripLegMetaData.TableMetaData.ORIGIN_RT_TRACK, TripLegMetaData.TableMetaData.DEST_TRACK,
-
+			TripLegMetaData.TableMetaData.GEOFENCE_EVENT_ID,
 			TripLegMetaData.TableMetaData.PROGRESS_BAR_PROGRESS, TripLegMetaData.TableMetaData.PROGRESS_BAR_MAX, TripLegMetaData.TableMetaData.DEPARTURES_IN_TIME_LABEL, TripLegMetaData.TableMetaData.COMPLETED };
 
 	private static final String[] PROJECTION_TRIP_GPS_READY = { TripMetaData.TableMetaData._ID, TripMetaData.TableMetaData.HAS_ALL_ADDRESS_GPSES };
@@ -161,6 +161,7 @@ public class TripGuideFragment extends SherlockListFragment implements LoaderCal
 	{
 		if (loader.getId() == LoaderConstants.LOAD_TRIP_LEGS)
 		{
+			Log.d(tag, "onLoadFinished LOAD_TRIP_LEGS");
 			mTripAdapter.swapCursor(newCursor);
 		} 
 		else if (loader.getId() == LoaderConstants.LOAD_HAS_ALL_ADDRESS_GPSES && newCursor.moveToFirst())
@@ -188,7 +189,7 @@ public class TripGuideFragment extends SherlockListFragment implements LoaderCal
 
 	private class LoadGeofencesTask extends AsyncTask<String, Void, List<Geofence>>
 	{
-		private final String[] projection = {TripLegMetaData.TableMetaData._ID,AddressGPSMetaData.TableMetaData.ADDRESS ,AddressGPSMetaData.TableMetaData.LATITUDE_Y, AddressGPSMetaData.TableMetaData.LONGITUDE_X };
+		private final String[] projection = {TripLegMetaData.TableMetaData._ID,TripLegMetaData.TableMetaData.TYPE,AddressGPSMetaData.TableMetaData.ADDRESS ,AddressGPSMetaData.TableMetaData.LATITUDE_Y, AddressGPSMetaData.TableMetaData.LONGITUDE_X };
 
 		@Override
 		protected List<Geofence> doInBackground(String... params)
@@ -207,6 +208,7 @@ public class TripGuideFragment extends SherlockListFragment implements LoaderCal
 				if (c.moveToFirst())
 				{
 					int iId = c.getColumnIndex(TripLegMetaData.TableMetaData._ID);
+					int iType = c.getColumnIndex(TripLegMetaData.TableMetaData.TYPE);
 					int iLat = c.getColumnIndex(AddressGPSMetaData.TableMetaData.LATITUDE_Y);
 					int iLng = c.getColumnIndex(AddressGPSMetaData.TableMetaData.LONGITUDE_X);
 					int iAddress = c.getColumnIndex(AddressGPSMetaData.TableMetaData.ADDRESS);
@@ -214,6 +216,7 @@ public class TripGuideFragment extends SherlockListFragment implements LoaderCal
 					{
 						int latd = c.getInt(iLat);
 						int lngd = c.getInt(iLng);
+						
 						String address = c.getString(iAddress);
 						if(address!=null)
 						{
@@ -227,11 +230,14 @@ public class TripGuideFragment extends SherlockListFragment implements LoaderCal
 						
 						if(latd!=0 && lngd!=0)
 						{
+							String typeOfTransport = c.getString(iType);
+							
+							int radius = getRadius(typeOfTransport);
 							double lat = (double) latd / 1000000d;
 							double lng = (double) lngd / 1000000d;
 							int id = c.getInt(iId);
 							int transition = Geofence.GEOFENCE_TRANSITION_ENTER | Geofence.GEOFENCE_TRANSITION_EXIT; 
-							geofences.add(toGeofence(id + "", transition, lat, lng, 100, DateUtils.DAY_IN_MILLIS));
+							geofences.add(toGeofence(id + "", transition, lat, lng, radius, DateUtils.DAY_IN_MILLIS));
 						}
 						
 
@@ -246,6 +252,44 @@ public class TripGuideFragment extends SherlockListFragment implements LoaderCal
 				
 			}
 			return geofences;
+		}
+		
+		private int getRadius(String typeOfTransport)
+		{
+			int radius = 10;
+			if(typeOfTransport.equals(TripLeg.TYPE_WALK))
+			{
+				radius = 35;
+			}
+			else if(typeOfTransport.equals(TripLeg.TYPE_BUS))
+			{
+				radius = 300;
+			}
+			else if(typeOfTransport.equals(TripLeg.TYPE_EXB))
+			{
+				radius = 300;
+			}
+			else if(typeOfTransport.equals(TripLeg.TYPE_IC))
+			{
+				radius = 500;
+			}
+			else if(typeOfTransport.equals(TripLeg.TYPE_LYN))
+			{
+				radius = 1200;
+			}
+			else if(typeOfTransport.equals(TripLeg.TYPE_REG))
+			{
+				radius = 800;
+			}
+			else if(typeOfTransport.equals(TripLeg.TYPE_TB))
+			{
+				radius = 300;
+			}
+			else if(typeOfTransport.equals(TripLeg.TYPE_TRAIN))
+			{
+				radius = 500;
+			}
+			return radius;
 		}
 
 		public void onPostExecute(List<Geofence> geofences)
@@ -281,21 +325,21 @@ public class TripGuideFragment extends SherlockListFragment implements LoaderCal
 		private int iDestType;
 		private int iOriginDate;
 
-		private int iOriginTime = 0;
-		private int iOriginType = 0;
-		private int iDuration = 0;
-		private int iDurationFormatted = 0;
-		private int iName = 0;
-		private int iNotes = 0;
-		private int iRef = 0;
-		private int iType = 0;
-		private int iProgressBarProgress = 0;
-		private int iProgressBarMax = 0;
-		private int iDeparturesInTimeLabel = 0;
-		private int iCompleted = 0;
-		private int iGeofenceTransition = 0;
-		private int iRtTrack = 0;
-		private int iDestTrack = 0;
+		private int iOriginTime = -1;
+		private int iOriginType = -1;
+		private int iDuration = -1;
+		private int iDurationFormatted = -1;
+		private int iName = -1;
+		private int iNotes = -1;
+		private int iRef = -1;
+		private int iType = -1;
+		private int iProgressBarProgress = -1;
+		private int iProgressBarMax = -1;
+		private int iDeparturesInTimeLabel = -1;
+		private int iCompleted = -1;
+		private int iGeofenceTransition = -1;
+		private int iRtTrack = -1;
+		private int iDestTrack = -1;
 
 		private LayoutInflater mInf = null;
 
@@ -325,24 +369,7 @@ public class TripGuideFragment extends SherlockListFragment implements LoaderCal
 				textViewOriginName.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_menu_myplaces, 0, 0, 0);
 			}
 			TextView textViewDestName = (TextView) v.findViewById(R.id.textViewDestName);
-			if (cursor.isLast())
-			{
-				textViewTime.setText(originTime + " - " + cursor.getString(iDestTime));
-				textViewDestName.setText(String.format(getString(R.string.to), cursor.getString(iDestName)));
 
-				String destLocationType = cursor.getString(iDestType);
-				if (destLocationType.equals("ADR"))
-				{
-					textViewDestName.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_menu_home, 0, 0, 0);
-				} else if (destLocationType.equals("ST"))
-				{
-					textViewDestName.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_menu_myplaces, 0, 0, 0);
-				}
-				textViewDestName.setVisibility(View.VISIBLE);
-			} else
-			{
-				textViewDestName.setVisibility(View.GONE);
-			}
 
 			String type = cursor.getString(iType);
 			String track = cursor.getString(iRtTrack);
@@ -383,6 +410,31 @@ public class TripGuideFragment extends SherlockListFragment implements LoaderCal
 			{
 				v.setBackgroundResource(R.drawable.selectable_background_minrutevejledning);
 			}
+			
+			
+			if (cursor.isLast())
+			{
+				/*textViewTime.setText(originTime + " - " + cursor.getString(iDestTime));
+				textViewDestName.setText(String.format(getString(R.string.to), cursor.getString(iDestName)));
+
+				String destLocationType = cursor.getString(iDestType);
+				if (destLocationType.equals("ADR"))
+				{
+					textViewDestName.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_menu_home, 0, 0, 0);
+				} else if (destLocationType.equals("ST"))
+				{
+					textViewDestName.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_menu_myplaces, 0, 0, 0);
+				}
+				textViewDestName.setVisibility(View.VISIBLE);*/
+				textViewNotes.setVisibility(View.GONE);
+				textViewTransportType.setVisibility(View.GONE);
+			} 
+			else
+			{
+				textViewDestName.setVisibility(View.GONE);
+				textViewNotes.setVisibility(View.VISIBLE);
+				textViewTransportType.setVisibility(View.VISIBLE);
+			}
 		}
 
 		@Override
@@ -417,6 +469,7 @@ public class TripGuideFragment extends SherlockListFragment implements LoaderCal
 				iCompleted = newCursor.getColumnIndex(TripLegMetaData.TableMetaData.COMPLETED);
 				iRtTrack = newCursor.getColumnIndex(TripLegMetaData.TableMetaData.ORIGIN_RT_TRACK);
 				iDestTrack = newCursor.getColumnIndex(TripLegMetaData.TableMetaData.DEST_TRACK);
+				iGeofenceTransition = newCursor.getColumnIndex(TripLegMetaData.TableMetaData.GEOFENCE_EVENT_ID);
 			}
 			return super.swapCursor(newCursor);
 		}

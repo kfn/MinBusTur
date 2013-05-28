@@ -17,8 +17,8 @@ public class AddressGPSMetaData
 	public static final String PROVIDER_NAME = "MinBusTurProvider";
 	public static final String PACKAGE_NAME = "com.miracleas.minrute.provider.";
 	public static final String AUTHORITY = PACKAGE_NAME + PROVIDER_NAME;
-	public static final String COLLECTION_TYPE = "leg_gps_choords";
-	public static final String ITEM_TYPE = "leg_gps_choord";
+	public static final String COLLECTION_TYPE = "address_gps_choords";
+	public static final String ITEM_TYPE = "address_gps_choord";
 	public static final String TABLE_NAME = AddressGPSMetaData.COLLECTION_TYPE;
 
 	private AddressGPSMetaData()

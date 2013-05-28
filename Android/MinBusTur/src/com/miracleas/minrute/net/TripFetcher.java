@@ -22,7 +22,7 @@ import com.miracleas.minrute.model.TripLocation;
 import com.miracleas.minrute.model.TripRequest;
 import com.miracleas.minrute.provider.TripLegMetaData;
 import com.miracleas.minrute.provider.TripMetaData;
-import com.miracleas.minrute.provider.TripVoiceMetaData;
+import com.miracleas.minrute.provider.GeofenceTransitionMetaData;
 import com.miracleas.minrute.utils.DateHelper;
 
 public class TripFetcher extends BaseFetcher
@@ -34,6 +34,8 @@ public class TripFetcher extends BaseFetcher
 	private DateHelper mDateHelper = null;
 	private TripRequest mTripRequest = null;
 	public static final String TRIP_REQUEST = "TRIP_REQUEST";
+	
+	private boolean mFoundDestination = false;
 	
 	public TripFetcher(Context c, Intent intent, Uri notifyUri)
 	{
@@ -96,6 +98,7 @@ public class TripFetcher extends BaseFetcher
 				if (!mDbOperations.isEmpty())
 				{					
 					saveData(TripLegMetaData.AUTHORITY);
+					exportDatabase();
 				}
 			} 
 		} finally
@@ -106,7 +109,7 @@ public class TripFetcher extends BaseFetcher
 	}
 	
 	private void parse(InputStream in) throws XmlPullParserException, IOException
-	{
+	{				
 		XmlPullParserFactory factory = XmlPullParserFactory.newInstance();
 		factory.setNamespaceAware(true);
 		XmlPullParser xpp = factory.newPullParser();
@@ -137,11 +140,11 @@ public class TripFetcher extends BaseFetcher
 								{	
 									if (eventType == XmlPullParser.START_TAG && xpp.getName().equals("Origin"))
 									{									
-										leg.origin = getTripLegValues(xpp);				
+										leg.origin = getTripLegValues(xpp, false);				
 									}
 									else if (eventType == XmlPullParser.START_TAG && xpp.getName().equals("Destination"))
 									{
-										leg.dest = getTripLegValues(xpp);	
+										leg.dest = getTripLegValues(xpp, true);	
 									}
 									else if (eventType == XmlPullParser.START_TAG && xpp.getName().equals("Notes"))
 									{
@@ -159,6 +162,13 @@ public class TripFetcher extends BaseFetcher
 								{
 									trip.addLeg(leg);
 									saveLeg(leg, trip.getLegCount());
+									
+									if(mFoundDestination)
+									{
+										TripLeg legDestination = leg;
+										legDestination.origin = leg.dest;
+										saveLeg(legDestination, trip.getLegCount()+1);
+									}
 								}							
 							}
 							eventType = xpp.next();			
@@ -172,7 +182,7 @@ public class TripFetcher extends BaseFetcher
 		}
 	}
 	
-	private TripLocation getTripLegValues(XmlPullParser xpp)
+	private TripLocation getTripLegValues(XmlPullParser xpp, boolean isDestination)
 	{
 		TripLocation leg = new TripLocation();
 		leg.name = xpp.getAttributeValue(null, "name");
@@ -183,6 +193,14 @@ public class TripFetcher extends BaseFetcher
 		leg.track = xpp.getAttributeValue(null, "track");
 		leg.rtTrack = xpp.getAttributeValue(null, "rtTrack");
 		
+		if(isDestination && mTripRequest.destCoordNameNotEncoded.equals(leg.name))
+		{
+			mFoundDestination = true;
+		}
+		else
+		{
+			mFoundDestination = false;
+		}
 		return leg;
 	}
 	
@@ -217,13 +235,13 @@ public class TripFetcher extends BaseFetcher
 		mDbOperations.add(b.build());
 				
 		//IF VOICE ON	
-		mDateHelper.setVoice(true);
+		/*mDateHelper.setVoice(true);
 		departures = departures - System.currentTimeMillis();
 		b = ContentProviderOperation.newInsert(TripVoiceMetaData.TableMetaData.CONTENT_URI);
 		b.withValue(TripVoiceMetaData.TableMetaData.TRIP_ID, t.id);
 		b.withValue(TripVoiceMetaData.TableMetaData.DEPARTURES_IN, mDateHelper.getDurationLabel(departures, true));
 		mDbOperations.add(b.build());
-		mDateHelper.setVoice(false);
+		mDateHelper.setVoice(false);*/
 	}
 	
 	private void saveLeg(TripLeg leg, int stepNumber)
@@ -237,7 +255,7 @@ public class TripFetcher extends BaseFetcher
 		.withValue(TripLegMetaData.TableMetaData.NAME, leg.name)
 		.withValue(TripLegMetaData.TableMetaData.TYPE, leg.type)
 		.withValue(TripLegMetaData.TableMetaData.NOTES, leg.notes)
-		.withValue(TripLegMetaData.TableMetaData.ORIGIN_DATE, leg.origin.name)
+		.withValue(TripLegMetaData.TableMetaData.ORIGIN_DATE, leg.origin.date)
 		.withValue(TripLegMetaData.TableMetaData.ORIGIN_NAME, leg.origin.name)
 		.withValue(TripLegMetaData.TableMetaData.ORIGIN_ROUTE_ID, leg.origin.routeId)
 		.withValue(TripLegMetaData.TableMetaData.ORIGIN_TIME, leg.origin.time)

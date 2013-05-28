@@ -5,12 +5,15 @@ import java.util.List;
 
 import com.google.android.gms.location.Geofence;
 import com.google.android.gms.location.LocationClient;
+import com.miracleas.minrute.R;
 import com.miracleas.minrute.provider.JourneyDetailNoteMetaData;
 import com.miracleas.minrute.provider.TripLegMetaData;
+import com.miracleas.minrute.provider.GeofenceTransitionMetaData;
 
 import android.app.IntentService;
 import android.content.ContentProviderOperation;
 import android.content.ContentResolver;
+import android.content.ContentValues;
 import android.content.Intent;
 import android.content.OperationApplicationException;
 import android.net.Uri;
@@ -80,12 +83,21 @@ public class ReceiveTransitionsIntentService extends IntentService
 
 				List<Geofence> triggerList = LocationClient.getTriggeringGeofences(intent);
 				ArrayList<ContentProviderOperation> mDbOperations = new ArrayList<ContentProviderOperation>(triggerList.size());
+				long now = System.currentTimeMillis();
 				for (int i = 0; i < triggerList.size(); i++)
 				{
-					String legId = triggerList.get(i).getRequestId().replace("exit", "").replace("enter", "");
+					String legId = triggerList.get(i).getRequestId();
+					Log.d(tag, "legid: "+legId);
 					Uri uri = Uri.withAppendedPath(TripLegMetaData.TableMetaData.CONTENT_URI, legId);
 					ContentProviderOperation.Builder b = ContentProviderOperation.newUpdate(uri);	
 					b.withValue(TripLegMetaData.TableMetaData.GEOFENCE_EVENT_ID, transitionType);
+					b.withValue(TripLegMetaData.TableMetaData.updated, now);
+					mDbOperations.add(b.build());
+					
+					b = ContentProviderOperation.newInsert(GeofenceTransitionMetaData.TableMetaData.CONTENT_URI);	
+					b.withValue(GeofenceTransitionMetaData.TableMetaData.TRIP_LEG_ID, legId);
+					b.withValue(GeofenceTransitionMetaData.TableMetaData.GEOFENCE_TRANSITION_TYPE, transitionType);
+					b.withValue(GeofenceTransitionMetaData.TableMetaData.updated, System.currentTimeMillis());
 					mDbOperations.add(b.build());
 				}
 				if(!mDbOperations.isEmpty())
@@ -113,5 +125,4 @@ public class ReceiveTransitionsIntentService extends IntentService
 
 		}
 	}
-
 }

@@ -3,25 +3,24 @@ package com.miracleas.minrute.provider;
 import android.net.Uri;
 import android.provider.BaseColumns;
 
-public class GeofenceMetaData
+public class GeofenceTransitionMetaData
 {
 	public static final String PROVIDER_NAME = "MinBusTurProvider";
 	public static final String PACKAGE_NAME = "com.miracleas.minrute.provider.";
 	public static final String AUTHORITY = PACKAGE_NAME + PROVIDER_NAME;
-	public static final String COLLECTION_TYPE = "geofences";
-	public static final String ITEM_TYPE = "geofence";
-	public static final String TABLE_NAME = GeofenceMetaData.COLLECTION_TYPE;
+	public static final String COLLECTION_TYPE = "geofence_transitions";
+	public static final String ITEM_TYPE = "geofence_transition";
+	public static final String TABLE_NAME = GeofenceTransitionMetaData.COLLECTION_TYPE;
 
-	private GeofenceMetaData()
+	private GeofenceTransitionMetaData()
 	{
 	}
 
 	public static String getTableSchema()
 	{
 		return TableMetaData._ID + " INTEGER PRIMARY KEY AUTOINCREMENT," +
-				TableMetaData.geofence_id + " LONG," 
-				+ TableMetaData.geofence_lat + " TEXT," 
-				+ TableMetaData.geofence_lng + " TEXT," 
+				TableMetaData.GEOFENCE_TRANSITION_TYPE + " INTEGER," 
+				+ TableMetaData.TRIP_LEG_ID + " INTEGER," 
 				+ TableMetaData.updated + " LONG"
 				;
 	}
@@ -38,9 +37,8 @@ public class GeofenceMetaData
 		public static final String CONTENT_TYPE = "vnd.android.cursor.dir/vnd." + PACKAGE_NAME + ITEM_TYPE;
 		public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd." + PACKAGE_NAME + ITEM_TYPE;
 
-		public static final String geofence_id = "geofence_id";
-		public static final String geofence_lat = "geofence_lat";
-		public static final String geofence_lng = "geofence_lng";
+		public static final String GEOFENCE_TRANSITION_TYPE = "geofence_transition_type";
+		public static final String TRIP_LEG_ID = "trip_leg_id";
 		public static final String updated = "updated";
 
 	}

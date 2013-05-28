@@ -4,15 +4,19 @@ import java.util.Locale;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import com.google.android.gms.location.Geofence;
 import com.miracleas.minrute.R;
+import com.miracleas.minrute.model.TripLeg;
+import com.miracleas.minrute.provider.TripLegMetaData;
 import com.miracleas.minrute.provider.TripMetaData;
-import com.miracleas.minrute.provider.TripVoiceMetaData;
+import com.miracleas.minrute.provider.GeofenceTransitionMetaData;
 import com.miracleas.minrute.utils.DateHelper;
 
 import android.app.Service;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Intent;
+import android.database.ContentObserver;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -33,6 +37,7 @@ public class UpdateVoiceTripService extends Service implements android.speech.tt
 	private long mDeparturesIn = 0;
 	private TextToSpeech mTts;
 	private String mTextToSpeak;
+	private TransistionObserver mTransistionObserver = null;
 	
 	private static final long FOURTY_FIVE_MINUTES = DateUtils.MINUTE_IN_MILLIS * 45;
 	private static final long ONE_HOUR_FOURTY_FIVE_MINUTES = DateUtils.HOUR_IN_MILLIS + FOURTY_FIVE_MINUTES;
@@ -81,6 +86,10 @@ public class UpdateVoiceTripService extends Service implements android.speech.tt
 		super.onCreate();
 		mDateHelper = new DateHelper(this);
 		mDateHelper.setVoice(true);
+		mTransistionObserver = new TransistionObserver(handler);
+		getContentResolver().registerContentObserver(
+				GeofenceTransitionMetaData.TableMetaData.CONTENT_URI, true,
+				mTransistionObserver);
 		Log.d(tag, "onCreate");
 	}
 
@@ -96,6 +105,10 @@ public class UpdateVoiceTripService extends Service implements android.speech.tt
 			mTts = null;
 		}
 		mOnVoiceServiceReadyListener = null;
+		
+		getContentResolver().unregisterContentObserver(
+				mTransistionObserver);
+		
 		Log.d(tag, "onDestroy");
 
 	}
@@ -122,7 +135,11 @@ public class UpdateVoiceTripService extends Service implements android.speech.tt
 			{
 				mTts.setLanguage(Locale.US);
 			}
-			
+			if(mTextToSpeak!=null)
+			{
+				mTts.speak(mTextToSpeak, TextToSpeech.QUEUE_ADD, null);
+				mTextToSpeak = null;
+			}
 			startDepartureTimer();
 		}
 		
@@ -131,10 +148,17 @@ public class UpdateVoiceTripService extends Service implements android.speech.tt
 	
 	public void playVoice(String voice)
 	{
+		Log.d(tag, "playVoice: "+voice);
 		if(voice!=null && isVoiceInitialized())
 		{
 			mTts.speak(voice, TextToSpeech.QUEUE_ADD, null);
 			mTextToSpeak = null;
+		}
+		else
+		{
+			Log.e(tag, "Voice is not ready");
+			mTextToSpeak = voice;
+			startTextToSpeech();
 		}
 	}
 	
@@ -266,44 +290,15 @@ public class UpdateVoiceTripService extends Service implements android.speech.tt
 	{
 		this.mTripId = tripId;
 	}
-	private UpdateDepartueTask mUpdateDepartueTask = null;
+	
 	
 	private void updateDepartureVoice()
 	{
 		long departures =  mDeparturesIn - System.currentTimeMillis();
 		String str = String.format(getString(R.string.voice_departure), mDateHelper.getDurationLabel(departures, true));
-		playVoice(str);
-		/*if(mUpdateDepartueTask==null || mUpdateDepartueTask.getStatus()==AsyncTask.Status.FINISHED)
-		{
-			mUpdateDepartueTask = new UpdateDepartueTask();
-			mUpdateDepartueTask.execute(null,null,null);
-		}*/		
+		playVoice(str);	
 	}
 
-	private class UpdateDepartueTask extends AsyncTask<Void, Void, String>
-	{
-		@Override
-		protected String doInBackground(Void... params)
-		{
-			long departures =  mDeparturesIn - System.currentTimeMillis();
-			String str = mDateHelper.getDurationLabel(departures, true);
-
-			String where = TripVoiceMetaData.TableMetaData.TRIP_ID + "=?";
-			String[] selectionArgs = { mTripId };
-			ContentValues values = new ContentValues();
-			values.put(TripVoiceMetaData.TableMetaData.DEPARTURES_IN, str);
-			ContentResolver cr = getContentResolver();
-			cr.update(TripVoiceMetaData.TableMetaData.CONTENT_URI, values, where, selectionArgs);
-			return str;
-		}
-		@Override
-		public void onPostExecute(String result)
-		{
-			
-		}
-
-	}
-	
 	private LoadDepartueTask mLoadDepartueTask = null;
 	private OnVoiceServiceReadyListener mOnVoiceServiceReadyListener = null;
 	
@@ -362,5 +357,171 @@ public class UpdateVoiceTripService extends Service implements android.speech.tt
 	{
 		public void onVoiceServiceReady();
 	}
+	
+	class TransistionObserver extends ContentObserver {
+	    public TransistionObserver(Handler h) {
+	        super(h);
+	    }
 
+	    @Override
+	    public boolean deliverSelfNotifications() {
+	        return true;
+	    }
+
+	    @Override
+	    public void onChange(boolean selfChange) {
+	        Log.d(tag, "onChange");
+	        super.onChange(selfChange);
+	        loadTransition();
+
+	    }
+	}
+	private void loadTransition()
+	{
+		if(mLoadNewTransitionTask==null || mLoadNewTransitionTask.getStatus()==AsyncTask.Status.FINISHED)
+		{
+			mLoadNewTransitionTask = new LoadNewTransitionTask();
+			mLoadNewTransitionTask.execute(null,null,null);
+		}
+	}
+	private LoadNewTransitionTask mLoadNewTransitionTask = null;
+	
+	private class LoadNewTransitionTask extends AsyncTask<Void, Void, Integer>
+	{
+		@Override
+		protected Integer doInBackground(Void... params)
+		{
+			ContentResolver cr = getContentResolver();
+			Cursor c = null;
+			int voiceRes = -1;
+			try
+			{
+				long now = System.currentTimeMillis() - (DateUtils.SECOND_IN_MILLIS * 5);
+				String[] projection = { TripLegMetaData.TableMetaData.GEOFENCE_EVENT_ID,  TripLegMetaData.TableMetaData.TYPE, TripLegMetaData.TableMetaData.STEP_NUMBER};
+				String selection = TripLegMetaData.TableMetaData.TRIP_ID + "=? AND "+TripLegMetaData.TableMetaData.updated + ">? AND "+TripLegMetaData.TableMetaData.GEOFENCE_EVENT_ID+"!=?";
+				String[] selectionArgs = {mTripId,now+"", "0"};
+				
+				c = cr.query(TripLegMetaData.TableMetaData.CONTENT_URI, projection, selection, selectionArgs, TripLegMetaData.TableMetaData.updated + " DESC LIMIT 1");
+				if (c.moveToFirst())
+				{
+					int iStepNumber = c.getColumnIndex(TripLegMetaData.TableMetaData.STEP_NUMBER);
+					int iType = c.getColumnIndex(TripLegMetaData.TableMetaData.TYPE);
+					int i = c.getColumnIndex(TripLegMetaData.TableMetaData.GEOFENCE_EVENT_ID);
+					
+					String transportType = c.getString(iType);					
+					int transitionType = c.getInt(i);
+					int stepNumber = c.getInt(iStepNumber);
+					voiceRes = getVoiceRessouce(transportType, transitionType);
+				}
+
+			} finally
+			{
+				if (c != null)
+				{
+					c.close();
+				}
+			}
+
+			return voiceRes;
+		}
+		
+		private int getVoiceRessouce(String typeOfTransport, int typeOfTransition)
+		{
+			int radius = -1;
+			if(typeOfTransition == Geofence.GEOFENCE_TRANSITION_ENTER)
+			{
+				radius = getEnterRessourceVoice(typeOfTransport);
+			}
+			else if(typeOfTransition == Geofence.GEOFENCE_TRANSITION_EXIT)
+			{
+				radius = getExitRessourceVoice(typeOfTransport);;
+			}
+			return radius;
+		}
+		
+		private int getEnterRessourceVoice(String typeOfTransport)
+		{
+			int radius = -1;
+			if(typeOfTransport.equals(TripLeg.TYPE_WALK))
+			{
+				radius = R.string.voice_enter;
+			}
+			else if(typeOfTransport.equals(TripLeg.TYPE_BUS))
+			{
+				radius = R.string.voice_enter;
+			}
+			else if(typeOfTransport.equals(TripLeg.TYPE_EXB))
+			{
+				radius = R.string.voice_enter;
+			}
+			else if(typeOfTransport.equals(TripLeg.TYPE_IC))
+			{
+				radius = R.string.voice_enter;
+			}
+			else if(typeOfTransport.equals(TripLeg.TYPE_LYN))
+			{
+				radius = R.string.voice_enter;
+			}
+			else if(typeOfTransport.equals(TripLeg.TYPE_REG))
+			{
+				radius = R.string.voice_enter;
+			}
+			else if(typeOfTransport.equals(TripLeg.TYPE_TB))
+			{
+				radius = R.string.voice_enter;
+			}
+			else if(typeOfTransport.equals(TripLeg.TYPE_TRAIN))
+			{
+				radius = R.string.voice_enter;
+			}
+			return radius;
+		}
+		
+		private int getExitRessourceVoice(String typeOfTransport)
+		{
+			int radius = -1;
+			if(typeOfTransport.equals(TripLeg.TYPE_WALK))
+			{
+				radius = R.string.voice_exit;
+			}
+			else if(typeOfTransport.equals(TripLeg.TYPE_BUS))
+			{
+				radius = R.string.voice_exit;
+			}
+			else if(typeOfTransport.equals(TripLeg.TYPE_EXB))
+			{
+				radius = R.string.voice_exit;
+			}
+			else if(typeOfTransport.equals(TripLeg.TYPE_IC))
+			{
+				radius = R.string.voice_exit;
+			}
+			else if(typeOfTransport.equals(TripLeg.TYPE_LYN))
+			{
+				radius = R.string.voice_exit;
+			}
+			else if(typeOfTransport.equals(TripLeg.TYPE_REG))
+			{
+				radius = R.string.voice_exit;
+			}
+			else if(typeOfTransport.equals(TripLeg.TYPE_TB))
+			{
+				radius = R.string.voice_exit;
+			}
+			else if(typeOfTransport.equals(TripLeg.TYPE_TRAIN))
+			{
+				radius = R.string.voice_exit;
+			}
+			return radius;
+		}
+
+		@Override
+		public void onPostExecute(Integer result)
+		{
+			if(result!=-1)
+			{
+				playVoice(getString(result));
+			}
+		}
+	}
 }

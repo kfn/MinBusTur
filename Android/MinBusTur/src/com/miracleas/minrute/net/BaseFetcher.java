@@ -143,11 +143,8 @@ public abstract class BaseFetcher
 		if(!mDbOperations.isEmpty())
 		{
 			results  = mContentResolver.applyBatch(authority, mDbOperations);
-			Log.d(tag, "applyBatch: "+results.length);
-			if(mUriNotify!=null)
-			{
-				//mContentResolver.notifyChange(mUriNotify, null);
-			}			
+			
+			Log.d(tag, "applyBatch: "+results.length);		
 			mDbOperations.clear();
 		}
 		return results;
