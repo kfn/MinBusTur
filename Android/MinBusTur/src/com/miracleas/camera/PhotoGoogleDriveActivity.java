@@ -18,6 +18,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -58,7 +59,7 @@ public class PhotoGoogleDriveActivity extends MinRuteBaseActivity implements IIm
 	private String mLat = null;
 	private String mLng = null;
 	private IImageDownloader mImageLoader = null;
-	private static final String CACHE_DIR = "thumbs";
+	private static final String CACHE_DIR = IImageDownloader.CACHE_DIR;
 	private static Uri fileUri;
 	private static Drive service;
 	protected GoogleAccountCredential credential;
@@ -463,10 +464,17 @@ public class PhotoGoogleDriveActivity extends MinRuteBaseActivity implements IIm
 	
 	private void startUploadServiceHelper()
 	{
-		Toast.makeText(this, getString(R.string.uploading_pictures), Toast.LENGTH_LONG).show();
-		Intent service = new Intent(this, UploadImagesService.class);
-		service.putExtra(AccountManager.KEY_ACCOUNT_NAME, mAccountName);
-		startService(service);
+		if(!TextUtils.isEmpty(mAccountName))
+		{
+			Toast.makeText(this, getString(R.string.uploading_pictures), Toast.LENGTH_LONG).show();
+			Intent service = new Intent(this, UploadImagesService.class);
+			service.putExtra(AccountManager.KEY_ACCOUNT_NAME, mAccountName);
+			startService(service);
+		}
+		else
+		{
+			Toast.makeText(this, "Account mangler", Toast.LENGTH_LONG).show();
+		}
 		
 	}
 

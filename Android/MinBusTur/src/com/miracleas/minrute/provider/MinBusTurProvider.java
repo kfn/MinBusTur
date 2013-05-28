@@ -52,6 +52,7 @@ public class MinBusTurProvider extends ContentProvider
 	private static final int INCOMING_ADDRESS_GPS_COLLECTION_URI_INDICATOR = 22;
 	
 	private static final int INCOMING_TRIP_LEG_ADDRESS_GPS_JOIN_URI_INDICATOR = 23;
+	private static final int INCOMING_TRIPLEG_IMAGES_COLLECTION_URI_INDICATOR = 24;
 	
 	
 	
@@ -82,6 +83,7 @@ public class MinBusTurProvider extends ContentProvider
 		sUriMatcher.addURI(AddressGPSMetaData.AUTHORITY, AddressGPSMetaData.COLLECTION_TYPE, INCOMING_ADDRESS_GPS_COLLECTION_URI_INDICATOR);
 		sUriMatcher.addURI(TripLegMetaData.AUTHORITY, TripLegMetaData.COLLECTION_TYPE + "/"+AddressGPSMetaData.TABLE_NAME, INCOMING_TRIP_LEG_ADDRESS_GPS_JOIN_URI_INDICATOR);
 		
+		sUriMatcher.addURI(TripLegMetaData.AUTHORITY, TripLegMetaData.COLLECTION_TYPE + "/"+JourneyDetailStopImagesMetaData.TABLE_NAME, INCOMING_TRIPLEG_IMAGES_COLLECTION_URI_INDICATOR);
 	}
 
 	/**
@@ -188,6 +190,14 @@ public class MinBusTurProvider extends ContentProvider
 		case INCOMING_TRIPLEG_COLLECTION_URI_INDICATOR:
 			qb.setTables(TripLegMetaData.TABLE_NAME);
 			break; 
+		case INCOMING_TRIPLEG_IMAGES_COLLECTION_URI_INDICATOR:
+			StringBuilder b1 = new StringBuilder();
+			b1.append(TripLegMetaData.TABLE_NAME).append(" as t LEFT JOIN ").append(JourneyDetailStopImagesMetaData.TABLE_NAME)
+			.append(" as i ON (t.").append(TripLegMetaData.TableMetaData.ORIGIN_NAME).append("=i.")
+			.append(JourneyDetailStopImagesMetaData.TableMetaData.STOP_NAME).append(")");			
+			qb.setTables(b1.toString());
+			break; 	
+			
 
 		case INCOMING_SINGLE_TRIPLEG_URI_INDICATOR:
 			qb.setTables(TripLegMetaData.TABLE_NAME);

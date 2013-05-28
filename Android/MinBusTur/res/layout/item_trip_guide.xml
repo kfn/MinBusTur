@@ -21,22 +21,12 @@
         android:drawablePadding="10dp"
         android:gravity="center_vertical"
         android:textSize="17sp" />
-    
-    <TextView
-        android:id="@+id/textViewDestName"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/textViewOriginName"
-        android:layout_marginTop="4dp" android:visibility="gone"
-        android:drawablePadding="10dp"
-        android:gravity="center_vertical"
-        android:textSize="17sp" />
 
     <TextView
         android:id="@+id/textViewTransportType"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/textViewDestName"
+        android:layout_below="@+id/textViewOriginName"
         android:layout_marginTop="4dp"
         android:drawablePadding="10dp"
         android:gravity="center_vertical"
@@ -62,5 +52,13 @@
         android:drawablePadding="10dp"
         android:gravity="center_vertical"
         android:textSize="14sp" />
+
+    <ImageView
+        android:id="@+id/imageViewThumb"
+        android:layout_width="90dp" android:background="@android:color/transparent"
+        android:layout_height="90dp"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:scaleType="fitCenter" />
 
 </RelativeLayout>

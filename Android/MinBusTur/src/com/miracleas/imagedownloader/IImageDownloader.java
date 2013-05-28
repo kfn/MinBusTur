@@ -5,6 +5,7 @@ import android.widget.ImageView;
 
 public interface IImageDownloader
 {
+	public static final String CACHE_DIR = "thumbs";
 	public static final String IMAGE_CACHE_DIR = "images";
 	// Default memory cache size
 	public static final int DEFAULT_MEM_CACHE_SIZE = 1024 * 1024 * 8; // 8MB

@@ -46,6 +46,7 @@ public class TripLegMetaData
 				+ TableMetaData.DEST_TRACK + " TEXT,"	
 				+ TableMetaData.ORIGIN_RT_TRACK + " TEXT,"
 				+ TableMetaData.DEST_RT_TRACK + " TEXT,"
+				+ TableMetaData.THUMB_URL + " TEXT,"
 				+ TableMetaData.updated + " LONG"
 				;
 	}
@@ -53,6 +54,7 @@ public class TripLegMetaData
 	// inner class describing columns and their types
 	public static final class TableMetaData implements BaseColumns
 	{
+		
 		
 		private TableMetaData()
 		{
@@ -97,6 +99,7 @@ public class TripLegMetaData
 		public static final String DEST_TRACK = "dest_track";
 		public static final String ORIGIN_RT_TRACK = "origin_rt_track";
 		public static final String DEST_RT_TRACK = "dest_rt_track";
+		public static final String THUMB_URL = "leg_thumb_url";
 
 	}
 }

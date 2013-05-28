@@ -1,23 +1,30 @@
 package com.miracleas.minrute;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.NavUtils;
 import android.text.TextUtils;
+import android.widget.ImageView;
 
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 
+import com.miracleas.imagedownloader.IImageDownloader;
+import com.miracleas.imagedownloader.ImageFetcher;
 import com.miracleas.minrute.model.TripRequest;
 import com.miracleas.minrute.provider.JourneyDetailMetaData;
 import com.miracleas.minrute.provider.TripLegMetaData;
 import com.miracleas.minrute.provider.TripMetaData;
+import com.miracleas.minrute.utils.MyPrefs;
 
-public class TripGuideActivity extends GeofenceActivity implements TripGuideFragment.Callbacks
+public class TripGuideActivity extends GeofenceActivity implements TripGuideFragment.Callbacks, IImageDownloader
 {
+	private IImageDownloader mImageLoader = null;
+	private String mAuth = null;
 	@Override
 	public void onCreate(Bundle savedInstanceState)
 	{
@@ -43,6 +50,7 @@ public class TripGuideActivity extends GeofenceActivity implements TripGuideFrag
 
 		if (savedInstanceState == null)
 		{
+			setAuthTokenHeader(getAuthToken());
 			removeAllGeofences();
 			Intent intent = getIntent();
 			String tripId = intent.getStringExtra(TripMetaData.TableMetaData._ID);
@@ -125,5 +133,137 @@ public class TripGuideActivity extends GeofenceActivity implements TripGuideFrag
 	public void onConnectedServiceLocation()
 	{
 		mServiceLocation.startLocationListening();		
+	}
+	
+	public IImageDownloader getIImageDownloader()
+	{
+		if (mImageLoader == null)
+		{
+			mImageLoader = ImageFetcher.getInstance(this, getSupportFragmentManager(), getImgCacheDir());
+		}
+		return mImageLoader;
+	}
+
+	public String getImgCacheDir()
+	{
+		return IImageDownloader.CACHE_DIR;
+	}
+
+	@Override
+	public void onResume()
+	{
+		super.onResume();
+		setExitTasksEarly(false);
+	}
+
+	@Override
+	public void onPause()
+	{
+		super.onPause();
+		setExitTasksEarly(true);
+		flushCache();
+	}
+
+	@Override
+	public void onDestroy()
+	{
+		super.onDestroy();
+		closeCache();
+	}
+
+	@Override
+	public void closeCache()
+	{
+
+		getIImageDownloader().closeCache();
+	}
+
+	@Override
+	public void flushCache()
+	{
+
+		getIImageDownloader().flushCache();
+
+	}
+
+	@Override
+	public void setExitTasksEarly(boolean exitEarly)
+	{
+		getIImageDownloader().setExitTasksEarly(exitEarly);
+	}
+
+	@Override
+	public boolean download(String url, ImageView imageView)
+	{
+		// TODO Auto-generated method stub
+		return getIImageDownloader().download(url, imageView);
+	}
+
+	@Override
+	public void setPauseWork(boolean pause)
+	{
+		getIImageDownloader().setPauseWork(pause);
+
+	}
+
+	@Override
+	public void setLoadingImage(int resId)
+	{
+		getIImageDownloader().setLoadingImage(resId);
+
+	}
+
+	@Override
+	public int getPlaceHolderRessource()
+	{
+		return getIImageDownloader().getPlaceHolderRessource();
+	}
+
+	@Override
+	public void setImageFadeIn(boolean fadeIn)
+	{
+		getIImageDownloader().setImageFadeIn(fadeIn);
+
+	}
+
+	@Override
+	public void setImageSize(int size)
+	{
+		getIImageDownloader().setImageSize(size);
+
+	}
+
+	@Override
+	public void cancelMyWork(ImageView imageView)
+	{
+		getIImageDownloader().cancelMyWork(imageView);
+
+	}
+
+	@Override
+	public void setContext(Context c)
+	{
+		getIImageDownloader().setContext(c);
+
+	}
+
+	@Override
+	public void setAuthTokenHeader(String authToken)
+	{
+		if (authToken != null)
+		{
+			getIImageDownloader().setAuthTokenHeader(authToken);
+		}
+
+	}
+
+
+	public String getAuthToken()
+	{
+		if (mAuth == null)
+		{
+			mAuth = MyPrefs.getString(this, MyPrefs.GOOGLE_DRIVE_AUTH, null);
+		}
+		return mAuth;
 	}
 }

@@ -1,6 +1,7 @@
 package com.miracleas.minrute.service;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Timer;
 
 import com.google.api.client.extensions.android.http.AndroidHttp;
@@ -17,32 +18,42 @@ import com.miracleas.minrute.net.BaseFetcher;
 import com.miracleas.minrute.net.TripFetcher;
 import com.miracleas.minrute.provider.JourneyDetailStopDeparturesMetaData;
 import com.miracleas.minrute.provider.JourneyDetailStopImagesMetaData;
+import com.miracleas.minrute.provider.TripLegMetaData;
+import com.miracleas.minrute.provider.JourneyDetailStopImagesMetaData.TableMetaData;
 
 import android.accounts.AccountManager;
 import android.app.IntentService;
 import android.app.Service;
+import android.content.ContentProviderOperation;
+import android.content.ContentProviderResult;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Intent;
+import android.content.OperationApplicationException;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.IBinder;
+import android.os.RemoteException;
 import android.support.v4.content.LocalBroadcastManager;
 import android.text.TextUtils;
 import android.util.Log;
 
 public class UploadImagesService extends Service
 {
+	public final static String tag = UploadImagesService.class.getName();
 	private static Drive service;
 	protected GoogleAccountCredential credential;
 	private String mAccountName;
-	private String mStopName = null;
+	private ArrayList<ContentProviderOperation> mDbOperations;
+	private ContentResolver mContentResolver;
 
 	@Override
 	public void onCreate()
 	{
 		super.onCreate();
+		mDbOperations = new ArrayList<ContentProviderOperation>();
+		mContentResolver = getContentResolver();
 	}
 
 	@Override
@@ -77,7 +88,7 @@ public class UploadImagesService extends Service
 			Cursor c = null;
 			try
 			{
-				String[] projection = { JourneyDetailStopImagesMetaData.TableMetaData._ID, JourneyDetailStopImagesMetaData.TableMetaData.FILE_ID, JourneyDetailStopImagesMetaData.TableMetaData.FILE_LOCALE_PATH, JourneyDetailStopImagesMetaData.TableMetaData.FILE_MIME_TYPE, JourneyDetailStopImagesMetaData.TableMetaData.FILE_TITLE };
+				String[] projection = {JourneyDetailStopImagesMetaData.TableMetaData.STOP_NAME, JourneyDetailStopImagesMetaData.TableMetaData._ID, JourneyDetailStopImagesMetaData.TableMetaData.FILE_ID, JourneyDetailStopImagesMetaData.TableMetaData.FILE_LOCALE_PATH, JourneyDetailStopImagesMetaData.TableMetaData.FILE_MIME_TYPE, JourneyDetailStopImagesMetaData.TableMetaData.FILE_TITLE };
 				String selection = JourneyDetailStopImagesMetaData.TableMetaData.UPLOADED + "=? AND "+ JourneyDetailStopImagesMetaData.TableMetaData.UPLOADED+"=?";
 				String[] selectionArgs = { "0", "0" };
 				ContentResolver cr = getContentResolver();
@@ -88,15 +99,21 @@ public class UploadImagesService extends Service
 					int iMimeType = c.getColumnIndex(JourneyDetailStopImagesMetaData.TableMetaData.FILE_MIME_TYPE);
 					int iTitle = c.getColumnIndex(JourneyDetailStopImagesMetaData.TableMetaData.FILE_TITLE);
 					int iId = c.getColumnIndex(JourneyDetailStopImagesMetaData.TableMetaData._ID);
+					int iStopName = c.getColumnIndex(JourneyDetailStopImagesMetaData.TableMetaData.STOP_NAME);
 					do
 					{						
 						int id = c.getInt(iId);
 						String path = c.getString(iLocalePath);
 						String title = c.getString(iTitle);
-						String mime = c.getString(iMimeType);						
+						String mime = c.getString(iMimeType);
+						String stopName = c.getString(iStopName);
 						if(!TextUtils.isEmpty(path))
 						{
-							saveFileToDrive(id, path, mime, title);
+							File uploaded = saveFileToDrive(id, path, mime, title);
+							if(uploaded!=null && !TextUtils.isEmpty(stopName))
+							{
+								updateImageWithNewUrl(uploaded, stopName, id);		
+							}
 						}						
 					} while (c.moveToNext());
 				}
@@ -107,6 +124,18 @@ public class UploadImagesService extends Service
 				{
 					c.close();
 				}
+			}
+			try
+			{
+				saveData(JourneyDetailStopImagesMetaData.AUTHORITY);
+			} catch (RemoteException e)
+			{
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (OperationApplicationException e)
+			{
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
 			return null;
 			
@@ -122,9 +151,25 @@ public class UploadImagesService extends Service
 		}
 
 	}
-
-	private void saveFileToDrive(final long id, final String path, final String mimeType, final String title)
+	
+	private void updateImageWithNewUrl(File file, String stopName, int imageId)
 	{
+		String selectionImg = TripLegMetaData.TableMetaData.ORIGIN_NAME + "=?";
+		String[] selectionArgsImg = {stopName};
+		ContentProviderOperation.Builder b = ContentProviderOperation.newUpdate(TripLegMetaData.TableMetaData.CONTENT_URI)
+				.withSelection(selectionImg, selectionArgsImg);
+		b.withValue(TripLegMetaData.TableMetaData.THUMB_URL, file.getDownloadUrl());
+		mDbOperations.add(b.build());
+		
+		Uri uri = Uri.withAppendedPath(JourneyDetailStopImagesMetaData.TableMetaData.CONTENT_URI, imageId+"");
+		b = ContentProviderOperation.newUpdate(uri);
+		b.withValue(JourneyDetailStopImagesMetaData.TableMetaData.URL, file.getDownloadUrl());
+		mDbOperations.add(b.build());
+	}
+
+	private File saveFileToDrive(final long id, final String path, final String mimeType, final String title)
+	{
+		File file = null;
 		ContentResolver cr = getContentResolver();
 		Uri uri = Uri.withAppendedPath(JourneyDetailStopImagesMetaData.TableMetaData.CONTENT_URI, id+"");
 		ContentValues values = new ContentValues();
@@ -142,10 +187,10 @@ public class UploadImagesService extends Service
 			body.setTitle(title);
 			body.setMimeType(mimeType);
 
-			File file = service.files().insert(body, mediaContent).execute();
+			file = service.files().insert(body, mediaContent).execute();
 			if (file != null)
 			{				
-				uploaded = 1;						
+				uploaded = 1;				
 			}
 		}
 
@@ -160,11 +205,24 @@ public class UploadImagesService extends Service
 		values.put(JourneyDetailStopImagesMetaData.TableMetaData.IS_UPLOADING, "0");
 		values.put(JourneyDetailStopImagesMetaData.TableMetaData.UPLOADED, uploaded+"");
 		cr.update(uri, values, null, null);
+		return file;
 	}
 
 	private Drive getDriveService(GoogleAccountCredential credential)
 	{
 		return new Drive.Builder(AndroidHttp.newCompatibleTransport(), new GsonFactory(), credential).build();
+	}
+	
+	protected ContentProviderResult[] saveData(String authority) throws RemoteException, OperationApplicationException
+	{
+		ContentProviderResult[] results = null;
+		if(!mDbOperations.isEmpty())
+		{
+			results  = mContentResolver.applyBatch(authority, mDbOperations);			
+			Log.d(tag, "applyBatch: "+results.length);		
+			mDbOperations.clear();
+		}
+		return results;
 	}
 
 	@Override

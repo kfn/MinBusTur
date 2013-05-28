@@ -27,6 +27,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -34,12 +35,14 @@ import com.actionbarsherlock.app.SherlockListFragment;
 import com.google.android.gms.location.Geofence;
 import com.google.android.gms.location.LocationClient.OnAddGeofencesResultListener;
 
+import com.miracleas.imagedownloader.IImageDownloader;
 import com.miracleas.minrute.TripSuggestionsFragment.Callbacks;
 import com.miracleas.minrute.model.Trip;
 import com.miracleas.minrute.model.TripLeg;
 import com.miracleas.minrute.model.TripRequest;
 import com.miracleas.minrute.provider.AddressGPSMetaData;
 import com.miracleas.minrute.provider.JourneyDetailMetaData;
+import com.miracleas.minrute.provider.JourneyDetailStopImagesMetaData;
 import com.miracleas.minrute.provider.JourneyDetailStopMetaData;
 import com.miracleas.minrute.provider.TripLegMetaData;
 import com.miracleas.minrute.provider.TripMetaData;
@@ -52,16 +55,17 @@ import com.miracleas.minrute.utils.App;
 
 public class TripGuideFragment extends SherlockListFragment implements LoaderCallbacks<Cursor>, OnItemClickListener, com.miracleas.minrute.service.UpdateVoiceTripService.OnVoiceServiceReadyListener
 {
+	//"t."+TripLegMetaData.TableMetaData._ID
 	private static final String[] PROJECTION = { TripLegMetaData.TableMetaData._ID, TripLegMetaData.TableMetaData.DEST_DATE, TripLegMetaData.TableMetaData.DEST_NAME, TripLegMetaData.TableMetaData.DEST_ROUTE_ID, TripLegMetaData.TableMetaData.DEST_TIME,
 			TripLegMetaData.TableMetaData.DEST_TYPE, TripLegMetaData.TableMetaData.ORIGIN_DATE, TripLegMetaData.TableMetaData.ORIGIN_NAME, TripLegMetaData.TableMetaData.ORIGIN_ROUTE_ID, TripLegMetaData.TableMetaData.ORIGIN_TIME, TripLegMetaData.TableMetaData.ORIGIN_TYPE,
 			TripLegMetaData.TableMetaData.DURATION, TripLegMetaData.TableMetaData.DURATION_FORMATTED, TripLegMetaData.TableMetaData.NAME, TripLegMetaData.TableMetaData.NOTES, TripLegMetaData.TableMetaData.REF, TripLegMetaData.TableMetaData.TYPE,
 			TripLegMetaData.TableMetaData.ORIGIN_RT_TRACK, TripLegMetaData.TableMetaData.DEST_TRACK,
-			TripLegMetaData.TableMetaData.GEOFENCE_EVENT_ID,
+			TripLegMetaData.TableMetaData.GEOFENCE_EVENT_ID,TripLegMetaData.TableMetaData.THUMB_URL,
 			TripLegMetaData.TableMetaData.PROGRESS_BAR_PROGRESS, TripLegMetaData.TableMetaData.PROGRESS_BAR_MAX, TripLegMetaData.TableMetaData.DEPARTURES_IN_TIME_LABEL, TripLegMetaData.TableMetaData.COMPLETED };
 
 	private static final String[] PROJECTION_TRIP_GPS_READY = { TripMetaData.TableMetaData._ID, TripMetaData.TableMetaData.HAS_ALL_ADDRESS_GPSES };
 
-	
+	private IImageDownloader mIImageDownloader = null;
 	private TripAdapter mTripAdapter = null;
 	private String mTextToSpeak;
 	
@@ -136,6 +140,7 @@ public class TripGuideFragment extends SherlockListFragment implements LoaderCal
 		{
 			String selection = TripLegMetaData.TableMetaData.TRIP_ID + "=?";
 			String[] selectionArgs = { args.getString(TripMetaData.TableMetaData._ID) };
+			//Uri uri = Uri.withAppendedPath(TripLegMetaData.TableMetaData.CONTENT_URI, JourneyDetailStopImagesMetaData.TABLE_NAME);
 			return new CursorLoader(getActivity(), TripLegMetaData.TableMetaData.CONTENT_URI, PROJECTION, selection, selectionArgs, null);
 		}
 
@@ -236,7 +241,7 @@ public class TripGuideFragment extends SherlockListFragment implements LoaderCal
 							double lat = (double) latd / 1000000d;
 							double lng = (double) lngd / 1000000d;
 							int id = c.getInt(iId);
-							int transition = Geofence.GEOFENCE_TRANSITION_ENTER | Geofence.GEOFENCE_TRANSITION_EXIT; 
+							int transition = Geofence.GEOFENCE_TRANSITION_ENTER; // | Geofence.GEOFENCE_TRANSITION_EXIT
 							geofences.add(toGeofence(id + "", transition, lat, lng, radius, DateUtils.DAY_IN_MILLIS));
 						}
 						
@@ -340,6 +345,7 @@ public class TripGuideFragment extends SherlockListFragment implements LoaderCal
 		private int iGeofenceTransition = -1;
 		private int iRtTrack = -1;
 		private int iDestTrack = -1;
+		private int iUrl = -1;
 
 		private LayoutInflater mInf = null;
 
@@ -352,15 +358,33 @@ public class TripGuideFragment extends SherlockListFragment implements LoaderCal
 		@Override
 		public void bindView(View v, Context context, Cursor cursor)
 		{
-
-			String originTime = cursor.getString(iOriginTime);
 			TextView textViewTime = (TextView) v.findViewById(R.id.textViewTime);
-			textViewTime.setText(originTime);
-
+			TextView textViewTransportType = (TextView) v.findViewById(R.id.textViewTransportType);
+			TextView textViewNotes = (TextView) v.findViewById(R.id.textViewNotes);
+			TextView textViewDeparturesIn = (TextView) v.findViewById(R.id.textViewDeparturesIn);
+			ImageView imageViewThumb = (ImageView)v.findViewById(R.id.imageViewThumb);
+			
+			
+			String originTime = cursor.getString(iOriginTime);
+			String originLocationType = cursor.getString(iOriginType);
+			String type = cursor.getString(iType);
+			String track = cursor.getString(iRtTrack);
+			String notes = cursor.getString(iNotes);
+			String url = cursor.getString(iUrl);
+			
+			if(TextUtils.isEmpty(url))
+			{
+				
+			}
+			else
+			{
+				mIImageDownloader.download(url, imageViewThumb);
+			}
+			
 			TextView textViewOriginName = (TextView) v.findViewById(R.id.textViewOriginName);
 			textViewOriginName.setText(String.format(getString(R.string.from), cursor.getString(iOriginName)));
-
-			String originLocationType = cursor.getString(iOriginType);
+			textViewTime.setText(originTime);
+			
 			if (originLocationType.equals("ADR"))
 			{
 				textViewOriginName.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_menu_home, 0, 0, 0);
@@ -368,12 +392,6 @@ public class TripGuideFragment extends SherlockListFragment implements LoaderCal
 			{
 				textViewOriginName.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_menu_myplaces, 0, 0, 0);
 			}
-			TextView textViewDestName = (TextView) v.findViewById(R.id.textViewDestName);
-
-
-			String type = cursor.getString(iType);
-			String track = cursor.getString(iRtTrack);
-			TextView textViewTransportType = (TextView) v.findViewById(R.id.textViewTransportType);
 			if (!TextUtils.isEmpty(track))
 			{
 				textViewTransportType.setText(String.format(getString(R.string.transport_type_and_track_number), cursor.getString(iName), cursor.getString(iRtTrack)));
@@ -384,9 +402,6 @@ public class TripGuideFragment extends SherlockListFragment implements LoaderCal
 
 			int iconRes = TripLeg.getIcon(type);
 			textViewTransportType.setCompoundDrawablesWithIntrinsicBounds(iconRes, 0, 0, 0);
-
-			String notes = cursor.getString(iNotes);
-			TextView textViewNotes = (TextView) v.findViewById(R.id.textViewNotes);
 			if (!TextUtils.isEmpty(notes))
 			{
 				textViewNotes.setText(notes);
@@ -396,7 +411,7 @@ public class TripGuideFragment extends SherlockListFragment implements LoaderCal
 				textViewNotes.setVisibility(View.GONE);
 			}
 
-			TextView textViewDeparturesIn = (TextView) v.findViewById(R.id.textViewDeparturesIn);
+			
 			textViewDeparturesIn.setText(cursor.getString(iDeparturesInTimeLabel));
 
 			int geofenceTransitionType = cursor.getInt(iGeofenceTransition);
@@ -414,27 +429,15 @@ public class TripGuideFragment extends SherlockListFragment implements LoaderCal
 			
 			if (cursor.isLast())
 			{
-				/*textViewTime.setText(originTime + " - " + cursor.getString(iDestTime));
-				textViewDestName.setText(String.format(getString(R.string.to), cursor.getString(iDestName)));
-
-				String destLocationType = cursor.getString(iDestType);
-				if (destLocationType.equals("ADR"))
-				{
-					textViewDestName.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_menu_home, 0, 0, 0);
-				} else if (destLocationType.equals("ST"))
-				{
-					textViewDestName.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_menu_myplaces, 0, 0, 0);
-				}
-				textViewDestName.setVisibility(View.VISIBLE);*/
 				textViewNotes.setVisibility(View.GONE);
 				textViewTransportType.setVisibility(View.GONE);
 			} 
 			else
 			{
-				textViewDestName.setVisibility(View.GONE);
 				textViewNotes.setVisibility(View.VISIBLE);
 				textViewTransportType.setVisibility(View.VISIBLE);
-			}
+			}		
+			
 		}
 
 		@Override
@@ -470,6 +473,8 @@ public class TripGuideFragment extends SherlockListFragment implements LoaderCal
 				iRtTrack = newCursor.getColumnIndex(TripLegMetaData.TableMetaData.ORIGIN_RT_TRACK);
 				iDestTrack = newCursor.getColumnIndex(TripLegMetaData.TableMetaData.DEST_TRACK);
 				iGeofenceTransition = newCursor.getColumnIndex(TripLegMetaData.TableMetaData.GEOFENCE_EVENT_ID);
+				iUrl =  newCursor.getColumnIndex(TripLegMetaData.TableMetaData.THUMB_URL);
+				
 			}
 			return super.swapCursor(newCursor);
 		}
@@ -558,6 +563,12 @@ public class TripGuideFragment extends SherlockListFragment implements LoaderCal
 		{
 			throw new IllegalStateException("Activity must implement fragment's callbacks.");
 		}
+		// Activities containing this fragment must implement its callbacks.
+		if (!(activity instanceof IImageDownloader))
+		{
+			throw new IllegalStateException("Activity must implement IImageDownloader.");
+		}
+		mIImageDownloader = (IImageDownloader)activity;
 
 		mCallbacks = (Callbacks) activity;
 	}
@@ -569,6 +580,7 @@ public class TripGuideFragment extends SherlockListFragment implements LoaderCal
 
 		// Reset the active callbacks interface to the dummy implementation.
 		mCallbacks = sDummyCallbacks;
+		mIImageDownloader = null;
 	}
 
 	private Callbacks mCallbacks = sDummyCallbacks;
