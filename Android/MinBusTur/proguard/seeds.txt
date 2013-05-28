@@ -1641,6 +1641,7 @@ com.miracleas.minrute.GeofenceActivity: GeofenceActivity()
 com.miracleas.minrute.GeofenceActivity$REQUEST_TYPE: com.miracleas.minrute.GeofenceActivity$REQUEST_TYPE[] values()
 com.miracleas.minrute.GeofenceActivity$REQUEST_TYPE: com.miracleas.minrute.GeofenceActivity$REQUEST_TYPE valueOf(java.lang.String)
 com.miracleas.minrute.GoogleServiceActivity: GoogleServiceActivity()
+com.miracleas.minrute.MinRuteBaseActivity: MinRuteBaseActivity()
 com.miracleas.minrute.R$attr: int actionBarDivider
 com.miracleas.minrute.R$attr: int actionBarItemBackground
 com.miracleas.minrute.R$attr: int actionBarSize
@@ -2097,7 +2098,6 @@ com.miracleas.minrute.R$id: int textViewArrival
 com.miracleas.minrute.R$id: int textViewDate
 com.miracleas.minrute.R$id: int textViewDeparturesIn
 com.miracleas.minrute.R$id: int textViewDepature
-com.miracleas.minrute.R$id: int textViewDepatureIn
 com.miracleas.minrute.R$id: int textViewDepatureTime
 com.miracleas.minrute.R$id: int textViewDestName
 com.miracleas.minrute.R$id: int textViewDirection
@@ -2208,9 +2208,12 @@ com.miracleas.minrute.R$string: int common_signin_button_text
 com.miracleas.minrute.R$string: int common_signin_button_text_long
 com.miracleas.minrute.R$string: int create_route
 com.miracleas.minrute.R$string: int days
+com.miracleas.minrute.R$string: int days_one
 com.miracleas.minrute.R$string: int depDateTime
 com.miracleas.minrute.R$string: int departure
 com.miracleas.minrute.R$string: int departure1
+com.miracleas.minrute.R$string: int departure_now
+com.miracleas.minrute.R$string: int departured
 com.miracleas.minrute.R$string: int destination_address
 com.miracleas.minrute.R$string: int direction
 com.miracleas.minrute.R$string: int duration
@@ -2218,11 +2221,13 @@ com.miracleas.minrute.R$string: int fetch_departure_board
 com.miracleas.minrute.R$string: int from
 com.miracleas.minrute.R$string: int geocoding_service_not_available
 com.miracleas.minrute.R$string: int hours
+com.miracleas.minrute.R$string: int hours_one
 com.miracleas.minrute.R$string: int location_client_ulr_inactive_age_under_13
 com.miracleas.minrute.R$string: int location_client_ulr_inactive_age_unknown
 com.miracleas.minrute.R$string: int location_client_ulr_inactive_unknown_restriction
 com.miracleas.minrute.R$string: int map_mode
 com.miracleas.minrute.R$string: int minutes
+com.miracleas.minrute.R$string: int minutes_one
 com.miracleas.minrute.R$string: int no_network_connection_toast
 com.miracleas.minrute.R$string: int notes
 com.miracleas.minrute.R$string: int parenthese_value
@@ -2234,6 +2239,7 @@ com.miracleas.minrute.R$string: int search_failed_404
 com.miracleas.minrute.R$string: int search_failed_500
 com.miracleas.minrute.R$string: int search_failed_503
 com.miracleas.minrute.R$string: int seconds
+com.miracleas.minrute.R$string: int seconds_one
 com.miracleas.minrute.R$string: int startaddress
 com.miracleas.minrute.R$string: int streetview
 com.miracleas.minrute.R$string: int time_out
@@ -2253,6 +2259,19 @@ com.miracleas.minrute.R$string: int trip_suggestions
 com.miracleas.minrute.R$string: int upload_pictures
 com.miracleas.minrute.R$string: int uploading_finished
 com.miracleas.minrute.R$string: int uploading_pictures
+com.miracleas.minrute.R$string: int voice_days_more
+com.miracleas.minrute.R$string: int voice_days_one
+com.miracleas.minrute.R$string: int voice_departure
+com.miracleas.minrute.R$string: int voice_departure_now
+com.miracleas.minrute.R$string: int voice_departured
+com.miracleas.minrute.R$string: int voice_enter
+com.miracleas.minrute.R$string: int voice_exit
+com.miracleas.minrute.R$string: int voice_hours_more
+com.miracleas.minrute.R$string: int voice_hours_one
+com.miracleas.minrute.R$string: int voice_minutes_more
+com.miracleas.minrute.R$string: int voice_minutes_one
+com.miracleas.minrute.R$string: int voice_seconds_more
+com.miracleas.minrute.R$string: int voice_seconds_one
 com.miracleas.minrute.R$string: int waiting
 com.miracleas.minrute.R$style: int ActionBar_Solid_Minrutevejledning
 com.miracleas.minrute.R$style: int ActionBar_Transparent_Minrutevejledning
@@ -2549,18 +2568,22 @@ com.miracleas.minrute.provider.MinBusTurProvider: MinBusTurProvider()
 com.miracleas.minrute.service.DepartureBoardsService
 com.miracleas.minrute.service.DepartureBoardsService: DepartureBoardsService()
 com.miracleas.minrute.service.DepartureBoardsService: DepartureBoardsService(java.lang.String)
-com.miracleas.minrute.service.JourneyDetailsGeofenceService
-com.miracleas.minrute.service.JourneyDetailsGeofenceService: JourneyDetailsGeofenceService()
-com.miracleas.minrute.service.JourneyDetailsGeofenceService: JourneyDetailsGeofenceService(java.lang.String)
+com.miracleas.minrute.service.FetchGpsOnMissingAddressesService
+com.miracleas.minrute.service.FetchGpsOnMissingAddressesService: FetchGpsOnMissingAddressesService()
+com.miracleas.minrute.service.FetchGpsOnMissingAddressesService: FetchGpsOnMissingAddressesService(java.lang.String)
 com.miracleas.minrute.service.JourneyDetailsService
 com.miracleas.minrute.service.JourneyDetailsService: JourneyDetailsService()
 com.miracleas.minrute.service.JourneyDetailsService: JourneyDetailsService(java.lang.String)
+com.miracleas.minrute.service.LocationService
+com.miracleas.minrute.service.LocationService: LocationService()
 com.miracleas.minrute.service.ReceiveTransitionsIntentService
 com.miracleas.minrute.service.ReceiveTransitionsIntentService: ReceiveTransitionsIntentService(java.lang.String)
 com.miracleas.minrute.service.ReceiveTransitionsIntentService: ReceiveTransitionsIntentService()
 com.miracleas.minrute.service.TripService
 com.miracleas.minrute.service.TripService: TripService()
 com.miracleas.minrute.service.TripService: TripService(java.lang.String)
+com.miracleas.minrute.service.UpdateVoiceTripService
+com.miracleas.minrute.service.UpdateVoiceTripService: UpdateVoiceTripService()
 com.miracleas.minrute.service.UploadImagesService
 com.miracleas.minrute.service.UploadImagesService: UploadImagesService()
 com.miracleas.minrute.widget.TableRowKeyValue: void setKey(java.lang.String)

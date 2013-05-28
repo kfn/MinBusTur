@@ -263,31 +263,31 @@ public class TripGuideFragment extends SherlockListFragment implements LoaderCal
 			}
 			else if(typeOfTransport.equals(TripLeg.TYPE_BUS))
 			{
-				radius = 300;
+				radius = 50;
 			}
 			else if(typeOfTransport.equals(TripLeg.TYPE_EXB))
 			{
-				radius = 300;
+				radius = 50;
 			}
 			else if(typeOfTransport.equals(TripLeg.TYPE_IC))
 			{
-				radius = 500;
+				radius = 50;
 			}
 			else if(typeOfTransport.equals(TripLeg.TYPE_LYN))
 			{
-				radius = 1200;
+				radius = 50;
 			}
 			else if(typeOfTransport.equals(TripLeg.TYPE_REG))
 			{
-				radius = 800;
+				radius = 50;
 			}
 			else if(typeOfTransport.equals(TripLeg.TYPE_TB))
 			{
-				radius = 300;
+				radius = 50;
 			}
 			else if(typeOfTransport.equals(TripLeg.TYPE_TRAIN))
 			{
-				radius = 500;
+				radius = 50;
 			}
 			return radius;
 		}

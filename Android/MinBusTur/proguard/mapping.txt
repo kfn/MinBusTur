@@ -5523,11 +5523,15 @@ com.google.android.gms.internal.cd -> com.google.android.gms.internal.ba:
     android.content.ContentResolver mContentResolver -> b
     android.content.ContentProviderClient eF -> c
     java.util.HashMap eG -> d
+    void requestLocationUpdates(com.google.android.gms.location.LocationRequest,com.google.android.gms.location.LocationListener,android.os.Looper) -> a
     void removeAllListeners() -> a
-com.google.android.gms.internal.cd$b -> com.google.android.gms.internal.bb:
+com.google.android.gms.internal.cd$a -> com.google.android.gms.internal.bb:
+    com.google.android.gms.location.LocationListener eH -> a
+    void handleMessage(android.os.Message) -> handleMessage
+com.google.android.gms.internal.cd$b -> com.google.android.gms.internal.bc:
     android.os.Handler eI -> a
     void onLocationChanged(android.location.Location) -> a
-com.google.android.gms.internal.ce -> com.google.android.gms.internal.bc:
+com.google.android.gms.internal.ce -> com.google.android.gms.internal.bd:
     com.google.android.gms.internal.ch eE -> f
     com.google.android.gms.internal.cd eJ -> g
     java.lang.String eK -> h
@@ -5537,29 +5541,33 @@ com.google.android.gms.internal.ce -> com.google.android.gms.internal.bc:
     void addGeofences(java.util.List,android.app.PendingIntent,com.google.android.gms.location.LocationClient$OnAddGeofencesResultListener) -> a
     void removeGeofences(android.app.PendingIntent,com.google.android.gms.location.LocationClient$OnRemoveGeofencesResultListener) -> a
     void removeGeofences(java.util.List,com.google.android.gms.location.LocationClient$OnRemoveGeofencesResultListener) -> a
+    void requestLocationUpdates(com.google.android.gms.location.LocationRequest,com.google.android.gms.location.LocationListener) -> a
+    void requestLocationUpdates(com.google.android.gms.location.LocationRequest,com.google.android.gms.location.LocationListener,android.os.Looper) -> a
     com.google.android.gms.internal.cc q(android.os.IBinder) -> a
     void a(com.google.android.gms.internal.u,com.google.android.gms.internal.p$d) -> a
     android.os.IInterface c(android.os.IBinder) -> b
-    android.os.IInterface b(com.google.android.gms.internal.ce) -> a
-com.google.android.gms.internal.ce$1 -> com.google.android.gms.internal.bd:
-com.google.android.gms.internal.ce$a -> com.google.android.gms.internal.be:
+    void a(com.google.android.gms.internal.ce) -> a
+    android.os.IInterface b(com.google.android.gms.internal.ce) -> b
+com.google.android.gms.internal.ce$1 -> com.google.android.gms.internal.be:
+com.google.android.gms.internal.ce$a -> com.google.android.gms.internal.bh:
     int p -> c
     java.lang.String[] eL -> d
     com.google.android.gms.internal.ce eM -> a
     void a(com.google.android.gms.location.LocationClient$OnAddGeofencesResultListener) -> a
     void a(java.lang.Object) -> a
-com.google.android.gms.internal.ce$b -> com.google.android.gms.internal.bh:
+com.google.android.gms.internal.ce$b -> com.google.android.gms.internal.bi:
     com.google.android.gms.location.LocationClient$OnAddGeofencesResultListener eN -> b
     com.google.android.gms.location.LocationClient$OnRemoveGeofencesResultListener eO -> c
     com.google.android.gms.internal.ce eM -> a
     void onAddGeofencesResult(int,java.lang.String[]) -> a
     void onRemoveGeofencesByRequestIdsResult(int,java.lang.String[]) -> b
     void onRemoveGeofencesByPendingIntentResult(int,android.app.PendingIntent) -> a
-com.google.android.gms.internal.ce$c -> com.google.android.gms.internal.bi:
+com.google.android.gms.internal.ce$c -> com.google.android.gms.internal.bj:
     com.google.android.gms.internal.ce eM -> a
-    com.google.android.gms.internal.cc az() -> a
-    android.os.IInterface o() -> b
-com.google.android.gms.internal.ce$d -> com.google.android.gms.internal.bj:
+    void n() -> a
+    com.google.android.gms.internal.cc az() -> b
+    android.os.IInterface o() -> c
+com.google.android.gms.internal.ce$d -> com.google.android.gms.internal.bk:
     int p -> c
     java.lang.String[] eL -> d
     android.app.PendingIntent mPendingIntent -> e
@@ -5596,42 +5604,43 @@ com.google.android.gms.internal.cf -> com.google.android.gms.internal.cf:
     java.lang.String toString() -> toString
     int hashCode() -> hashCode
     boolean equals(java.lang.Object) -> equals
-com.google.android.gms.internal.cg -> com.google.android.gms.internal.bk:
+com.google.android.gms.internal.cg -> com.google.android.gms.internal.bl:
     com.google.android.gms.internal.cf t(android.os.Parcel) -> a
     com.google.android.gms.internal.cf[] M(int) -> a
     void a(com.google.android.gms.internal.cf,android.os.Parcel,int) -> a
     java.lang.Object[] newArray(int) -> newArray
     java.lang.Object createFromParcel(android.os.Parcel) -> createFromParcel
-com.google.android.gms.internal.ch -> com.google.android.gms.internal.bl:
-    android.os.IInterface o() -> b
-com.google.android.gms.internal.ci -> com.google.android.gms.internal.bm:
+com.google.android.gms.internal.ch -> com.google.android.gms.internal.bm:
+    android.os.IInterface o() -> c
+    void n() -> a
+com.google.android.gms.internal.ci -> com.google.android.gms.internal.bn:
     void a(com.google.android.gms.maps.GoogleMapOptions,android.os.Parcel,int) -> a
-com.google.android.gms.internal.cj -> com.google.android.gms.internal.bn:
+com.google.android.gms.internal.cj -> com.google.android.gms.internal.bo:
     java.lang.Boolean a(byte) -> a
     byte b(java.lang.Boolean) -> a
-com.google.android.gms.internal.ck -> com.google.android.gms.internal.bo:
+com.google.android.gms.internal.ck -> com.google.android.gms.internal.bp:
     void onFinish() -> a
     void onCancel() -> b
-com.google.android.gms.internal.ck$a -> com.google.android.gms.internal.bp:
+com.google.android.gms.internal.ck$a -> com.google.android.gms.internal.bq:
     com.google.android.gms.internal.ck s(android.os.IBinder) -> a
     android.os.IBinder asBinder() -> asBinder
     boolean onTransact(int,android.os.Parcel,android.os.Parcel,int) -> onTransact
-com.google.android.gms.internal.ck$a$a -> com.google.android.gms.internal.bq:
+com.google.android.gms.internal.ck$a$a -> com.google.android.gms.internal.br:
     android.os.IBinder a -> a
     android.os.IBinder asBinder() -> asBinder
     void onFinish() -> a
     void onCancel() -> b
-com.google.android.gms.internal.cl -> com.google.android.gms.internal.br:
+com.google.android.gms.internal.cl -> com.google.android.gms.internal.bs:
     void c(com.google.android.gms.internal.bc) -> a
     com.google.android.gms.maps.internal.IMapFragmentDelegate d(com.google.android.gms.internal.bc) -> b
     com.google.android.gms.maps.internal.IMapViewDelegate a(com.google.android.gms.internal.bc,com.google.android.gms.maps.GoogleMapOptions) -> a
     com.google.android.gms.maps.internal.ICameraUpdateFactoryDelegate aR() -> a
     com.google.android.gms.internal.dj aS() -> b
     void a(com.google.android.gms.internal.bc,int) -> a
-com.google.android.gms.internal.cl$a -> com.google.android.gms.internal.bs:
+com.google.android.gms.internal.cl$a -> com.google.android.gms.internal.bt:
     com.google.android.gms.internal.cl t(android.os.IBinder) -> a
     boolean onTransact(int,android.os.Parcel,android.os.Parcel,int) -> onTransact
-com.google.android.gms.internal.cl$a$a -> com.google.android.gms.internal.bt:
+com.google.android.gms.internal.cl$a$a -> com.google.android.gms.internal.bu:
     android.os.IBinder a -> a
     android.os.IBinder asBinder() -> asBinder
     void c(com.google.android.gms.internal.bc) -> a
@@ -5640,104 +5649,104 @@ com.google.android.gms.internal.cl$a$a -> com.google.android.gms.internal.bt:
     com.google.android.gms.maps.internal.ICameraUpdateFactoryDelegate aR() -> a
     com.google.android.gms.internal.dj aS() -> b
     void a(com.google.android.gms.internal.bc,int) -> a
-com.google.android.gms.internal.cm -> com.google.android.gms.internal.bu:
+com.google.android.gms.internal.cm -> com.google.android.gms.internal.bv:
     com.google.android.gms.internal.bc f(com.google.android.gms.internal.dm) -> a
     com.google.android.gms.internal.bc g(com.google.android.gms.internal.dm) -> b
-com.google.android.gms.internal.cm$a -> com.google.android.gms.internal.bv:
+com.google.android.gms.internal.cm$a -> com.google.android.gms.internal.by:
     com.google.android.gms.internal.cm v(android.os.IBinder) -> a
     android.os.IBinder asBinder() -> asBinder
     boolean onTransact(int,android.os.Parcel,android.os.Parcel,int) -> onTransact
-com.google.android.gms.internal.cm$a$a -> com.google.android.gms.internal.by:
+com.google.android.gms.internal.cm$a$a -> com.google.android.gms.internal.ca:
     android.os.IBinder a -> a
     android.os.IBinder asBinder() -> asBinder
     com.google.android.gms.internal.bc f(com.google.android.gms.internal.dm) -> a
     com.google.android.gms.internal.bc g(com.google.android.gms.internal.dm) -> b
-com.google.android.gms.internal.cn -> com.google.android.gms.internal.ca:
+com.google.android.gms.internal.cn -> com.google.android.gms.internal.cb:
     void onCameraChange(com.google.android.gms.maps.model.CameraPosition) -> a
-com.google.android.gms.internal.cn$a -> com.google.android.gms.internal.cb:
+com.google.android.gms.internal.cn$a -> com.google.android.gms.internal.cc:
     com.google.android.gms.internal.cn z(android.os.IBinder) -> a
     android.os.IBinder asBinder() -> asBinder
     boolean onTransact(int,android.os.Parcel,android.os.Parcel,int) -> onTransact
-com.google.android.gms.internal.cn$a$a -> com.google.android.gms.internal.cc:
+com.google.android.gms.internal.cn$a$a -> com.google.android.gms.internal.cd:
     android.os.IBinder a -> a
     android.os.IBinder asBinder() -> asBinder
     void onCameraChange(com.google.android.gms.maps.model.CameraPosition) -> a
-com.google.android.gms.internal.co -> com.google.android.gms.internal.cd:
+com.google.android.gms.internal.co -> com.google.android.gms.internal.ce:
     void e(com.google.android.gms.internal.dm) -> a
-com.google.android.gms.internal.co$a -> com.google.android.gms.internal.ce:
+com.google.android.gms.internal.co$a -> com.google.android.gms.internal.cg:
     com.google.android.gms.internal.co A(android.os.IBinder) -> a
     android.os.IBinder asBinder() -> asBinder
     boolean onTransact(int,android.os.Parcel,android.os.Parcel,int) -> onTransact
-com.google.android.gms.internal.co$a$a -> com.google.android.gms.internal.cg:
+com.google.android.gms.internal.co$a$a -> com.google.android.gms.internal.ch:
     android.os.IBinder a -> a
     android.os.IBinder asBinder() -> asBinder
     void e(com.google.android.gms.internal.dm) -> a
-com.google.android.gms.internal.cp -> com.google.android.gms.internal.ch:
+com.google.android.gms.internal.cp -> com.google.android.gms.internal.ci:
     void e(com.google.android.gms.internal.bc) -> a
-com.google.android.gms.internal.cp$a -> com.google.android.gms.internal.ci:
+com.google.android.gms.internal.cp$a -> com.google.android.gms.internal.cj:
     com.google.android.gms.internal.cp B(android.os.IBinder) -> a
     boolean onTransact(int,android.os.Parcel,android.os.Parcel,int) -> onTransact
-com.google.android.gms.internal.cp$a$a -> com.google.android.gms.internal.cj:
+com.google.android.gms.internal.cp$a$a -> com.google.android.gms.internal.ck:
     android.os.IBinder a -> a
     android.os.IBinder asBinder() -> asBinder
     void e(com.google.android.gms.internal.bc) -> a
-com.google.android.gms.internal.cq -> com.google.android.gms.internal.ck:
+com.google.android.gms.internal.cq -> com.google.android.gms.internal.cl:
     void onMapClick(com.google.android.gms.maps.model.LatLng) -> a
-com.google.android.gms.internal.cq$a -> com.google.android.gms.internal.cl:
+com.google.android.gms.internal.cq$a -> com.google.android.gms.internal.cm:
     com.google.android.gms.internal.cq C(android.os.IBinder) -> a
     android.os.IBinder asBinder() -> asBinder
     boolean onTransact(int,android.os.Parcel,android.os.Parcel,int) -> onTransact
-com.google.android.gms.internal.cq$a$a -> com.google.android.gms.internal.cm:
+com.google.android.gms.internal.cq$a$a -> com.google.android.gms.internal.cn:
     android.os.IBinder a -> a
     android.os.IBinder asBinder() -> asBinder
     void onMapClick(com.google.android.gms.maps.model.LatLng) -> a
-com.google.android.gms.internal.cr -> com.google.android.gms.internal.cn:
+com.google.android.gms.internal.cr -> com.google.android.gms.internal.co:
     void onMapLongClick(com.google.android.gms.maps.model.LatLng) -> a
-com.google.android.gms.internal.cr$a -> com.google.android.gms.internal.co:
+com.google.android.gms.internal.cr$a -> com.google.android.gms.internal.cp:
     com.google.android.gms.internal.cr D(android.os.IBinder) -> a
     android.os.IBinder asBinder() -> asBinder
     boolean onTransact(int,android.os.Parcel,android.os.Parcel,int) -> onTransact
-com.google.android.gms.internal.cr$a$a -> com.google.android.gms.internal.cp:
+com.google.android.gms.internal.cr$a$a -> com.google.android.gms.internal.cq:
     android.os.IBinder a -> a
     android.os.IBinder asBinder() -> asBinder
     void onMapLongClick(com.google.android.gms.maps.model.LatLng) -> a
-com.google.android.gms.internal.cs -> com.google.android.gms.internal.cq:
+com.google.android.gms.internal.cs -> com.google.android.gms.internal.cr:
     boolean a(com.google.android.gms.internal.dm) -> a
-com.google.android.gms.internal.cs$a -> com.google.android.gms.internal.cr:
+com.google.android.gms.internal.cs$a -> com.google.android.gms.internal.cs:
     com.google.android.gms.internal.cs E(android.os.IBinder) -> a
     android.os.IBinder asBinder() -> asBinder
     boolean onTransact(int,android.os.Parcel,android.os.Parcel,int) -> onTransact
-com.google.android.gms.internal.cs$a$a -> com.google.android.gms.internal.cs:
+com.google.android.gms.internal.cs$a$a -> com.google.android.gms.internal.ct:
     android.os.IBinder a -> a
     android.os.IBinder asBinder() -> asBinder
     boolean a(com.google.android.gms.internal.dm) -> a
-com.google.android.gms.internal.ct -> com.google.android.gms.internal.ct:
+com.google.android.gms.internal.ct -> com.google.android.gms.internal.cu:
     void b(com.google.android.gms.internal.dm) -> a
     void d(com.google.android.gms.internal.dm) -> b
     void c(com.google.android.gms.internal.dm) -> c
-com.google.android.gms.internal.ct$a -> com.google.android.gms.internal.cu:
+com.google.android.gms.internal.ct$a -> com.google.android.gms.internal.cv:
     com.google.android.gms.internal.ct F(android.os.IBinder) -> a
     android.os.IBinder asBinder() -> asBinder
     boolean onTransact(int,android.os.Parcel,android.os.Parcel,int) -> onTransact
-com.google.android.gms.internal.ct$a$a -> com.google.android.gms.internal.cv:
+com.google.android.gms.internal.ct$a$a -> com.google.android.gms.internal.cw:
     android.os.IBinder a -> a
     android.os.IBinder asBinder() -> asBinder
     void b(com.google.android.gms.internal.dm) -> a
     void d(com.google.android.gms.internal.dm) -> b
     void c(com.google.android.gms.internal.dm) -> c
-com.google.android.gms.internal.cu -> com.google.android.gms.internal.cw:
+com.google.android.gms.internal.cu -> com.google.android.gms.internal.cx:
     void b(com.google.android.gms.internal.bc) -> a
-com.google.android.gms.internal.cu$a -> com.google.android.gms.internal.cx:
+com.google.android.gms.internal.cu$a -> com.google.android.gms.internal.cy:
     com.google.android.gms.internal.cu G(android.os.IBinder) -> a
     android.os.IBinder asBinder() -> asBinder
     boolean onTransact(int,android.os.Parcel,android.os.Parcel,int) -> onTransact
-com.google.android.gms.internal.cu$a$a -> com.google.android.gms.internal.cy:
+com.google.android.gms.internal.cu$a$a -> com.google.android.gms.internal.cz:
     android.os.IBinder a -> a
     android.os.IBinder asBinder() -> asBinder
     void b(com.google.android.gms.internal.bc) -> a
-com.google.android.gms.internal.cv -> com.google.android.gms.internal.cz:
+com.google.android.gms.internal.cv -> com.google.android.gms.internal.da:
     void a(android.os.Bundle,java.lang.String,android.os.Parcelable) -> a
-com.google.android.gms.internal.cw -> com.google.android.gms.internal.da:
+com.google.android.gms.internal.cw -> com.google.android.gms.internal.db:
     android.content.Context aZ -> a
     com.google.android.gms.internal.cl fH -> b
     com.google.android.gms.internal.cl g(android.content.Context) -> a
@@ -5749,32 +5758,32 @@ com.google.android.gms.internal.cw -> com.google.android.gms.internal.da:
     android.content.Context getRemoteContext(android.content.Context) -> e
     java.lang.Object a(java.lang.ClassLoader,java.lang.String) -> a
     java.lang.Object b(java.lang.Class) -> a
-com.google.android.gms.internal.cx -> com.google.android.gms.internal.db:
+com.google.android.gms.internal.cx -> com.google.android.gms.internal.dc:
     boolean fI -> a
     boolean aV() -> a
-com.google.android.gms.internal.cy -> com.google.android.gms.internal.dc:
+com.google.android.gms.internal.cy -> com.google.android.gms.internal.dd:
     void a(com.google.android.gms.maps.model.CameraPosition,android.os.Parcel,int) -> a
-com.google.android.gms.internal.cz -> com.google.android.gms.internal.dd:
+com.google.android.gms.internal.cz -> com.google.android.gms.internal.de:
     void a(com.google.android.gms.maps.model.CircleOptions,android.os.Parcel,int) -> a
-com.google.android.gms.internal.da -> com.google.android.gms.internal.de:
+com.google.android.gms.internal.da -> com.google.android.gms.internal.df:
     void a(com.google.android.gms.maps.model.GroundOverlayOptions,android.os.Parcel,int) -> a
-com.google.android.gms.internal.db -> com.google.android.gms.internal.df:
+com.google.android.gms.internal.db -> com.google.android.gms.internal.dg:
     void a(com.google.android.gms.maps.model.LatLngBounds,android.os.Parcel,int) -> a
-com.google.android.gms.internal.dc -> com.google.android.gms.internal.dg:
+com.google.android.gms.internal.dc -> com.google.android.gms.internal.dh:
     void a(com.google.android.gms.maps.model.LatLng,android.os.Parcel,int) -> a
-com.google.android.gms.internal.dd -> com.google.android.gms.internal.dh:
+com.google.android.gms.internal.dd -> com.google.android.gms.internal.di:
     void a(com.google.android.gms.maps.model.MarkerOptions,android.os.Parcel,int) -> a
-com.google.android.gms.internal.de -> com.google.android.gms.internal.di:
+com.google.android.gms.internal.de -> com.google.android.gms.internal.dj:
     void a(com.google.android.gms.maps.model.PolygonOptions,android.os.Parcel,int) -> a
-com.google.android.gms.internal.df -> com.google.android.gms.internal.dj:
+com.google.android.gms.internal.df -> com.google.android.gms.internal.dk:
     void a(com.google.android.gms.maps.model.PolylineOptions,android.os.Parcel,int) -> a
-com.google.android.gms.internal.dg -> com.google.android.gms.internal.dk:
+com.google.android.gms.internal.dg -> com.google.android.gms.internal.dl:
     void a(com.google.android.gms.maps.model.Tile,android.os.Parcel,int) -> a
-com.google.android.gms.internal.dh -> com.google.android.gms.internal.dl:
+com.google.android.gms.internal.dh -> com.google.android.gms.internal.dm:
     void a(com.google.android.gms.maps.model.TileOverlayOptions,android.os.Parcel,int) -> a
-com.google.android.gms.internal.di -> com.google.android.gms.internal.dm:
+com.google.android.gms.internal.di -> com.google.android.gms.internal.dn:
     void a(com.google.android.gms.maps.model.VisibleRegion,android.os.Parcel,int) -> a
-com.google.android.gms.internal.dj -> com.google.android.gms.internal.dn:
+com.google.android.gms.internal.dj -> com.google.android.gms.internal.do:
     com.google.android.gms.internal.bc N(int) -> a
     com.google.android.gms.internal.bc x(java.lang.String) -> a
     com.google.android.gms.internal.bc y(java.lang.String) -> b
@@ -5782,10 +5791,10 @@ com.google.android.gms.internal.dj -> com.google.android.gms.internal.dn:
     com.google.android.gms.internal.bc c(float) -> a
     com.google.android.gms.internal.bc a(android.graphics.Bitmap) -> a
     com.google.android.gms.internal.bc z(java.lang.String) -> c
-com.google.android.gms.internal.dj$a -> com.google.android.gms.internal.do:
+com.google.android.gms.internal.dj$a -> com.google.android.gms.internal.dp:
     com.google.android.gms.internal.dj J(android.os.IBinder) -> a
     boolean onTransact(int,android.os.Parcel,android.os.Parcel,int) -> onTransact
-com.google.android.gms.internal.dj$a$a -> com.google.android.gms.internal.dp:
+com.google.android.gms.internal.dj$a$a -> com.google.android.gms.internal.dq:
     android.os.IBinder a -> a
     android.os.IBinder asBinder() -> asBinder
     com.google.android.gms.internal.bc N(int) -> a
@@ -5795,7 +5804,7 @@ com.google.android.gms.internal.dj$a$a -> com.google.android.gms.internal.dp:
     com.google.android.gms.internal.bc c(float) -> a
     com.google.android.gms.internal.bc a(android.graphics.Bitmap) -> a
     com.google.android.gms.internal.bc z(java.lang.String) -> c
-com.google.android.gms.internal.dk -> com.google.android.gms.internal.dq:
+com.google.android.gms.internal.dk -> com.google.android.gms.internal.dr:
     void remove() -> a
     java.lang.String getId() -> b
     void setCenter(com.google.android.gms.maps.model.LatLng) -> a
@@ -5814,10 +5823,10 @@ com.google.android.gms.internal.dk -> com.google.android.gms.internal.dq:
     boolean isVisible() -> i
     boolean a(com.google.android.gms.internal.dk) -> a
     int hashCodeRemote() -> j
-com.google.android.gms.internal.dk$a -> com.google.android.gms.internal.dr:
+com.google.android.gms.internal.dk$a -> com.google.android.gms.internal.ds:
     com.google.android.gms.internal.dk K(android.os.IBinder) -> a
     boolean onTransact(int,android.os.Parcel,android.os.Parcel,int) -> onTransact
-com.google.android.gms.internal.dk$a$a -> com.google.android.gms.internal.ds:
+com.google.android.gms.internal.dk$a$a -> com.google.android.gms.internal.dt:
     android.os.IBinder a -> a
     android.os.IBinder asBinder() -> asBinder
     void remove() -> a
@@ -5838,7 +5847,7 @@ com.google.android.gms.internal.dk$a$a -> com.google.android.gms.internal.ds:
     boolean isVisible() -> i
     boolean a(com.google.android.gms.internal.dk) -> a
     int hashCodeRemote() -> j
-com.google.android.gms.internal.dl -> com.google.android.gms.internal.dt:
+com.google.android.gms.internal.dl -> com.google.android.gms.internal.du:
     void remove() -> a
     java.lang.String getId() -> b
     void setPosition(com.google.android.gms.maps.model.LatLng) -> a
@@ -5859,10 +5868,10 @@ com.google.android.gms.internal.dl -> com.google.android.gms.internal.dt:
     float getTransparency() -> j
     boolean a(com.google.android.gms.internal.dl) -> a
     int hashCodeRemote() -> k
-com.google.android.gms.internal.dl$a -> com.google.android.gms.internal.du:
+com.google.android.gms.internal.dl$a -> com.google.android.gms.internal.dv:
     com.google.android.gms.internal.dl L(android.os.IBinder) -> a
     boolean onTransact(int,android.os.Parcel,android.os.Parcel,int) -> onTransact
-com.google.android.gms.internal.dl$a$a -> com.google.android.gms.internal.dv:
+com.google.android.gms.internal.dl$a$a -> com.google.android.gms.internal.dw:
     android.os.IBinder a -> a
     android.os.IBinder asBinder() -> asBinder
     void remove() -> a
@@ -5885,7 +5894,7 @@ com.google.android.gms.internal.dl$a$a -> com.google.android.gms.internal.dv:
     float getTransparency() -> j
     boolean a(com.google.android.gms.internal.dl) -> a
     int hashCodeRemote() -> k
-com.google.android.gms.internal.dm -> com.google.android.gms.internal.dw:
+com.google.android.gms.internal.dm -> com.google.android.gms.internal.dx:
     void remove() -> a
     java.lang.String getId() -> b
     void setPosition(com.google.android.gms.maps.model.LatLng) -> a
@@ -5905,10 +5914,10 @@ com.google.android.gms.internal.dm -> com.google.android.gms.internal.dw:
     int hashCodeRemote() -> k
     void f(com.google.android.gms.internal.bc) -> a
     void setAnchor(float,float) -> a
-com.google.android.gms.internal.dm$a -> com.google.android.gms.internal.dx:
+com.google.android.gms.internal.dm$a -> com.google.android.gms.internal.dy:
     com.google.android.gms.internal.dm M(android.os.IBinder) -> a
     boolean onTransact(int,android.os.Parcel,android.os.Parcel,int) -> onTransact
-com.google.android.gms.internal.dm$a$a -> com.google.android.gms.internal.dy:
+com.google.android.gms.internal.dm$a$a -> com.google.android.gms.internal.dz:
     android.os.IBinder a -> a
     android.os.IBinder asBinder() -> asBinder
     void remove() -> a
@@ -5930,7 +5939,7 @@ com.google.android.gms.internal.dm$a$a -> com.google.android.gms.internal.dy:
     int hashCodeRemote() -> k
     void f(com.google.android.gms.internal.bc) -> a
     void setAnchor(float,float) -> a
-com.google.android.gms.internal.dn -> com.google.android.gms.internal.dz:
+com.google.android.gms.internal.dn -> com.google.android.gms.internal.ea:
     void remove() -> a
     java.lang.String getId() -> b
     void setPoints(java.util.List) -> a
@@ -5951,10 +5960,10 @@ com.google.android.gms.internal.dn -> com.google.android.gms.internal.dz:
     boolean isGeodesic() -> j
     boolean a(com.google.android.gms.internal.dn) -> a
     int hashCodeRemote() -> k
-com.google.android.gms.internal.dn$a -> com.google.android.gms.internal.ea:
+com.google.android.gms.internal.dn$a -> com.google.android.gms.internal.ec:
     com.google.android.gms.internal.dn N(android.os.IBinder) -> a
     boolean onTransact(int,android.os.Parcel,android.os.Parcel,int) -> onTransact
-com.google.android.gms.internal.dn$a$a -> com.google.android.gms.internal.ec:
+com.google.android.gms.internal.dn$a$a -> com.google.android.gms.internal.ee:
     android.os.IBinder a -> a
     android.os.IBinder asBinder() -> asBinder
     void remove() -> a
@@ -5977,7 +5986,7 @@ com.google.android.gms.internal.dn$a$a -> com.google.android.gms.internal.ec:
     boolean isGeodesic() -> j
     boolean a(com.google.android.gms.internal.dn) -> a
     int hashCodeRemote() -> k
-com.google.android.gms.internal.do -> com.google.android.gms.internal.ee:
+com.google.android.gms.internal.do -> com.google.android.gms.internal.eg:
     void remove() -> a
     void clearTileCache() -> b
     java.lang.String getId() -> c
@@ -5987,10 +5996,10 @@ com.google.android.gms.internal.do -> com.google.android.gms.internal.ee:
     boolean isVisible() -> e
     boolean a(com.google.android.gms.internal.do) -> a
     int hashCodeRemote() -> f
-com.google.android.gms.internal.do$a -> com.google.android.gms.internal.eg:
+com.google.android.gms.internal.do$a -> com.google.android.gms.internal.eh:
     com.google.android.gms.internal.do P(android.os.IBinder) -> a
     boolean onTransact(int,android.os.Parcel,android.os.Parcel,int) -> onTransact
-com.google.android.gms.internal.do$a$a -> com.google.android.gms.internal.eh:
+com.google.android.gms.internal.do$a$a -> com.google.android.gms.internal.ei:
     android.os.IBinder a -> a
     android.os.IBinder asBinder() -> asBinder
     void remove() -> a
@@ -6002,13 +6011,13 @@ com.google.android.gms.internal.do$a$a -> com.google.android.gms.internal.eh:
     boolean isVisible() -> e
     boolean a(com.google.android.gms.internal.do) -> a
     int hashCodeRemote() -> f
-com.google.android.gms.internal.dp -> com.google.android.gms.internal.ei:
+com.google.android.gms.internal.dp -> com.google.android.gms.internal.ej:
     com.google.android.gms.maps.model.Tile getTile(int,int,int) -> a
-com.google.android.gms.internal.dp$a -> com.google.android.gms.internal.ej:
+com.google.android.gms.internal.dp$a -> com.google.android.gms.internal.ek:
     com.google.android.gms.internal.dp Q(android.os.IBinder) -> a
     android.os.IBinder asBinder() -> asBinder
     boolean onTransact(int,android.os.Parcel,android.os.Parcel,int) -> onTransact
-com.google.android.gms.internal.dp$a$a -> com.google.android.gms.internal.ek:
+com.google.android.gms.internal.dp$a$a -> com.google.android.gms.internal.el:
     android.os.IBinder a -> a
     android.os.IBinder asBinder() -> asBinder
     com.google.android.gms.maps.model.Tile getTile(int,int,int) -> a
@@ -6026,7 +6035,7 @@ com.google.android.gms.internal.eb -> com.google.android.gms.internal.eb:
     boolean bx() -> e
     int describeContents() -> describeContents
     void writeToParcel(android.os.Parcel,int) -> writeToParcel
-com.google.android.gms.internal.ec -> com.google.android.gms.internal.el:
+com.google.android.gms.internal.ec -> com.google.android.gms.internal.em:
     com.google.android.gms.internal.eb u(android.os.Parcel) -> a
     com.google.android.gms.internal.eb[] O(int) -> a
     void a(com.google.android.gms.internal.eb,android.os.Parcel,int) -> a
@@ -6158,7 +6167,7 @@ com.google.android.gms.internal.ed -> com.google.android.gms.internal.ed:
     int hashCode() -> hashCode
     boolean equals(java.lang.Object) -> equals
     java.lang.Object freeze() -> a
-com.google.android.gms.internal.ee -> com.google.android.gms.internal.em:
+com.google.android.gms.internal.ee -> com.google.android.gms.internal.en:
     com.google.android.gms.internal.ed v(android.os.Parcel) -> a
     com.google.android.gms.internal.ed[] P(int) -> a
     void a(com.google.android.gms.internal.ed,android.os.Parcel,int) -> a
@@ -6192,55 +6201,55 @@ com.google.android.gms.internal.ef -> com.google.android.gms.internal.ef:
     int hashCode() -> hashCode
     boolean equals(java.lang.Object) -> equals
     java.lang.Object freeze() -> a
-com.google.android.gms.internal.eg -> com.google.android.gms.internal.en:
+com.google.android.gms.internal.eg -> com.google.android.gms.internal.eo:
     com.google.android.gms.internal.ef w(android.os.Parcel) -> a
     com.google.android.gms.internal.ef[] Q(int) -> a
     void a(com.google.android.gms.internal.ef,android.os.Parcel,int) -> a
     java.lang.Object[] newArray(int) -> newArray
     java.lang.Object createFromParcel(android.os.Parcel) -> createFromParcel
-com.google.android.gms.internal.ei -> com.google.android.gms.internal.eo:
+com.google.android.gms.internal.ei -> com.google.android.gms.internal.ep:
     com.google.android.gms.internal.eq$a x(android.os.Parcel) -> a
     com.google.android.gms.internal.eq$a[] R(int) -> a
     void a(com.google.android.gms.internal.eq$a,android.os.Parcel,int) -> a
     java.lang.Object[] newArray(int) -> newArray
     java.lang.Object createFromParcel(android.os.Parcel) -> createFromParcel
-com.google.android.gms.internal.ej -> com.google.android.gms.internal.ep:
+com.google.android.gms.internal.ej -> com.google.android.gms.internal.er:
     com.google.android.gms.internal.eq$b y(android.os.Parcel) -> a
     com.google.android.gms.internal.eq$b[] S(int) -> a
     void a(com.google.android.gms.internal.eq$b,android.os.Parcel,int) -> a
     java.lang.Object[] newArray(int) -> newArray
     java.lang.Object createFromParcel(android.os.Parcel) -> createFromParcel
-com.google.android.gms.internal.ek -> com.google.android.gms.internal.er:
+com.google.android.gms.internal.ek -> com.google.android.gms.internal.es:
     com.google.android.gms.internal.eq$b$a z(android.os.Parcel) -> a
     com.google.android.gms.internal.eq$b$a[] T(int) -> a
     void a(com.google.android.gms.internal.eq$b$a,android.os.Parcel,int) -> a
     java.lang.Object[] newArray(int) -> newArray
     java.lang.Object createFromParcel(android.os.Parcel) -> createFromParcel
-com.google.android.gms.internal.el -> com.google.android.gms.internal.es:
+com.google.android.gms.internal.el -> com.google.android.gms.internal.et:
     com.google.android.gms.internal.eq$b$b A(android.os.Parcel) -> a
     com.google.android.gms.internal.eq$b$b[] U(int) -> a
     void a(com.google.android.gms.internal.eq$b$b,android.os.Parcel,int) -> a
     java.lang.Object[] newArray(int) -> newArray
     java.lang.Object createFromParcel(android.os.Parcel) -> createFromParcel
-com.google.android.gms.internal.em -> com.google.android.gms.internal.et:
+com.google.android.gms.internal.em -> com.google.android.gms.internal.eu:
     com.google.android.gms.internal.eq$c B(android.os.Parcel) -> a
     com.google.android.gms.internal.eq$c[] V(int) -> a
     void a(com.google.android.gms.internal.eq$c,android.os.Parcel,int) -> a
     java.lang.Object[] newArray(int) -> newArray
     java.lang.Object createFromParcel(android.os.Parcel) -> createFromParcel
-com.google.android.gms.internal.en -> com.google.android.gms.internal.eu:
+com.google.android.gms.internal.en -> com.google.android.gms.internal.ev:
     com.google.android.gms.internal.eq$d C(android.os.Parcel) -> a
     com.google.android.gms.internal.eq$d[] W(int) -> a
     void a(com.google.android.gms.internal.eq$d,android.os.Parcel,int) -> a
     java.lang.Object[] newArray(int) -> newArray
     java.lang.Object createFromParcel(android.os.Parcel) -> createFromParcel
-com.google.android.gms.internal.eo -> com.google.android.gms.internal.ev:
+com.google.android.gms.internal.eo -> com.google.android.gms.internal.ew:
     com.google.android.gms.internal.eq$e D(android.os.Parcel) -> a
     com.google.android.gms.internal.eq$e[] X(int) -> a
     void a(com.google.android.gms.internal.eq$e,android.os.Parcel,int) -> a
     java.lang.Object[] newArray(int) -> newArray
     java.lang.Object createFromParcel(android.os.Parcel) -> createFromParcel
-com.google.android.gms.internal.ep -> com.google.android.gms.internal.ew:
+com.google.android.gms.internal.ep -> com.google.android.gms.internal.ex:
     com.google.android.gms.internal.eq$g E(android.os.Parcel) -> a
     com.google.android.gms.internal.eq$g[] Y(int) -> a
     void a(com.google.android.gms.internal.eq$g,android.os.Parcel,int) -> a
@@ -6564,31 +6573,31 @@ com.google.android.gms.internal.eq$i -> com.google.android.gms.internal.eq$i:
     int hashCode() -> hashCode
     boolean equals(java.lang.Object) -> equals
     java.lang.Object freeze() -> a
-com.google.android.gms.internal.er -> com.google.android.gms.internal.ex:
+com.google.android.gms.internal.er -> com.google.android.gms.internal.ey:
     com.google.android.gms.internal.eq F(android.os.Parcel) -> a
     com.google.android.gms.internal.eq[] Z(int) -> a
     void a(com.google.android.gms.internal.eq,android.os.Parcel,int) -> a
     java.lang.Object[] newArray(int) -> newArray
     java.lang.Object createFromParcel(android.os.Parcel) -> createFromParcel
-com.google.android.gms.internal.et -> com.google.android.gms.internal.ey:
+com.google.android.gms.internal.et -> com.google.android.gms.internal.ez:
     com.google.android.gms.internal.eq$h G(android.os.Parcel) -> a
     com.google.android.gms.internal.eq$h[] aa(int) -> a
     void a(com.google.android.gms.internal.eq$h,android.os.Parcel,int) -> a
     java.lang.Object[] newArray(int) -> newArray
     java.lang.Object createFromParcel(android.os.Parcel) -> createFromParcel
-com.google.android.gms.internal.eu -> com.google.android.gms.internal.ez:
+com.google.android.gms.internal.eu -> com.google.android.gms.internal.fa:
     com.google.android.gms.internal.eq$i H(android.os.Parcel) -> a
     com.google.android.gms.internal.eq$i[] ab(int) -> a
     void a(com.google.android.gms.internal.eq$i,android.os.Parcel,int) -> a
     java.lang.Object[] newArray(int) -> newArray
     java.lang.Object createFromParcel(android.os.Parcel) -> createFromParcel
-com.google.android.gms.internal.h -> com.google.android.gms.internal.fa:
+com.google.android.gms.internal.h -> com.google.android.gms.internal.fb:
     boolean u -> a
     java.util.concurrent.BlockingQueue v -> b
     void onServiceConnected(android.content.ComponentName,android.os.IBinder) -> onServiceConnected
     void onServiceDisconnected(android.content.ComponentName) -> onServiceDisconnected
     android.os.IBinder d() -> a
-com.google.android.gms.internal.j -> com.google.android.gms.internal.fb:
+com.google.android.gms.internal.j -> com.google.android.gms.internal.fc:
     com.google.android.gms.internal.k O -> a
     int R -> b
     int S -> c
@@ -6625,29 +6634,29 @@ com.google.android.gms.internal.k -> com.google.android.gms.internal.k:
     int getCount() -> b
     int d(int) -> a
     boolean isClosed() -> c
-com.google.android.gms.internal.k$1 -> com.google.android.gms.internal.fc:
-com.google.android.gms.internal.k$a -> com.google.android.gms.internal.fd:
+com.google.android.gms.internal.k$1 -> com.google.android.gms.internal.fd:
+com.google.android.gms.internal.k$a -> com.google.android.gms.internal.fe:
     java.lang.String[] U -> a
     java.util.ArrayList ab -> b
     java.lang.String ac -> c
     java.util.HashMap ad -> d
     boolean ae -> e
     java.lang.String af -> f
-com.google.android.gms.internal.l -> com.google.android.gms.internal.fe:
+com.google.android.gms.internal.l -> com.google.android.gms.internal.ff:
     com.google.android.gms.internal.k a(android.os.Parcel) -> a
     com.google.android.gms.internal.k[] f(int) -> a
     void a(com.google.android.gms.internal.k,android.os.Parcel,int) -> a
     java.lang.Object[] newArray(int) -> newArray
     java.lang.Object createFromParcel(android.os.Parcel) -> createFromParcel
-com.google.android.gms.internal.n -> com.google.android.gms.internal.ff:
+com.google.android.gms.internal.n -> com.google.android.gms.internal.fg:
     void b(java.lang.Object) -> a
     void a(boolean) -> a
-com.google.android.gms.internal.o -> com.google.android.gms.internal.fg:
+com.google.android.gms.internal.o -> com.google.android.gms.internal.fh:
     android.app.Activity ar -> a
     android.content.Intent mIntent -> b
     int as -> c
     void onClick(android.content.DialogInterface,int) -> onClick
-com.google.android.gms.internal.p -> com.google.android.gms.internal.fh:
+com.google.android.gms.internal.p -> com.google.android.gms.internal.fi:
     android.content.Context mContext -> f
     android.os.Handler mHandler -> a
     android.os.IInterface at -> g
@@ -6688,30 +6697,30 @@ com.google.android.gms.internal.p -> com.google.android.gms.internal.fh:
     com.google.android.gms.internal.p$e e(com.google.android.gms.internal.p) -> e
     android.content.Context f(com.google.android.gms.internal.p) -> f
     com.google.android.gms.internal.p$e a(com.google.android.gms.internal.p,com.google.android.gms.internal.p$e) -> a
-com.google.android.gms.internal.p$a -> com.google.android.gms.internal.fi:
+com.google.android.gms.internal.p$a -> com.google.android.gms.internal.fj:
     com.google.android.gms.internal.p aF -> a
     void handleMessage(android.os.Message) -> handleMessage
-com.google.android.gms.internal.p$b -> com.google.android.gms.internal.fj:
+com.google.android.gms.internal.p$b -> com.google.android.gms.internal.fk:
     java.lang.Object mListener -> a
     com.google.android.gms.internal.p aF -> b
     void a(java.lang.Object) -> a
     void p() -> a
     void q() -> b
-com.google.android.gms.internal.p$d -> com.google.android.gms.internal.fk:
+com.google.android.gms.internal.p$d -> com.google.android.gms.internal.fl:
     com.google.android.gms.internal.p aF -> a
     void a(int,android.os.IBinder,android.os.Bundle) -> a
-com.google.android.gms.internal.p$e -> com.google.android.gms.internal.fl:
+com.google.android.gms.internal.p$e -> com.google.android.gms.internal.fm:
     com.google.android.gms.internal.p aF -> a
     void onServiceConnected(android.content.ComponentName,android.os.IBinder) -> onServiceConnected
     void onServiceDisconnected(android.content.ComponentName) -> onServiceDisconnected
-com.google.android.gms.internal.p$f -> com.google.android.gms.internal.fm:
+com.google.android.gms.internal.p$f -> com.google.android.gms.internal.fn:
     int statusCode -> a
     android.os.Bundle aG -> c
     android.os.IBinder aH -> d
     com.google.android.gms.internal.p aF -> e
     void a(java.lang.Boolean) -> a
     void a(java.lang.Object) -> a
-com.google.android.gms.internal.q -> com.google.android.gms.internal.fn:
+com.google.android.gms.internal.q -> com.google.android.gms.internal.fo:
     com.google.android.gms.internal.q aI -> a
     android.content.Context aJ -> b
     java.util.HashMap aK -> c
@@ -6721,7 +6730,7 @@ com.google.android.gms.internal.q -> com.google.android.gms.internal.fn:
     void b(java.lang.String,com.google.android.gms.internal.p$e) -> b
     boolean handleMessage(android.os.Message) -> handleMessage
     java.util.HashMap a(com.google.android.gms.internal.q) -> a
-com.google.android.gms.internal.q$a -> com.google.android.gms.internal.fo:
+com.google.android.gms.internal.q$a -> com.google.android.gms.internal.fp:
     java.lang.String aL -> b
     com.google.android.gms.internal.q$a$a aM -> c
     java.util.HashSet aN -> d
@@ -6745,28 +6754,28 @@ com.google.android.gms.internal.q$a -> com.google.android.gms.internal.fo:
     android.content.ComponentName a(com.google.android.gms.internal.q$a,android.content.ComponentName) -> a
     java.util.HashSet a(com.google.android.gms.internal.q$a) -> a
     int a(com.google.android.gms.internal.q$a,int) -> a
-com.google.android.gms.internal.q$a$a -> com.google.android.gms.internal.fp:
+com.google.android.gms.internal.q$a$a -> com.google.android.gms.internal.fq:
     com.google.android.gms.internal.q$a aS -> a
     void onServiceConnected(android.content.ComponentName,android.os.IBinder) -> onServiceConnected
     void onServiceDisconnected(android.content.ComponentName) -> onServiceDisconnected
-com.google.android.gms.internal.r -> com.google.android.gms.internal.fq:
+com.google.android.gms.internal.r -> com.google.android.gms.internal.fr:
     android.net.Uri aT -> a
     android.net.Uri aU -> b
     android.content.Intent e(java.lang.String) -> a
     android.net.Uri f(java.lang.String) -> d
     android.content.Intent g(java.lang.String) -> b
     android.content.Intent h(java.lang.String) -> c
-com.google.android.gms.internal.t -> com.google.android.gms.internal.fr:
+com.google.android.gms.internal.t -> com.google.android.gms.internal.fs:
     void a(int,android.os.IBinder,android.os.Bundle) -> a
-com.google.android.gms.internal.t$a -> com.google.android.gms.internal.fs:
+com.google.android.gms.internal.t$a -> com.google.android.gms.internal.ft:
     com.google.android.gms.internal.t g(android.os.IBinder) -> a
     android.os.IBinder asBinder() -> asBinder
     boolean onTransact(int,android.os.Parcel,android.os.Parcel,int) -> onTransact
-com.google.android.gms.internal.t$a$a -> com.google.android.gms.internal.ft:
+com.google.android.gms.internal.t$a$a -> com.google.android.gms.internal.fu:
     android.os.IBinder a -> a
     android.os.IBinder asBinder() -> asBinder
     void a(int,android.os.IBinder,android.os.Bundle) -> a
-com.google.android.gms.internal.u -> com.google.android.gms.internal.fu:
+com.google.android.gms.internal.u -> com.google.android.gms.internal.fv:
     void a(com.google.android.gms.internal.t,int,java.lang.String,java.lang.String,java.lang.String[],java.lang.String,android.os.Bundle) -> a
     void a(com.google.android.gms.internal.t,int,java.lang.String,android.os.Bundle) -> a
     void a(com.google.android.gms.internal.t,int,java.lang.String) -> a
@@ -6778,10 +6787,10 @@ com.google.android.gms.internal.u -> com.google.android.gms.internal.fu:
     void a(com.google.android.gms.internal.t,int,java.lang.String,java.lang.String,java.lang.String[],java.lang.String,android.os.IBinder,java.lang.String,android.os.Bundle) -> a
     void a(com.google.android.gms.internal.t,int,java.lang.String,java.lang.String,java.lang.String[]) -> a
     void f(com.google.android.gms.internal.t,int,java.lang.String,android.os.Bundle) -> f
-com.google.android.gms.internal.u$a -> com.google.android.gms.internal.fv:
+com.google.android.gms.internal.u$a -> com.google.android.gms.internal.fw:
     com.google.android.gms.internal.u h(android.os.IBinder) -> a
     boolean onTransact(int,android.os.Parcel,android.os.Parcel,int) -> onTransact
-com.google.android.gms.internal.u$a$a -> com.google.android.gms.internal.fw:
+com.google.android.gms.internal.u$a$a -> com.google.android.gms.internal.fx:
     android.os.IBinder a -> a
     android.os.IBinder asBinder() -> asBinder
     void a(com.google.android.gms.internal.t,int,java.lang.String,java.lang.String,java.lang.String[],java.lang.String,android.os.Bundle) -> a
@@ -6795,17 +6804,17 @@ com.google.android.gms.internal.u$a$a -> com.google.android.gms.internal.fw:
     void a(com.google.android.gms.internal.t,int,java.lang.String,java.lang.String,java.lang.String[],java.lang.String,android.os.IBinder,java.lang.String,android.os.Bundle) -> a
     void a(com.google.android.gms.internal.t,int,java.lang.String,java.lang.String,java.lang.String[]) -> a
     void f(com.google.android.gms.internal.t,int,java.lang.String,android.os.Bundle) -> f
-com.google.android.gms.internal.w -> com.google.android.gms.internal.fx:
+com.google.android.gms.internal.w -> com.google.android.gms.internal.fy:
     boolean a(java.lang.Object,java.lang.Object) -> a
     int hashCode(java.lang.Object[]) -> a
     com.google.android.gms.internal.w$a c(java.lang.Object) -> a
-com.google.android.gms.internal.w$1 -> com.google.android.gms.internal.fy:
-com.google.android.gms.internal.w$a -> com.google.android.gms.internal.fz:
+com.google.android.gms.internal.w$1 -> com.google.android.gms.internal.fz:
+com.google.android.gms.internal.w$a -> com.google.android.gms.internal.ga:
     java.util.List aW -> a
     java.lang.Object aX -> b
     com.google.android.gms.internal.w$a a(java.lang.String,java.lang.Object) -> a
     java.lang.String toString() -> toString
-com.google.android.gms.internal.x -> com.google.android.gms.internal.ga:
+com.google.android.gms.internal.x -> com.google.android.gms.internal.gb:
     java.lang.Object d(java.lang.Object) -> a
     java.lang.Object b(java.lang.Object,java.lang.Object) -> a
     void a(boolean) -> a
@@ -6867,13 +6876,17 @@ com.google.android.gms.location.LocationClient -> com.google.android.gms.locatio
     int getErrorCode(android.content.Intent) -> b
     int getGeofenceTransition(android.content.Intent) -> c
     java.util.List getTriggeringGeofences(android.content.Intent) -> d
+    void requestLocationUpdates(com.google.android.gms.location.LocationRequest,com.google.android.gms.location.LocationListener) -> a
     void connect() -> a
     void disconnect() -> b
+    boolean isConnected() -> c
 com.google.android.gms.location.LocationClient$OnAddGeofencesResultListener -> com.google.android.gms.location.f:
     void onAddGeofencesResult(int,java.lang.String[]) -> a
 com.google.android.gms.location.LocationClient$OnRemoveGeofencesResultListener -> com.google.android.gms.location.g:
     void onRemoveGeofencesByRequestIdsResult(int,java.lang.String[]) -> b
     void onRemoveGeofencesByPendingIntentResult(int,android.app.PendingIntent) -> a
+com.google.android.gms.location.LocationListener -> com.google.android.gms.location.h:
+    void onLocationChanged(android.location.Location) -> a
 com.google.android.gms.location.LocationRequest -> com.google.android.gms.location.LocationRequest:
     int T -> a
     int mPriority -> b
@@ -6884,17 +6897,23 @@ com.google.android.gms.location.LocationRequest -> com.google.android.gms.locati
     int eC -> g
     float eD -> h
     com.google.android.gms.location.LocationRequestCreator CREATOR -> i
+    com.google.android.gms.location.LocationRequest create() -> a
+    com.google.android.gms.location.LocationRequest setPriority(int) -> a
+    com.google.android.gms.location.LocationRequest setInterval(long) -> a
+    com.google.android.gms.location.LocationRequest setFastestInterval(long) -> b
+    void c(long) -> c
+    void H(int) -> c
     int describeContents() -> describeContents
     void writeToParcel(android.os.Parcel,int) -> writeToParcel
-    java.lang.String I(int) -> a
+    java.lang.String I(int) -> b
     java.lang.String toString() -> toString
-com.google.android.gms.location.LocationRequestCreator -> com.google.android.gms.location.h:
+com.google.android.gms.location.LocationRequestCreator -> com.google.android.gms.location.i:
     com.google.android.gms.location.LocationRequest createFromParcel(android.os.Parcel) -> a
     com.google.android.gms.location.LocationRequest[] newArray(int) -> a
     void a(com.google.android.gms.location.LocationRequest,android.os.Parcel,int) -> a
     java.lang.Object[] newArray(int) -> newArray
     java.lang.Object createFromParcel(android.os.Parcel) -> createFromParcel
-com.google.android.gms.location.LocationStatusCodes -> com.google.android.gms.location.i:
+com.google.android.gms.location.LocationStatusCodes -> com.google.android.gms.location.j:
     int J(int) -> a
 com.google.android.gms.maps.CameraUpdate -> com.google.android.gms.maps.a:
     com.google.android.gms.internal.bc eR -> a
@@ -9172,18 +9191,18 @@ com.google.gson.stream.StringPool -> com.google.b.b.i:
     java.lang.String get(char[],int,int) -> a
 com.miracleas.camera.PhotoGoogleDriveActivity -> com.miracleas.a.a:
     java.lang.String mAccountName -> o
-    java.lang.String mLat -> p
-    java.lang.String mLng -> q
-    com.miracleas.imagedownloader.IImageDownloader mImageLoader -> r
-    android.net.Uri fileUri -> s
-    com.google.api.services.drive.Drive service -> t
+    java.lang.String mLat -> t
+    java.lang.String mLng -> u
+    com.miracleas.imagedownloader.IImageDownloader mImageLoader -> v
+    android.net.Uri fileUri -> w
+    com.google.api.services.drive.Drive service -> x
     com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential credential -> n
-    java.lang.String mAuth -> u
-    java.lang.String mStopName -> v
+    java.lang.String mAuth -> y
+    java.lang.String mStopName -> z
     void onCreate(android.os.Bundle) -> onCreate
     void onActivityResult(int,int,android.content.Intent) -> onActivityResult
-    void startCameraIntent() -> q
-    void saveFileToDb() -> r
+    void startCameraIntent() -> s
+    void saveFileToDb() -> t
     com.google.api.services.drive.Drive getDriveService(com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential) -> a
     void setBtnListenerOrDisable(android.widget.Button,java.lang.String,java.lang.String,java.lang.String) -> a
     boolean isIntentAvailable(android.content.Context,java.lang.String) -> a
@@ -9206,8 +9225,10 @@ com.miracleas.camera.PhotoGoogleDriveActivity -> com.miracleas.a.a:
     void saveAuthToken(java.lang.String) -> c
     java.lang.String getAuthToken() -> n
     void startUploadService() -> o
-    void startUploadServiceHelper() -> s
-    android.net.Uri access$0() -> p
+    void startUploadServiceHelper() -> u
+    void onConnectedServiceVoice() -> p
+    void onConnectedServiceLocation() -> q
+    android.net.Uri access$0() -> r
     java.lang.String access$1(com.miracleas.camera.PhotoGoogleDriveActivity) -> a
     java.lang.String access$2(com.miracleas.camera.PhotoGoogleDriveActivity) -> b
     java.lang.String access$3(com.miracleas.camera.PhotoGoogleDriveActivity) -> c
@@ -9677,14 +9698,13 @@ com.miracleas.minrute.DatePickerFragment -> com.miracleas.minrute.l:
 com.miracleas.minrute.GeofenceActivity -> com.miracleas.minrute.m:
     java.lang.String tag -> n
     int CONNECTION_FAILURE_RESOLUTION_REQUEST -> o
-    com.google.android.gms.location.LocationClient mLocationClient -> p
-    android.app.PendingIntent mGeofenceRequestIntent -> q
-    com.miracleas.minrute.GeofenceActivity$SaveGeofences mSaveGeofences -> r
-    com.miracleas.minrute.GeofenceActivity$REQUEST_TYPE mRequestType -> s
-    boolean mInProgress -> t
-    java.util.List mCurrentGeofences -> u
-    java.util.List mGeofencesToRemove -> v
-    int[] $SWITCH_TABLE$com$miracleas$minrute$GeofenceActivity$REQUEST_TYPE -> w
+    com.google.android.gms.location.LocationClient mLocationClient -> t
+    android.app.PendingIntent mGeofenceRequestIntent -> u
+    com.miracleas.minrute.GeofenceActivity$REQUEST_TYPE mRequestType -> v
+    boolean mInProgress -> w
+    java.util.List mCurrentGeofences -> x
+    java.util.List mGeofencesToRemove -> y
+    int[] $SWITCH_TABLE$com$miracleas$minrute$GeofenceActivity$REQUEST_TYPE -> z
     void onCreate(android.os.Bundle) -> onCreate
     void onConnected(android.os.Bundle) -> a
     android.app.PendingIntent getTransitionPendingIntent() -> m
@@ -9696,8 +9716,6 @@ com.miracleas.minrute.GeofenceActivity -> com.miracleas.minrute.m:
     void onConnectionFailed(com.google.android.gms.common.ConnectionResult) -> a
     void onRemoveGeofencesByPendingIntentResult(int,android.app.PendingIntent) -> a
     void onRemoveGeofencesByRequestIdsResult(int,java.lang.String[]) -> b
-    void saveGeofences(boolean) -> b
-    java.util.List access$0(com.miracleas.minrute.GeofenceActivity) -> a
     int[] $SWITCH_TABLE$com$miracleas$minrute$GeofenceActivity$REQUEST_TYPE() -> k
 com.miracleas.minrute.GeofenceActivity$REQUEST_TYPE -> com.miracleas.minrute.n:
     com.miracleas.minrute.GeofenceActivity$REQUEST_TYPE ADD -> a
@@ -9706,23 +9724,19 @@ com.miracleas.minrute.GeofenceActivity$REQUEST_TYPE -> com.miracleas.minrute.n:
     com.miracleas.minrute.GeofenceActivity$REQUEST_TYPE[] ENUM$VALUES -> d
     com.miracleas.minrute.GeofenceActivity$REQUEST_TYPE[] values() -> values
     com.miracleas.minrute.GeofenceActivity$REQUEST_TYPE valueOf(java.lang.String) -> valueOf
-com.miracleas.minrute.GeofenceActivity$SaveGeofences -> com.miracleas.minrute.o:
-    com.miracleas.minrute.GeofenceActivity this$0 -> a
-    java.lang.Void doInBackground(java.lang.Boolean[]) -> a
-    void onPostExecute(java.lang.Void) -> a
-    void onPostExecute(java.lang.Object) -> onPostExecute
-    java.lang.Object doInBackground(java.lang.Object[]) -> doInBackground
-com.miracleas.minrute.GoogleServiceActivity -> com.miracleas.minrute.p:
+com.miracleas.minrute.GoogleServiceActivity -> com.miracleas.minrute.o:
     java.lang.String tag -> n
     void onStart() -> onStart
     boolean servicesConnected() -> l
     void onConnectionFailed(com.google.android.gms.common.ConnectionResult) -> a
     void onActivityResult(int,int,android.content.Intent) -> onActivityResult
-com.miracleas.minrute.GoogleServiceActivity$ErrorDialogFragment -> com.miracleas.minrute.q:
+    void onConnectedServiceVoice() -> p
+    void onConnectedServiceLocation() -> q
+com.miracleas.minrute.GoogleServiceActivity$ErrorDialogFragment -> com.miracleas.minrute.p:
     android.app.Dialog mDialog -> Y
     void setDialog(android.app.Dialog) -> a
     android.app.Dialog onCreateDialog(android.os.Bundle) -> c
-com.miracleas.minrute.LocaleImageHandlerFragment -> com.miracleas.minrute.r:
+com.miracleas.minrute.LocaleImageHandlerFragment -> com.miracleas.minrute.q:
     android.support.v4.util.LruCache mCache -> a
     java.util.ArrayList mIdList -> b
     android.graphics.drawable.Drawable mBitmapDrawableDummy -> c
@@ -9732,7 +9746,7 @@ com.miracleas.minrute.LocaleImageHandlerFragment -> com.miracleas.minrute.r:
     void loadLocaleImage(long,java.lang.String,android.widget.ImageView) -> a
     void addBitmapToCache(java.lang.Long,android.graphics.drawable.Drawable) -> a
     void access$0(com.miracleas.minrute.LocaleImageHandlerFragment,java.lang.Long,android.graphics.drawable.Drawable) -> a
-com.miracleas.minrute.LocaleImageHandlerFragment$ImageLoader -> com.miracleas.minrute.s:
+com.miracleas.minrute.LocaleImageHandlerFragment$ImageLoader -> com.miracleas.minrute.r:
     android.widget.ImageView mView -> b
     android.net.Uri mUri -> c
     java.lang.Object tag -> d
@@ -9743,7 +9757,28 @@ com.miracleas.minrute.LocaleImageHandlerFragment$ImageLoader -> com.miracleas.mi
     void onPostExecute(android.graphics.drawable.Drawable) -> a
     void onPostExecute(java.lang.Object) -> onPostExecute
     java.lang.Object doInBackground(java.lang.Object[]) -> doInBackground
-com.miracleas.minrute.TimePickerFragment -> com.miracleas.minrute.t:
+com.miracleas.minrute.MinRuteBaseActivity -> com.miracleas.minrute.s:
+    com.miracleas.minrute.service.UpdateVoiceTripService mServiceVoice -> p
+    boolean mBoundVoice -> q
+    com.miracleas.minrute.service.LocationService mServiceLocation -> r
+    boolean mBoundLocation -> s
+    android.content.ServiceConnection mConnectionLocation -> n
+    android.content.ServiceConnection mConnectionVoice -> o
+    void onCreate(android.os.Bundle) -> onCreate
+    void connectToVoiceService() -> j
+    void connectToLocationService() -> k
+    void onDestroy() -> onDestroy
+    void onConnectedServiceVoice() -> p
+    void onConnectedServiceLocation() -> q
+com.miracleas.minrute.MinRuteBaseActivity$1 -> com.miracleas.minrute.t:
+    com.miracleas.minrute.MinRuteBaseActivity this$0 -> a
+    void onServiceConnected(android.content.ComponentName,android.os.IBinder) -> onServiceConnected
+    void onServiceDisconnected(android.content.ComponentName) -> onServiceDisconnected
+com.miracleas.minrute.MinRuteBaseActivity$2 -> com.miracleas.minrute.u:
+    com.miracleas.minrute.MinRuteBaseActivity this$0 -> a
+    void onServiceConnected(android.content.ComponentName,android.os.IBinder) -> onServiceConnected
+    void onServiceDisconnected(android.content.ComponentName) -> onServiceDisconnected
+com.miracleas.minrute.TimePickerFragment -> com.miracleas.minrute.v:
     android.app.Dialog onCreateDialog(android.os.Bundle) -> c
     void onTimeSet(android.widget.TimePicker,int,int) -> onTimeSet
     void onAttach(android.app.Activity) -> a
@@ -9753,43 +9788,50 @@ com.miracleas.minrute.TripGuideActivity -> com.miracleas.minrute.TripGuideActivi
     boolean onOptionsItemSelected(com.actionbarsherlock.view.MenuItem) -> a
     void onActivityResult(int,int,android.content.Intent) -> onActivityResult
     void onTripLegSelected(java.lang.String,java.lang.String,java.lang.String,java.lang.String) -> a
-com.miracleas.minrute.TripGuideFragment -> com.miracleas.minrute.u:
-    java.lang.String[] PROJECTION -> i
-    java.lang.String[] PROJECTION_LEGS -> Y
-    java.lang.String[] PROJECTION_JORNEY_DETAILS -> Z
-    java.lang.String[] PROJECTION_TRIP -> aa
-    com.miracleas.minrute.TripGuideFragment$TripAdapter mTripAdapter -> ab
-    long[] mLegIds -> ac
-    boolean mHasSpoken -> ad
-    java.lang.String mTextToSpeak -> ae
-    com.miracleas.minrute.TripGuideFragment$Callbacks mCallbacks -> af
-    com.miracleas.minrute.TripGuideFragment$Callbacks sDummyCallbacks -> ag
-    int MY_DATA_CHECK_CODE -> ah
-    android.speech.tts.TextToSpeech mTts -> ai
+    void onConnectedServiceVoice() -> p
+    void onConnectedServiceLocation() -> q
+com.miracleas.minrute.TripGuideFragment -> com.miracleas.minrute.w:
+    java.lang.String[] PROJECTION -> Y
+    java.lang.String[] PROJECTION_TRIP_GPS_READY -> Z
+    com.miracleas.minrute.TripGuideFragment$TripAdapter mTripAdapter -> aa
+    java.lang.String mTextToSpeak -> ab
+    java.lang.String tag -> i
+    com.miracleas.minrute.TripGuideFragment$LoadGeofencesTask mLoadGeofencesTask -> ac
+    com.miracleas.minrute.TripGuideFragment$Callbacks mCallbacks -> ad
+    com.miracleas.minrute.TripGuideFragment$Callbacks sDummyCallbacks -> ae
+    int MY_DATA_CHECK_CODE -> af
     com.miracleas.minrute.TripGuideFragment createInstance(java.lang.String,int,com.miracleas.minrute.model.TripRequest) -> a
     void onCreate(android.os.Bundle) -> a
+    void onSaveInstanceState(android.os.Bundle) -> e
     android.view.View onCreateView(android.view.LayoutInflater,android.view.ViewGroup,android.os.Bundle) -> a
     void onActivityCreated(android.os.Bundle) -> d
     android.support.v4.content.Loader onCreateLoader(int,android.os.Bundle) -> a
     void onLoadFinished(android.support.v4.content.Loader,android.database.Cursor) -> a
-    void loadTripLegs(android.database.Cursor,android.content.Intent,boolean) -> a
-    com.google.android.gms.location.Geofence loadGeofenceInfo(android.database.Cursor,boolean) -> a
-    boolean loadStartAndEndGeofences(java.util.List) -> a
+    void insertGeofencesForThisTrip() -> F
     com.google.android.gms.location.Geofence toGeofence(java.lang.String,int,double,double,float,long) -> a
     void onLoaderReset(android.support.v4.content.Loader) -> a
     void onItemClick(android.widget.AdapterView,android.view.View,int,long) -> onItemClick
     void onAttach(android.app.Activity) -> a
     void onDetach() -> c
-    void startTextSpeach() -> b
+    void startTextSpeach() -> G
     void onActivityResult(int,int,android.content.Intent) -> a
     void onDestroy() -> s
-    void onInit(int) -> onInit
+    void onConnectedService() -> b
+    void onVoiceServiceReady() -> E
     void onLoadFinished(android.support.v4.content.Loader,java.lang.Object) -> a
-com.miracleas.minrute.TripGuideFragment$1 -> com.miracleas.minrute.v:
+com.miracleas.minrute.TripGuideFragment$1 -> com.miracleas.minrute.x:
     void onTripLegSelected(java.lang.String,java.lang.String,java.lang.String,java.lang.String) -> a
-com.miracleas.minrute.TripGuideFragment$Callbacks -> com.miracleas.minrute.w:
+com.miracleas.minrute.TripGuideFragment$Callbacks -> com.miracleas.minrute.y:
     void onTripLegSelected(java.lang.String,java.lang.String,java.lang.String,java.lang.String) -> a
-com.miracleas.minrute.TripGuideFragment$TripAdapter -> com.miracleas.minrute.x:
+com.miracleas.minrute.TripGuideFragment$LoadGeofencesTask -> com.miracleas.minrute.z:
+    java.lang.String[] projection -> b
+    com.miracleas.minrute.TripGuideFragment this$0 -> a
+    java.util.List doInBackground(java.lang.String[]) -> a
+    int getRadius(java.lang.String) -> a
+    void onPostExecute(java.util.List) -> a
+    void onPostExecute(java.lang.Object) -> onPostExecute
+    java.lang.Object doInBackground(java.lang.Object[]) -> doInBackground
+com.miracleas.minrute.TripGuideFragment$TripAdapter -> com.miracleas.minrute.aa:
     int iDestName -> k
     int iOriginName -> l
     int iOriginRouteId -> m
@@ -9822,7 +9864,7 @@ com.miracleas.minrute.TripGuideFragment$TripAdapter -> com.miracleas.minrute.x:
     java.lang.String getType(int) -> b
     java.lang.String getOriginName(int) -> c
     java.lang.String getDestName(int) -> d
-com.miracleas.minrute.TripLegDetailNotesDialog -> com.miracleas.minrute.y:
+com.miracleas.minrute.TripLegDetailNotesDialog -> com.miracleas.minrute.ab:
     java.lang.String tag -> Y
     android.widget.LinearLayout mContainerNotes -> Z
     java.lang.String[] PROJECTION_NOTES -> aa
@@ -9836,15 +9878,15 @@ com.miracleas.minrute.TripLegDetailNotesDialog -> com.miracleas.minrute.y:
     void onLoaderReset(android.support.v4.content.Loader) -> a
     void onLoadFinished(android.support.v4.content.Loader,java.lang.Object) -> a
 com.miracleas.minrute.TripLegDetailsActivity -> com.miracleas.minrute.TripLegDetailsActivity:
-    long mJourneyId -> p
-    java.lang.String mLegId -> q
-    java.lang.String mTransportType -> r
+    long mJourneyId -> t
+    java.lang.String mLegId -> u
+    java.lang.String mTransportType -> v
     void onCreate(android.os.Bundle) -> onCreate
     boolean onCreateOptionsMenu(com.actionbarsherlock.view.Menu) -> a
     boolean onOptionsItemSelected(com.actionbarsherlock.view.MenuItem) -> a
     void onStopSelected(java.lang.String,java.lang.String,java.lang.String,java.lang.String,java.lang.String) -> a
     void setJourneyDetailId(long,java.lang.String,java.lang.String) -> a
-com.miracleas.minrute.TripLegDetailsFragment -> com.miracleas.minrute.z:
+com.miracleas.minrute.TripLegDetailsFragment -> com.miracleas.minrute.ac:
     java.lang.String[] PROJECTION -> i
     java.lang.String[] PROJECTION_STOP -> Y
     com.miracleas.minrute.TripLegDetailsFragment$TripAdapter mTripAdapter -> Z
@@ -9864,13 +9906,13 @@ com.miracleas.minrute.TripLegDetailsFragment -> com.miracleas.minrute.z:
     void onAttach(android.app.Activity) -> a
     void onDetach() -> c
     void onLoadFinished(android.support.v4.content.Loader,java.lang.Object) -> a
-com.miracleas.minrute.TripLegDetailsFragment$1 -> com.miracleas.minrute.aa:
+com.miracleas.minrute.TripLegDetailsFragment$1 -> com.miracleas.minrute.ad:
     void onStopSelected(java.lang.String,java.lang.String,java.lang.String,java.lang.String,java.lang.String) -> a
     void setJourneyDetailId(long,java.lang.String,java.lang.String) -> a
-com.miracleas.minrute.TripLegDetailsFragment$Callbacks -> com.miracleas.minrute.ab:
+com.miracleas.minrute.TripLegDetailsFragment$Callbacks -> com.miracleas.minrute.ae:
     void onStopSelected(java.lang.String,java.lang.String,java.lang.String,java.lang.String,java.lang.String) -> a
     void setJourneyDetailId(long,java.lang.String,java.lang.String) -> a
-com.miracleas.minrute.TripLegDetailsFragment$TripAdapter -> com.miracleas.minrute.ac:
+com.miracleas.minrute.TripLegDetailsFragment$TripAdapter -> com.miracleas.minrute.af:
     int iArrTime -> k
     int iDepTime -> l
     int iLat -> m
@@ -9893,7 +9935,9 @@ com.miracleas.minrute.TripLegMapActivity -> com.miracleas.minrute.TripLegMapActi
     boolean onCreateOptionsMenu(com.actionbarsherlock.view.Menu) -> a
     boolean onOptionsItemSelected(com.actionbarsherlock.view.MenuItem) -> a
     void onStopSelected(java.lang.String,java.lang.String,java.lang.String,java.lang.String,java.lang.String) -> a
-com.miracleas.minrute.TripLegMapFragment -> com.miracleas.minrute.ad:
+    void onConnectedServiceVoice() -> p
+    void onConnectedServiceLocation() -> q
+com.miracleas.minrute.TripLegMapFragment -> com.miracleas.minrute.ag:
     android.os.Handler mHandler -> b
     boolean mStartUp -> c
     android.widget.ProgressBar mProgressBar -> d
@@ -9928,15 +9972,15 @@ com.miracleas.minrute.TripLegMapFragment -> com.miracleas.minrute.ad:
     android.location.Location getCenterLocation() -> F
     void onLoadFinished(android.support.v4.content.Loader,java.lang.Object) -> a
     android.location.Location access$1(com.miracleas.minrute.TripLegMapFragment) -> a
-com.miracleas.minrute.TripLegMapFragment$1 -> com.miracleas.minrute.ae:
+com.miracleas.minrute.TripLegMapFragment$1 -> com.miracleas.minrute.ah:
     void onStopSelected(java.lang.String,java.lang.String,java.lang.String,java.lang.String,java.lang.String) -> a
-com.miracleas.minrute.TripLegMapFragment$2 -> com.miracleas.minrute.af:
+com.miracleas.minrute.TripLegMapFragment$2 -> com.miracleas.minrute.ai:
     com.miracleas.minrute.TripLegMapFragment this$0 -> a
     android.view.View val$mapView -> b
     void onGlobalLayout() -> onGlobalLayout
-com.miracleas.minrute.TripLegMapFragment$Callbacks -> com.miracleas.minrute.ag:
+com.miracleas.minrute.TripLegMapFragment$Callbacks -> com.miracleas.minrute.aj:
     void onStopSelected(java.lang.String,java.lang.String,java.lang.String,java.lang.String,java.lang.String) -> a
-com.miracleas.minrute.TripLegMapFragment$LegStop -> com.miracleas.minrute.ah:
+com.miracleas.minrute.TripLegMapFragment$LegStop -> com.miracleas.minrute.ak:
     com.google.android.gms.maps.model.LatLng latLng -> a
     int dbId -> b
     float distance -> c
@@ -9946,9 +9990,9 @@ com.miracleas.minrute.TripLegMapFragment$LegStop -> com.miracleas.minrute.ah:
     com.miracleas.minrute.TripLegMapFragment this$0 -> g
 com.miracleas.minrute.TripStopDetailsActivity -> com.miracleas.minrute.TripStopDetailsActivity:
     com.miracleas.minrute.TripStopDetailsActivity$SectionsPagerAdapter mSectionsPagerAdapter -> o
-    android.support.v4.view.ViewPager mViewPager -> p
-    com.miracleas.minrute.model.NearbyLocationRequest mNearbyLocationRequest -> q
-    java.lang.String mTransportType -> r
+    android.support.v4.view.ViewPager mViewPager -> t
+    com.miracleas.minrute.model.NearbyLocationRequest mNearbyLocationRequest -> u
+    java.lang.String mTransportType -> v
     void onCreate(android.os.Bundle) -> onCreate
     boolean onCreateOptionsMenu(com.actionbarsherlock.view.Menu) -> a
     boolean onOptionsItemSelected(com.actionbarsherlock.view.MenuItem) -> a
@@ -9956,19 +10000,19 @@ com.miracleas.minrute.TripStopDetailsActivity -> com.miracleas.minrute.TripStopD
     void onTabSelected(com.actionbarsherlock.app.ActionBar$Tab,android.support.v4.app.FragmentTransaction) -> a
     void onTabUnselected(com.actionbarsherlock.app.ActionBar$Tab,android.support.v4.app.FragmentTransaction) -> b
     void onTabReselected(com.actionbarsherlock.app.ActionBar$Tab,android.support.v4.app.FragmentTransaction) -> c
-    void navigateToDirectionMap() -> q
+    void navigateToDirectionMap() -> s
     com.miracleas.minrute.model.NearbyLocationRequest access$0(com.miracleas.minrute.TripStopDetailsActivity) -> a
     java.lang.String access$1(com.miracleas.minrute.TripStopDetailsActivity) -> b
-com.miracleas.minrute.TripStopDetailsActivity$1 -> com.miracleas.minrute.ai:
+com.miracleas.minrute.TripStopDetailsActivity$1 -> com.miracleas.minrute.al:
     com.miracleas.minrute.TripStopDetailsActivity this$0 -> a
     com.actionbarsherlock.app.ActionBar val$actionBar -> b
     void onPageSelected(int) -> a
-com.miracleas.minrute.TripStopDetailsActivity$SectionsPagerAdapter -> com.miracleas.minrute.aj:
+com.miracleas.minrute.TripStopDetailsActivity$SectionsPagerAdapter -> com.miracleas.minrute.am:
     com.miracleas.minrute.TripStopDetailsActivity this$0 -> a
     android.support.v4.app.Fragment getItem(int) -> a
     int getCount() -> b
     java.lang.CharSequence getPageTitle(int) -> c
-com.miracleas.minrute.TripStopDetailsDepartureBoardFragment -> com.miracleas.minrute.ak:
+com.miracleas.minrute.TripStopDetailsDepartureBoardFragment -> com.miracleas.minrute.an:
     java.lang.String[] PROJECTION_DEPARTURE -> a
     com.miracleas.minrute.TripStopDetailsDepartureBoardFragment$TripAdapter mTripAdapter -> b
     android.widget.ListView mListView -> c
@@ -9987,7 +10031,7 @@ com.miracleas.minrute.TripStopDetailsDepartureBoardFragment -> com.miracleas.min
     void setEmptyView(android.view.View) -> a
     void onClick(android.view.View) -> onClick
     void onLoadFinished(android.support.v4.content.Loader,java.lang.Object) -> a
-com.miracleas.minrute.TripStopDetailsDepartureBoardFragment$TripAdapter -> com.miracleas.minrute.al:
+com.miracleas.minrute.TripStopDetailsDepartureBoardFragment$TripAdapter -> com.miracleas.minrute.ao:
     int iDate -> k
     int iDirection -> l
     int iRef -> m
@@ -10000,7 +10044,7 @@ com.miracleas.minrute.TripStopDetailsDepartureBoardFragment$TripAdapter -> com.m
     void bindView(android.view.View,android.content.Context,android.database.Cursor) -> a
     android.view.View newView(android.content.Context,android.database.Cursor,android.view.ViewGroup) -> a
     android.database.Cursor swapCursor(android.database.Cursor) -> b
-com.miracleas.minrute.TripStopDetailsFragment -> com.miracleas.minrute.am:
+com.miracleas.minrute.TripStopDetailsFragment -> com.miracleas.minrute.ap:
     java.lang.String tag -> a
     android.widget.TableLayout mTblLayout -> b
     android.widget.TextView mTextViewTitle -> c
@@ -10014,9 +10058,9 @@ com.miracleas.minrute.TripStopDetailsFragment -> com.miracleas.minrute.am:
     void onLoadFinished(android.support.v4.content.Loader,java.lang.Object) -> a
 com.miracleas.minrute.TripStopDetailsImagePagerActivity -> com.miracleas.minrute.TripStopDetailsImagePagerActivity:
     java.lang.String[] PROJECTION -> o
-    com.miracleas.imagedownloader.IImageDownloader mImageLoader -> p
-    com.miracleas.minrute.TripStopDetailsImagePagerActivity$ImagePagerAdapter mAdapter -> q
-    android.support.v4.view.ViewPager mPager -> r
+    com.miracleas.imagedownloader.IImageDownloader mImageLoader -> t
+    com.miracleas.minrute.TripStopDetailsImagePagerActivity$ImagePagerAdapter mAdapter -> u
+    android.support.v4.view.ViewPager mPager -> v
     void onCreate(android.os.Bundle) -> onCreate
     boolean onOptionsItemSelected(com.actionbarsherlock.view.MenuItem) -> a
     void onClick(android.view.View) -> onClick
@@ -10025,16 +10069,16 @@ com.miracleas.minrute.TripStopDetailsImagePagerActivity -> com.miracleas.minrute
     void onLoadFinished(android.support.v4.content.Loader,android.database.Cursor) -> a
     void onLoaderReset(android.support.v4.content.Loader) -> a
     void onLoadFinished(android.support.v4.content.Loader,java.lang.Object) -> a
-com.miracleas.minrute.TripStopDetailsImagePagerActivity$1 -> com.miracleas.minrute.an:
+com.miracleas.minrute.TripStopDetailsImagePagerActivity$1 -> com.miracleas.minrute.aq:
     com.miracleas.minrute.TripStopDetailsImagePagerActivity this$0 -> a
     android.app.ActionBar val$actionBar -> b
     void onSystemUiVisibilityChange(int) -> onSystemUiVisibilityChange
-com.miracleas.minrute.TripStopDetailsImagePagerActivity$ImagePagerAdapter -> com.miracleas.minrute.ao:
+com.miracleas.minrute.TripStopDetailsImagePagerActivity$ImagePagerAdapter -> com.miracleas.minrute.ar:
     com.miracleas.minrute.model.MyLittleImage[] mImages -> b
     com.miracleas.minrute.TripStopDetailsImagePagerActivity this$0 -> a
     int getCount() -> b
     android.support.v4.app.Fragment getItem(int) -> a
-com.miracleas.minrute.TripStopDetailsImagePagerFragmentItem -> com.miracleas.minrute.ap:
+com.miracleas.minrute.TripStopDetailsImagePagerFragmentItem -> com.miracleas.minrute.as:
     com.miracleas.minrute.model.MyLittleImage mImg -> d
     android.widget.ImageView mImageView -> e
     com.miracleas.imagedownloader.IImageDownloader mImageDownloaderActivity -> f
@@ -10048,7 +10092,7 @@ com.miracleas.minrute.TripStopDetailsImagePagerFragmentItem -> com.miracleas.min
     void onDestroy() -> s
     int getImageHeight() -> b
     int getImageWidth() -> E
-com.miracleas.minrute.TripStopDetailsImagesFragment -> com.miracleas.minrute.aq:
+com.miracleas.minrute.TripStopDetailsImagesFragment -> com.miracleas.minrute.at:
     java.lang.String tag -> d
     android.widget.ImageButton btnClose -> g
     boolean mIsTablet -> h
@@ -10089,17 +10133,17 @@ com.miracleas.minrute.TripStopDetailsImagesFragment -> com.miracleas.minrute.aq:
     android.widget.GridView access$6(com.miracleas.minrute.TripStopDetailsImagesFragment) -> e
     int access$7(com.miracleas.minrute.TripStopDetailsImagesFragment) -> f
     int access$8(com.miracleas.minrute.TripStopDetailsImagesFragment) -> g
-com.miracleas.minrute.TripStopDetailsImagesFragment$1 -> com.miracleas.minrute.ar:
+com.miracleas.minrute.TripStopDetailsImagesFragment$1 -> com.miracleas.minrute.au:
     com.miracleas.minrute.TripStopDetailsImagesFragment this$0 -> a
     void onReceive(android.content.Context,android.content.Intent) -> onReceive
-com.miracleas.minrute.TripStopDetailsImagesFragment$2 -> com.miracleas.minrute.as:
+com.miracleas.minrute.TripStopDetailsImagesFragment$2 -> com.miracleas.minrute.av:
     com.miracleas.minrute.TripStopDetailsImagesFragment this$0 -> a
     void onScrollStateChanged(android.widget.AbsListView,int) -> onScrollStateChanged
     void onScroll(android.widget.AbsListView,int,int,int) -> onScroll
-com.miracleas.minrute.TripStopDetailsImagesFragment$3 -> com.miracleas.minrute.at:
+com.miracleas.minrute.TripStopDetailsImagesFragment$3 -> com.miracleas.minrute.aw:
     com.miracleas.minrute.TripStopDetailsImagesFragment this$0 -> a
     void onGlobalLayout() -> onGlobalLayout
-com.miracleas.minrute.TripStopDetailsImagesFragment$ImageAdapter -> com.miracleas.minrute.au:
+com.miracleas.minrute.TripStopDetailsImagesFragment$ImageAdapter -> com.miracleas.minrute.ax:
     android.content.Context mContext -> k
     int mNumColumns -> l
     int mActionBarHeight -> m
@@ -10119,7 +10163,9 @@ com.miracleas.minrute.TripSuggestionsActivity -> com.miracleas.minrute.TripSugge
     boolean onCreateOptionsMenu(com.actionbarsherlock.view.Menu) -> a
     boolean onOptionsItemSelected(com.actionbarsherlock.view.MenuItem) -> a
     void onTripSuggestionSelected(java.lang.String,int,com.miracleas.minrute.model.TripRequest) -> a
-com.miracleas.minrute.TripSuggestionsFragment -> com.miracleas.minrute.av:
+    void onConnectedServiceLocation() -> q
+    void onConnectedServiceVoice() -> p
+com.miracleas.minrute.TripSuggestionsFragment -> com.miracleas.minrute.ay:
     java.lang.String[] PROJECTION -> a
     com.miracleas.minrute.TripSuggestionsFragment$TripAdapter mTripAdapter -> b
     android.widget.ListView mListView -> c
@@ -10139,24 +10185,22 @@ com.miracleas.minrute.TripSuggestionsFragment -> com.miracleas.minrute.av:
     void onDetach() -> c
     void setEmptyView(android.view.View) -> a
     void onLoadFinished(android.support.v4.content.Loader,java.lang.Object) -> a
-com.miracleas.minrute.TripSuggestionsFragment$1 -> com.miracleas.minrute.aw:
+com.miracleas.minrute.TripSuggestionsFragment$1 -> com.miracleas.minrute.az:
     void onTripSuggestionSelected(java.lang.String,int,com.miracleas.minrute.model.TripRequest) -> a
-com.miracleas.minrute.TripSuggestionsFragment$Callbacks -> com.miracleas.minrute.ax:
+com.miracleas.minrute.TripSuggestionsFragment$Callbacks -> com.miracleas.minrute.ba:
     void onTripSuggestionSelected(java.lang.String,int,com.miracleas.minrute.model.TripRequest) -> a
-com.miracleas.minrute.TripSuggestionsFragment$TripAdapter -> com.miracleas.minrute.ay:
+com.miracleas.minrute.TripSuggestionsFragment$TripAdapter -> com.miracleas.minrute.bb:
     int iArrivalTime -> k
-    int iArrivalInTime -> l
-    int iDepatureTime -> m
-    int iDepatureInTime -> n
-    int iDuration -> o
-    int iLegCount -> p
-    int iLegNames -> q
-    int iLegTypes -> r
-    int iTransportChanges -> s
-    int iDurationBus -> t
-    int iDurationWalk -> u
-    int iDurationTrain -> v
-    android.view.LayoutInflater mInf -> w
+    int iDepatureTime -> l
+    int iDuration -> m
+    int iLegCount -> n
+    int iLegNames -> o
+    int iLegTypes -> p
+    int iTransportChanges -> q
+    int iDurationBus -> r
+    int iDurationWalk -> s
+    int iDurationTrain -> t
+    android.view.LayoutInflater mInf -> u
     com.miracleas.minrute.TripSuggestionsFragment this$0 -> j
     void bindView(android.view.View,android.content.Context,android.database.Cursor) -> a
     android.view.View newView(android.content.Context,android.database.Cursor,android.view.ViewGroup) -> a
@@ -10222,19 +10266,15 @@ com.miracleas.minrute.model.Trip -> com.miracleas.minrute.model.e:
     void addLeg(com.miracleas.minrute.model.TripLeg) -> a
     void addName(java.lang.String,java.lang.String) -> a
     void addType(java.lang.String) -> a
-    long getDeparturesInTime() -> a
-    long getArrivesInTime() -> b
     void incrementCount(com.miracleas.minrute.model.TripLeg) -> b
-    long getTotalDuration() -> c
-    long getDurationWalk() -> d
-    long getDurationBus() -> e
-    long getDurationTrain() -> f
-    int getTransportChanges() -> g
-    int getLegCount() -> h
-    java.lang.String getDepatureTime() -> i
-    java.lang.String getArrivalTime() -> j
-    java.lang.String getNames() -> k
-    java.lang.String getTypes() -> l
+    long getTotalDuration() -> a
+    int getTransportChanges() -> b
+    int getLegCount() -> c
+    java.lang.String getDepatureTime() -> d
+    long getDepatureTimeLong() -> e
+    java.lang.String getArrivalTime() -> f
+    java.lang.String getNames() -> g
+    java.lang.String getTypes() -> h
 com.miracleas.minrute.model.TripLeg -> com.miracleas.minrute.model.f:
     java.lang.String tripId -> a
     java.lang.String name -> b
@@ -10249,8 +10289,7 @@ com.miracleas.minrute.model.TripLeg -> com.miracleas.minrute.model.f:
     java.util.Calendar end -> k
     long getDuration() -> a
     java.lang.String getFormattedDuration() -> b
-    long getDeparturesIn() -> c
-    long getArrivesIn() -> d
+    long getDepartures() -> c
     int getIcon(java.lang.String) -> a
     boolean isTrain(java.lang.String) -> b
 com.miracleas.minrute.model.TripLocation -> com.miracleas.minrute.model.g:
@@ -10327,7 +10366,15 @@ com.miracleas.minrute.net.AddressFetcher -> com.miracleas.minrute.a.a:
     void rejseplanenAddressSearch() -> g
     void parse(java.io.InputStream) -> a
     void saveLocation(org.xmlpull.v1.XmlPullParser,int) -> a
-com.miracleas.minrute.net.BaseFetcher -> com.miracleas.minrute.a.b:
+com.miracleas.minrute.net.AddressToGPSFetcher -> com.miracleas.minrute.a.b:
+    java.lang.String tag -> a
+    java.lang.String mSearchTerm -> m
+    long mUpdated -> n
+    void doWork() -> a
+    void rejseplanenAddressSearch() -> g
+    void parse(java.io.InputStream) -> a
+    void saveLocation(org.xmlpull.v1.XmlPullParser,int) -> a
+com.miracleas.minrute.net.BaseFetcher -> com.miracleas.minrute.a.c:
     java.lang.String tag -> b
     android.content.Context mContext -> c
     android.content.ContentResolver mContentResolver -> d
@@ -10350,7 +10397,7 @@ com.miracleas.minrute.net.BaseFetcher -> com.miracleas.minrute.a.b:
     void broadcastError(java.lang.String,boolean) -> a
     java.net.HttpURLConnection initHttpURLConnection(java.lang.String) -> c
     void exportDatabase() -> f
-com.miracleas.minrute.net.DepartureBoardFetcher -> com.miracleas.minrute.a.c:
+com.miracleas.minrute.net.DepartureBoardFetcher -> com.miracleas.minrute.a.d:
     java.lang.String tag -> a
     java.lang.String[] PROJECTION -> m
     java.lang.String mSearchId -> n
@@ -10360,7 +10407,7 @@ com.miracleas.minrute.net.DepartureBoardFetcher -> com.miracleas.minrute.a.c:
     void fetchSearchIdForCurrentStop() -> g
     void parse(java.io.InputStream) -> a
     void insertStopLocation(com.miracleas.minrute.model.StopDeparture) -> a
-com.miracleas.minrute.net.JourneyDetailFetcher -> com.miracleas.minrute.a.d:
+com.miracleas.minrute.net.JourneyDetailFetcher -> com.miracleas.minrute.a.e:
     java.lang.String tag -> a
     java.lang.String mUrl -> m
     java.util.List mIds -> n
@@ -10375,25 +10422,23 @@ com.miracleas.minrute.net.JourneyDetailFetcher -> com.miracleas.minrute.a.d:
     java.util.List mUrls -> w
     boolean start() -> c
     void doWork() -> a
-    void fetchJourneyDetails() -> i
+    void fetchJourneyDetails() -> h
     void save() -> g
-    java.util.ArrayList getDbOperations() -> h
-    void addContentProviderOperations(java.util.ArrayList) -> a
     void parse(java.io.InputStream) -> a
     void saveStop(org.xmlpull.v1.XmlPullParser,com.miracleas.minrute.model.JourneyDetail) -> a
     void saveNote(org.xmlpull.v1.XmlPullParser,com.miracleas.minrute.model.JourneyDetail) -> b
     void saveJourneyName(org.xmlpull.v1.XmlPullParser,com.miracleas.minrute.model.JourneyDetail) -> c
     void saveJourneyType(org.xmlpull.v1.XmlPullParser,com.miracleas.minrute.model.JourneyDetail) -> d
-    com.miracleas.minrute.model.JourneyDetail createNewJourneyDetail() -> j
+    com.miracleas.minrute.model.JourneyDetail createNewJourneyDetail() -> i
     void updateJourneyDetail(com.miracleas.minrute.model.JourneyDetail) -> a
     void onFatalError() -> e
-com.miracleas.minrute.net.JourneyDetailFetcher$MyImage -> com.miracleas.minrute.a.e:
+com.miracleas.minrute.net.JourneyDetailFetcher$MyImage -> com.miracleas.minrute.a.f:
     java.lang.String lat -> a
     java.lang.String lng -> b
     java.lang.String url -> c
     java.lang.String stopName -> d
     com.miracleas.minrute.net.JourneyDetailFetcher this$0 -> e
-com.miracleas.minrute.net.StopsNearbyFetcher -> com.miracleas.minrute.a.f:
+com.miracleas.minrute.net.StopsNearbyFetcher -> com.miracleas.minrute.a.g:
     java.lang.String tag -> a
     java.lang.String[] PROJECTION -> m
     com.miracleas.minrute.model.NearbyLocationRequest mRequest -> n
@@ -10403,16 +10448,17 @@ com.miracleas.minrute.net.StopsNearbyFetcher -> com.miracleas.minrute.a.f:
     void parse(java.io.InputStream) -> a
     void updateStopLocation(org.xmlpull.v1.XmlPullParser) -> a
     java.lang.String getSearchId() -> g
-com.miracleas.minrute.net.TripFetcher -> com.miracleas.minrute.a.g:
+com.miracleas.minrute.net.TripFetcher -> com.miracleas.minrute.a.h:
     java.lang.String tag -> a
     long mUpdated -> m
     java.lang.StringBuilder b -> n
     com.miracleas.minrute.utils.DateHelper mDateHelper -> o
     com.miracleas.minrute.model.TripRequest mTripRequest -> p
+    boolean mFoundDestination -> q
     void doWork() -> a
     void tripSearch(com.miracleas.minrute.model.TripRequest) -> a
     void parse(java.io.InputStream) -> a
-    com.miracleas.minrute.model.TripLocation getTripLegValues(org.xmlpull.v1.XmlPullParser) -> a
+    com.miracleas.minrute.model.TripLocation getTripLegValues(org.xmlpull.v1.XmlPullParser,boolean) -> a
     com.miracleas.minrute.model.Trip createNewTrip() -> g
     void updateTrip(com.miracleas.minrute.model.Trip) -> a
     void saveLeg(com.miracleas.minrute.model.TripLeg,int) -> a
@@ -10420,33 +10466,38 @@ com.miracleas.minrute.net.TripFetcher -> com.miracleas.minrute.a.g:
     void addRequest(java.lang.String,java.lang.String) -> a
     void addTransportRequest(java.lang.String,int) -> a
     void addArrivalRequest(java.lang.String,int) -> b
-com.miracleas.minrute.provider.AddressProviderMetaData -> com.miracleas.minrute.provider.a:
+com.miracleas.minrute.provider.AddressGPSMetaData -> com.miracleas.minrute.provider.a:
     java.lang.String getTableSchema() -> a
-com.miracleas.minrute.provider.AddressProviderMetaData$TableMetaData -> com.miracleas.minrute.provider.b:
+com.miracleas.minrute.provider.AddressGPSMetaData$TableMetaData -> com.miracleas.minrute.provider.b:
     android.net.Uri CONTENT_URI -> a
-com.miracleas.minrute.provider.GeofenceMetaData -> com.miracleas.minrute.provider.c:
+    java.lang.String type_int -> b
+com.miracleas.minrute.provider.AddressProviderMetaData -> com.miracleas.minrute.provider.c:
     java.lang.String getTableSchema() -> a
-com.miracleas.minrute.provider.GeofenceMetaData$TableMetaData -> com.miracleas.minrute.provider.d:
+com.miracleas.minrute.provider.AddressProviderMetaData$TableMetaData -> com.miracleas.minrute.provider.d:
     android.net.Uri CONTENT_URI -> a
-com.miracleas.minrute.provider.JourneyDetailMetaData -> com.miracleas.minrute.provider.e:
+com.miracleas.minrute.provider.GeofenceTransitionMetaData -> com.miracleas.minrute.provider.e:
     java.lang.String getTableSchema() -> a
-com.miracleas.minrute.provider.JourneyDetailMetaData$TableMetaData -> com.miracleas.minrute.provider.f:
+com.miracleas.minrute.provider.GeofenceTransitionMetaData$TableMetaData -> com.miracleas.minrute.provider.f:
     android.net.Uri CONTENT_URI -> a
-com.miracleas.minrute.provider.JourneyDetailNoteMetaData -> com.miracleas.minrute.provider.g:
+com.miracleas.minrute.provider.JourneyDetailMetaData -> com.miracleas.minrute.provider.g:
     java.lang.String getTableSchema() -> a
-com.miracleas.minrute.provider.JourneyDetailNoteMetaData$TableMetaData -> com.miracleas.minrute.provider.h:
+com.miracleas.minrute.provider.JourneyDetailMetaData$TableMetaData -> com.miracleas.minrute.provider.h:
     android.net.Uri CONTENT_URI -> a
-com.miracleas.minrute.provider.JourneyDetailStopDeparturesMetaData -> com.miracleas.minrute.provider.i:
+com.miracleas.minrute.provider.JourneyDetailNoteMetaData -> com.miracleas.minrute.provider.i:
     java.lang.String getTableSchema() -> a
-com.miracleas.minrute.provider.JourneyDetailStopDeparturesMetaData$TableMetaData -> com.miracleas.minrute.provider.j:
+com.miracleas.minrute.provider.JourneyDetailNoteMetaData$TableMetaData -> com.miracleas.minrute.provider.j:
     android.net.Uri CONTENT_URI -> a
-com.miracleas.minrute.provider.JourneyDetailStopImagesMetaData -> com.miracleas.minrute.provider.k:
+com.miracleas.minrute.provider.JourneyDetailStopDeparturesMetaData -> com.miracleas.minrute.provider.k:
     java.lang.String getTableSchema() -> a
-com.miracleas.minrute.provider.JourneyDetailStopImagesMetaData$TableMetaData -> com.miracleas.minrute.provider.l:
+com.miracleas.minrute.provider.JourneyDetailStopDeparturesMetaData$TableMetaData -> com.miracleas.minrute.provider.l:
     android.net.Uri CONTENT_URI -> a
-com.miracleas.minrute.provider.JourneyDetailStopMetaData -> com.miracleas.minrute.provider.m:
+com.miracleas.minrute.provider.JourneyDetailStopImagesMetaData -> com.miracleas.minrute.provider.m:
     java.lang.String getTableSchema() -> a
-com.miracleas.minrute.provider.JourneyDetailStopMetaData$TableMetaData -> com.miracleas.minrute.provider.n:
+com.miracleas.minrute.provider.JourneyDetailStopImagesMetaData$TableMetaData -> com.miracleas.minrute.provider.n:
+    android.net.Uri CONTENT_URI -> a
+com.miracleas.minrute.provider.JourneyDetailStopMetaData -> com.miracleas.minrute.provider.o:
+    java.lang.String getTableSchema() -> a
+com.miracleas.minrute.provider.JourneyDetailStopMetaData$TableMetaData -> com.miracleas.minrute.provider.p:
     android.net.Uri CONTENT_URI -> a
 com.miracleas.minrute.provider.MinBusTurProvider -> com.miracleas.minrute.provider.MinBusTurProvider:
     java.lang.String tag -> b
@@ -10460,36 +10511,137 @@ com.miracleas.minrute.provider.MinBusTurProvider -> com.miracleas.minrute.provid
     int update(android.net.Uri,android.content.ContentValues,java.lang.String,java.lang.String[]) -> update
     android.content.ContentProviderResult[] applyBatch(java.util.ArrayList) -> applyBatch
     java.lang.String access$0() -> a
-com.miracleas.minrute.provider.MinBusTurProvider$DatabaseHelper -> com.miracleas.minrute.provider.o:
+com.miracleas.minrute.provider.MinBusTurProvider$DatabaseHelper -> com.miracleas.minrute.provider.q:
     void onCreate(android.database.sqlite.SQLiteDatabase) -> onCreate
     java.lang.String getTableSchemaStart() -> a
     java.lang.String getTableSchemaEnd() -> b
     void onUpgrade(android.database.sqlite.SQLiteDatabase,int,int) -> onUpgrade
-com.miracleas.minrute.provider.TripLegImageMetaData -> com.miracleas.minrute.provider.p:
+com.miracleas.minrute.provider.TripLegImageMetaData -> com.miracleas.minrute.provider.r:
     java.lang.String getTableSchema() -> a
-com.miracleas.minrute.provider.TripLegImageMetaData$TableMetaData -> com.miracleas.minrute.provider.q:
+com.miracleas.minrute.provider.TripLegImageMetaData$TableMetaData -> com.miracleas.minrute.provider.s:
     android.net.Uri CONTENT_URI -> a
-com.miracleas.minrute.provider.TripLegMetaData -> com.miracleas.minrute.provider.r:
+com.miracleas.minrute.provider.TripLegMetaData -> com.miracleas.minrute.provider.t:
     java.lang.String getTableSchema() -> a
-com.miracleas.minrute.provider.TripLegMetaData$TableMetaData -> com.miracleas.minrute.provider.s:
+com.miracleas.minrute.provider.TripLegMetaData$TableMetaData -> com.miracleas.minrute.provider.u:
     android.net.Uri CONTENT_URI -> a
-com.miracleas.minrute.provider.TripMetaData -> com.miracleas.minrute.provider.t:
+com.miracleas.minrute.provider.TripMetaData -> com.miracleas.minrute.provider.v:
     java.lang.String getTableSchema() -> a
-com.miracleas.minrute.provider.TripMetaData$TableMetaData -> com.miracleas.minrute.provider.u:
+com.miracleas.minrute.provider.TripMetaData$TableMetaData -> com.miracleas.minrute.provider.w:
     android.net.Uri CONTENT_URI -> a
 com.miracleas.minrute.service.DepartureBoardsService -> com.miracleas.minrute.service.DepartureBoardsService:
     void onHandleIntent(android.content.Intent) -> onHandleIntent
-com.miracleas.minrute.service.JourneyDetailsGeofenceService -> com.miracleas.minrute.service.JourneyDetailsGeofenceService:
+com.miracleas.minrute.service.FetchGpsOnMissingAddressesService -> com.miracleas.minrute.service.FetchGpsOnMissingAddressesService:
+    java.lang.String[] PROJECTION_LEGS -> a
+    java.lang.String[] PROJECTION_ADDRESS -> b
+    boolean mHasStartLocation -> c
+    boolean mHasStopLocation -> d
+    android.content.ContentResolver cr -> e
+    void onCreate() -> onCreate
     void onHandleIntent(android.content.Intent) -> onHandleIntent
+    void fetchGpsOnMissingAddresses(java.lang.String) -> a
+    void insertStartAndEndLocationsForTrip(com.miracleas.minrute.model.TripRequest) -> a
+    boolean insertAddress(java.lang.String,java.lang.String,java.lang.String) -> a
+    void markAllGpsAddressesIsLoaded(java.lang.String) -> b
+    java.util.List fetchStopLocationNames(java.lang.String) -> c
+    void fetchGPSForAddresses(java.util.List) -> a
+    java.util.List getRequestedAddesses(android.database.Cursor) -> a
+    java.util.List getCachedAddresses(java.lang.String) -> d
+    java.lang.String createStopLocationNamesQuery(java.util.List) -> b
 com.miracleas.minrute.service.JourneyDetailsService -> com.miracleas.minrute.service.JourneyDetailsService:
     void onHandleIntent(android.content.Intent) -> onHandleIntent
+com.miracleas.minrute.service.LocationService -> com.miracleas.minrute.service.LocationService:
+    java.lang.String tag -> a
+    android.os.IBinder mBinder -> b
+    com.google.android.gms.location.LocationRequest mLocationRequest -> c
+    com.google.android.gms.location.LocationClient mLocationClient -> d
+    boolean mUpdatesRequested -> e
+    boolean mIsLocationStarted -> f
+    android.content.SharedPreferences mPrefs -> g
+    android.content.SharedPreferences$Editor mEditor -> h
+    void onCreate() -> onCreate
+    int onStartCommand(android.content.Intent,int,int) -> onStartCommand
+    android.os.IBinder onBind(android.content.Intent) -> onBind
+    void startLocationListening() -> b
+    void stopLocationListening() -> c
+    void onLocationChanged(android.location.Location) -> a
+    void onConnected(android.os.Bundle) -> a
+    void onDisconnected() -> a
+    void onConnectionFailed(com.google.android.gms.common.ConnectionResult) -> a
+com.miracleas.minrute.service.LocationService$LocalBinder -> com.miracleas.minrute.service.a:
+    com.miracleas.minrute.service.LocationService this$0 -> a
+    com.miracleas.minrute.service.LocationService getService() -> a
 com.miracleas.minrute.service.ReceiveTransitionsIntentService -> com.miracleas.minrute.service.ReceiveTransitionsIntentService:
     java.lang.String tag -> a
     void onHandleIntent(android.content.Intent) -> onHandleIntent
-com.miracleas.minrute.service.RemoveGeofencesService -> com.miracleas.minrute.service.a:
+com.miracleas.minrute.service.RemoveGeofencesService -> com.miracleas.minrute.service.b:
     void onHandleIntent(android.content.Intent) -> onHandleIntent
 com.miracleas.minrute.service.TripService -> com.miracleas.minrute.service.TripService:
     void onHandleIntent(android.content.Intent) -> onHandleIntent
+com.miracleas.minrute.service.UpdateVoiceTripService -> com.miracleas.minrute.service.UpdateVoiceTripService:
+    java.lang.String tag -> a
+    android.os.Handler handler -> b
+    android.os.IBinder mBinder -> c
+    com.miracleas.minrute.utils.DateHelper mDateHelper -> d
+    java.lang.String mTripId -> e
+    long mDeparturesIn -> f
+    android.speech.tts.TextToSpeech mTts -> g
+    java.lang.String mTextToSpeak -> h
+    com.miracleas.minrute.service.UpdateVoiceTripService$TransistionObserver mTransistionObserver -> i
+    java.lang.Runnable runnable -> j
+    com.miracleas.minrute.service.UpdateVoiceTripService$LoadDepartueTask mLoadDepartueTask -> k
+    com.miracleas.minrute.service.UpdateVoiceTripService$OnVoiceServiceReadyListener mOnVoiceServiceReadyListener -> l
+    com.miracleas.minrute.service.UpdateVoiceTripService$LoadNewTransitionTask mLoadNewTransitionTask -> m
+    int onStartCommand(android.content.Intent,int,int) -> onStartCommand
+    android.os.IBinder onBind(android.content.Intent) -> onBind
+    void onCreate() -> onCreate
+    void onDestroy() -> onDestroy
+    void startTextToSpeech() -> a
+    void onInit(int) -> onInit
+    void playVoice(java.lang.String) -> a
+    void stopVoices() -> b
+    boolean isVoiceInitialized() -> c
+    void startDepartureTimer() -> e
+    long getTickTime() -> f
+    void stopDepartureHandler() -> d
+    void updateDepartureVoice() -> g
+    void initVoiceService(java.lang.String,com.miracleas.minrute.service.UpdateVoiceTripService$OnVoiceServiceReadyListener) -> a
+    void loadTransition() -> h
+    java.lang.String access$0(com.miracleas.minrute.service.UpdateVoiceTripService) -> a
+    void access$1(com.miracleas.minrute.service.UpdateVoiceTripService) -> b
+    long access$2(com.miracleas.minrute.service.UpdateVoiceTripService) -> c
+    android.os.Handler access$3(com.miracleas.minrute.service.UpdateVoiceTripService) -> d
+    java.lang.Runnable access$4(com.miracleas.minrute.service.UpdateVoiceTripService) -> e
+    void access$5(com.miracleas.minrute.service.UpdateVoiceTripService,long) -> a
+    com.miracleas.minrute.service.UpdateVoiceTripService$OnVoiceServiceReadyListener access$6(com.miracleas.minrute.service.UpdateVoiceTripService) -> f
+    void access$7(com.miracleas.minrute.service.UpdateVoiceTripService,com.miracleas.minrute.service.UpdateVoiceTripService$OnVoiceServiceReadyListener) -> a
+    void access$8(com.miracleas.minrute.service.UpdateVoiceTripService) -> g
+com.miracleas.minrute.service.UpdateVoiceTripService$1 -> com.miracleas.minrute.service.c:
+    com.miracleas.minrute.service.UpdateVoiceTripService this$0 -> a
+    void run() -> run
+com.miracleas.minrute.service.UpdateVoiceTripService$LoadDepartueTask -> com.miracleas.minrute.service.d:
+    com.miracleas.minrute.service.UpdateVoiceTripService this$0 -> a
+    java.lang.Long doInBackground(java.lang.Void[]) -> a
+    void onPostExecute(java.lang.Long) -> a
+    void onPostExecute(java.lang.Object) -> onPostExecute
+    java.lang.Object doInBackground(java.lang.Object[]) -> doInBackground
+com.miracleas.minrute.service.UpdateVoiceTripService$LoadNewTransitionTask -> com.miracleas.minrute.service.e:
+    com.miracleas.minrute.service.UpdateVoiceTripService this$0 -> a
+    java.lang.Integer doInBackground(java.lang.Void[]) -> a
+    int getVoiceRessouce(java.lang.String,int) -> a
+    int getEnterRessourceVoice(java.lang.String) -> a
+    int getExitRessourceVoice(java.lang.String) -> b
+    void onPostExecute(java.lang.Integer) -> a
+    void onPostExecute(java.lang.Object) -> onPostExecute
+    java.lang.Object doInBackground(java.lang.Object[]) -> doInBackground
+com.miracleas.minrute.service.UpdateVoiceTripService$LocalBinder -> com.miracleas.minrute.service.f:
+    com.miracleas.minrute.service.UpdateVoiceTripService this$0 -> a
+    com.miracleas.minrute.service.UpdateVoiceTripService getService() -> a
+com.miracleas.minrute.service.UpdateVoiceTripService$OnVoiceServiceReadyListener -> com.miracleas.minrute.service.g:
+    void onVoiceServiceReady() -> E
+com.miracleas.minrute.service.UpdateVoiceTripService$TransistionObserver -> com.miracleas.minrute.service.h:
+    com.miracleas.minrute.service.UpdateVoiceTripService this$0 -> a
+    boolean deliverSelfNotifications() -> deliverSelfNotifications
+    void onChange(boolean) -> onChange
 com.miracleas.minrute.service.UploadImagesService -> com.miracleas.minrute.service.UploadImagesService:
     com.google.api.services.drive.Drive service -> b
     com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential credential -> a
@@ -10501,7 +10653,7 @@ com.miracleas.minrute.service.UploadImagesService -> com.miracleas.minrute.servi
     com.google.api.services.drive.Drive getDriveService(com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential) -> a
     android.os.IBinder onBind(android.content.Intent) -> onBind
     void access$0(com.miracleas.minrute.service.UploadImagesService,long,java.lang.String,java.lang.String,java.lang.String) -> a
-com.miracleas.minrute.service.UploadImagesService$UploadImages -> com.miracleas.minrute.service.b:
+com.miracleas.minrute.service.UploadImagesService$UploadImages -> com.miracleas.minrute.service.i:
     com.miracleas.minrute.service.UploadImagesService this$0 -> a
     java.lang.Void doInBackground(java.lang.Void[]) -> a
     void onPostExecute(java.lang.Void) -> a
@@ -10518,13 +10670,16 @@ com.miracleas.minrute.utils.DateHelper -> com.miracleas.minrute.b.b:
     java.text.SimpleDateFormat formatterInternational -> b
     java.text.SimpleDateFormat formatterTime -> c
     java.text.SimpleDateFormat formatterDateRejseplanen -> d
-    java.lang.String mDays -> e
-    java.lang.String mHours -> f
-    java.lang.String mMinutes -> g
-    java.lang.String mSeconds -> h
+    android.content.Context c -> e
+    boolean mVoice -> f
     java.util.Calendar parseToCalendar(java.lang.String,java.text.SimpleDateFormat) -> a
+    void setVoice(boolean) -> a
     java.lang.String convertDateToString(java.util.Calendar,java.text.SimpleDateFormat) -> a
     java.lang.String getDurationLabel(long,boolean) -> a
+    java.lang.String getDay(int) -> a
+    java.lang.String getHour(int) -> b
+    java.lang.String getMintues(int) -> c
+    java.lang.String getSeconds(int) -> d
 com.miracleas.minrute.utils.MyPrefs -> com.miracleas.minrute.b.c:
     void setString(android.content.Context,java.lang.String,java.lang.String) -> a
     java.lang.String getString(android.content.Context,java.lang.String,java.lang.String) -> b

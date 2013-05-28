@@ -2491,31 +2491,18 @@ com.google.android.gms.internal.bz:
     public java.util.ArrayList getParticipantIds()
     public java.lang.String getParticipantId(java.lang.String)
 com.google.android.gms.internal.c
-com.google.android.gms.internal.ca$a:
-    public ca$a()
 com.google.android.gms.internal.cd:
     public android.location.Location getLastLocation()
-    public void requestLocationUpdates(com.google.android.gms.location.LocationRequest,com.google.android.gms.location.LocationListener,android.os.Looper)
     public void requestLocationUpdates(com.google.android.gms.location.LocationRequest,android.app.PendingIntent)
     public void removeLocationUpdates(com.google.android.gms.location.LocationListener)
     public void removeLocationUpdates(android.app.PendingIntent)
-com.google.android.gms.internal.cd$a
-com.google.android.gms.internal.cd$b:
-    cd$b(com.google.android.gms.location.LocationListener,android.os.Looper)
 com.google.android.gms.internal.ce:
     public void requestActivityUpdates(long,android.app.PendingIntent)
     public void removeActivityUpdates(android.app.PendingIntent)
     public android.location.Location getLastLocation()
-    public void requestLocationUpdates(com.google.android.gms.location.LocationRequest,com.google.android.gms.location.LocationListener)
-    public void requestLocationUpdates(com.google.android.gms.location.LocationRequest,com.google.android.gms.location.LocationListener,android.os.Looper)
     public void requestLocationUpdates(com.google.android.gms.location.LocationRequest,android.app.PendingIntent)
     public void removeLocationUpdates(com.google.android.gms.location.LocationListener)
     public void removeLocationUpdates(android.app.PendingIntent)
-    static synthetic void a(com.google.android.gms.internal.ce)
-com.google.android.gms.internal.ce$c:
-    public void n()
-com.google.android.gms.internal.ch:
-    public abstract void n()
 com.google.android.gms.internal.ck$a:
     public ck$a()
 com.google.android.gms.internal.cm$a:
@@ -2824,12 +2811,10 @@ com.google.android.gms.location.Geofence:
 com.google.android.gms.location.LocationClient:
     public static final java.lang.String KEY_LOCATION_CHANGED
     public android.location.Location getLastLocation()
-    public void requestLocationUpdates(com.google.android.gms.location.LocationRequest,com.google.android.gms.location.LocationListener)
     public void requestLocationUpdates(com.google.android.gms.location.LocationRequest,com.google.android.gms.location.LocationListener,android.os.Looper)
     public void requestLocationUpdates(com.google.android.gms.location.LocationRequest,android.app.PendingIntent)
     public void removeLocationUpdates(com.google.android.gms.location.LocationListener)
     public void removeLocationUpdates(android.app.PendingIntent)
-    public boolean isConnected()
     public boolean isConnecting()
     public void registerConnectionCallbacks(com.google.android.gms.common.GooglePlayServicesClient$ConnectionCallbacks)
     public boolean isConnectionCallbacksRegistered(com.google.android.gms.common.GooglePlayServicesClient$ConnectionCallbacks)
@@ -2837,17 +2822,12 @@ com.google.android.gms.location.LocationClient:
     public void registerConnectionFailedListener(com.google.android.gms.common.GooglePlayServicesClient$OnConnectionFailedListener)
     public boolean isConnectionFailedListenerRegistered(com.google.android.gms.common.GooglePlayServicesClient$OnConnectionFailedListener)
     public void unregisterConnectionFailedListener(com.google.android.gms.common.GooglePlayServicesClient$OnConnectionFailedListener)
-com.google.android.gms.location.LocationListener
 com.google.android.gms.location.LocationRequest:
     public static final int PRIORITY_HIGH_ACCURACY
     public static final int PRIORITY_BALANCED_POWER_ACCURACY
     public static final int PRIORITY_NO_POWER
-    public static com.google.android.gms.location.LocationRequest create()
-    public com.google.android.gms.location.LocationRequest setPriority(int)
     public int getPriority()
-    public com.google.android.gms.location.LocationRequest setInterval(long)
     public long getInterval()
-    public com.google.android.gms.location.LocationRequest setFastestInterval(long)
     public long getFastestInterval()
     public com.google.android.gms.location.LocationRequest setExpirationDuration(long)
     public com.google.android.gms.location.LocationRequest setExpirationTime(long)
@@ -2856,8 +2836,6 @@ com.google.android.gms.location.LocationRequest:
     public int getNumUpdates()
     public com.google.android.gms.location.LocationRequest setSmallestDisplacement(float)
     public float getSmallestDisplacement()
-    private static void c(long)
-    private static void H(int)
     private static void a(float)
 com.google.android.gms.location.LocationRequestCreator:
     public static final int CONTENT_DESCRIPTION
@@ -4684,12 +4662,12 @@ com.miracleas.camera.PhotoGoogleDriveActivity:
     static final int CAPTURE_IMAGE
     static final java.lang.String AUTH_TOKEN
     private static final java.lang.String CACHE_DIR
-    183:224:private void saveFileToDrive()
-    233:241:public void showToast(java.lang.String)
-    393:393:public int getPlaceHolderRessource()
-    399:401:public void setImageFadeIn(boolean)
-    420:422:public void setContext(android.content.Context)
-    62:62:static synthetic com.google.api.services.drive.Drive access$4()
+    184:225:private void saveFileToDrive()
+    234:242:public void showToast(java.lang.String)
+    394:394:public int getPlaceHolderRessource()
+    400:402:public void setImageFadeIn(boolean)
+    421:423:public void setContext(android.content.Context)
+    63:63:static synthetic com.google.api.services.drive.Drive access$4()
 com.miracleas.camera.PhotoGoogleDriveActivity$3
 com.miracleas.camera.PhotoGoogleDriveActivity$4
 com.miracleas.camera.PhotoIntentActivity
@@ -4823,8 +4801,7 @@ com.miracleas.minrute.ChooseOriginDestFragmentContactsBase$ImageLoader
 com.miracleas.minrute.ChooseOriginDestFragmentContactsBase$LoadContactAddress
 com.miracleas.minrute.ChooseOriginDestFragmentContactsBase$LoadContactRun
 com.miracleas.minrute.GeofenceActivity:
-    211:243:public void removeGeofences(java.util.List)
-    283:283:public void onLocationChanged(android.location.Location)
+    208:240:public void removeGeofences(java.util.List)
 com.miracleas.minrute.GoogleServiceActivity:
     private static final int CONNECTION_FAILURE_RESOLUTION_REQUEST
 com.miracleas.minrute.LoaderConstants
@@ -4867,15 +4844,24 @@ com.miracleas.minrute.TripStopDetailsImagesFragment:
     private static final int LOAD_TOILET_IMAGES
     251:267:public void resetLoader(android.os.Bundle)
 com.miracleas.minrute.TripSuggestionsFragment$TripAdapter:
+    private int iArrivalInTime
     private int iDurationIC
 com.miracleas.minrute.model.AddressSearch
 com.miracleas.minrute.model.JourneyDetail:
     public int routeIdXfrom
     public int routeIdXto
+com.miracleas.minrute.model.NearbyLocationRequest:
+    41:41:public boolean hasGPSChoords()
+    46:46:public boolean hasLocationName()
 com.miracleas.minrute.model.StopDeparture:
     public java.lang.String stopId
 com.miracleas.minrute.model.Trip:
-    164:169:public java.lang.String getDepaturesAt()
+    43:48:public long getDeparturesInTime()
+    53:58:public long getArrivesInTime()
+    115:115:public long getDurationWalk()
+    120:120:public long getDurationBus()
+    125:125:public long getDurationTrain()
+    170:175:public java.lang.String getDepaturesAt()
 com.miracleas.minrute.model.TripLeg:
     public static final java.lang.String TYPE_BUS
     public static final java.lang.String TYPE_WALK
@@ -4886,7 +4872,9 @@ com.miracleas.minrute.model.TripLeg:
     public static final java.lang.String TYPE_EXB
     public static final java.lang.String TYPE_TB
     public java.lang.String updated
-    91:98:private android.text.format.Time getTime(java.lang.String)
+    71:76:public long getDeparturesIn()
+    91:96:public long getArrivesIn()
+    101:108:private android.text.format.Time getTime(java.lang.String)
 com.miracleas.minrute.model.TripRequest:
     172:187:public void setViaId(java.lang.String)
     218:219:public void setUseTog(int)
@@ -4894,6 +4882,8 @@ com.miracleas.minrute.model.TripRequest:
     234:235:public void setUseMetro(int)
 com.miracleas.minrute.net.AddressFetcher:
     public static final java.lang.String URL
+com.miracleas.minrute.net.AddressToGPSFetcher:
+    private static final java.lang.String URL
 com.miracleas.minrute.net.BaseFetcher:
     public static final java.lang.String CONTENT_TYPE
     public static final java.lang.String CONTENT_TYPE_JSON
@@ -4908,28 +4898,46 @@ com.miracleas.minrute.net.BaseFetcher:
     public static final java.lang.String ARGS_FORCE_UPDATE
     public static final java.lang.String BASE_URL
     protected static final int TIME_OUT
-    162:162:public static void resetLoadingState(android.content.Context)
-    185:190:protected void broadcastSuccess()
-    194:198:protected void broadcastLoading()
-    202:206:protected void log(java.lang.String,java.lang.String)
-    221:226:protected java.net.HttpURLConnection initPostHttpURLConnection(java.lang.String)
-    230:236:protected java.lang.String getPostBody()
-    242:246:protected java.lang.StringBuilder addToPostBodyUrlEncoded(java.lang.String,java.lang.String)
-    250:254:protected java.lang.StringBuilder addToPostBody(java.lang.String,java.lang.String)
-    259:260:protected void writePostRequest(java.net.HttpURLConnection)
-    264:270:protected void writePostRequest(java.net.HttpURLConnection,java.lang.String)
-    274:282:protected org.json.JSONObject getJsonResponse(java.io.InputStream,java.lang.String)
-    288:293:protected java.lang.String safeNextText(org.xmlpull.v1.XmlPullParser)
+    159:159:public static void resetLoadingState(android.content.Context)
+    182:187:protected void broadcastSuccess()
+    191:195:protected void broadcastLoading()
+    199:203:protected void log(java.lang.String,java.lang.String)
+    218:223:protected java.net.HttpURLConnection initPostHttpURLConnection(java.lang.String)
+    227:233:protected java.lang.String getPostBody()
+    239:243:protected java.lang.StringBuilder addToPostBodyUrlEncoded(java.lang.String,java.lang.String)
+    247:251:protected java.lang.StringBuilder addToPostBody(java.lang.String,java.lang.String)
+    256:257:protected void writePostRequest(java.net.HttpURLConnection)
+    261:267:protected void writePostRequest(java.net.HttpURLConnection,java.lang.String)
+    271:279:protected org.json.JSONObject getJsonResponse(java.io.InputStream,java.lang.String)
+    285:290:protected java.lang.String safeNextText(org.xmlpull.v1.XmlPullParser)
 com.miracleas.minrute.net.DepartureBoardFetcher:
     public static final java.lang.String URL
 com.miracleas.minrute.net.JourneyDetailFetcher:
     public static final java.lang.String URL
+    174:174:public java.util.ArrayList getDbOperations()
+    179:180:public void addContentProviderOperations(java.util.ArrayList)
 com.miracleas.minrute.net.StopsNearbyFetcher:
     public static final java.lang.String URL
 com.miracleas.minrute.net.TripFetcher:
     public static final java.lang.String URL
     public static final java.lang.String TRIP_REQUEST
 com.miracleas.minrute.net.Utils
+com.miracleas.minrute.provider.AddressGPSMetaData:
+    public static final java.lang.String PROVIDER_NAME
+    public static final java.lang.String PACKAGE_NAME
+    public static final java.lang.String AUTHORITY
+    public static final java.lang.String COLLECTION_TYPE
+    public static final java.lang.String ITEM_TYPE
+    public static final java.lang.String TABLE_NAME
+    24:26:private AddressGPSMetaData()
+com.miracleas.minrute.provider.AddressGPSMetaData$TableMetaData:
+    public static final java.lang.String CONTENT_TYPE
+    public static final java.lang.String CONTENT_ITEM_TYPE
+    public static final java.lang.String ADDRESS
+    public static final java.lang.String LATITUDE_Y
+    public static final java.lang.String LONGITUDE_X
+    public static final java.lang.String updated
+    44:46:private AddressGPSMetaData$TableMetaData()
 com.miracleas.minrute.provider.AddressProviderMetaData:
     public static final java.lang.String PROVIDER_NAME
     public static final java.lang.String PACKAGE_NAME
@@ -4950,22 +4958,21 @@ com.miracleas.minrute.provider.AddressProviderMetaData$TableMetaData:
     public static final java.lang.String id
     public static final java.lang.String updated
     36:38:private AddressProviderMetaData$TableMetaData()
-com.miracleas.minrute.provider.GeofenceMetaData:
+com.miracleas.minrute.provider.GeofenceTransitionMetaData:
     public static final java.lang.String PROVIDER_NAME
     public static final java.lang.String PACKAGE_NAME
     public static final java.lang.String AUTHORITY
     public static final java.lang.String COLLECTION_TYPE
     public static final java.lang.String ITEM_TYPE
     public static final java.lang.String TABLE_NAME
-    15:17:private GeofenceMetaData()
-com.miracleas.minrute.provider.GeofenceMetaData$TableMetaData:
+    15:17:private GeofenceTransitionMetaData()
+com.miracleas.minrute.provider.GeofenceTransitionMetaData$TableMetaData:
     public static final java.lang.String CONTENT_TYPE
     public static final java.lang.String CONTENT_ITEM_TYPE
-    public static final java.lang.String geofence_id
-    public static final java.lang.String geofence_lat
-    public static final java.lang.String geofence_lng
+    public static final java.lang.String GEOFENCE_TRANSITION_TYPE
+    public static final java.lang.String TRIP_LEG_ID
     public static final java.lang.String updated
-    32:34:private GeofenceMetaData$TableMetaData()
+    31:33:private GeofenceTransitionMetaData$TableMetaData()
 com.miracleas.minrute.provider.JourneyDetailMetaData:
     public static final java.lang.String PROVIDER_NAME
     public static final java.lang.String PACKAGE_NAME
@@ -5094,11 +5101,13 @@ com.miracleas.minrute.provider.MinBusTurProvider:
     private static final int INCOMING_JOURNEY_DETAIL_STOP_COLLECTION_URI_INDICATOR
     private static final int INCOMING_SINGLE_JOURNEY_DETAIL_STOP_URI_INDICATOR
     private static final int INCOMING_JOURNEY_DETAIL_NOTE_COLLECTION_URI_INDICATOR
-    private static final int INCOMING_GEOFENCE_COLLECTION_URI_INDICATOR
-    private static final int INCOMING_SINGLE_GEOFENCE_URI_INDICATOR
     private static final int INCOMING_STOP_IMAGE_COLLECTION_URI_INDICATOR
     private static final int INCOMING_SINGLE_STOP_IMAGE_URI_INDICATOR
     private static final int INCOMING_STOP_DEPARTURES_COLLECTION_URI_INDICATOR
+    private static final int INCOMING_TRIP_VOICE_COLLECTION_URI_INDICATOR
+    private static final int INCOMING_SINGLE_TRIP_VOICE_URI_INDICATOR
+    private static final int INCOMING_ADDRESS_GPS_COLLECTION_URI_INDICATOR
+    private static final int INCOMING_TRIP_LEG_ADDRESS_GPS_JOIN_URI_INDICATOR
 com.miracleas.minrute.provider.RouteMetaData
 com.miracleas.minrute.provider.RouteMetaData$TableMetaData
 com.miracleas.minrute.provider.RouteWaypointMetaData
@@ -5184,25 +5193,13 @@ com.miracleas.minrute.provider.TripMetaData$TableMetaData:
     public static final java.lang.String DURATION_BUS
     public static final java.lang.String DURATION_WALK
     public static final java.lang.String updated
-    public static final java.lang.String ARRIVES_IN_TIME_LABEL
-    public static final java.lang.String DEPATURES_IN_TIME_LABEL
-    public static final java.lang.String DEPATURES_IN_TIME
-    46:48:private TripMetaData$TableMetaData()
+    public static final java.lang.String DEPATURES_TIME_LONG
+    public static final java.lang.String HAS_ALL_ADDRESS_GPSES
+    47:49:private TripMetaData$TableMetaData()
 com.miracleas.minrute.service.DepartureBoardsService:
     public static final java.lang.String REQUEST
     public static final java.lang.String STOP_ID
-com.miracleas.minrute.service.JourneyDetailsGeofenceService:
-    public static final java.lang.String ADDRESS
-    public static final java.lang.String ADDRESS1
-    public static final java.lang.String ADDRESS2
-    public static final java.lang.String ADDRESS3
-    public static final java.lang.String ADDRESS4
-    public static final java.lang.String URL
-    public static final java.lang.String URL1
-    public static final java.lang.String URL2
-    public static final java.lang.String LEG
-    public static final java.lang.String LEG_ID1
-    public static final java.lang.String LEG_ID2
+com.miracleas.minrute.service.FetchGpsOnMissingAddressesService:
     public static final java.lang.String TRIP_ID
 com.miracleas.minrute.service.JourneyDetailsService:
     public static final java.lang.String ADDRESS_ORIGIN
@@ -5210,13 +5207,35 @@ com.miracleas.minrute.service.JourneyDetailsService:
     public static final java.lang.String URL
     public static final java.lang.String LEG
     public static final java.lang.String TRIP_ID
+com.miracleas.minrute.service.LocationService:
+    public static final int UPDATE_INTERVAL_IN_SECONDS
+    private static final long UPDATE_INTERVAL
+    private static final int FASTEST_INTERVAL_IN_SECONDS
+    private static final long FASTEST_INTERVAL
 com.miracleas.minrute.service.RemoveGeofencesService:
     14:15:public RemoveGeofencesService(java.lang.String)
+com.miracleas.minrute.service.UpdateVoiceTripService:
+    private static final long FOURTY_FIVE_MINUTES
+    private static final long ONE_HOUR_FOURTY_FIVE_MINUTES
+    private static final long TEN_MINUTES
+    private static final long FIFTEEN_MINUTES
+    private static final long FIVE_MINUTES
+    private static final long ONE_MINUTE
+    private static final long TWO_MINUTE
+    private static final long TWO_HOURS
+    private static final long TEN_SECONDS
+    private static final long TEN_SECONDS_MINUS
+    174:174:public java.lang.String getTextToSpeak()
+    179:180:public void setTextToSpeak(java.lang.String)
+    286:286:public java.lang.String getTripId()
+    291:292:public void setTripId(java.lang.String)
 com.miracleas.minrute.utils.App:
     4:4:public App()
 com.miracleas.minrute.utils.DateHelper:
-    45:45:public static java.lang.String convertCalendarToString(java.util.Calendar,java.text.SimpleDateFormat)
-    50:53:public static java.util.Calendar parseISO8601(java.lang.String)
+    41:41:public boolean isVoice()
+    56:56:public static java.lang.String convertCalendarToString(java.util.Calendar,java.text.SimpleDateFormat)
+    61:64:public static java.util.Calendar parseISO8601(java.lang.String)
+    71:71:public void setVoices(java.lang.String,java.lang.String,java.lang.String,java.lang.String)
 com.miracleas.minrute.utils.MyPrefs:
     public static final java.lang.String PREFS_NAME
     public static final java.lang.String GOOGLE_DRIVE_AUTH

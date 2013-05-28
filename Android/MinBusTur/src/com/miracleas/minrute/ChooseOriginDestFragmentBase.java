@@ -230,7 +230,7 @@ public abstract class ChooseOriginDestFragmentBase extends SherlockFragment impl
 	{
 		Calendar c = Calendar.getInstance();
 		c.set(Calendar.HOUR_OF_DAY, hourOfDay);
-		c.set(Calendar.MONTH, minute);
+		c.set(Calendar.MINUTE, minute);
 		mTextViewTime.setText(getTimeFormat(c));
 		mTripRequest.setTime(DateHelper.convertDateToString(c, DateHelper.formatterTime));
 	}

@@ -158,7 +158,7 @@ public class UpdateVoiceTripService extends Service implements android.speech.tt
 		{
 			Log.e(tag, "Voice is not ready");
 			mTextToSpeak = voice;
-			startTextToSpeech();
+			//startTextToSpeech();
 		}
 	}
 	
