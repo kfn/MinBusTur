@@ -37,13 +37,21 @@
         android:gravity="center_vertical"
         android:textSize="17sp" />
 
-    
+    <TextView
+        android:id="@+id/textViewDestName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/textViewOriginName"
+        android:layout_marginTop="4dp"
+        android:drawablePadding="10dp" android:text="Skolegade 5, 8000 Aarhus C"
+        android:gravity="center_vertical"
+        android:textSize="17sp" />
 
     <TextView
         android:id="@+id/textViewNotes"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" android:text="Retning; mod Skolen"
-        android:layout_below="@+id/textViewOriginName"
+        android:layout_below="@+id/textViewDestName"
         android:layout_marginTop="4dp"
         android:drawableLeft="@drawable/ic_menu_info_details"
         android:drawablePadding="10dp"

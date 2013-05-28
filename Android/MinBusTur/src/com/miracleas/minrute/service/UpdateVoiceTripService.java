@@ -24,6 +24,7 @@ import android.os.Binder;
 import android.os.Handler;
 import android.os.IBinder;
 import android.speech.tts.TextToSpeech;
+import android.text.TextUtils;
 import android.text.format.DateUtils;
 import android.util.Log;
 
@@ -88,7 +89,7 @@ public class UpdateVoiceTripService extends Service implements android.speech.tt
 		mDateHelper.setVoice(true);
 		mTransistionObserver = new TransistionObserver(handler);
 		getContentResolver().registerContentObserver(
-				GeofenceTransitionMetaData.TableMetaData.CONTENT_URI, true,
+				GeofenceTransitionMetaData.TableMetaData.CONTENT_URI, false,
 				mTransistionObserver);
 		Log.d(tag, "onCreate");
 	}
@@ -378,7 +379,7 @@ public class UpdateVoiceTripService extends Service implements android.speech.tt
 	}
 	private void loadTransition()
 	{
-		if(mLoadNewTransitionTask==null || mLoadNewTransitionTask.getStatus()==AsyncTask.Status.FINISHED)
+		if(!TextUtils.isEmpty(mTripId) && mLoadNewTransitionTask==null || mLoadNewTransitionTask.getStatus()==AsyncTask.Status.FINISHED)
 		{
 			mLoadNewTransitionTask = new LoadNewTransitionTask();
 			mLoadNewTransitionTask.execute(null,null,null);
@@ -397,7 +398,7 @@ public class UpdateVoiceTripService extends Service implements android.speech.tt
 			try
 			{
 				long now = System.currentTimeMillis() - (DateUtils.SECOND_IN_MILLIS * 5);
-				String[] projection = { TripLegMetaData.TableMetaData.GEOFENCE_EVENT_ID,  TripLegMetaData.TableMetaData.TYPE, TripLegMetaData.TableMetaData.STEP_NUMBER};
+				String[] projection = { TripLegMetaData.TableMetaData.GEOFENCE_EVENT_ID,  TripLegMetaData.TableMetaData.TYPE, TripLegMetaData.TableMetaData.STEP_NUMBER, TripLegMetaData.TableMetaData.updated};
 				String selection = TripLegMetaData.TableMetaData.TRIP_ID + "=? AND "+TripLegMetaData.TableMetaData.updated + ">? AND "+TripLegMetaData.TableMetaData.GEOFENCE_EVENT_ID+"!=?";
 				String[] selectionArgs = {mTripId,now+"", "0"};
 				

@@ -35,8 +35,6 @@ android.support.v4.app.BackStackRecord:
     346:346:public int getBreadCrumbShortTitleRes()
     350:353:public java.lang.CharSequence getBreadCrumbTitle()
     357:360:public java.lang.CharSequence getBreadCrumbShortTitle()
-    421:421:public android.support.v4.app.FragmentTransaction replace(int,android.support.v4.app.Fragment)
-    425:430:public android.support.v4.app.FragmentTransaction replace(int,android.support.v4.app.Fragment,java.lang.String)
     443:448:public android.support.v4.app.FragmentTransaction hide(android.support.v4.app.Fragment)
     452:457:public android.support.v4.app.FragmentTransaction show(android.support.v4.app.Fragment)
     479:479:public android.support.v4.app.FragmentTransaction setCustomAnimations(int,int)
@@ -169,7 +167,6 @@ android.support.v4.app.FragmentTransaction:
     public static final int TRANSIT_FRAGMENT_OPEN
     public static final int TRANSIT_FRAGMENT_CLOSE
     public static final int TRANSIT_FRAGMENT_FADE
-    public abstract android.support.v4.app.FragmentTransaction replace(int,android.support.v4.app.Fragment)
     public abstract android.support.v4.app.FragmentTransaction replace(int,android.support.v4.app.Fragment,java.lang.String)
     public abstract android.support.v4.app.FragmentTransaction hide(android.support.v4.app.Fragment)
     public abstract android.support.v4.app.FragmentTransaction show(android.support.v4.app.Fragment)
@@ -4283,7 +4280,6 @@ com.google.api.services.drive.model.File:
     428:429:public com.google.api.services.drive.model.File setDefaultOpenWithLink(java.lang.String)
     437:437:public java.lang.String getDescription()
     445:446:public com.google.api.services.drive.model.File setDescription(java.lang.String)
-    455:455:public java.lang.String getDownloadUrl()
     464:465:public com.google.api.services.drive.model.File setDownloadUrl(java.lang.String)
     473:473:public java.lang.Boolean getEditable()
     481:482:public com.google.api.services.drive.model.File setEditable(java.lang.Boolean)
@@ -4662,12 +4658,12 @@ com.miracleas.camera.PhotoGoogleDriveActivity:
     static final int CAPTURE_IMAGE
     static final java.lang.String AUTH_TOKEN
     private static final java.lang.String CACHE_DIR
-    184:225:private void saveFileToDrive()
-    234:242:public void showToast(java.lang.String)
-    394:394:public int getPlaceHolderRessource()
-    400:402:public void setImageFadeIn(boolean)
-    421:423:public void setContext(android.content.Context)
-    63:63:static synthetic com.google.api.services.drive.Drive access$4()
+    189:230:private void saveFileToDrive()
+    239:247:public void showToast(java.lang.String)
+    401:401:public int getPlaceHolderRessource()
+    407:409:public void setImageFadeIn(boolean)
+    428:430:public void setContext(android.content.Context)
+    64:64:static synthetic com.google.api.services.drive.Drive access$4()
 com.miracleas.camera.PhotoGoogleDriveActivity$3
 com.miracleas.camera.PhotoGoogleDriveActivity$4
 com.miracleas.camera.PhotoIntentActivity
@@ -4720,6 +4716,7 @@ com.miracleas.imagedownloader.DiskLruCache$Snapshot:
     868:868:public com.miracleas.imagedownloader.DiskLruCache$Editor edit()
     884:884:public java.lang.String getString(int)
 com.miracleas.imagedownloader.IImageDownloader:
+    public static final java.lang.String CACHE_DIR
     public static final java.lang.String IMAGE_CACHE_DIR
     public static final int DEFAULT_MEM_CACHE_SIZE
     public static final int DEFAULT_DISK_CACHE_SIZE
@@ -4745,7 +4742,7 @@ com.miracleas.imagedownloader.ImageFetcher:
     private static final java.lang.String HTTP_CACHE_DIR
     private static final int IO_BUFFER_SIZE
     private static final int DISK_CACHE_INDEX
-    114:116:public ImageFetcher(android.content.Context,int,int)
+    113:115:public ImageFetcher(android.content.Context,int,int)
 com.miracleas.imagedownloader.ImageResizer:
     private static final java.lang.String TAG
     49:53:public void setContext(android.content.Context)
@@ -4785,23 +4782,22 @@ com.miracleas.imagedownloader.Utils:
     40:53:public static void enableStrictMode()
 com.miracleas.minrute.BuildConfig
 com.miracleas.minrute.ChooseOriginDestFragment:
-    61:64:public static com.miracleas.minrute.ChooseOriginDestFragment createInstance()
-    560:570:private void onAddressSelected2(boolean)
-com.miracleas.minrute.ChooseOriginDestFragment$AutoCompleteAddressAdapter:
-    468:483:public int getPosition(java.lang.String)
+    60:63:public static com.miracleas.minrute.ChooseOriginDestFragment createInstance()
+    383:393:private void onAddressSelected2(boolean)
 com.miracleas.minrute.ChooseOriginDestFragment$LoadTrips:
-    513:513:private ChooseOriginDestFragment$LoadTrips(com.miracleas.minrute.ChooseOriginDestFragment)
+    330:330:private ChooseOriginDestFragment$LoadTrips(com.miracleas.minrute.ChooseOriginDestFragment)
 com.miracleas.minrute.ChooseOriginDestFragmentBase:
     protected static final int THRESHOLD
     android.widget.ArrayAdapter adapter
-    public abstract void textChangedHelper(java.lang.CharSequence,int)
+com.miracleas.minrute.ChooseOriginDestFragmentBase$AutoCompleteAddressAdapter:
+    465:480:public int getPosition(java.lang.String)
 com.miracleas.minrute.ChooseOriginDestFragmentContactsBase
 com.miracleas.minrute.ChooseOriginDestFragmentContactsBase$AutoCompleteContactsAdapter
 com.miracleas.minrute.ChooseOriginDestFragmentContactsBase$ImageLoader
 com.miracleas.minrute.ChooseOriginDestFragmentContactsBase$LoadContactAddress
 com.miracleas.minrute.ChooseOriginDestFragmentContactsBase$LoadContactRun
 com.miracleas.minrute.GeofenceActivity:
-    208:240:public void removeGeofences(java.util.List)
+    206:241:public void removeGeofences(java.util.List)
 com.miracleas.minrute.GoogleServiceActivity:
     private static final int CONNECTION_FAILURE_RESOLUTION_REQUEST
 com.miracleas.minrute.LoaderConstants
@@ -4822,13 +4818,17 @@ com.miracleas.minrute.R$menu
 com.miracleas.minrute.R$string
 com.miracleas.minrute.R$style
 com.miracleas.minrute.R$styleable
+com.miracleas.minrute.TripGuideActivity:
+    226:226:public int getPlaceHolderRessource()
+    232:234:public void setImageFadeIn(boolean)
+    253:255:public void setContext(android.content.Context)
 com.miracleas.minrute.TripLegDetailNotesDialog:
     private android.content.Context cxt
 com.miracleas.minrute.TripLegMapFragment:
-    527:533:public static java.lang.String getFormatedValue(double,int)
-    538:539:public void setLocation(android.location.Location)
+    528:534:public static java.lang.String getFormatedValue(double,int)
+    539:540:public void setLocation(android.location.Location)
 com.miracleas.minrute.TripLegMapFragment$LegStop:
-    480:488:public java.lang.String getDistance()
+    481:489:public java.lang.String getDistance()
 com.miracleas.minrute.TripStopDetailsDepartureBoardFragment$TripAdapter:
     194:200:public java.lang.String getRef(int)
 com.miracleas.minrute.TripStopDetailsFragment:
@@ -4872,9 +4872,9 @@ com.miracleas.minrute.model.TripLeg:
     public static final java.lang.String TYPE_EXB
     public static final java.lang.String TYPE_TB
     public java.lang.String updated
-    71:76:public long getDeparturesIn()
-    91:96:public long getArrivesIn()
-    101:108:private android.text.format.Time getTime(java.lang.String)
+    123:128:public long getDeparturesIn()
+    143:148:public long getArrivesIn()
+    153:160:private android.text.format.Time getTime(java.lang.String)
 com.miracleas.minrute.model.TripRequest:
     172:187:public void setViaId(java.lang.String)
     218:219:public void setUseTog(int)
@@ -4901,7 +4901,6 @@ com.miracleas.minrute.net.BaseFetcher:
     159:159:public static void resetLoadingState(android.content.Context)
     182:187:protected void broadcastSuccess()
     191:195:protected void broadcastLoading()
-    199:203:protected void log(java.lang.String,java.lang.String)
     218:223:protected java.net.HttpURLConnection initPostHttpURLConnection(java.lang.String)
     227:233:protected java.lang.String getPostBody()
     239:243:protected java.lang.StringBuilder addToPostBodyUrlEncoded(java.lang.String,java.lang.String)
@@ -4914,8 +4913,8 @@ com.miracleas.minrute.net.DepartureBoardFetcher:
     public static final java.lang.String URL
 com.miracleas.minrute.net.JourneyDetailFetcher:
     public static final java.lang.String URL
-    174:174:public java.util.ArrayList getDbOperations()
-    179:180:public void addContentProviderOperations(java.util.ArrayList)
+    181:181:public java.util.ArrayList getDbOperations()
+    186:187:public void addContentProviderOperations(java.util.ArrayList)
 com.miracleas.minrute.net.StopsNearbyFetcher:
     public static final java.lang.String URL
 com.miracleas.minrute.net.TripFetcher:
@@ -5054,7 +5053,9 @@ com.miracleas.minrute.provider.JourneyDetailStopImagesMetaData$TableMetaData:
     public static final java.lang.String FILE_TITLE
     public static final java.lang.String FILE_LOCALE_PATH
     public static final java.lang.String STOP_NAME
-    40:42:private JourneyDetailStopImagesMetaData$TableMetaData()
+    public static final java.lang.String IS_GOOGLE_STREET_LAT_LNG
+    public static final java.lang.String IS_GOOGLE_STREET_NAME_SEARCH
+    43:45:private JourneyDetailStopImagesMetaData$TableMetaData()
 com.miracleas.minrute.provider.JourneyDetailStopMetaData:
     public static final java.lang.String PROVIDER_NAME
     public static final java.lang.String PACKAGE_NAME
@@ -5108,6 +5109,7 @@ com.miracleas.minrute.provider.MinBusTurProvider:
     private static final int INCOMING_SINGLE_TRIP_VOICE_URI_INDICATOR
     private static final int INCOMING_ADDRESS_GPS_COLLECTION_URI_INDICATOR
     private static final int INCOMING_TRIP_LEG_ADDRESS_GPS_JOIN_URI_INDICATOR
+    private static final int INCOMING_TRIPLEG_IMAGES_COLLECTION_URI_INDICATOR
 com.miracleas.minrute.provider.RouteMetaData
 com.miracleas.minrute.provider.RouteMetaData$TableMetaData
 com.miracleas.minrute.provider.RouteWaypointMetaData
@@ -5169,7 +5171,7 @@ com.miracleas.minrute.provider.TripLegMetaData$TableMetaData:
     public static final java.lang.String DEST_TRACK
     public static final java.lang.String ORIGIN_RT_TRACK
     public static final java.lang.String DEST_RT_TRACK
-    57:59:private TripLegMetaData$TableMetaData()
+    58:60:private TripLegMetaData$TableMetaData()
 com.miracleas.minrute.provider.TripMetaData:
     public static final java.lang.String PROVIDER_NAME
     public static final java.lang.String PACKAGE_NAME
@@ -5212,6 +5214,8 @@ com.miracleas.minrute.service.LocationService:
     private static final long UPDATE_INTERVAL
     private static final int FASTEST_INTERVAL_IN_SECONDS
     private static final long FASTEST_INTERVAL
+    120:120:public android.location.Location getLastLocation()
+    188:188:public com.miracleas.minrute.service.LocationService$OnNewLocationReceivedListener getOnNewLocationReceived()
 com.miracleas.minrute.service.RemoveGeofencesService:
     14:15:public RemoveGeofencesService(java.lang.String)
 com.miracleas.minrute.service.UpdateVoiceTripService:
@@ -5225,10 +5229,10 @@ com.miracleas.minrute.service.UpdateVoiceTripService:
     private static final long TWO_HOURS
     private static final long TEN_SECONDS
     private static final long TEN_SECONDS_MINUS
-    174:174:public java.lang.String getTextToSpeak()
-    179:180:public void setTextToSpeak(java.lang.String)
-    286:286:public java.lang.String getTripId()
-    291:292:public void setTripId(java.lang.String)
+    175:175:public java.lang.String getTextToSpeak()
+    180:181:public void setTextToSpeak(java.lang.String)
+    287:287:public java.lang.String getTripId()
+    292:293:public void setTripId(java.lang.String)
 com.miracleas.minrute.utils.App:
     4:4:public App()
 com.miracleas.minrute.utils.DateHelper:

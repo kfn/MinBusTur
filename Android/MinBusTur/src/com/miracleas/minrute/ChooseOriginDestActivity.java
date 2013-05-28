@@ -1,6 +1,7 @@
 package com.miracleas.minrute;
 
 import android.content.Intent;
+import android.location.Location;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.widget.DatePicker;
@@ -8,15 +9,18 @@ import android.widget.TimePicker;
 import android.widget.Toast;
 
 import com.actionbarsherlock.app.ActionBar;
-import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 import com.miracleas.minrute.model.TripRequest;
 import com.miracleas.minrute.net.TripFetcher;
 import com.miracleas.minrute.service.TripService;
 
-public class ChooseOriginDestActivity extends GeofenceActivity implements ChooseOriginDestFragment.Callbacks, android.app.DatePickerDialog.OnDateSetListener, android.app.TimePickerDialog.OnTimeSetListener
+public class ChooseOriginDestActivity extends GeofenceActivity implements ChooseOriginDestFragment.Callbacks, android.app.DatePickerDialog.OnDateSetListener, 
+							android.app.TimePickerDialog.OnTimeSetListener, com.miracleas.minrute.service.LocationService.OnNewLocationReceivedListener
 {
+	
+	private MenuItem mLocationItem;
+	private boolean mLoading = false;
 	@Override
 	public void onCreate(Bundle savedInstanceState)
 	{
@@ -52,17 +56,44 @@ public class ChooseOriginDestActivity extends GeofenceActivity implements Choose
 		
 	}
 	@Override
+	public void onSaveInstanceState(Bundle outState)
+	{
+		super.onSaveInstanceState(outState);
+		outState.putBoolean("loading", mLoading);
+		
+	}
+	@Override
+	public void onRestoreInstanceState(Bundle savedInstanceState)
+	{
+		super.onRestoreInstanceState(savedInstanceState);
+		mLoading = savedInstanceState.getBoolean("loading");
+	}
+	
+	
+	@Override
 	public void onStart()
 	{
 		super.onStart();
 	}
 	
 	@Override
+	public boolean onPrepareOptionsMenu(Menu menu)
+	{
+		mLocationItem = menu.findItem(R.id.menu_my_location);
+		if (mLoading)
+		{
+			mLocationItem.setActionView(R.layout.refresh_menuitem);
+		}
+		return super.onPrepareOptionsMenu(menu);
+	}
+	
+	@Override
 	public boolean onCreateOptionsMenu(Menu menu)
 	{
 		// Inflate the menu; this adds items to the action bar if it is present.
-		//getSupportMenuInflater().inflate(R.menu.create_route, menu);
-		return super.onCreateOptionsMenu(menu);
+		getSupportMenuInflater().inflate(R.menu.activity_choose_origin_dest, menu);
+		return true;
+		//return super.onCreateOptionsMenu(menu);
 	}
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item)
@@ -80,11 +111,48 @@ public class ChooseOriginDestActivity extends GeofenceActivity implements Choose
 			//
 			finish();
 			return true;
+		case R.id.menu_my_location:
+			refreshData(item);
+			return true;
 		
 		default:
 			return super.onOptionsItemSelected(item);
 		}
 	}
+	
+	/**
+	 * if not already loading, refresh the data for the selected content
+	 * (mSelectedMenuItem). show loading spinner instead of refresh button.
+	 * 
+	 * @param item
+	 */
+	private void refreshData(MenuItem item)
+	{
+		if (!mLoading && mBoundLocation)
+		{
+			mServiceLocation.setOnNewLocationReceived(this);
+			mServiceLocation.startLocationListening();
+			mLocationItem = item;
+			mLoading = true;
+			showLoadSpinner();
+
+		}
+	}
+	
+	private void showLoadSpinner()
+	{
+		if (mLocationItem != null)
+		{
+			if (mLoading)
+			{
+				mLocationItem.setActionView(R.layout.refresh_menuitem);
+			} else
+			{
+				mLocationItem.setActionView(null);
+			}
+		}
+	}
+	
 	@Override
 	public void onFindTripSuggestion(TripRequest tripRequest)
 	{
@@ -120,6 +188,33 @@ public class ChooseOriginDestActivity extends GeofenceActivity implements Choose
 			((ChooseOriginDestFragment)f).onDateSet(view, year, monthOfYear, dayOfMonth);
 		}
 		
+	}
+	@Override
+	public void onNewLocationReceived(Location loc)
+	{		
+		if(mBoundLocation)
+		{
+			mServiceLocation.stopLocationListening();
+			mServiceLocation.geocode(loc);
+		}
+		else
+		{
+			mLoading = false;
+			showLoadSpinner();			
+		}
+		
+	}
+	@Override
+	public void onAddressGeocoded(String address)
+	{
+		mLoading = false;
+		showLoadSpinner();
+		Fragment f = getSupportFragmentManager().findFragmentById(R.id.fragmentEnterAddresses);
+		if(f!=null)
+		{					
+			((ChooseOriginDestFragment)f).setAddress(address);
+		}
+		mServiceLocation.setOnNewLocationReceived(null);
 	}
 
 }

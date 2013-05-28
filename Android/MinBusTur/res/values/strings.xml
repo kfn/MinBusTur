@@ -35,7 +35,7 @@
     <string name="parenthese_value">(<xliff:g ID="time_label">%1$s</xliff:g>)</string>
     <string name="arrival_within">Ankomst: <xliff:g ID="time_label">%1$s</xliff:g></string>
     <string name="duration">Varighed: <xliff:g ID="time_label">%1$s</xliff:g></string>
-	<string name="from"><xliff:g ID="address">%1$s</xliff:g></string>
+	<string name="from">Fra <xliff:g ID="address">%1$s</xliff:g></string>
 	<string name="to">Til <xliff:g ID="address">%1$s</xliff:g></string>
 	<string name="transport_type_and_track_number"><xliff:g ID="transport_type">%1$s</xliff:g>, spor <xliff:g ID="track_number">%2$s</xliff:g></string>
 	<string name="notes">Bemærkinger</string>
@@ -56,4 +56,6 @@
 	<string name="uploading_finished">Billeder uploaded</string>
 	<string name="startaddress">Startadresse</string>
 	<string name="destination_address">Slutadresse</string>
+	<string name="my_location">Min placering</string>
+	
 </resources>

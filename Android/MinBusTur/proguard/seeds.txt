@@ -1972,6 +1972,7 @@ com.miracleas.minrute.R$drawable: int common_signin_btn_text_pressed_dark
 com.miracleas.minrute.R$drawable: int common_signin_btn_text_pressed_light
 com.miracleas.minrute.R$drawable: int driving
 com.miracleas.minrute.R$drawable: int empty_photo
+com.miracleas.minrute.R$drawable: int ic_action_locate
 com.miracleas.minrute.R$drawable: int ic_action_user
 com.miracleas.minrute.R$drawable: int ic_launcher
 com.miracleas.minrute.R$drawable: int ic_menu_home
@@ -2053,6 +2054,7 @@ com.miracleas.minrute.R$id: int abs__up
 com.miracleas.minrute.R$id: int action_settings
 com.miracleas.minrute.R$id: int autoCompleteTextViewFrom
 com.miracleas.minrute.R$id: int autoCompleteTextViewTo
+com.miracleas.minrute.R$id: int border
 com.miracleas.minrute.R$id: int btnAddPicture
 com.miracleas.minrute.R$id: int btnDate
 com.miracleas.minrute.R$id: int btnFetchDepartures
@@ -2071,11 +2073,13 @@ com.miracleas.minrute.R$id: int gridView
 com.miracleas.minrute.R$id: int homeAsUp
 com.miracleas.minrute.R$id: int hybrid
 com.miracleas.minrute.R$id: int imageView
+com.miracleas.minrute.R$id: int imageViewThumb
 com.miracleas.minrute.R$id: int listContainer
 com.miracleas.minrute.R$id: int listMode
 com.miracleas.minrute.R$id: int map
 com.miracleas.minrute.R$id: int menu_direction
 com.miracleas.minrute.R$id: int menu_map
+com.miracleas.minrute.R$id: int menu_my_location
 com.miracleas.minrute.R$id: int menu_notes
 com.miracleas.minrute.R$id: int menu_streetview
 com.miracleas.minrute.R$id: int none
@@ -2103,6 +2107,7 @@ com.miracleas.minrute.R$id: int textViewDestName
 com.miracleas.minrute.R$id: int textViewDirection
 com.miracleas.minrute.R$id: int textViewDuration
 com.miracleas.minrute.R$id: int textViewJourneyName
+com.miracleas.minrute.R$id: int textViewJourneyTimes
 com.miracleas.minrute.R$id: int textViewName
 com.miracleas.minrute.R$id: int textViewNotes
 com.miracleas.minrute.R$id: int textViewOriginName
@@ -2162,9 +2167,11 @@ com.miracleas.minrute.R$layout: int item_trip_leg_detail
 com.miracleas.minrute.R$layout: int item_trip_stop_details
 com.miracleas.minrute.R$layout: int item_trip_suggestion
 com.miracleas.minrute.R$layout: int map
+com.miracleas.minrute.R$layout: int refresh_menuitem
 com.miracleas.minrute.R$layout: int sherlock_spinner_dropdown_item
 com.miracleas.minrute.R$layout: int sherlock_spinner_item
 com.miracleas.minrute.R$layout: int trip_details_notes_dialog
+com.miracleas.minrute.R$menu: int activity_choose_origin_dest
 com.miracleas.minrute.R$menu: int activity_details
 com.miracleas.minrute.R$menu: int activity_trip_leg_details
 com.miracleas.minrute.R$menu: int main
@@ -2228,6 +2235,7 @@ com.miracleas.minrute.R$string: int location_client_ulr_inactive_unknown_restric
 com.miracleas.minrute.R$string: int map_mode
 com.miracleas.minrute.R$string: int minutes
 com.miracleas.minrute.R$string: int minutes_one
+com.miracleas.minrute.R$string: int my_location
 com.miracleas.minrute.R$string: int no_network_connection_toast
 com.miracleas.minrute.R$string: int notes
 com.miracleas.minrute.R$string: int parenthese_value
@@ -2322,6 +2330,7 @@ com.miracleas.minrute.R$style: int TextAppearance_Sherlock_Widget_PopupMenu_Larg
 com.miracleas.minrute.R$style: int TextAppearance_Sherlock_Widget_PopupMenu_Small
 com.miracleas.minrute.R$style: int TextAppearance_Sherlock_Widget_TextView_SpinnerItem
 com.miracleas.minrute.R$style: int Theme_Minrutevejledning
+com.miracleas.minrute.R$style: int Theme_Minrutevejledning_Background
 com.miracleas.minrute.R$style: int Theme_Minrutevejledning_Widget
 com.miracleas.minrute.R$style: int Theme_Sherlock
 com.miracleas.minrute.R$style: int Theme_Sherlock_Light
@@ -2561,6 +2570,8 @@ com.miracleas.minrute.model.MyLittleImage
 com.miracleas.minrute.model.MyLittleImage: android.os.Parcelable$Creator CREATOR
 com.miracleas.minrute.model.NearbyLocationRequest
 com.miracleas.minrute.model.NearbyLocationRequest: android.os.Parcelable$Creator CREATOR
+com.miracleas.minrute.model.TripLeg
+com.miracleas.minrute.model.TripLeg: android.os.Parcelable$Creator CREATOR
 com.miracleas.minrute.model.TripRequest
 com.miracleas.minrute.model.TripRequest: android.os.Parcelable$Creator CREATOR
 com.miracleas.minrute.provider.MinBusTurProvider

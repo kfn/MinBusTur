@@ -83,8 +83,7 @@ public class AddressFetcher extends BaseFetcher
 				InputStream input = urlConnection.getInputStream();
 				parse(input);
 				if (!mDbOperations.isEmpty())
-				{
-					
+				{					
 					saveData(AddressProviderMetaData.AUTHORITY);
 				}
 
@@ -153,10 +152,10 @@ public class AddressFetcher extends BaseFetcher
 		}
 		b.withValue(AddressProviderMetaData.TableMetaData.updated, mUpdated);
 		b.withValue(AddressProviderMetaData.TableMetaData.searchTerm, mSearchTerm);
-		/*if(log)
+		if(log)
 		{
 			log(tag, xpp.getAttributeValue(null, "name"));
-		}*/
+		}
 		mDbOperations.add(b.build());
 	}
 

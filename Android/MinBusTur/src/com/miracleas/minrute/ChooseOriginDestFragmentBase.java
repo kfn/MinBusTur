@@ -4,16 +4,17 @@ import java.util.Calendar;
 import java.util.Locale;
 
 import android.annotation.SuppressLint;
-import android.app.TimePickerDialog;
+import android.content.Context;
 import android.database.Cursor;
-import android.database.DataSetObserver;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.ContactsContract;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
+import android.support.v4.widget.CursorAdapter;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -24,26 +25,28 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.DatePicker;
+import android.widget.FilterQueryProvider;
 import android.widget.ProgressBar;
 import android.widget.RadioButton;
-import android.widget.Spinner;
-import android.widget.SpinnerAdapter;
 import android.widget.TextView;
 import android.widget.TimePicker;
 
 import com.actionbarsherlock.app.SherlockFragment;
-
+import com.miracleas.minrute.model.AddressSearch;
 import com.miracleas.minrute.model.TripRequest;
 import com.miracleas.minrute.provider.AddressProviderMetaData;
 import com.miracleas.minrute.utils.DateHelper;
-import com.miracleas.minrute.utils.ViewHelper;
 
 public abstract class ChooseOriginDestFragmentBase extends SherlockFragment implements LoaderCallbacks<Cursor>, OnClickListener, OnFocusChangeListener
 {
+	public static final String tag = ChooseOriginDestFragmentBase.class.getName();
 	protected AutoCompleteTextView mAutoCompleteTextViewFromAddress;
 	protected AutoCompleteTextView mAutoCompleteTextViewToAddress;
 	protected int mSelectedAddressFromPosition = -1;
 	protected int mSelectedAddressToPosition = -1;
+	
+	protected AutoCompleteAddressAdapter mAutoCompleteAdapterFrom = null;
+	protected AutoCompleteAddressAdapter mAutoCompleteAdapterTo = null;	
 
 	protected static final int THRESHOLD = 2;
 	
@@ -186,6 +189,21 @@ public abstract class ChooseOriginDestFragmentBase extends SherlockFragment impl
 		}
 	}
 	
+	public void setAddress(String address)
+	{
+		
+		if(mAutoCompleteTextViewToAddress==mFocusedView)
+		{
+			mAutoCompleteTextViewToAddress.setHint(address);
+			mAutoCompleteAdapterTo.getFilter().filter(address);
+		}
+		else
+		{
+			mAutoCompleteTextViewFromAddress.setHint(address);
+			mAutoCompleteAdapterFrom.getFilter().filter(address);			
+		}
+	}
+	
 	public int getActiveLoader()
 	{
 		int loaderId = 0;
@@ -274,5 +292,194 @@ public abstract class ChooseOriginDestFragmentBase extends SherlockFragment impl
 	            break;
 	    }
 	}
+	
+	protected class AutoCompleteAddressAdapter extends CursorAdapter
+	{
+		private int iAddress;
+		private int iY;
+		private int iX;
+		private int iType;
+		private int iId;
+		private LayoutInflater mInf = null;
+		private CharSequence mPreviousConstraint = "";
+		private int mLoaderId = 0;
+		
+		public AutoCompleteAddressAdapter(Context context, Cursor c, int flags, final int loaderId)
+		{
+			super(context, c, FLAG_REGISTER_CONTENT_OBSERVER);
+			mInf = LayoutInflater.from(context);
+			mLoaderId = loaderId;
+			setFilterQueryProvider(new FilterQueryProvider()
+			{
+				@Override
+				public Cursor runQuery(CharSequence constraint)
+				{
+					// Stop the FQP from looking for nothing
+					if (constraint == null)
+						return null;
+					constraint = constraint.toString().trim();
+					if(!mPreviousConstraint.equals(constraint))
+					{
+						textChangedHelper(constraint, loaderId);
+						mPreviousConstraint = constraint;
+					}
+
+					Log.d(tag, "autocomplete: "+constraint);
+					//) GROUP BY (").append(AddressProviderMetaData.TableMetaData.address);
+					StringBuilder b = new StringBuilder();
+					b.append(AddressProviderMetaData.TableMetaData.address).append(" LIKE '").append(constraint).append("%') GROUP BY (").append(AddressProviderMetaData.TableMetaData.address);
+					return getActivity().getContentResolver().query(AddressProviderMetaData.TableMetaData.CONTENT_URI, PROJECTION, b.toString(), null, AddressProviderMetaData.TableMetaData.address+" LIMIT 10");
+				}
+			});
+			
+		}
+		
+		//you need to override this to return the string value when
+	    //selecting an item from the autocomplete suggestions
+	    //just do cursor.getstring(whatevercolumn);
+	    @Override
+	    public CharSequence convertToString(Cursor cursor) {
+	    	return cursor.getString(iAddress);
+	    }
+
+		@Override
+		public void changeCursor(Cursor newCursor)
+		{
+			Cursor oldCursor = getCursor();
+			super.changeCursor(newCursor);
+			if (oldCursor != null && oldCursor != newCursor)
+			{
+				// adapter has already dealt with closing the cursor
+				getActivity().stopManagingCursor(oldCursor);
+				oldCursor.close();
+			}
+			getActivity().startManagingCursor(newCursor);
+			
+			if(newCursor.getCount()==1)
+			{
+				if(mLoaderId==LoaderConstants.LOADER_ADDRESS_FROM)
+				{		
+					mSelectedAddressFromPosition = 0;
+				}
+				else if(mLoaderId==LoaderConstants.LOADER_ADDRESS_TO)
+				{
+					mSelectedAddressToPosition = 0;
+				}	
+			}
+			
+
+		}
+
+		@Override
+		public void bindView(View v, Context context, Cursor cursor)
+		{
+			TextView tv = (TextView) v;
+			tv.setText(cursor.getString(iAddress));
+			int icon = getIcon(cursor.getInt(iType));
+			if (icon != -1)
+			{
+				tv.setCompoundDrawablesWithIntrinsicBounds(icon, 0, 0, 0);
+			}
+
+		}
+
+		private int getIcon(int type)
+		{
+			switch (type)
+			{
+			case AddressSearch.TYPE_ADRESSE:
+				return R.drawable.ic_menu_home;
+			case AddressSearch.TYPE_STATION_STOP:
+				return R.drawable.ic_menu_myplaces;
+			default:
+				return -1;
+
+			}
+		}
+
+		@Override
+		public View newView(Context context, Cursor cursor, ViewGroup parent)
+		{
+			return mInf.inflate(R.layout.item_address, null);
+		}
+
+		public Cursor swapCursor(Cursor newCursor)
+		{
+			if (newCursor != null)
+			{
+				iAddress = newCursor.getColumnIndex(AddressProviderMetaData.TableMetaData.address);
+				iY = newCursor.getColumnIndex(AddressProviderMetaData.TableMetaData.Y);
+				iX = newCursor.getColumnIndex(AddressProviderMetaData.TableMetaData.X);
+				iType = newCursor.getColumnIndex(AddressProviderMetaData.TableMetaData.type_int);
+				iId = newCursor.getColumnIndex(AddressProviderMetaData.TableMetaData.id);
+			}
+			return super.swapCursor(newCursor);
+		}
+
+		public String getY(int position)
+		{
+			String lat = null;
+			Cursor c = getCursor();
+			if (c.moveToPosition(position))
+			{
+				lat = c.getString(iY);
+			}
+			return lat;
+		}
+
+		public String getX(int position)
+		{
+			String lng = null;
+			Cursor c = getCursor();
+			if (c.moveToPosition(position))
+			{
+				lng = c.getString(iX);
+			}
+			return lng;
+		}
+
+		public String getAddress(int position)
+		{
+			String address = null;
+			Cursor c = getCursor();
+			if (c.moveToPosition(position))
+			{
+				address = c.getString(iAddress);
+			}
+			return address;
+		}
+
+		public String getId(int position)
+		{
+			String address = null;
+			Cursor c = getCursor();
+			if (c.moveToPosition(position))
+			{
+				address = c.getString(iId);
+			}
+			return address;
+		}
+		
+		public int getPosition(String address)
+		{
+			int pos = -1;
+			Cursor c = getCursor();
+			boolean found = false;
+			if(c.moveToFirst())
+			{
+				do{
+					String current = c.getString(iAddress);
+					if(current.equals(address))
+					{
+						pos = c.getPosition();
+						found = true;
+					}
+				}
+				while(c.moveToNext() && !found);
+			}
+			return pos;
+		}
+	}
+
 
 }

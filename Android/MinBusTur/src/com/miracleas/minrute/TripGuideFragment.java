@@ -358,6 +358,8 @@ public class TripGuideFragment extends SherlockListFragment implements LoaderCal
 		@Override
 		public void bindView(View v, Context context, Cursor cursor)
 		{
+			TextView textViewOriginName = (TextView) v.findViewById(R.id.textViewOriginName);
+			TextView textViewDestName = (TextView) v.findViewById(R.id.textViewDestName);
 			TextView textViewTime = (TextView) v.findViewById(R.id.textViewTime);
 			TextView textViewTransportType = (TextView) v.findViewById(R.id.textViewTransportType);
 			TextView textViewNotes = (TextView) v.findViewById(R.id.textViewNotes);
@@ -367,11 +369,13 @@ public class TripGuideFragment extends SherlockListFragment implements LoaderCal
 			
 			String originTime = cursor.getString(iOriginTime);
 			String originLocationType = cursor.getString(iOriginType);
+			String destLocationType = cursor.getString(iDestType);
 			String type = cursor.getString(iType);
 			String track = cursor.getString(iRtTrack);
 			String notes = cursor.getString(iNotes);
 			String url = cursor.getString(iUrl);
 			String originName =  cursor.getString(iOriginName);
+			String destName =  cursor.getString(iDestName);
 			
 			if(TextUtils.isEmpty(url))
 			{
@@ -382,8 +386,9 @@ public class TripGuideFragment extends SherlockListFragment implements LoaderCal
 				mIImageDownloader.download(url, imageViewThumb);
 			}
 			
-			TextView textViewOriginName = (TextView) v.findViewById(R.id.textViewOriginName);
-			textViewOriginName.setText(String.format(getString(R.string.from), originName));
+			
+			textViewOriginName.setText(originName); //.setText(String.format(getString(R.string.from), originName));
+			textViewDestName.setText(destName); //.setText(String.format(getString(R.string.to), destName));
 			textViewTime.setText(originTime);
 			
 			if (originLocationType.equals("ADR"))
@@ -393,6 +398,14 @@ public class TripGuideFragment extends SherlockListFragment implements LoaderCal
 			{
 				textViewOriginName.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_menu_myplaces, 0, 0, 0);
 			}
+			if (destLocationType.equals("ADR"))
+			{
+				textViewDestName.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_menu_home, 0, 0, 0);
+			} else if (destLocationType.equals("ST"))
+			{
+				textViewDestName.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_menu_myplaces, 0, 0, 0);
+			}
+			
 			if (!TextUtils.isEmpty(track))
 			{
 				textViewTransportType.setText(String.format(getString(R.string.transport_type_and_track_number), cursor.getString(iName), cursor.getString(iRtTrack)));
@@ -432,11 +445,13 @@ public class TripGuideFragment extends SherlockListFragment implements LoaderCal
 			{
 				textViewNotes.setVisibility(View.GONE);
 				textViewTransportType.setVisibility(View.GONE);
+				textViewDestName.setVisibility(View.GONE);
 			} 
 			else
 			{
 				textViewNotes.setVisibility(View.VISIBLE);
 				textViewTransportType.setVisibility(View.VISIBLE);
+				textViewDestName.setVisibility(View.VISIBLE);
 			}		
 			
 		}

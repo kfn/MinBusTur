@@ -28,6 +28,8 @@ android.support.v4.app.BackStackRecord -> android.support.v4.app.b:
     android.support.v4.app.FragmentTransaction add(int,android.support.v4.app.Fragment) -> a
     android.support.v4.app.FragmentTransaction add(int,android.support.v4.app.Fragment,java.lang.String) -> a
     void doAddOp(int,android.support.v4.app.Fragment,java.lang.String,int) -> a
+    android.support.v4.app.FragmentTransaction replace(int,android.support.v4.app.Fragment) -> b
+    android.support.v4.app.FragmentTransaction replace(int,android.support.v4.app.Fragment,java.lang.String) -> b
     android.support.v4.app.FragmentTransaction remove(android.support.v4.app.Fragment) -> a
     android.support.v4.app.FragmentTransaction detach(android.support.v4.app.Fragment) -> b
     android.support.v4.app.FragmentTransaction attach(android.support.v4.app.Fragment) -> c
@@ -517,6 +519,7 @@ android.support.v4.app.FragmentTransaction -> android.support.v4.app.ab:
     android.support.v4.app.FragmentTransaction add(android.support.v4.app.Fragment,java.lang.String) -> a
     android.support.v4.app.FragmentTransaction add(int,android.support.v4.app.Fragment) -> a
     android.support.v4.app.FragmentTransaction add(int,android.support.v4.app.Fragment,java.lang.String) -> a
+    android.support.v4.app.FragmentTransaction replace(int,android.support.v4.app.Fragment) -> b
     android.support.v4.app.FragmentTransaction remove(android.support.v4.app.Fragment) -> a
     android.support.v4.app.FragmentTransaction detach(android.support.v4.app.Fragment) -> b
     android.support.v4.app.FragmentTransaction attach(android.support.v4.app.Fragment) -> c
@@ -8929,10 +8932,11 @@ com.google.api.services.drive.model.File -> com.google.a.b.a.a.a:
     java.lang.String webContentLink -> webContentLink
     java.lang.String webViewLink -> webViewLink
     java.lang.Boolean writersCanShare -> writersCanShare
+    java.lang.String getDownloadUrl() -> a
     com.google.api.services.drive.model.File setMimeType(java.lang.String) -> a
     com.google.api.services.drive.model.File setTitle(java.lang.String) -> b
     com.google.api.services.drive.model.File set(java.lang.String,java.lang.Object) -> a
-    com.google.api.services.drive.model.File clone() -> a
+    com.google.api.services.drive.model.File clone() -> e
     com.google.api.client.json.GenericJson set(java.lang.String,java.lang.Object) -> b
     com.google.api.client.json.GenericJson clone() -> b
     com.google.api.client.util.GenericData clone() -> c
@@ -9191,7 +9195,7 @@ com.google.gson.stream.StringPool -> com.google.b.b.i:
     java.lang.String get(char[],int,int) -> a
 com.miracleas.camera.PhotoGoogleDriveActivity -> com.miracleas.a.a:
     java.lang.String mAccountName -> o
-    java.lang.String mLat -> t
+    java.lang.String mLat -> p
     java.lang.String mLng -> u
     com.miracleas.imagedownloader.IImageDownloader mImageLoader -> v
     android.net.Uri fileUri -> w
@@ -9466,7 +9470,7 @@ com.miracleas.imagedownloader.ImageFetcher -> com.miracleas.b.w:
     boolean mHttpDiskCacheStarting -> h
     java.lang.Object mHttpDiskCacheLock -> i
     com.miracleas.imagedownloader.ImageFetcher instance -> j
-    com.miracleas.imagedownloader.ImageFetcher getInstance(android.app.Activity,android.support.v4.app.FragmentManager,java.lang.String) -> a
+    com.miracleas.imagedownloader.ImageFetcher getInstance(android.app.Activity,android.support.v4.app.FragmentManager,java.lang.String,int,int) -> a
     void init(android.content.Context) -> a
     void initDiskCacheInternal() -> a
     void initHttpDiskCache() -> g
@@ -9556,28 +9560,35 @@ com.miracleas.imagedownloader.Utils -> com.miracleas.b.ae:
     boolean hasHoneycombMR1() -> d
     boolean hasJellyBean() -> e
 com.miracleas.minrute.ChooseOriginDestActivity -> com.miracleas.minrute.ChooseOriginDestActivity:
+    com.actionbarsherlock.view.MenuItem mLocationItem -> u
+    boolean mLoading -> v
     void onCreate(android.os.Bundle) -> onCreate
+    void onSaveInstanceState(android.os.Bundle) -> onSaveInstanceState
+    void onRestoreInstanceState(android.os.Bundle) -> onRestoreInstanceState
     void onStart() -> onStart
+    boolean onPrepareOptionsMenu(com.actionbarsherlock.view.Menu) -> b
     boolean onCreateOptionsMenu(com.actionbarsherlock.view.Menu) -> a
     boolean onOptionsItemSelected(com.actionbarsherlock.view.MenuItem) -> a
+    void refreshData(com.actionbarsherlock.view.MenuItem) -> b
+    void showLoadSpinner() -> l
     void onFindTripSuggestion(com.miracleas.minrute.model.TripRequest) -> a
     void onTimeSet(android.widget.TimePicker,int,int) -> onTimeSet
     void onDateSet(android.widget.DatePicker,int,int,int) -> onDateSet
+    void onNewLocationReceived(android.location.Location) -> a
+    void onAddressGeocoded(java.lang.String) -> b
 com.miracleas.minrute.ChooseOriginDestFragment -> com.miracleas.minrute.ChooseOriginDestFragment:
     java.lang.String tag -> a
-    com.miracleas.minrute.ChooseOriginDestFragment$AutoCompleteAddressAdapter mAutoCompleteAdapterFrom -> ai
-    com.miracleas.minrute.ChooseOriginDestFragment$AutoCompleteAddressAdapter mAutoCompleteAdapterTo -> aj
-    com.miracleas.minrute.ChooseOriginDestFragment$LoadAddressesRun mLoadAddressesRun -> ak
-    com.miracleas.minrute.ChooseOriginDestFragment$LoadTrips mLoadTrips -> al
+    com.miracleas.minrute.ChooseOriginDestFragment$LoadAddressesRun mLoadAddressesRun -> al
+    com.miracleas.minrute.ChooseOriginDestFragment$LoadTrips mLoadTrips -> am
     com.miracleas.minrute.net.AddressFetcher mAddressFetcher -> b
-    com.miracleas.minrute.net.TripFetcher mTripFetcher -> am
-    boolean mIsLoadingAddresses -> an
-    boolean mUpdateCursor -> ao
-    boolean mItemClicked -> ap
-    com.miracleas.minrute.ChooseOriginDestFragment$LoadAddresses mLoadAddresses -> aq
-    com.miracleas.minrute.ChooseOriginDestFragment$AddressSelected mAddressSelected -> ar
-    com.miracleas.minrute.ChooseOriginDestFragment$Callbacks mCallbacks -> as
-    com.miracleas.minrute.ChooseOriginDestFragment$Callbacks sDummyCallbacks -> at
+    com.miracleas.minrute.net.TripFetcher mTripFetcher -> an
+    boolean mIsLoadingAddresses -> ao
+    boolean mUpdateCursor -> ap
+    boolean mItemClicked -> aq
+    com.miracleas.minrute.ChooseOriginDestFragment$LoadAddresses mLoadAddresses -> ar
+    com.miracleas.minrute.ChooseOriginDestFragment$AddressSelected mAddressSelected -> as
+    com.miracleas.minrute.ChooseOriginDestFragment$Callbacks mCallbacks -> at
+    com.miracleas.minrute.ChooseOriginDestFragment$Callbacks sDummyCallbacks -> au
     android.view.View onCreateView(android.view.LayoutInflater,android.view.ViewGroup,android.os.Bundle) -> a
     void onCreate(android.os.Bundle) -> a
     android.support.v4.content.Loader onCreateLoader(int,android.os.Bundle) -> a
@@ -9596,10 +9607,8 @@ com.miracleas.minrute.ChooseOriginDestFragment -> com.miracleas.minrute.ChooseOr
     android.widget.ProgressBar access$2(com.miracleas.minrute.ChooseOriginDestFragment,int) -> a
     void access$3(com.miracleas.minrute.ChooseOriginDestFragment,java.lang.String,int) -> a
     com.miracleas.minrute.net.TripFetcher access$4(com.miracleas.minrute.ChooseOriginDestFragment) -> a
-    com.miracleas.minrute.ChooseOriginDestFragment$AutoCompleteAddressAdapter access$5(com.miracleas.minrute.ChooseOriginDestFragment) -> b
-    com.miracleas.minrute.ChooseOriginDestFragment$AutoCompleteAddressAdapter access$6(com.miracleas.minrute.ChooseOriginDestFragment) -> c
-    void access$7(com.miracleas.minrute.ChooseOriginDestFragment,boolean) -> a
-    com.miracleas.minrute.ChooseOriginDestFragment$Callbacks access$8(com.miracleas.minrute.ChooseOriginDestFragment) -> d
+    void access$5(com.miracleas.minrute.ChooseOriginDestFragment,boolean) -> a
+    com.miracleas.minrute.ChooseOriginDestFragment$Callbacks access$6(com.miracleas.minrute.ChooseOriginDestFragment) -> b
 com.miracleas.minrute.ChooseOriginDestFragment$1 -> com.miracleas.minrute.a:
     void onFindTripSuggestion(com.miracleas.minrute.model.TripRequest) -> a
 com.miracleas.minrute.ChooseOriginDestFragment$AddressSelected -> com.miracleas.minrute.b:
@@ -9608,7 +9617,70 @@ com.miracleas.minrute.ChooseOriginDestFragment$AddressSelected -> com.miracleas.
     void onPostExecute(java.lang.Void) -> a
     void onPostExecute(java.lang.Object) -> onPostExecute
     java.lang.Object doInBackground(java.lang.Object[]) -> doInBackground
-com.miracleas.minrute.ChooseOriginDestFragment$AutoCompleteAddressAdapter -> com.miracleas.minrute.c:
+com.miracleas.minrute.ChooseOriginDestFragment$Callbacks -> com.miracleas.minrute.c:
+    void onFindTripSuggestion(com.miracleas.minrute.model.TripRequest) -> a
+com.miracleas.minrute.ChooseOriginDestFragment$LoadAddresses -> com.miracleas.minrute.d:
+    int mLoaderId -> b
+    java.lang.String mAddress -> c
+    com.miracleas.minrute.ChooseOriginDestFragment this$0 -> a
+    void onPreExecute() -> onPreExecute
+    java.lang.Void doInBackground(java.lang.String[]) -> a
+    void onPostExecute(java.lang.Void) -> a
+    void onPostExecute(java.lang.Object) -> onPostExecute
+    java.lang.Object doInBackground(java.lang.Object[]) -> doInBackground
+com.miracleas.minrute.ChooseOriginDestFragment$LoadAddressesRun -> com.miracleas.minrute.e:
+    java.lang.String mQuery -> b
+    int loaderId -> c
+    com.miracleas.minrute.ChooseOriginDestFragment this$0 -> a
+    void run() -> run
+com.miracleas.minrute.ChooseOriginDestFragment$LoadTrips -> com.miracleas.minrute.f:
+    com.miracleas.minrute.ChooseOriginDestFragment this$0 -> a
+    java.lang.Void doInBackground(java.lang.String[]) -> a
+    void onPostExecute(java.lang.Void) -> a
+    void onPostExecute(java.lang.Object) -> onPostExecute
+    java.lang.Object doInBackground(java.lang.Object[]) -> doInBackground
+com.miracleas.minrute.ChooseOriginDestFragmentBase -> com.miracleas.minrute.g:
+    java.lang.String tag -> c
+    android.widget.AutoCompleteTextView mAutoCompleteTextViewFromAddress -> d
+    android.widget.AutoCompleteTextView mAutoCompleteTextViewToAddress -> e
+    int mSelectedAddressFromPosition -> f
+    int mSelectedAddressToPosition -> g
+    com.miracleas.minrute.ChooseOriginDestFragmentBase$AutoCompleteAddressAdapter mAutoCompleteAdapterFrom -> h
+    com.miracleas.minrute.ChooseOriginDestFragmentBase$AutoCompleteAddressAdapter mAutoCompleteAdapterTo -> i
+    java.lang.String[] PROJECTION -> Y
+    java.lang.String[] PROJECTION_CONTACTS -> Z
+    android.os.Handler mHandler -> aa
+    android.net.Uri mDataUri -> ab
+    android.widget.ProgressBar mProgressBarToAddress -> ac
+    android.widget.ProgressBar mProgressBarFromAddress -> ad
+    android.view.View mBtnFindRoute -> ae
+    int mLoadCount -> af
+    com.miracleas.minrute.model.TripRequest mTripRequest -> ag
+    android.view.View mFocusedView -> ah
+    android.widget.TextView mTextViewDate -> ai
+    android.widget.TextView mTextViewTime -> aj
+    java.lang.String[] dates -> ak
+    android.view.View onCreateView(android.view.LayoutInflater,android.view.ViewGroup,android.os.Bundle) -> a
+    void textChangedHelper(java.lang.CharSequence,int) -> a
+    void initAutoComplete(android.widget.AutoCompleteTextView) -> a
+    void onDestroy() -> s
+    void onSaveInstanceState(android.os.Bundle) -> e
+    void onFocusChange(android.view.View,boolean) -> onFocusChange
+    void setAddress(java.lang.String) -> a
+    int getActiveLoader() -> b
+    void onClick(android.view.View) -> onClick
+    void onTimeSet(android.widget.TimePicker,int,int) -> a
+    void onDateSet(android.widget.DatePicker,int,int,int) -> a
+    java.lang.String getDateFormat(java.util.Calendar) -> a
+    java.lang.String getTimeFormat(java.util.Calendar) -> b
+    void onRadioButtonClicked(android.view.View) -> a
+com.miracleas.minrute.ChooseOriginDestFragmentBase$1 -> com.miracleas.minrute.h:
+    com.miracleas.minrute.ChooseOriginDestFragmentBase this$0 -> a
+    void onItemClick(android.widget.AdapterView,android.view.View,int,long) -> onItemClick
+com.miracleas.minrute.ChooseOriginDestFragmentBase$2 -> com.miracleas.minrute.i:
+    com.miracleas.minrute.ChooseOriginDestFragmentBase this$0 -> a
+    void onItemClick(android.widget.AdapterView,android.view.View,int,long) -> onItemClick
+com.miracleas.minrute.ChooseOriginDestFragmentBase$AutoCompleteAddressAdapter -> com.miracleas.minrute.j:
     int iAddress -> k
     int iY -> l
     int iX -> m
@@ -9616,7 +9688,8 @@ com.miracleas.minrute.ChooseOriginDestFragment$AutoCompleteAddressAdapter -> com
     int iId -> o
     android.view.LayoutInflater mInf -> p
     java.lang.CharSequence mPreviousConstraint -> q
-    com.miracleas.minrute.ChooseOriginDestFragment this$0 -> j
+    int mLoaderId -> r
+    com.miracleas.minrute.ChooseOriginDestFragmentBase this$0 -> j
     java.lang.CharSequence convertToString(android.database.Cursor) -> c
     void changeCursor(android.database.Cursor) -> a
     void bindView(android.view.View,android.content.Context,android.database.Cursor) -> a
@@ -9627,70 +9700,13 @@ com.miracleas.minrute.ChooseOriginDestFragment$AutoCompleteAddressAdapter -> com
     java.lang.String getX(int) -> b
     java.lang.String getAddress(int) -> c
     java.lang.String getId(int) -> d
-    java.lang.CharSequence access$0(com.miracleas.minrute.ChooseOriginDestFragment$AutoCompleteAddressAdapter) -> a
-    void access$1(com.miracleas.minrute.ChooseOriginDestFragment$AutoCompleteAddressAdapter,java.lang.CharSequence) -> a
-    com.miracleas.minrute.ChooseOriginDestFragment access$2(com.miracleas.minrute.ChooseOriginDestFragment$AutoCompleteAddressAdapter) -> b
-com.miracleas.minrute.ChooseOriginDestFragment$AutoCompleteAddressAdapter$1 -> com.miracleas.minrute.d:
-    com.miracleas.minrute.ChooseOriginDestFragment$AutoCompleteAddressAdapter this$1 -> a
+    java.lang.CharSequence access$0(com.miracleas.minrute.ChooseOriginDestFragmentBase$AutoCompleteAddressAdapter) -> a
+    void access$1(com.miracleas.minrute.ChooseOriginDestFragmentBase$AutoCompleteAddressAdapter,java.lang.CharSequence) -> a
+    com.miracleas.minrute.ChooseOriginDestFragmentBase access$2(com.miracleas.minrute.ChooseOriginDestFragmentBase$AutoCompleteAddressAdapter) -> b
+com.miracleas.minrute.ChooseOriginDestFragmentBase$AutoCompleteAddressAdapter$1 -> com.miracleas.minrute.k:
+    com.miracleas.minrute.ChooseOriginDestFragmentBase$AutoCompleteAddressAdapter this$1 -> a
     int val$loaderId -> b
     android.database.Cursor runQuery(java.lang.CharSequence) -> runQuery
-com.miracleas.minrute.ChooseOriginDestFragment$Callbacks -> com.miracleas.minrute.e:
-    void onFindTripSuggestion(com.miracleas.minrute.model.TripRequest) -> a
-com.miracleas.minrute.ChooseOriginDestFragment$LoadAddresses -> com.miracleas.minrute.f:
-    int mLoaderId -> b
-    com.miracleas.minrute.ChooseOriginDestFragment this$0 -> a
-    void onPreExecute() -> onPreExecute
-    java.lang.Void doInBackground(java.lang.String[]) -> a
-    void onPostExecute(java.lang.Void) -> a
-    void onPostExecute(java.lang.Object) -> onPostExecute
-    java.lang.Object doInBackground(java.lang.Object[]) -> doInBackground
-com.miracleas.minrute.ChooseOriginDestFragment$LoadAddressesRun -> com.miracleas.minrute.g:
-    java.lang.String mQuery -> b
-    int loaderId -> c
-    com.miracleas.minrute.ChooseOriginDestFragment this$0 -> a
-    void run() -> run
-com.miracleas.minrute.ChooseOriginDestFragment$LoadTrips -> com.miracleas.minrute.h:
-    com.miracleas.minrute.ChooseOriginDestFragment this$0 -> a
-    java.lang.Void doInBackground(java.lang.String[]) -> a
-    void onPostExecute(java.lang.Void) -> a
-    void onPostExecute(java.lang.Object) -> onPostExecute
-    java.lang.Object doInBackground(java.lang.Object[]) -> doInBackground
-com.miracleas.minrute.ChooseOriginDestFragmentBase -> com.miracleas.minrute.i:
-    android.widget.AutoCompleteTextView mAutoCompleteTextViewFromAddress -> c
-    android.widget.AutoCompleteTextView mAutoCompleteTextViewToAddress -> d
-    int mSelectedAddressFromPosition -> e
-    int mSelectedAddressToPosition -> f
-    java.lang.String[] PROJECTION -> g
-    java.lang.String[] PROJECTION_CONTACTS -> h
-    android.os.Handler mHandler -> i
-    android.net.Uri mDataUri -> Y
-    android.widget.ProgressBar mProgressBarToAddress -> Z
-    android.widget.ProgressBar mProgressBarFromAddress -> aa
-    android.view.View mBtnFindRoute -> ab
-    int mLoadCount -> ac
-    com.miracleas.minrute.model.TripRequest mTripRequest -> ad
-    android.view.View mFocusedView -> ae
-    android.widget.TextView mTextViewDate -> af
-    android.widget.TextView mTextViewTime -> ag
-    java.lang.String[] dates -> ah
-    android.view.View onCreateView(android.view.LayoutInflater,android.view.ViewGroup,android.os.Bundle) -> a
-    void initAutoComplete(android.widget.AutoCompleteTextView) -> a
-    void onDestroy() -> s
-    void onSaveInstanceState(android.os.Bundle) -> e
-    void onFocusChange(android.view.View,boolean) -> onFocusChange
-    int getActiveLoader() -> b
-    void onClick(android.view.View) -> onClick
-    void onTimeSet(android.widget.TimePicker,int,int) -> a
-    void onDateSet(android.widget.DatePicker,int,int,int) -> a
-    java.lang.String getDateFormat(java.util.Calendar) -> a
-    java.lang.String getTimeFormat(java.util.Calendar) -> b
-    void onRadioButtonClicked(android.view.View) -> a
-com.miracleas.minrute.ChooseOriginDestFragmentBase$1 -> com.miracleas.minrute.j:
-    com.miracleas.minrute.ChooseOriginDestFragmentBase this$0 -> a
-    void onItemClick(android.widget.AdapterView,android.view.View,int,long) -> onItemClick
-com.miracleas.minrute.ChooseOriginDestFragmentBase$2 -> com.miracleas.minrute.k:
-    com.miracleas.minrute.ChooseOriginDestFragmentBase this$0 -> a
-    void onItemClick(android.widget.AdapterView,android.view.View,int,long) -> onItemClick
 com.miracleas.minrute.DatePickerFragment -> com.miracleas.minrute.l:
     android.app.Dialog onCreateDialog(android.os.Bundle) -> c
     void onDateSet(android.widget.DatePicker,int,int,int) -> onDateSet
@@ -9698,17 +9714,17 @@ com.miracleas.minrute.DatePickerFragment -> com.miracleas.minrute.l:
 com.miracleas.minrute.GeofenceActivity -> com.miracleas.minrute.m:
     java.lang.String tag -> n
     int CONNECTION_FAILURE_RESOLUTION_REQUEST -> o
-    com.google.android.gms.location.LocationClient mLocationClient -> t
-    android.app.PendingIntent mGeofenceRequestIntent -> u
-    com.miracleas.minrute.GeofenceActivity$REQUEST_TYPE mRequestType -> v
+    com.google.android.gms.location.LocationClient mLocationClient -> u
+    android.app.PendingIntent mGeofenceRequestIntent -> v
+    com.miracleas.minrute.GeofenceActivity$REQUEST_TYPE mRequestType -> p
     boolean mInProgress -> w
     java.util.List mCurrentGeofences -> x
     java.util.List mGeofencesToRemove -> y
     int[] $SWITCH_TABLE$com$miracleas$minrute$GeofenceActivity$REQUEST_TYPE -> z
     void onCreate(android.os.Bundle) -> onCreate
     void onConnected(android.os.Bundle) -> a
-    android.app.PendingIntent getTransitionPendingIntent() -> m
-    android.app.PendingIntent getRemoveGeofencesPendingIntent() -> n
+    android.app.PendingIntent getTransitionPendingIntent() -> l
+    android.app.PendingIntent getRemoveGeofencesPendingIntent() -> m
     void addGeofences(java.util.List) -> a
     void removeAllGeofences() -> j
     void onAddGeofencesResult(int,java.lang.String[]) -> a
@@ -9727,7 +9743,7 @@ com.miracleas.minrute.GeofenceActivity$REQUEST_TYPE -> com.miracleas.minrute.n:
 com.miracleas.minrute.GoogleServiceActivity -> com.miracleas.minrute.o:
     java.lang.String tag -> n
     void onStart() -> onStart
-    boolean servicesConnected() -> l
+    boolean servicesConnected() -> n
     void onConnectionFailed(com.google.android.gms.common.ConnectionResult) -> a
     void onActivityResult(int,int,android.content.Intent) -> onActivityResult
     void onConnectedServiceVoice() -> p
@@ -9758,10 +9774,10 @@ com.miracleas.minrute.LocaleImageHandlerFragment$ImageLoader -> com.miracleas.mi
     void onPostExecute(java.lang.Object) -> onPostExecute
     java.lang.Object doInBackground(java.lang.Object[]) -> doInBackground
 com.miracleas.minrute.MinRuteBaseActivity -> com.miracleas.minrute.s:
-    com.miracleas.minrute.service.UpdateVoiceTripService mServiceVoice -> p
-    boolean mBoundVoice -> q
-    com.miracleas.minrute.service.LocationService mServiceLocation -> r
-    boolean mBoundLocation -> s
+    com.miracleas.minrute.service.UpdateVoiceTripService mServiceVoice -> q
+    boolean mBoundVoice -> r
+    com.miracleas.minrute.service.LocationService mServiceLocation -> s
+    boolean mBoundLocation -> t
     android.content.ServiceConnection mConnectionLocation -> n
     android.content.ServiceConnection mConnectionVoice -> o
     void onCreate(android.os.Bundle) -> onCreate
@@ -9783,23 +9799,43 @@ com.miracleas.minrute.TimePickerFragment -> com.miracleas.minrute.v:
     void onTimeSet(android.widget.TimePicker,int,int) -> onTimeSet
     void onAttach(android.app.Activity) -> a
 com.miracleas.minrute.TripGuideActivity -> com.miracleas.minrute.TripGuideActivity:
+    java.lang.String tag -> u
+    com.miracleas.imagedownloader.IImageDownloader mImageLoader -> v
+    java.lang.String mAuth -> w
     void onCreate(android.os.Bundle) -> onCreate
     boolean onCreateOptionsMenu(com.actionbarsherlock.view.Menu) -> a
     boolean onOptionsItemSelected(com.actionbarsherlock.view.MenuItem) -> a
     void onActivityResult(int,int,android.content.Intent) -> onActivityResult
-    void onTripLegSelected(java.lang.String,java.lang.String,java.lang.String,java.lang.String) -> a
+    void onTripLegSelected(com.miracleas.minrute.model.TripLeg) -> a
     void onConnectedServiceVoice() -> p
     void onConnectedServiceLocation() -> q
+    com.miracleas.imagedownloader.IImageDownloader getIImageDownloader() -> o
+    java.lang.String getImgCacheDir() -> r
+    void onResume() -> onResume
+    void onPause() -> onPause
+    void onDestroy() -> onDestroy
+    void closeCache() -> l
+    void flushCache() -> m
+    void setExitTasksEarly(boolean) -> b
+    boolean download(java.lang.String,android.widget.ImageView) -> a
+    void setPauseWork(boolean) -> c
+    void setLoadingImage(int) -> a
+    void setImageSize(int) -> b
+    void cancelMyWork(android.widget.ImageView) -> a
+    void setAuthTokenHeader(java.lang.String) -> b
+    java.lang.String getAuthToken() -> s
+    void onSharedPreferenceChanged(android.content.SharedPreferences,java.lang.String) -> onSharedPreferenceChanged
 com.miracleas.minrute.TripGuideFragment -> com.miracleas.minrute.w:
     java.lang.String[] PROJECTION -> Y
     java.lang.String[] PROJECTION_TRIP_GPS_READY -> Z
-    com.miracleas.minrute.TripGuideFragment$TripAdapter mTripAdapter -> aa
-    java.lang.String mTextToSpeak -> ab
+    com.miracleas.imagedownloader.IImageDownloader mIImageDownloader -> aa
+    com.miracleas.minrute.TripGuideFragment$TripAdapter mTripAdapter -> ab
+    java.lang.String mTextToSpeak -> ac
     java.lang.String tag -> i
-    com.miracleas.minrute.TripGuideFragment$LoadGeofencesTask mLoadGeofencesTask -> ac
-    com.miracleas.minrute.TripGuideFragment$Callbacks mCallbacks -> ad
-    com.miracleas.minrute.TripGuideFragment$Callbacks sDummyCallbacks -> ae
-    int MY_DATA_CHECK_CODE -> af
+    com.miracleas.minrute.TripGuideFragment$LoadGeofencesTask mLoadGeofencesTask -> ad
+    com.miracleas.minrute.TripGuideFragment$Callbacks mCallbacks -> ae
+    com.miracleas.minrute.TripGuideFragment$Callbacks sDummyCallbacks -> af
+    int MY_DATA_CHECK_CODE -> ag
     com.miracleas.minrute.TripGuideFragment createInstance(java.lang.String,int,com.miracleas.minrute.model.TripRequest) -> a
     void onCreate(android.os.Bundle) -> a
     void onSaveInstanceState(android.os.Bundle) -> e
@@ -9819,10 +9855,11 @@ com.miracleas.minrute.TripGuideFragment -> com.miracleas.minrute.w:
     void onConnectedService() -> b
     void onVoiceServiceReady() -> E
     void onLoadFinished(android.support.v4.content.Loader,java.lang.Object) -> a
+    com.miracleas.imagedownloader.IImageDownloader access$1(com.miracleas.minrute.TripGuideFragment) -> a
 com.miracleas.minrute.TripGuideFragment$1 -> com.miracleas.minrute.x:
-    void onTripLegSelected(java.lang.String,java.lang.String,java.lang.String,java.lang.String) -> a
+    void onTripLegSelected(com.miracleas.minrute.model.TripLeg) -> a
 com.miracleas.minrute.TripGuideFragment$Callbacks -> com.miracleas.minrute.y:
-    void onTripLegSelected(java.lang.String,java.lang.String,java.lang.String,java.lang.String) -> a
+    void onTripLegSelected(com.miracleas.minrute.model.TripLeg) -> a
 com.miracleas.minrute.TripGuideFragment$LoadGeofencesTask -> com.miracleas.minrute.z:
     java.lang.String[] projection -> b
     com.miracleas.minrute.TripGuideFragment this$0 -> a
@@ -9855,7 +9892,8 @@ com.miracleas.minrute.TripGuideFragment$TripAdapter -> com.miracleas.minrute.aa:
     int iGeofenceTransition -> E
     int iRtTrack -> F
     int iDestTrack -> G
-    android.view.LayoutInflater mInf -> H
+    int iUrl -> H
+    android.view.LayoutInflater mInf -> I
     com.miracleas.minrute.TripGuideFragment this$0 -> j
     void bindView(android.view.View,android.content.Context,android.database.Cursor) -> a
     android.view.View newView(android.content.Context,android.database.Cursor,android.view.ViewGroup) -> a
@@ -9864,6 +9902,8 @@ com.miracleas.minrute.TripGuideFragment$TripAdapter -> com.miracleas.minrute.aa:
     java.lang.String getType(int) -> b
     java.lang.String getOriginName(int) -> c
     java.lang.String getDestName(int) -> d
+    java.lang.String getDestTime(int) -> e
+    java.lang.String getOriginTime(int) -> f
 com.miracleas.minrute.TripLegDetailNotesDialog -> com.miracleas.minrute.ab:
     java.lang.String tag -> Y
     android.widget.LinearLayout mContainerNotes -> Z
@@ -9878,12 +9918,14 @@ com.miracleas.minrute.TripLegDetailNotesDialog -> com.miracleas.minrute.ab:
     void onLoaderReset(android.support.v4.content.Loader) -> a
     void onLoadFinished(android.support.v4.content.Loader,java.lang.Object) -> a
 com.miracleas.minrute.TripLegDetailsActivity -> com.miracleas.minrute.TripLegDetailsActivity:
-    long mJourneyId -> t
-    java.lang.String mLegId -> u
-    java.lang.String mTransportType -> v
+    long mJourneyId -> u
+    java.lang.String mLegId -> v
+    java.lang.String mTransportType -> w
     void onCreate(android.os.Bundle) -> onCreate
     boolean onCreateOptionsMenu(com.actionbarsherlock.view.Menu) -> a
     boolean onOptionsItemSelected(com.actionbarsherlock.view.MenuItem) -> a
+    void showList() -> l
+    void showMap() -> m
     void onStopSelected(java.lang.String,java.lang.String,java.lang.String,java.lang.String,java.lang.String) -> a
     void setJourneyDetailId(long,java.lang.String,java.lang.String) -> a
 com.miracleas.minrute.TripLegDetailsFragment -> com.miracleas.minrute.ac:
@@ -9892,9 +9934,11 @@ com.miracleas.minrute.TripLegDetailsFragment -> com.miracleas.minrute.ac:
     com.miracleas.minrute.TripLegDetailsFragment$TripAdapter mTripAdapter -> Z
     android.widget.TextView mTextViewJourneyName -> aa
     long journeyDetailId -> ab
-    com.miracleas.minrute.TripLegDetailsFragment$Callbacks mCallbacks -> ac
-    com.miracleas.minrute.TripLegDetailsFragment$Callbacks sDummyCallbacks -> ad
-    com.miracleas.minrute.TripLegDetailsFragment createInstance(java.lang.String,java.lang.String,java.lang.String,java.lang.String) -> a
+    com.miracleas.minrute.model.TripLeg mTripLeg -> ac
+    android.widget.TextView mTextViewJourneyTimes -> ad
+    com.miracleas.minrute.TripLegDetailsFragment$Callbacks mCallbacks -> ae
+    com.miracleas.minrute.TripLegDetailsFragment$Callbacks sDummyCallbacks -> af
+    com.miracleas.minrute.TripLegDetailsFragment createInstance(com.miracleas.minrute.model.TripLeg) -> a
     void onCreate(android.os.Bundle) -> a
     android.view.View onCreateView(android.view.LayoutInflater,android.view.ViewGroup,android.os.Bundle) -> a
     void onViewCreated(android.view.View,android.os.Bundle) -> a
@@ -9948,7 +9992,7 @@ com.miracleas.minrute.TripLegMapFragment -> com.miracleas.minrute.ag:
     com.miracleas.minrute.TripLegMapFragment$Callbacks mCallbacks -> i
     com.miracleas.minrute.TripLegMapFragment$Callbacks sDummyCallbacks -> Y
     java.text.NumberFormat currencyFormat -> a
-    com.miracleas.minrute.TripLegMapFragment createInstance(java.lang.String,java.lang.String,java.lang.String) -> a
+    com.miracleas.minrute.TripLegMapFragment createInstance(java.lang.String,com.miracleas.minrute.model.TripLeg) -> a
     void onAttach(android.app.Activity) -> a
     void onDetach() -> c
     void onCreate(android.os.Bundle) -> a
@@ -9990,7 +10034,7 @@ com.miracleas.minrute.TripLegMapFragment$LegStop -> com.miracleas.minrute.ak:
     com.miracleas.minrute.TripLegMapFragment this$0 -> g
 com.miracleas.minrute.TripStopDetailsActivity -> com.miracleas.minrute.TripStopDetailsActivity:
     com.miracleas.minrute.TripStopDetailsActivity$SectionsPagerAdapter mSectionsPagerAdapter -> o
-    android.support.v4.view.ViewPager mViewPager -> t
+    android.support.v4.view.ViewPager mViewPager -> p
     com.miracleas.minrute.model.NearbyLocationRequest mNearbyLocationRequest -> u
     java.lang.String mTransportType -> v
     void onCreate(android.os.Bundle) -> onCreate
@@ -10058,7 +10102,7 @@ com.miracleas.minrute.TripStopDetailsFragment -> com.miracleas.minrute.ap:
     void onLoadFinished(android.support.v4.content.Loader,java.lang.Object) -> a
 com.miracleas.minrute.TripStopDetailsImagePagerActivity -> com.miracleas.minrute.TripStopDetailsImagePagerActivity:
     java.lang.String[] PROJECTION -> o
-    com.miracleas.imagedownloader.IImageDownloader mImageLoader -> t
+    com.miracleas.imagedownloader.IImageDownloader mImageLoader -> p
     com.miracleas.minrute.TripStopDetailsImagePagerActivity$ImagePagerAdapter mAdapter -> u
     android.support.v4.view.ViewPager mPager -> v
     void onCreate(android.os.Bundle) -> onCreate
@@ -10164,7 +10208,6 @@ com.miracleas.minrute.TripSuggestionsActivity -> com.miracleas.minrute.TripSugge
     boolean onOptionsItemSelected(com.actionbarsherlock.view.MenuItem) -> a
     void onTripSuggestionSelected(java.lang.String,int,com.miracleas.minrute.model.TripRequest) -> a
     void onConnectedServiceLocation() -> q
-    void onConnectedServiceVoice() -> p
 com.miracleas.minrute.TripSuggestionsFragment -> com.miracleas.minrute.ay:
     java.lang.String[] PROJECTION -> a
     com.miracleas.minrute.TripSuggestionsFragment$TripAdapter mTripAdapter -> b
@@ -10275,23 +10318,36 @@ com.miracleas.minrute.model.Trip -> com.miracleas.minrute.model.e:
     java.lang.String getArrivalTime() -> f
     java.lang.String getNames() -> g
     java.lang.String getTypes() -> h
-com.miracleas.minrute.model.TripLeg -> com.miracleas.minrute.model.f:
-    java.lang.String tripId -> a
-    java.lang.String name -> b
-    java.lang.String type -> c
-    java.lang.String notes -> d
-    java.lang.String ref -> e
-    com.miracleas.minrute.model.TripLocation origin -> f
-    com.miracleas.minrute.model.TripLocation dest -> g
-    long duration -> h
-    java.lang.StringBuilder b -> i
-    java.util.Calendar start -> j
-    java.util.Calendar end -> k
+com.miracleas.minrute.model.TripLeg -> com.miracleas.minrute.model.TripLeg:
+    java.lang.String tag -> a
+    java.lang.String tripId -> b
+    java.lang.String name -> c
+    java.lang.String type -> d
+    java.lang.String notes -> e
+    java.lang.String ref -> f
+    com.miracleas.minrute.model.TripLocation origin -> g
+    com.miracleas.minrute.model.TripLocation dest -> h
+    long duration -> m
+    java.lang.StringBuilder b -> n
+    java.util.Calendar start -> o
+    java.util.Calendar end -> p
+    int id -> i
+    java.lang.String originName -> j
+    java.lang.String destName -> k
+    java.lang.String time -> l
+    android.os.Parcelable$Creator CREATOR -> CREATOR
+    int describeContents() -> describeContents
+    void writeToParcel(android.os.Parcel,int) -> writeToParcel
     long getDuration() -> a
     java.lang.String getFormattedDuration() -> b
     long getDepartures() -> c
     int getIcon(java.lang.String) -> a
     boolean isTrain(java.lang.String) -> b
+com.miracleas.minrute.model.TripLeg$1 -> com.miracleas.minrute.model.f:
+    com.miracleas.minrute.model.TripLeg createFromParcel(android.os.Parcel) -> a
+    com.miracleas.minrute.model.TripLeg[] newArray(int) -> a
+    java.lang.Object createFromParcel(android.os.Parcel) -> createFromParcel
+    java.lang.Object[] newArray(int) -> newArray
 com.miracleas.minrute.model.TripLocation -> com.miracleas.minrute.model.g:
     java.lang.String name -> a
     java.lang.String date -> b
@@ -10395,6 +10451,7 @@ com.miracleas.minrute.net.BaseFetcher -> com.miracleas.minrute.a.c:
     void onFatalError() -> e
     void doWork() -> a
     void broadcastError(java.lang.String,boolean) -> a
+    void log(java.lang.String,java.lang.String) -> a
     java.net.HttpURLConnection initHttpURLConnection(java.lang.String) -> c
     void exportDatabase() -> f
 com.miracleas.minrute.net.DepartureBoardFetcher -> com.miracleas.minrute.a.d:
@@ -10459,11 +10516,12 @@ com.miracleas.minrute.net.TripFetcher -> com.miracleas.minrute.a.h:
     void tripSearch(com.miracleas.minrute.model.TripRequest) -> a
     void parse(java.io.InputStream) -> a
     com.miracleas.minrute.model.TripLocation getTripLegValues(org.xmlpull.v1.XmlPullParser,boolean) -> a
+    void saveGoogleStreetViewImage(java.lang.String) -> a
     com.miracleas.minrute.model.Trip createNewTrip() -> g
     void updateTrip(com.miracleas.minrute.model.Trip) -> a
     void saveLeg(com.miracleas.minrute.model.TripLeg,int) -> a
     void deleteOldTrips() -> h
-    void addRequest(java.lang.String,java.lang.String) -> a
+    void addRequest(java.lang.String,java.lang.String) -> b
     void addTransportRequest(java.lang.String,int) -> a
     void addArrivalRequest(java.lang.String,int) -> b
 com.miracleas.minrute.provider.AddressGPSMetaData -> com.miracleas.minrute.provider.a:
@@ -10558,8 +10616,11 @@ com.miracleas.minrute.service.LocationService -> com.miracleas.minrute.service.L
     boolean mIsLocationStarted -> f
     android.content.SharedPreferences mPrefs -> g
     android.content.SharedPreferences$Editor mEditor -> h
+    com.miracleas.minrute.service.LocationService$OnNewLocationReceivedListener mOnNewLocationReceived -> i
+    com.miracleas.minrute.service.LocationService$GetAddressTask mGetAddressTask -> j
     void onCreate() -> onCreate
     int onStartCommand(android.content.Intent,int,int) -> onStartCommand
+    void onDestroy() -> onDestroy
     android.os.IBinder onBind(android.content.Intent) -> onBind
     void startLocationListening() -> b
     void stopLocationListening() -> c
@@ -10567,13 +10628,26 @@ com.miracleas.minrute.service.LocationService -> com.miracleas.minrute.service.L
     void onConnected(android.os.Bundle) -> a
     void onDisconnected() -> a
     void onConnectionFailed(com.google.android.gms.common.ConnectionResult) -> a
-com.miracleas.minrute.service.LocationService$LocalBinder -> com.miracleas.minrute.service.a:
+    void setOnNewLocationReceived(com.miracleas.minrute.service.LocationService$OnNewLocationReceivedListener) -> a
+    void geocode(android.location.Location) -> b
+    com.miracleas.minrute.service.LocationService$OnNewLocationReceivedListener access$0(com.miracleas.minrute.service.LocationService) -> a
+com.miracleas.minrute.service.LocationService$GetAddressTask -> com.miracleas.minrute.service.a:
+    android.content.Context mContext -> a
+    com.miracleas.minrute.service.LocationService this$0 -> b
+    java.lang.String doInBackground(android.location.Location[]) -> a
+    void onPostExecute(java.lang.String) -> a
+    void onPostExecute(java.lang.Object) -> onPostExecute
+    java.lang.Object doInBackground(java.lang.Object[]) -> doInBackground
+com.miracleas.minrute.service.LocationService$LocalBinder -> com.miracleas.minrute.service.b:
     com.miracleas.minrute.service.LocationService this$0 -> a
     com.miracleas.minrute.service.LocationService getService() -> a
+com.miracleas.minrute.service.LocationService$OnNewLocationReceivedListener -> com.miracleas.minrute.service.c:
+    void onNewLocationReceived(android.location.Location) -> a
+    void onAddressGeocoded(java.lang.String) -> b
 com.miracleas.minrute.service.ReceiveTransitionsIntentService -> com.miracleas.minrute.service.ReceiveTransitionsIntentService:
     java.lang.String tag -> a
     void onHandleIntent(android.content.Intent) -> onHandleIntent
-com.miracleas.minrute.service.RemoveGeofencesService -> com.miracleas.minrute.service.b:
+com.miracleas.minrute.service.RemoveGeofencesService -> com.miracleas.minrute.service.d:
     void onHandleIntent(android.content.Intent) -> onHandleIntent
 com.miracleas.minrute.service.TripService -> com.miracleas.minrute.service.TripService:
     void onHandleIntent(android.content.Intent) -> onHandleIntent
@@ -10615,16 +10689,16 @@ com.miracleas.minrute.service.UpdateVoiceTripService -> com.miracleas.minrute.se
     com.miracleas.minrute.service.UpdateVoiceTripService$OnVoiceServiceReadyListener access$6(com.miracleas.minrute.service.UpdateVoiceTripService) -> f
     void access$7(com.miracleas.minrute.service.UpdateVoiceTripService,com.miracleas.minrute.service.UpdateVoiceTripService$OnVoiceServiceReadyListener) -> a
     void access$8(com.miracleas.minrute.service.UpdateVoiceTripService) -> g
-com.miracleas.minrute.service.UpdateVoiceTripService$1 -> com.miracleas.minrute.service.c:
+com.miracleas.minrute.service.UpdateVoiceTripService$1 -> com.miracleas.minrute.service.e:
     com.miracleas.minrute.service.UpdateVoiceTripService this$0 -> a
     void run() -> run
-com.miracleas.minrute.service.UpdateVoiceTripService$LoadDepartueTask -> com.miracleas.minrute.service.d:
+com.miracleas.minrute.service.UpdateVoiceTripService$LoadDepartueTask -> com.miracleas.minrute.service.f:
     com.miracleas.minrute.service.UpdateVoiceTripService this$0 -> a
     java.lang.Long doInBackground(java.lang.Void[]) -> a
     void onPostExecute(java.lang.Long) -> a
     void onPostExecute(java.lang.Object) -> onPostExecute
     java.lang.Object doInBackground(java.lang.Object[]) -> doInBackground
-com.miracleas.minrute.service.UpdateVoiceTripService$LoadNewTransitionTask -> com.miracleas.minrute.service.e:
+com.miracleas.minrute.service.UpdateVoiceTripService$LoadNewTransitionTask -> com.miracleas.minrute.service.g:
     com.miracleas.minrute.service.UpdateVoiceTripService this$0 -> a
     java.lang.Integer doInBackground(java.lang.Void[]) -> a
     int getVoiceRessouce(java.lang.String,int) -> a
@@ -10633,27 +10707,32 @@ com.miracleas.minrute.service.UpdateVoiceTripService$LoadNewTransitionTask -> co
     void onPostExecute(java.lang.Integer) -> a
     void onPostExecute(java.lang.Object) -> onPostExecute
     java.lang.Object doInBackground(java.lang.Object[]) -> doInBackground
-com.miracleas.minrute.service.UpdateVoiceTripService$LocalBinder -> com.miracleas.minrute.service.f:
+com.miracleas.minrute.service.UpdateVoiceTripService$LocalBinder -> com.miracleas.minrute.service.h:
     com.miracleas.minrute.service.UpdateVoiceTripService this$0 -> a
     com.miracleas.minrute.service.UpdateVoiceTripService getService() -> a
-com.miracleas.minrute.service.UpdateVoiceTripService$OnVoiceServiceReadyListener -> com.miracleas.minrute.service.g:
+com.miracleas.minrute.service.UpdateVoiceTripService$OnVoiceServiceReadyListener -> com.miracleas.minrute.service.i:
     void onVoiceServiceReady() -> E
-com.miracleas.minrute.service.UpdateVoiceTripService$TransistionObserver -> com.miracleas.minrute.service.h:
+com.miracleas.minrute.service.UpdateVoiceTripService$TransistionObserver -> com.miracleas.minrute.service.j:
     com.miracleas.minrute.service.UpdateVoiceTripService this$0 -> a
     boolean deliverSelfNotifications() -> deliverSelfNotifications
     void onChange(boolean) -> onChange
 com.miracleas.minrute.service.UploadImagesService -> com.miracleas.minrute.service.UploadImagesService:
-    com.google.api.services.drive.Drive service -> b
-    com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential credential -> a
-    java.lang.String mAccountName -> c
-    java.lang.String mStopName -> d
+    java.lang.String tag -> a
+    com.google.api.services.drive.Drive service -> c
+    com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential credential -> b
+    java.lang.String mAccountName -> d
+    java.util.ArrayList mDbOperations -> e
+    android.content.ContentResolver mContentResolver -> f
     void onCreate() -> onCreate
     int onStartCommand(android.content.Intent,int,int) -> onStartCommand
-    void saveFileToDrive(long,java.lang.String,java.lang.String,java.lang.String) -> a
+    void updateImageWithNewUrl(com.google.api.services.drive.model.File,java.lang.String,int) -> a
+    com.google.api.services.drive.model.File saveFileToDrive(long,java.lang.String,java.lang.String,java.lang.String) -> a
     com.google.api.services.drive.Drive getDriveService(com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential) -> a
+    android.content.ContentProviderResult[] saveData(java.lang.String) -> a
     android.os.IBinder onBind(android.content.Intent) -> onBind
-    void access$0(com.miracleas.minrute.service.UploadImagesService,long,java.lang.String,java.lang.String,java.lang.String) -> a
-com.miracleas.minrute.service.UploadImagesService$UploadImages -> com.miracleas.minrute.service.i:
+    com.google.api.services.drive.model.File access$0(com.miracleas.minrute.service.UploadImagesService,long,java.lang.String,java.lang.String,java.lang.String) -> a
+    void access$1(com.miracleas.minrute.service.UploadImagesService,com.google.api.services.drive.model.File,java.lang.String,int) -> a
+com.miracleas.minrute.service.UploadImagesService$UploadImages -> com.miracleas.minrute.service.k:
     com.miracleas.minrute.service.UploadImagesService this$0 -> a
     java.lang.Void doInBackground(java.lang.Void[]) -> a
     void onPostExecute(java.lang.Void) -> a
