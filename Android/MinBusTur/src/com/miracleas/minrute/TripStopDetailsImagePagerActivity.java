@@ -82,10 +82,7 @@ public class TripStopDetailsImagePagerActivity extends PhotoGoogleDriveActivity 
 		// Fetch screen height and width, to use as our max size when loading
 		// images as this
 		// activity runs full screen
-		final DisplayMetrics displayMetrics = new DisplayMetrics();
-		getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
-		final int height = displayMetrics.heightPixels;
-		final int width = displayMetrics.widthPixels;
+		
 
 		// Set up ViewPager and backing adapter
 		mPager = (ViewPager) findViewById(R.id.pager);
@@ -196,7 +193,11 @@ public class TripStopDetailsImagePagerActivity extends PhotoGoogleDriveActivity 
 	{
 		if (mImageLoader == null)
 		{
-			mImageLoader = ImageFetcher.getInstance(this, getSupportFragmentManager(), CACHE_DIR);
+			final DisplayMetrics displayMetrics = new DisplayMetrics();
+			getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+			final int height = displayMetrics.heightPixels;
+			final int width = displayMetrics.widthPixels;
+			mImageLoader = ImageFetcher.getInstance(this, getSupportFragmentManager(), CACHE_DIR, height, width);
 			mImageLoader.setLoadingImage(R.drawable.empty_photo);
 		}
 		return mImageLoader;

@@ -58,7 +58,7 @@
         
         
         <activity android:name="com.miracleas.minrute.TripGuideActivity" android:parentActivityName="com.miracleas.minrute.TripSuggestionsActivity"
-            android:label="@string/trip_guide" android:screenOrientation="portrait">
+            android:label="@string/trip_guide" android:screenOrientation="portrait" android:theme="@style/Theme.Minrutevejledning.Background">
          <meta-data
             android:name="android.support.PARENT_ACTIVITY"
             android:value="com.miracleas.minrute.TripSuggestionsActivity" />

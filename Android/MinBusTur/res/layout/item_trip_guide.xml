@@ -3,40 +3,47 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:paddingTop="4dp" >
-
+    
     <TextView
         android:id="@+id/textViewTime"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:gravity="center_vertical"
-        android:text="19:00-20:00"
+        android:text="19:00"
         android:textSize="19sp" />
+    
+    <TextView
+        android:id="@+id/textViewTransportType"
+        android:layout_width="wrap_content" android:padding="2dp"
+        android:layout_height="wrap_content" 
+        android:layout_centerHorizontal="true"
+        android:drawablePadding="10dp" android:text="BUS"
+        android:gravity="center_vertical"
+        android:textSize="17sp" android:textStyle="bold"/>
+    
+    <ImageView
+        android:id="@+id/imageViewThumb" android:src="@drawable/empty_photo"
+        android:layout_width="match_parent" android:background="@color/black_transparent"
+        android:layout_height="90dp" android:layout_below="@+id/textViewTransportType"
+        android:scaleType="centerCrop" />
 
     <TextView
         android:id="@+id/textViewOriginName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/textViewTime"
+        android:layout_below="@+id/imageViewThumb"
         android:layout_marginTop="4dp"
-        android:drawablePadding="10dp"
+        android:drawablePadding="10dp" android:text="Skolegade 4, 8000 Aarhus C"
         android:gravity="center_vertical"
         android:textSize="17sp" />
 
-    <TextView
-        android:id="@+id/textViewTransportType"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/textViewOriginName"
-        android:layout_marginTop="4dp"
-        android:drawablePadding="10dp"
-        android:gravity="center_vertical"
-        android:textSize="17sp" />
+    
 
     <TextView
         android:id="@+id/textViewNotes"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/textViewTransportType"
+        android:layout_height="wrap_content" android:text="Retning; mod Skolen"
+        android:layout_below="@+id/textViewOriginName"
         android:layout_marginTop="4dp"
         android:drawableLeft="@drawable/ic_menu_info_details"
         android:drawablePadding="10dp"
@@ -53,12 +60,6 @@
         android:gravity="center_vertical"
         android:textSize="14sp" />
 
-    <ImageView
-        android:id="@+id/imageViewThumb"
-        android:layout_width="90dp" android:background="@android:color/transparent"
-        android:layout_height="90dp"
-        android:layout_alignParentRight="true"
-        android:layout_centerVertical="true"
-        android:scaleType="fitCenter" />
+    
 
 </RelativeLayout>

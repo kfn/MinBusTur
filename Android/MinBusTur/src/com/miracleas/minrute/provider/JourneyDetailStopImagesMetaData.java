@@ -28,7 +28,8 @@ public class JourneyDetailStopImagesMetaData
 				+ TableMetaData.FILE_LOCALE_PATH + " TEXT,"
 				+ TableMetaData.FILE_TITLE + " TEXT,"
 				+ TableMetaData.FILE_MIME_TYPE + " TEXT,"
-				+ TableMetaData.STOP_NAME + " TEXT"
+				+ TableMetaData.STOP_NAME + " TEXT,"
+				+ TableMetaData.IS_GOOGLE_STREET + " INTEGER DEFAULT 0"
 				;
 	}
 
@@ -57,6 +58,7 @@ public class JourneyDetailStopImagesMetaData
 		public static final String FILE_TITLE = "file_title";
 		public static final String FILE_LOCALE_PATH = "file_locale_path";
 		public static final String STOP_NAME = "stop_name";
+		public static final String IS_GOOGLE_STREET = "is_google_street";
 	
 	}
 }

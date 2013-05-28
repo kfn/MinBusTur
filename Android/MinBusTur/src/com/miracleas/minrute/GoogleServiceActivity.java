@@ -14,7 +14,7 @@ import com.google.android.gms.common.GooglePlayServicesClient.OnConnectionFailed
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.miracleas.minrute.service.ReceiveTransitionsIntentService;
 
-public class GoogleServiceActivity extends MinRuteBaseActivity implements OnConnectionFailedListener
+public abstract class GoogleServiceActivity extends MinRuteBaseActivity implements OnConnectionFailedListener
 {
 	private static final String tag = GoogleServiceActivity.class.getName();
 	// Global constants

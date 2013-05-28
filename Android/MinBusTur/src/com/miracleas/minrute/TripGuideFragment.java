@@ -56,11 +56,11 @@ import com.miracleas.minrute.utils.App;
 public class TripGuideFragment extends SherlockListFragment implements LoaderCallbacks<Cursor>, OnItemClickListener, com.miracleas.minrute.service.UpdateVoiceTripService.OnVoiceServiceReadyListener
 {
 	//"t."+TripLegMetaData.TableMetaData._ID
-	private static final String[] PROJECTION = { TripLegMetaData.TableMetaData._ID, TripLegMetaData.TableMetaData.DEST_DATE, TripLegMetaData.TableMetaData.DEST_NAME, TripLegMetaData.TableMetaData.DEST_ROUTE_ID, TripLegMetaData.TableMetaData.DEST_TIME,
+	private static final String[] PROJECTION = { "t."+TripLegMetaData.TableMetaData._ID, TripLegMetaData.TableMetaData.DEST_DATE, TripLegMetaData.TableMetaData.DEST_NAME, TripLegMetaData.TableMetaData.DEST_ROUTE_ID, TripLegMetaData.TableMetaData.DEST_TIME,
 			TripLegMetaData.TableMetaData.DEST_TYPE, TripLegMetaData.TableMetaData.ORIGIN_DATE, TripLegMetaData.TableMetaData.ORIGIN_NAME, TripLegMetaData.TableMetaData.ORIGIN_ROUTE_ID, TripLegMetaData.TableMetaData.ORIGIN_TIME, TripLegMetaData.TableMetaData.ORIGIN_TYPE,
 			TripLegMetaData.TableMetaData.DURATION, TripLegMetaData.TableMetaData.DURATION_FORMATTED, TripLegMetaData.TableMetaData.NAME, TripLegMetaData.TableMetaData.NOTES, TripLegMetaData.TableMetaData.REF, TripLegMetaData.TableMetaData.TYPE,
 			TripLegMetaData.TableMetaData.ORIGIN_RT_TRACK, TripLegMetaData.TableMetaData.DEST_TRACK,
-			TripLegMetaData.TableMetaData.GEOFENCE_EVENT_ID,TripLegMetaData.TableMetaData.THUMB_URL,
+			TripLegMetaData.TableMetaData.GEOFENCE_EVENT_ID,JourneyDetailStopImagesMetaData.TableMetaData.URL,
 			TripLegMetaData.TableMetaData.PROGRESS_BAR_PROGRESS, TripLegMetaData.TableMetaData.PROGRESS_BAR_MAX, TripLegMetaData.TableMetaData.DEPARTURES_IN_TIME_LABEL, TripLegMetaData.TableMetaData.COMPLETED };
 
 	private static final String[] PROJECTION_TRIP_GPS_READY = { TripMetaData.TableMetaData._ID, TripMetaData.TableMetaData.HAS_ALL_ADDRESS_GPSES };
@@ -140,8 +140,8 @@ public class TripGuideFragment extends SherlockListFragment implements LoaderCal
 		{
 			String selection = TripLegMetaData.TableMetaData.TRIP_ID + "=?";
 			String[] selectionArgs = { args.getString(TripMetaData.TableMetaData._ID) };
-			//Uri uri = Uri.withAppendedPath(TripLegMetaData.TableMetaData.CONTENT_URI, JourneyDetailStopImagesMetaData.TABLE_NAME);
-			return new CursorLoader(getActivity(), TripLegMetaData.TableMetaData.CONTENT_URI, PROJECTION, selection, selectionArgs, null);
+			Uri uri = Uri.withAppendedPath(TripLegMetaData.TableMetaData.CONTENT_URI, JourneyDetailStopImagesMetaData.TABLE_NAME);
+			return new CursorLoader(getActivity(), uri, PROJECTION, selection, selectionArgs, null);
 		}
 
 		else if (id == LoaderConstants.LOAD_HAS_ALL_ADDRESS_GPSES)
@@ -374,7 +374,7 @@ public class TripGuideFragment extends SherlockListFragment implements LoaderCal
 			
 			if(TextUtils.isEmpty(url))
 			{
-				
+				imageViewThumb.setImageResource(R.drawable.empty_photo);
 			}
 			else
 			{
@@ -473,7 +473,7 @@ public class TripGuideFragment extends SherlockListFragment implements LoaderCal
 				iRtTrack = newCursor.getColumnIndex(TripLegMetaData.TableMetaData.ORIGIN_RT_TRACK);
 				iDestTrack = newCursor.getColumnIndex(TripLegMetaData.TableMetaData.DEST_TRACK);
 				iGeofenceTransition = newCursor.getColumnIndex(TripLegMetaData.TableMetaData.GEOFENCE_EVENT_ID);
-				iUrl =  newCursor.getColumnIndex(TripLegMetaData.TableMetaData.THUMB_URL);
+				iUrl =  newCursor.getColumnIndex(JourneyDetailStopImagesMetaData.TableMetaData.URL);
 				
 			}
 			return super.swapCursor(newCursor);
@@ -541,9 +541,11 @@ public class TripGuideFragment extends SherlockListFragment implements LoaderCal
 			service.putExtra(JourneyDetailsService.ADDRESS_DEST, dest);
 			service.putExtra(JourneyDetailsService.ADDRESS_ORIGIN, origin);
 			getActivity().startService(service);
+			
+			mCallbacks.onTripLegSelected(tripId, id + "", ref, type);
 		}
 
-		mCallbacks.onTripLegSelected(tripId, id + "", ref, type);
+		
 	}
 
 	@Override

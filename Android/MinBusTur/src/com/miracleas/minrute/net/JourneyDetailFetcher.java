@@ -27,6 +27,7 @@ import com.miracleas.minrute.provider.JourneyDetailMetaData;
 import com.miracleas.minrute.provider.JourneyDetailNoteMetaData;
 import com.miracleas.minrute.provider.JourneyDetailStopImagesMetaData;
 import com.miracleas.minrute.provider.JourneyDetailStopMetaData;
+import com.miracleas.minrute.provider.TripLegMetaData;
 
 public class JourneyDetailFetcher extends BaseFetcher
 {
@@ -134,9 +135,10 @@ public class JourneyDetailFetcher extends BaseFetcher
 								values.put(JourneyDetailStopImagesMetaData.TableMetaData.UPLOADED, "1");
 								values.put(JourneyDetailStopImagesMetaData.TableMetaData.IS_UPLOADING, "0");
 								values.put(JourneyDetailStopImagesMetaData.TableMetaData.STOP_NAME, img.stopName);
+								values.put(JourneyDetailStopImagesMetaData.TableMetaData.IS_GOOGLE_STREET, "1");
 								
-								String selection = JourneyDetailStopImagesMetaData.TableMetaData.URL + "=?";
-								String[] selectionArgs = {img.url};
+								String selection = JourneyDetailStopImagesMetaData.TableMetaData.URL + "=? AND "+JourneyDetailStopImagesMetaData.TableMetaData.IS_GOOGLE_STREET+"=?";
+								String[] selectionArgs = {img.url, "1"};
 								int updates = mContentResolver.update(JourneyDetailStopImagesMetaData.TableMetaData.CONTENT_URI, values, selection, selectionArgs);
 								if(updates==0)
 								{
@@ -264,6 +266,7 @@ public class JourneyDetailFetcher extends BaseFetcher
 			MyImage img = new MyImage(y, x, url.toString(), name);
 			mUrls.add(img);
 
+			
 			b.withValue(JourneyDetailStopMetaData.TableMetaData.LONGITUDE, x);
 			b.withValue(JourneyDetailStopMetaData.TableMetaData.LATITUDE, y);
 			b.withValue(JourneyDetailStopMetaData.TableMetaData.DEP_DATE, depDate);

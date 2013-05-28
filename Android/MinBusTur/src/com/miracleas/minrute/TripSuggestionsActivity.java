@@ -13,7 +13,7 @@ import com.miracleas.minrute.model.TripRequest;
 import com.miracleas.minrute.provider.TripLegMetaData;
 import com.miracleas.minrute.provider.TripMetaData;
 
-public class TripSuggestionsActivity extends MinRuteBaseActivity implements TripSuggestionsFragment.Callbacks
+public class TripSuggestionsActivity extends GeofenceActivity implements TripSuggestionsFragment.Callbacks
 {
 	@Override
 	public void onCreate(Bundle savedInstanceState)
@@ -27,6 +27,10 @@ public class TripSuggestionsActivity extends MinRuteBaseActivity implements Trip
 		
 		if (savedInstanceState == null)
 		{
+			if(servicesConnected())
+			{
+				removeAllGeofences();
+			}
 			Intent intent = getIntent();	
 			TripRequest tripRequest = intent.getParcelableExtra(TripRequest.tag);
 			// Create the detail fragment and add it to the activity
@@ -81,12 +85,5 @@ public class TripSuggestionsActivity extends MinRuteBaseActivity implements Trip
 	public void onConnectedServiceLocation()
 	{
 		mServiceLocation.stopLocationListening();
-	}
-
-	@Override
-	public void onConnectedServiceVoice()
-	{
-		// TODO Auto-generated method stub
-		
 	}
 }

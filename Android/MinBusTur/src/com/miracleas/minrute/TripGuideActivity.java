@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.NavUtils;
 import android.text.TextUtils;
+import android.util.DisplayMetrics;
 import android.widget.ImageView;
 
 import com.actionbarsherlock.app.ActionBar;
@@ -51,7 +52,7 @@ public class TripGuideActivity extends GeofenceActivity implements TripGuideFrag
 		if (savedInstanceState == null)
 		{
 			setAuthTokenHeader(getAuthToken());
-			removeAllGeofences();
+			//removeAllGeofences();
 			Intent intent = getIntent();
 			String tripId = intent.getStringExtra(TripMetaData.TableMetaData._ID);
 			int stepCount = intent.getIntExtra(TripLegMetaData.TableMetaData.STEP_NUMBER, 1);			
@@ -139,14 +140,18 @@ public class TripGuideActivity extends GeofenceActivity implements TripGuideFrag
 	{
 		if (mImageLoader == null)
 		{
-			mImageLoader = ImageFetcher.getInstance(this, getSupportFragmentManager(), getImgCacheDir());
+			final DisplayMetrics displayMetrics = new DisplayMetrics();
+			getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+			final int height = displayMetrics.heightPixels;
+			final int width = displayMetrics.widthPixels;
+			mImageLoader = ImageFetcher.getInstance(this, getSupportFragmentManager(), getImgCacheDir(), height, width);
 		}
 		return mImageLoader;
 	}
 
 	public String getImgCacheDir()
 	{
-		return IImageDownloader.CACHE_DIR;
+		return IImageDownloader.IMAGE_CACHE_DIR;
 	}
 
 	@Override

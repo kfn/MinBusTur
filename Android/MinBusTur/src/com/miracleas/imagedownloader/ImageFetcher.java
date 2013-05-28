@@ -58,7 +58,7 @@ public class ImageFetcher extends ImageResizer
 
 	private static ImageFetcher instance = null;
 
-	public static ImageFetcher getInstance(Activity activity, FragmentManager manager, String imageCacheDir)
+	public static ImageFetcher getInstance(Activity activity, FragmentManager manager, String imageCacheDir, int height, int width)
 	{
 		// if(instance==null)
 		// {
@@ -66,8 +66,7 @@ public class ImageFetcher extends ImageResizer
 		final DisplayMetrics displayMetrics = new DisplayMetrics();
 		activity.getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
 
-		final int height = activity.getResources().getDimensionPixelSize(R.dimen.image_height);// displayMetrics.heightPixels;
-		final int width = activity.getResources().getDimensionPixelSize(R.dimen.image_width);
+		
 
 		// For this sample we'll use half of the longest width to resize our
 		// images. As the

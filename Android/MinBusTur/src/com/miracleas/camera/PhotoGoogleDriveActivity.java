@@ -95,8 +95,12 @@ public class PhotoGoogleDriveActivity extends MinRuteBaseActivity implements IIm
 							try
 							{
 								String authToken = credential.getToken();
-								saveAuthToken(authToken);
-								setAuthTokenHeader(credential.getToken());
+								if(!TextUtils.isEmpty(authToken))
+								{
+									saveAuthToken(authToken);
+								}
+								
+								setAuthTokenHeader(authToken);
 							} catch (IOException e)
 							{
 								// TODO Auto-generated catch block
@@ -315,7 +319,9 @@ public class PhotoGoogleDriveActivity extends MinRuteBaseActivity implements IIm
 	{
 		if (mImageLoader == null)
 		{
-			mImageLoader = ImageFetcher.getInstance(this, getSupportFragmentManager(), getImgCacheDir());
+			final int height = getResources().getDimensionPixelSize(R.dimen.image_height);// displayMetrics.heightPixels;
+			final int width = getResources().getDimensionPixelSize(R.dimen.image_width);
+			mImageLoader = ImageFetcher.getInstance(this, getSupportFragmentManager(), getImgCacheDir(), height, width);
 		}
 		return mImageLoader;
 	}
@@ -451,7 +457,7 @@ public class PhotoGoogleDriveActivity extends MinRuteBaseActivity implements IIm
 	
 	public void startUploadService()
 	{
-		if(service==null)
+		if(service==null || TextUtils.isEmpty(mAccountName))
 		{
 			credential = GoogleAccountCredential.usingOAuth2(PhotoGoogleDriveActivity.this, DriveScopes.DRIVE);
 			startActivityForResult(credential.newChooseAccountIntent(), REQUEST_ACCOUNT_PICKER);

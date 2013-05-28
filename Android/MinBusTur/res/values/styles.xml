@@ -17,6 +17,10 @@
         <!-- All customizations that are NOT specific to a particular API-level can go here. -->
     </style>
     
+    <style name="Theme.Minrutevejledning.Background" parent="@style/Theme.Minrutevejledning">
+        <item name="android:windowBackground">@drawable/bg_pattern</item>
+   </style>
+    
     <style name="toiletTextLabel" parent="android:Widget.Holo.Light.TextView">
         <item name="android:textColor">#ff000000</item>
         <item name="android:textSize">16sp</item>

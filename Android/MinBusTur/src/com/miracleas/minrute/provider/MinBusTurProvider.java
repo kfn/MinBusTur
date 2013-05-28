@@ -23,7 +23,7 @@ import android.util.Log;
 public class MinBusTurProvider extends ContentProvider
 {
 	public static final String DATABASE_NAME = "minrejseplan";
-	public static final int DATABASE_VERSION = 5;
+	public static final int DATABASE_VERSION = 6;
 	// Logging helper tag. No significance to providers.
 	private static final String tag = MinBusTurProvider.class.getName();
 
@@ -193,11 +193,17 @@ public class MinBusTurProvider extends ContentProvider
 		case INCOMING_TRIPLEG_IMAGES_COLLECTION_URI_INDICATOR:
 			StringBuilder b1 = new StringBuilder();
 			b1.append(TripLegMetaData.TABLE_NAME).append(" as t LEFT JOIN ").append(JourneyDetailStopImagesMetaData.TABLE_NAME)
-			.append(" as i ON (t.").append(TripLegMetaData.TableMetaData.ORIGIN_NAME).append("=i.")
-			.append(JourneyDetailStopImagesMetaData.TableMetaData.STOP_NAME).append(")");			
+			.append(" as i ON (i.").append(JourneyDetailStopImagesMetaData.TableMetaData._ID)
+			.append("= (SELECT MAX(z.").append(JourneyDetailStopImagesMetaData.TableMetaData._ID)
+			.append(") FROM ").append(JourneyDetailStopImagesMetaData.TABLE_NAME).append(" as z WHERE z.").append(JourneyDetailStopImagesMetaData.TableMetaData.STOP_NAME)
+			.append("=t.").append(TripLegMetaData.TableMetaData.ORIGIN_NAME).append(" AND ").append(JourneyDetailStopImagesMetaData.TableMetaData.URL)
+			.append(" NOT NULL")
+			.append("))");
 			qb.setTables(b1.toString());
 			break; 	
-			
+			//LEFT JOIN
+			 //  Models_Content C
+			 //    ON C.ContentID = (SELECT MIN(ContentID) FROM Models_Content WHERE ModelID = M.ModelID)
 
 		case INCOMING_SINGLE_TRIPLEG_URI_INDICATOR:
 			qb.setTables(TripLegMetaData.TABLE_NAME);

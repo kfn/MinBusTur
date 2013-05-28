@@ -110,7 +110,7 @@ public class UploadImagesService extends Service
 						if(!TextUtils.isEmpty(path))
 						{
 							File uploaded = saveFileToDrive(id, path, mime, title);
-							if(uploaded!=null && !TextUtils.isEmpty(stopName))
+							if(uploaded!=null && !TextUtils.isEmpty(stopName) && !TextUtils.isEmpty(uploaded.getDownloadUrl()))
 							{
 								updateImageWithNewUrl(uploaded, stopName, id);		
 							}
@@ -153,16 +153,9 @@ public class UploadImagesService extends Service
 	}
 	
 	private void updateImageWithNewUrl(File file, String stopName, int imageId)
-	{
-		String selectionImg = TripLegMetaData.TableMetaData.ORIGIN_NAME + "=?";
-		String[] selectionArgsImg = {stopName};
-		ContentProviderOperation.Builder b = ContentProviderOperation.newUpdate(TripLegMetaData.TableMetaData.CONTENT_URI)
-				.withSelection(selectionImg, selectionArgsImg);
-		b.withValue(TripLegMetaData.TableMetaData.THUMB_URL, file.getDownloadUrl());
-		mDbOperations.add(b.build());
-		
+	{		
 		Uri uri = Uri.withAppendedPath(JourneyDetailStopImagesMetaData.TableMetaData.CONTENT_URI, imageId+"");
-		b = ContentProviderOperation.newUpdate(uri);
+		ContentProviderOperation.Builder b = ContentProviderOperation.newUpdate(uri);
 		b.withValue(JourneyDetailStopImagesMetaData.TableMetaData.URL, file.getDownloadUrl());
 		mDbOperations.add(b.build());
 	}

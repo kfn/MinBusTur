@@ -21,7 +21,7 @@ import com.google.android.gms.location.LocationStatusCodes;
 import com.miracleas.minrute.service.ReceiveTransitionsIntentService;
 import com.miracleas.minrute.service.RemoveGeofencesService;
 
-public class GeofenceActivity extends GoogleServiceActivity implements GooglePlayServicesClient.ConnectionCallbacks, OnAddGeofencesResultListener, OnRemoveGeofencesResultListener
+public abstract class GeofenceActivity extends GoogleServiceActivity implements GooglePlayServicesClient.ConnectionCallbacks, OnAddGeofencesResultListener, OnRemoveGeofencesResultListener
 {
 	public static final String tag = GeofenceActivity.class.getName();
 	public int CONNECTION_FAILURE_RESOLUTION_REQUEST = 251;
@@ -37,7 +37,7 @@ public class GeofenceActivity extends GoogleServiceActivity implements GooglePla
 		ADD, REMOVE_INTENT, REMOVE_LIST
 	};
 
-	private REQUEST_TYPE mRequestType;
+	protected REQUEST_TYPE mRequestType;
 	// Flag that indicates if a request is underway.
 	private boolean mInProgress;
 	private List<Geofence> mCurrentGeofences;
@@ -203,6 +203,7 @@ public class GeofenceActivity extends GoogleServiceActivity implements GooglePla
 	 */
 	public void removeGeofences(List<String> geofenceIds)
 	{
+		Log.d(tag, "removeGeofences request");
 		// If Google Play services is unavailable, exit
 		// Record the type of removal request
 		mRequestType = REQUEST_TYPE.REMOVE_LIST;
