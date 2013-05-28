@@ -36,6 +36,7 @@ import com.google.android.gms.maps.model.LatLngBounds.Builder;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import com.miracleas.minrute.model.TripLeg;
 import com.miracleas.minrute.provider.JourneyDetailMetaData;
 import com.miracleas.minrute.provider.JourneyDetailStopMetaData;
 
@@ -64,13 +65,13 @@ public class TripLegMapFragment extends SupportMapFragment implements LoaderCall
 		JourneyDetailStopMetaData.TableMetaData.IS_PART_OF_USER_ROUTE,
 	};
 	
-	public static TripLegMapFragment createInstance(String journeyId, String legId, String transportType)
+	public static TripLegMapFragment createInstance(String journeyId, TripLeg leg)
 	{
 		TripLegMapFragment f = new TripLegMapFragment();
 		Bundle args = new Bundle();
 		args.putString(JourneyDetailMetaData.TableMetaData._ID, journeyId);
-		args.putString(JourneyDetailStopMetaData.TableMetaData.LEG_ID, legId);
-		args.putString(JourneyDetailMetaData.TableMetaData.TYPE, transportType);
+		args.putString(JourneyDetailStopMetaData.TableMetaData.LEG_ID, leg.id+"");
+		args.putString(JourneyDetailMetaData.TableMetaData.TYPE, leg.type);
 		f.setArguments(args);
 		return f;
 	}

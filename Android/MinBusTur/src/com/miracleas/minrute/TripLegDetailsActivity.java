@@ -2,6 +2,7 @@ package com.miracleas.minrute;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.NavUtils;
 
 import com.actionbarsherlock.app.ActionBar;
@@ -9,13 +10,14 @@ import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 
+import com.miracleas.minrute.model.TripLeg;
 import com.miracleas.minrute.model.TripRequest;
 import com.miracleas.minrute.provider.JourneyDetailMetaData;
 import com.miracleas.minrute.provider.JourneyDetailStopImagesMetaData;
 import com.miracleas.minrute.provider.JourneyDetailStopMetaData;
 import com.miracleas.minrute.provider.TripLegMetaData;
 
-public class TripLegDetailsActivity extends GeofenceActivity implements TripLegDetailsFragment.Callbacks
+public class TripLegDetailsActivity extends GeofenceActivity implements TripLegDetailsFragment.Callbacks, TripLegMapFragment.Callbacks
 {
 	private long mJourneyId = -1;
 	private String mLegId = null;
@@ -45,13 +47,7 @@ public class TripLegDetailsActivity extends GeofenceActivity implements TripLegD
 
 		if (savedInstanceState == null)
 		{
-			Intent intent = getIntent();
-			String tripId = intent.getStringExtra(JourneyDetailMetaData.TableMetaData.TRIP_ID);
-			String legId = intent.getStringExtra(JourneyDetailMetaData.TableMetaData.LEG_ID);
-			String ref = intent.getStringExtra(JourneyDetailMetaData.TableMetaData.REF);
-			String transportType = intent.getStringExtra(TripLegMetaData.TableMetaData.TYPE);
-			TripLegDetailsFragment fragment = TripLegDetailsFragment.createInstance(tripId, legId, ref, transportType);
-			getSupportFragmentManager().beginTransaction().add(R.id.fragmentTripLegDetailsContainer, fragment).commit();
+			showList();
 		}
 	}
 	
@@ -89,16 +85,49 @@ public class TripLegDetailsActivity extends GeofenceActivity implements TripLegD
 		case R.id.menu_map:
 			if(mJourneyId!=-1)
 			{
-				Intent activity = new Intent(this, TripLegMapActivity.class);
+				/*Intent activity = new Intent(this, TripLegMapActivity.class);
 				activity.putExtra(JourneyDetailMetaData.TableMetaData._ID, mJourneyId);
 				activity.putExtra(JourneyDetailMetaData.TableMetaData.LEG_ID, mLegId);
 				activity.putExtra(TripLegMetaData.TableMetaData.TYPE, mTransportType);
-				startActivity(activity);
+				startActivity(activity);*/
+				Fragment f = getSupportFragmentManager().findFragmentById(R.id.fragmentTripLegDetailsContainer);
+				if(f instanceof TripLegDetailsFragment)
+				{
+					showMap();
+				}
+				else if(f instanceof TripLegMapFragment)
+				{
+					showList();
+				}								
 			}		
 			return true;
 		default:
 			return super.onOptionsItemSelected(item);
 		}
+	}
+	
+	private void showList()
+	{
+		Intent intent = getIntent();
+		/*String tripId = intent.getStringExtra(JourneyDetailMetaData.TableMetaData.TRIP_ID);
+		String legId = intent.getStringExtra(JourneyDetailMetaData.TableMetaData.LEG_ID);
+		String ref = intent.getStringExtra(JourneyDetailMetaData.TableMetaData.REF);
+		String transportType = intent.getStringExtra(TripLegMetaData.TableMetaData.TYPE);
+		String nameOfLocation = intent.getStringExtra(TripLegMetaData.TableMetaData.ORIGIN_NAME);*/
+		TripLeg leg = intent.getParcelableExtra(TripLeg.tag);
+		TripLegDetailsFragment fragment = TripLegDetailsFragment.createInstance(leg);
+		getSupportFragmentManager().beginTransaction().replace(R.id.fragmentTripLegDetailsContainer, fragment).commit();
+	}
+	
+	private void showMap()
+	{
+		Intent intent = getIntent();
+		/*String legId = intent.getStringExtra(JourneyDetailMetaData.TableMetaData.LEG_ID);
+		String transportType = intent.getStringExtra(TripLegMetaData.TableMetaData.TYPE);*/
+		
+		TripLeg leg = intent.getParcelableExtra(TripLeg.tag);
+		TripLegMapFragment fragment = TripLegMapFragment.createInstance(mJourneyId+"", leg);
+		getSupportFragmentManager().beginTransaction().replace(R.id.fragmentTripLegDetailsContainer, fragment).commit();
 	}
 
 	@Override

@@ -2,8 +2,11 @@ package com.miracleas.minrute.net;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
+import java.net.URLEncoder;
 
+import org.apache.http.protocol.HTTP;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 import org.xmlpull.v1.XmlPullParserFactory;
@@ -20,6 +23,7 @@ import com.miracleas.minrute.model.Trip;
 import com.miracleas.minrute.model.TripLeg;
 import com.miracleas.minrute.model.TripLocation;
 import com.miracleas.minrute.model.TripRequest;
+import com.miracleas.minrute.provider.JourneyDetailStopImagesMetaData;
 import com.miracleas.minrute.provider.TripLegMetaData;
 import com.miracleas.minrute.provider.TripMetaData;
 import com.miracleas.minrute.provider.GeofenceTransitionMetaData;
@@ -182,7 +186,7 @@ public class TripFetcher extends BaseFetcher
 		}
 	}
 	
-	private TripLocation getTripLegValues(XmlPullParser xpp, boolean isDestination)
+	private TripLocation getTripLegValues(XmlPullParser xpp, boolean isDestination) throws UnsupportedEncodingException
 	{
 		TripLocation leg = new TripLocation();
 		leg.name = xpp.getAttributeValue(null, "name");
@@ -201,7 +205,34 @@ public class TripFetcher extends BaseFetcher
 		{
 			mFoundDestination = false;
 		}
+		
+		saveGoogleStreetViewImage(leg.name);
 		return leg;
+	}
+	
+	private void saveGoogleStreetViewImage(String locationName) throws UnsupportedEncodingException
+	{
+		if(!TextUtils.isEmpty(locationName))
+		{
+			String url = "http://maps.googleapis.com/maps/api/streetview?size=600x300&heading=151.78&pitch=-0.76&sensor=false&location="+URLEncoder.encode(locationName, HTTP.UTF_8);
+			ContentValues values = new ContentValues();
+			values.put(JourneyDetailStopImagesMetaData.TableMetaData.URL, url);								
+			values.put(JourneyDetailStopImagesMetaData.TableMetaData.UPLOADED, "1");
+			values.put(JourneyDetailStopImagesMetaData.TableMetaData.IS_UPLOADING, "0");
+			values.put(JourneyDetailStopImagesMetaData.TableMetaData.STOP_NAME, locationName);
+			values.put(JourneyDetailStopImagesMetaData.TableMetaData.IS_GOOGLE_STREET, "1");
+			
+			String selection = JourneyDetailStopImagesMetaData.TableMetaData.URL + "=? AND "+JourneyDetailStopImagesMetaData.TableMetaData.IS_GOOGLE_STREET+"=?";
+			String[] selectionArgs = {url, "1"};
+			int updates = mContentResolver.update(JourneyDetailStopImagesMetaData.TableMetaData.CONTENT_URI, values, selection, selectionArgs);
+			if(updates==0)
+			{
+				ContentProviderOperation.Builder b = ContentProviderOperation.newInsert(JourneyDetailStopImagesMetaData.TableMetaData.CONTENT_URI);
+				b.withValues(values);
+				mDbOperations.add(b.build());
+			}
+		}
+		
 	}
 	
 	private Trip createNewTrip()

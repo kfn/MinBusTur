@@ -9,6 +9,7 @@ import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 
+import com.miracleas.minrute.model.TripLeg;
 import com.miracleas.minrute.model.TripRequest;
 import com.miracleas.minrute.provider.JourneyDetailMetaData;
 import com.miracleas.minrute.provider.JourneyDetailStopImagesMetaData;
@@ -44,9 +45,10 @@ public class TripLegMapActivity extends MinRuteBaseActivity implements TripLegMa
 		{
 			Intent intent = getIntent();
 			long journeyId = intent.getLongExtra(JourneyDetailMetaData.TableMetaData._ID, -1);
-			String legId = intent.getStringExtra(JourneyDetailMetaData.TableMetaData.LEG_ID);
-			String transportType = intent.getStringExtra(TripLegMetaData.TableMetaData.TYPE);
-			TripLegMapFragment fragment = TripLegMapFragment.createInstance(journeyId+"", legId, transportType);
+			//String legId = intent.getStringExtra(JourneyDetailMetaData.TableMetaData.LEG_ID);
+			//String transportType = intent.getStringExtra(TripLegMetaData.TableMetaData.TYPE);
+			TripLeg leg = intent.getParcelableExtra(TripLeg.tag);
+			TripLegMapFragment fragment = TripLegMapFragment.createInstance(journeyId+"", leg);
 			getSupportFragmentManager().beginTransaction().add(R.id.fragmentTripLegMapContainer, fragment).commit();
 		}
 	}

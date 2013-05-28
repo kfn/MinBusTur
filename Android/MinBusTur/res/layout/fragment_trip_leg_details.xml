@@ -2,20 +2,35 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    
     android:padding="8dp" >
 
     <TextView
         android:id="@+id/textViewJourneyName"
-        android:layout_width="wrap_content" android:gravity="center_vertical"
-        android:layout_height="wrap_content" />
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical" />
 
+    <TextView
+        android:id="@+id/textViewJourneyTimes"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_marginTop="12dp"
+        android:gravity="center_vertical" />
+
+    <View
+        android:id="@+id/border"
+        android:layout_width="match_parent"
+        android:layout_height="1dp" android:layout_marginBottom="4dp"
+        android:layout_below="@+id/textViewJourneyName"
+        android:background="@color/abs__background_holo_light" />
 
     <FrameLayout
         android:id="@+id/listContainer"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/textViewJourneyName"
+        android:layout_below="@+id/border"
+        
         android:layout_marginTop="6dp" />
 
 </RelativeLayout>

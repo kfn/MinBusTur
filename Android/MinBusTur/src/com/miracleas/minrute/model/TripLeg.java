@@ -7,13 +7,17 @@ import java.util.Calendar;
 import com.miracleas.minrute.R;
 import com.miracleas.minrute.utils.DateHelper;
 
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.support.v4.util.TimeUtils;
 import android.text.TextUtils;
 import android.text.format.Time;
 import android.util.Log;
 
-public class TripLeg
+public class TripLeg implements Parcelable
 {
+	public static final String tag = TripLeg.class.getName();
+	
 	public static final String TYPE_BUS = "BUS";
 	public static final String TYPE_WALK = "WALK";
 	public static final String TYPE_TRAIN = "TOG";
@@ -36,6 +40,54 @@ public class TripLeg
 	private StringBuilder b;
 	private Calendar start;
 	private Calendar end;
+
+	public int id;
+	public String originName;
+	public String destName;
+	public String time;
+	
+	public TripLeg(Parcel in)
+	{
+		tripId = in.readString();
+		type = in.readString();
+		ref = in.readString();
+		id = in.readInt();
+		originName = in.readString();
+		destName = in.readString();
+		time = in.readString();
+	}
+	@Override
+	public int describeContents()
+	{
+		return 0;
+	}
+	
+	@Override
+	public void writeToParcel(Parcel dest, int flags)
+	{
+		dest.writeString(this.tripId);
+		dest.writeString(this.type);
+		dest.writeString(this.ref);
+		dest.writeInt(this.id);
+		dest.writeString(this.originName);	
+		dest.writeString(destName);
+		dest.writeString(time);
+	}
+	public static final Parcelable.Creator<TripLeg> CREATOR = new Parcelable.Creator<TripLeg>()
+	{
+		public TripLeg createFromParcel(Parcel in)
+		{
+			return new TripLeg(in);
+		}
+
+		public TripLeg[] newArray(int size)
+		{
+			return new TripLeg[size];
+		}
+	};
+	
+	
+	public TripLeg(){}
 	
 	public long getDuration()
 	{
@@ -150,4 +202,5 @@ public class TripLeg
 	{
 		return !(type.equals(TripLeg.TYPE_WALK) || type.equals(TripLeg.TYPE_BUS) || type.equals(TripLeg.TYPE_EXB) || type.equals(TripLeg.TYPE_TB));
 	}
+
 }

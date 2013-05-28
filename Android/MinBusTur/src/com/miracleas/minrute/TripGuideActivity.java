@@ -2,11 +2,14 @@ package com.miracleas.minrute;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.NavUtils;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.widget.ImageView;
 
 import com.actionbarsherlock.app.ActionBar;
@@ -16,14 +19,16 @@ import com.actionbarsherlock.view.MenuItem;
 
 import com.miracleas.imagedownloader.IImageDownloader;
 import com.miracleas.imagedownloader.ImageFetcher;
+import com.miracleas.minrute.model.TripLeg;
 import com.miracleas.minrute.model.TripRequest;
 import com.miracleas.minrute.provider.JourneyDetailMetaData;
 import com.miracleas.minrute.provider.TripLegMetaData;
 import com.miracleas.minrute.provider.TripMetaData;
 import com.miracleas.minrute.utils.MyPrefs;
 
-public class TripGuideActivity extends GeofenceActivity implements TripGuideFragment.Callbacks, IImageDownloader
+public class TripGuideActivity extends GeofenceActivity implements TripGuideFragment.Callbacks, IImageDownloader, OnSharedPreferenceChangeListener
 {
+	public static final String tag = TripGuideActivity.class.getName();
 	private IImageDownloader mImageLoader = null;
 	private String mAuth = null;
 	@Override
@@ -107,15 +112,12 @@ public class TripGuideActivity extends GeofenceActivity implements TripGuideFrag
 	}
 
 	@Override
-	public void onTripLegSelected(String tripId, String legId, String ref, String transportType)
+	public void onTripLegSelected(TripLeg leg)
 	{
-		if(!TextUtils.isEmpty(ref))
+		if(!TextUtils.isEmpty(leg.ref))
 		{
 			Intent activity = new Intent(this, TripLegDetailsActivity.class);
-			activity.putExtra(JourneyDetailMetaData.TableMetaData.TRIP_ID, tripId);
-			activity.putExtra(JourneyDetailMetaData.TableMetaData.LEG_ID, legId);
-			activity.putExtra(JourneyDetailMetaData.TableMetaData.REF, ref);
-			activity.putExtra(TripLegMetaData.TableMetaData.TYPE, transportType);
+			activity.putExtra(TripLeg.tag, leg);		
 			startActivity(activity);
 		}		
 	}
@@ -270,5 +272,16 @@ public class TripGuideActivity extends GeofenceActivity implements TripGuideFrag
 			mAuth = MyPrefs.getString(this, MyPrefs.GOOGLE_DRIVE_AUTH, null);
 		}
 		return mAuth;
+	}
+
+	@Override
+	public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key)
+	{
+		Log.d(tag, "onSharedPreferenceChanged:"+key);
+		if(key.equals(MyPrefs.GOOGLE_DRIVE_AUTH))
+		{
+			setAuthTokenHeader(key);
+		}
+		
 	}
 }

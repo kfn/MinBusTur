@@ -371,6 +371,7 @@ public class TripGuideFragment extends SherlockListFragment implements LoaderCal
 			String track = cursor.getString(iRtTrack);
 			String notes = cursor.getString(iNotes);
 			String url = cursor.getString(iUrl);
+			String originName =  cursor.getString(iOriginName);
 			
 			if(TextUtils.isEmpty(url))
 			{
@@ -382,7 +383,7 @@ public class TripGuideFragment extends SherlockListFragment implements LoaderCal
 			}
 			
 			TextView textViewOriginName = (TextView) v.findViewById(R.id.textViewOriginName);
-			textViewOriginName.setText(String.format(getString(R.string.from), cursor.getString(iOriginName)));
+			textViewOriginName.setText(String.format(getString(R.string.from), originName));
 			textViewTime.setText(originTime);
 			
 			if (originLocationType.equals("ADR"))
@@ -522,6 +523,26 @@ public class TripGuideFragment extends SherlockListFragment implements LoaderCal
 			}
 			return name;
 		}
+		String getDestTime(int position)
+		{
+			String name = "";
+			Cursor c = getCursor();
+			if (c.moveToPosition(position))
+			{
+				name = c.getString(iDestTime);
+			}
+			return name;
+		}
+		String getOriginTime(int position)
+		{
+			String name = "";
+			Cursor c = getCursor();
+			if (c.moveToPosition(position))
+			{
+				name = c.getString(iOriginTime);
+			}
+			return name;
+		}
 	}
 
 	@Override
@@ -542,7 +563,15 @@ public class TripGuideFragment extends SherlockListFragment implements LoaderCal
 			service.putExtra(JourneyDetailsService.ADDRESS_ORIGIN, origin);
 			getActivity().startService(service);
 			
-			mCallbacks.onTripLegSelected(tripId, id + "", ref, type);
+			TripLeg leg = new TripLeg();
+			leg.id = (int)id;
+			leg.ref = ref;
+			leg.type = type;
+			leg.tripId = tripId;
+			leg.originName = origin;
+			leg.destName = dest;
+			leg.time = mTripAdapter.getOriginTime(position) + "-"+mTripAdapter.getDestTime(position);
+			mCallbacks.onTripLegSelected(leg);
 		}
 
 		
@@ -593,7 +622,7 @@ public class TripGuideFragment extends SherlockListFragment implements LoaderCal
 	 */
 	public interface Callbacks
 	{
-		public void onTripLegSelected(String tripId, String legId, String ref, String transportType);
+		public void onTripLegSelected(TripLeg leg);
 	}
 
 	/**
@@ -603,7 +632,7 @@ public class TripGuideFragment extends SherlockListFragment implements LoaderCal
 	private static Callbacks sDummyCallbacks = new Callbacks()
 	{
 		@Override
-		public void onTripLegSelected(String tripId, String legId, String ref, String transportType)
+		public void onTripLegSelected(TripLeg leg)
 		{
 		}
 
