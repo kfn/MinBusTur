@@ -130,20 +130,25 @@ public class JourneyDetailFetcher extends BaseFetcher
 								
 								ContentValues values = new ContentValues();
 								values.put(JourneyDetailStopImagesMetaData.TableMetaData.URL, img.url);								
-								values.put(JourneyDetailStopImagesMetaData.TableMetaData.LAT, img.lat);
-								values.put(JourneyDetailStopImagesMetaData.TableMetaData.LNG, img.lng);
-								values.put(JourneyDetailStopImagesMetaData.TableMetaData.UPLOADED, "1");
-								values.put(JourneyDetailStopImagesMetaData.TableMetaData.IS_UPLOADING, "0");
-								values.put(JourneyDetailStopImagesMetaData.TableMetaData.STOP_NAME, img.stopName);
-								values.put(JourneyDetailStopImagesMetaData.TableMetaData.IS_GOOGLE_STREET, "1");
-								
-								String selection = JourneyDetailStopImagesMetaData.TableMetaData.URL + "=? AND "+JourneyDetailStopImagesMetaData.TableMetaData.IS_GOOGLE_STREET+"=?";
-								String[] selectionArgs = {img.url, "1"};
+								String selection = JourneyDetailStopImagesMetaData.TableMetaData.URL + "=?";
+								String[] selectionArgs = {img.url};
 								int updates = mContentResolver.update(JourneyDetailStopImagesMetaData.TableMetaData.CONTENT_URI, values, selection, selectionArgs);
 								if(updates==0)
 								{
+									values.put(JourneyDetailStopImagesMetaData.TableMetaData.LAT, img.lat);
+									values.put(JourneyDetailStopImagesMetaData.TableMetaData.LNG, img.lng);
+									values.put(JourneyDetailStopImagesMetaData.TableMetaData.UPLOADED, "1");
+									values.put(JourneyDetailStopImagesMetaData.TableMetaData.IS_UPLOADING, "0");
+									values.put(JourneyDetailStopImagesMetaData.TableMetaData.STOP_NAME, img.stopName);
+									values.put(JourneyDetailStopImagesMetaData.TableMetaData.IS_GOOGLE_STREET_LAT_LNG, "1");
 									ContentProviderOperation.Builder b = ContentProviderOperation.newInsert(JourneyDetailStopImagesMetaData.TableMetaData.CONTENT_URI);
 									b.withValues(values);
+									mDbOperations.add(b.build());
+									
+									selection = JourneyDetailStopImagesMetaData.TableMetaData.IS_GOOGLE_STREET_NAME_SEARCH + "=? AND "
+									+JourneyDetailStopImagesMetaData.TableMetaData.STOP_NAME + "=?";
+									String[] selectionArgs1 = {"1", img.stopName};
+									b = ContentProviderOperation.newDelete(JourneyDetailStopImagesMetaData.TableMetaData.CONTENT_URI).withSelection(selection, selectionArgs1);
 									mDbOperations.add(b.build());
 								}
 							}

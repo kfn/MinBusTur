@@ -216,17 +216,17 @@ public class TripFetcher extends BaseFetcher
 		{
 			String url = "http://maps.googleapis.com/maps/api/streetview?size=600x300&heading=151.78&pitch=-0.76&sensor=false&location="+URLEncoder.encode(locationName, HTTP.UTF_8);
 			ContentValues values = new ContentValues();
-			values.put(JourneyDetailStopImagesMetaData.TableMetaData.URL, url);								
-			values.put(JourneyDetailStopImagesMetaData.TableMetaData.UPLOADED, "1");
-			values.put(JourneyDetailStopImagesMetaData.TableMetaData.IS_UPLOADING, "0");
 			values.put(JourneyDetailStopImagesMetaData.TableMetaData.STOP_NAME, locationName);
-			values.put(JourneyDetailStopImagesMetaData.TableMetaData.IS_GOOGLE_STREET, "1");
 			
-			String selection = JourneyDetailStopImagesMetaData.TableMetaData.URL + "=? AND "+JourneyDetailStopImagesMetaData.TableMetaData.IS_GOOGLE_STREET+"=?";
-			String[] selectionArgs = {url, "1"};
+			String selection = JourneyDetailStopImagesMetaData.TableMetaData.STOP_NAME + "=?";
+			String[] selectionArgs = {locationName};
 			int updates = mContentResolver.update(JourneyDetailStopImagesMetaData.TableMetaData.CONTENT_URI, values, selection, selectionArgs);
 			if(updates==0)
 			{
+				values.put(JourneyDetailStopImagesMetaData.TableMetaData.URL, url);								
+				values.put(JourneyDetailStopImagesMetaData.TableMetaData.UPLOADED, "1");
+				values.put(JourneyDetailStopImagesMetaData.TableMetaData.STOP_NAME, locationName);
+				values.put(JourneyDetailStopImagesMetaData.TableMetaData.IS_GOOGLE_STREET_NAME_SEARCH, "1");
 				ContentProviderOperation.Builder b = ContentProviderOperation.newInsert(JourneyDetailStopImagesMetaData.TableMetaData.CONTENT_URI);
 				b.withValues(values);
 				mDbOperations.add(b.build());

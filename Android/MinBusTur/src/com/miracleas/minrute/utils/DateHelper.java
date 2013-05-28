@@ -146,10 +146,12 @@ public class DateHelper
 		{
 			if(mVoice)
 			{
+				b.append(" ");
 				b.append(c.getString(R.string.voice_departured));
 			}
 			else
 			{
+				b.append(" ");
 				b.append(c.getString(R.string.departured));
 			}
 		
