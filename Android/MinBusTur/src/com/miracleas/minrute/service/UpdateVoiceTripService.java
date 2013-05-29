@@ -141,13 +141,8 @@ public class UpdateVoiceTripService extends Service implements android.speech.tt
 			{
 				mTts.setLanguage(Locale.US);
 			}
-			if(mTextToSpeak!=null)
-			{
-				mTts.speak(mTextToSpeak, TextToSpeech.QUEUE_ADD, null);
-				mTextToSpeak = null;
-			}
 			
-			
+			mTts.speak(getString(R.string.voice_is_on), TextToSpeech.QUEUE_ADD, null);	
 		}
 	}
 	/**
@@ -159,12 +154,13 @@ public class UpdateVoiceTripService extends Service implements android.speech.tt
 	 */
 	public void LoadTripIdForVoiceService(String tripId, OnVoiceServiceReadyListener listener)
 	{
+		Log.d(tag, "LoadTripIdForVoiceService");
 		mOnVoiceServiceReadyListener = listener;
 		mTripId = tripId;
-		if(mLoadDepartueTask==null)
+		if(mLoadDepartueTask==null || mLoadDepartueTask.getStatus()==AsyncTask.Status.FINISHED)
 		{
 			Log.d(tag, "LoadDepartueTask");
-			mLoadDepartueTask = new LoadDepartueTask();
+			mLoadDepartueTask = new LoadTripLegsTask();
 			mLoadDepartueTask.execute(null, null, null);
 		}
 		
@@ -258,12 +254,10 @@ public class UpdateVoiceTripService extends Service implements android.speech.tt
 			}
 			if(mCurrentVoiceState!=null)
 			{
+				playVoice(mCurrentVoiceState.nameOfDestination());
 				startDepartureTimer();
-			}
-			
+			}			
 		}
-		
-		
 	}
 
 	private void startDepartureTimer()
@@ -337,12 +331,12 @@ public class UpdateVoiceTripService extends Service implements android.speech.tt
 		}	
 	}
 
-	private LoadDepartueTask mLoadDepartueTask = null;
+	private LoadTripLegsTask mLoadDepartueTask = null;
 	private OnVoiceServiceReadyListener mOnVoiceServiceReadyListener = null;
 	
 
 	
-	private class LoadDepartueTask extends AsyncTask<Void, Void, ArrayList<TripLeg>>
+	private class LoadTripLegsTask extends AsyncTask<Void, Void, ArrayList<TripLeg>>
 	{
 		@Override
 		protected ArrayList<TripLeg> doInBackground(Void... params)
@@ -352,7 +346,7 @@ public class UpdateVoiceTripService extends Service implements android.speech.tt
 			Cursor c = null;
 			try
 			{
-				String[] projection = {TripLegMetaData.TableMetaData._ID, TripLegMetaData.TableMetaData.NAME, TripLegMetaData.TableMetaData.DEST_NAME, TripLegMetaData.TableMetaData.DEPARTURES_IN_TIME_LONG, TripLegMetaData.TableMetaData.TYPE, TripLegMetaData.TableMetaData.DURATION };
+				String[] projection = {TripLegMetaData.TableMetaData._ID, TripLegMetaData.TableMetaData.NAME,TripLegMetaData.TableMetaData.ORIGIN_NAME, TripLegMetaData.TableMetaData.DEST_NAME, TripLegMetaData.TableMetaData.DEPARTURES_IN_TIME_LONG, TripLegMetaData.TableMetaData.TYPE, TripLegMetaData.TableMetaData.DURATION };
 				String selection = TripLegMetaData.TableMetaData.TRIP_ID + "=?";
 				String[] selectionArgs = {mTripId};
 				
@@ -361,6 +355,7 @@ public class UpdateVoiceTripService extends Service implements android.speech.tt
 				if (c.moveToFirst())
 				{
 					int iDestName = c.getColumnIndex(TripLegMetaData.TableMetaData.DEST_NAME);
+					int iOrgName = c.getColumnIndex(TripLegMetaData.TableMetaData.ORIGIN_NAME);
 					int iType = c.getColumnIndex(TripLegMetaData.TableMetaData.TYPE);
 					int iDuration = c.getColumnIndex(TripLegMetaData.TableMetaData.DURATION);
 					int iDepartures = c.getColumnIndex(TripLegMetaData.TableMetaData.DEPARTURES_IN_TIME_LONG);
@@ -369,6 +364,7 @@ public class UpdateVoiceTripService extends Service implements android.speech.tt
 					do{
 						TripLeg leg = new TripLeg();
 						leg.destName = c.getString(iDestName);
+						leg.originName = c.getString(iOrgName);
 						leg.type = c.getString(iType);
 						leg.setDuration(c.getLong(iDuration));
 						leg.departureTime = c.getLong(iDepartures);

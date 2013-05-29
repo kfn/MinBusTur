@@ -370,4 +370,9 @@ public class JourneyDetailFetcher extends BaseFetcher
 		
 	}
 
+	public void clearDbOpretions()
+	{
+		mDbOperations.clear();		
+	}
+
 }

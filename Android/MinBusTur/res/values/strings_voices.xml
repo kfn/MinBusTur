@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources  xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
 
-  
+  	<string name="voice_is_on">Hej med dig, jeg hedder Tommy. Jeg hjælpe dig med at komme frem og tilbage i hele Danmark. Lad os komme igang.</string>
     
     <string name="voice_enter">Du er ved</string>
     <string name="voice_exit">Du har forladt</string>

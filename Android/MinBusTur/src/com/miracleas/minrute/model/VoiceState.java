@@ -34,4 +34,5 @@ public abstract class VoiceState
 	public abstract String startUsingTransport();
 	public abstract String startUsingNextTransportIn();
 	public abstract String leaveTransportIn();
+	public abstract String nameOfDestination();
 }

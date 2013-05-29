@@ -93,4 +93,10 @@ public class VoiceStateBus extends VoiceState
 		return tick;
 	}
 
+	@Override
+	public String nameOfDestination()
+	{
+		return mLeg.originName.split(",")[0];
+	}
+
 }

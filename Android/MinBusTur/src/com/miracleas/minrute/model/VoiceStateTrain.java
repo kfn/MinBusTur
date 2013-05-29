@@ -93,5 +93,11 @@ public class VoiceStateTrain extends VoiceState
 		Log.d(tag, "wait: "+tick / DateUtils.SECOND_IN_MILLIS+" seks.");
 		return tick;
 	}
+	
+	@Override
+	public String nameOfDestination()
+	{
+		return mLeg.originName.split(",")[0];
+	}
 
 }
