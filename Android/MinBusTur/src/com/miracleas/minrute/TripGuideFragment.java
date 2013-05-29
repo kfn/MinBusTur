@@ -61,7 +61,7 @@ public class TripGuideFragment extends SherlockListFragment implements LoaderCal
 			TripLegMetaData.TableMetaData.DURATION, TripLegMetaData.TableMetaData.DURATION_FORMATTED, TripLegMetaData.TableMetaData.NAME, TripLegMetaData.TableMetaData.NOTES, TripLegMetaData.TableMetaData.REF, TripLegMetaData.TableMetaData.TYPE,
 			TripLegMetaData.TableMetaData.ORIGIN_RT_TRACK, TripLegMetaData.TableMetaData.DEST_TRACK,
 			TripLegMetaData.TableMetaData.GEOFENCE_EVENT_ID,JourneyDetailStopImagesMetaData.TableMetaData.URL,
-			TripLegMetaData.TableMetaData.PROGRESS_BAR_PROGRESS, TripLegMetaData.TableMetaData.PROGRESS_BAR_MAX, TripLegMetaData.TableMetaData.DEPARTURES_IN_TIME_LABEL, TripLegMetaData.TableMetaData.COMPLETED };
+			TripLegMetaData.TableMetaData.PROGRESS_BAR_PROGRESS, TripLegMetaData.TableMetaData.PROGRESS_BAR_MAX, TripLegMetaData.TableMetaData.COMPLETED };
 
 	private static final String[] PROJECTION_TRIP_GPS_READY = { TripMetaData.TableMetaData._ID, TripMetaData.TableMetaData.HAS_ALL_ADDRESS_GPSES };
 
@@ -259,35 +259,35 @@ public class TripGuideFragment extends SherlockListFragment implements LoaderCal
 			int radius = 10;
 			if(typeOfTransport.equals(TripLeg.TYPE_WALK))
 			{
-				radius = 35;
+				radius = 50;
 			}
 			else if(typeOfTransport.equals(TripLeg.TYPE_BUS))
 			{
-				radius = 50;
+				radius = 100;
 			}
 			else if(typeOfTransport.equals(TripLeg.TYPE_EXB))
 			{
-				radius = 50;
+				radius = 100;
 			}
 			else if(typeOfTransport.equals(TripLeg.TYPE_IC))
 			{
-				radius = 50;
+				radius = 100;
 			}
 			else if(typeOfTransport.equals(TripLeg.TYPE_LYN))
 			{
-				radius = 50;
+				radius = 100;
 			}
 			else if(typeOfTransport.equals(TripLeg.TYPE_REG))
 			{
-				radius = 50;
+				radius = 100;
 			}
 			else if(typeOfTransport.equals(TripLeg.TYPE_TB))
 			{
-				radius = 50;
+				radius = 100;
 			}
 			else if(typeOfTransport.equals(TripLeg.TYPE_TRAIN))
 			{
-				radius = 50;
+				radius = 100;
 			}
 			return radius;
 		}
@@ -359,7 +359,7 @@ public class TripGuideFragment extends SherlockListFragment implements LoaderCal
 			TextView textViewTime = (TextView) v.findViewById(R.id.textViewTime);
 			TextView textViewTransportType = (TextView) v.findViewById(R.id.textViewTransportType);
 			TextView textViewNotes = (TextView) v.findViewById(R.id.textViewNotes);
-			TextView textViewDeparturesIn = (TextView) v.findViewById(R.id.textViewDeparturesIn);
+			//TextView textViewDeparturesIn = (TextView) v.findViewById(R.id.textViewDeparturesIn);
 			ImageView imageViewThumb = (ImageView)v.findViewById(R.id.imageViewThumb);
 			
 			
@@ -422,7 +422,7 @@ public class TripGuideFragment extends SherlockListFragment implements LoaderCal
 			}
 
 			
-			textViewDeparturesIn.setText(cursor.getString(iDeparturesInTimeLabel));
+			//textViewDeparturesIn.setText(cursor.getString(iDeparturesInTimeLabel));
 
 			int geofenceTransitionType = cursor.getInt(iGeofenceTransition);
 			if (geofenceTransitionType == Geofence.GEOFENCE_TRANSITION_ENTER)
@@ -480,7 +480,7 @@ public class TripGuideFragment extends SherlockListFragment implements LoaderCal
 				iType = newCursor.getColumnIndex(TripLegMetaData.TableMetaData.TYPE);
 				iProgressBarProgress = newCursor.getColumnIndex(TripLegMetaData.TableMetaData.PROGRESS_BAR_PROGRESS);
 				iProgressBarMax = newCursor.getColumnIndex(TripLegMetaData.TableMetaData.PROGRESS_BAR_MAX);
-				iDeparturesInTimeLabel = newCursor.getColumnIndex(TripLegMetaData.TableMetaData.DEPARTURES_IN_TIME_LABEL);
+				
 				iCompleted = newCursor.getColumnIndex(TripLegMetaData.TableMetaData.COMPLETED);
 				iRtTrack = newCursor.getColumnIndex(TripLegMetaData.TableMetaData.ORIGIN_RT_TRACK);
 				iDestTrack = newCursor.getColumnIndex(TripLegMetaData.TableMetaData.DEST_TRACK);
@@ -648,35 +648,7 @@ public class TripGuideFragment extends SherlockListFragment implements LoaderCal
 		}
 
 	};
-	private int MY_DATA_CHECK_CODE = 554;
 
-	private void startTextSpeach()
-	{
-		Intent checkIntent = new Intent();
-		checkIntent.setAction(TextToSpeech.Engine.ACTION_CHECK_TTS_DATA);
-		getActivity().startActivityForResult(checkIntent, MY_DATA_CHECK_CODE);
-	}
-
-	@Override
-	public void onActivityResult(int requestCode, int resultCode, Intent data)
-	{
-		if (App.SUPPORTS_JELLY_BEAN || requestCode == MY_DATA_CHECK_CODE)
-		{
-			if (App.SUPPORTS_JELLY_BEAN || resultCode == TextToSpeech.Engine.CHECK_VOICE_DATA_PASS)
-			{
-				// success, create the TTS instance
-				MinRuteBaseActivity base = (MinRuteBaseActivity) getActivity();
-				base.mServiceVoice.startTextToSpeech();
-			} else
-			{
-				// missing data, install it
-				Intent installIntent = new Intent();
-				installIntent.setAction(TextToSpeech.Engine.ACTION_INSTALL_TTS_DATA);
-				startActivity(installIntent);
-			}
-		}
-
-	}
 
 	@Override
 	public void onDestroy()
@@ -687,15 +659,13 @@ public class TripGuideFragment extends SherlockListFragment implements LoaderCal
 	public void onConnectedService()
 	{
 		String id = getArguments().getString(TripMetaData.TableMetaData._ID);
-		((MinRuteBaseActivity) getActivity()).mServiceVoice.initVoiceService(id, this);
+		((MinRuteBaseActivity) getActivity()).mServiceVoice.LoadTripIdForVoiceService(id, this);
 
 	}
 
 	@Override
 	public void onVoiceServiceReady()
 	{
-		// getLoaderManager().initLoader(LoaderConstants.LOAD_GUIDE_VOICE_TRIP,
-		// getArguments(), this);
-		startTextSpeach();
+		//((MinRuteBaseActivity) getActivity()).mServiceVoice.startDepartureTimer();
 	}
 }

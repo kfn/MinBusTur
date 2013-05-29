@@ -4,6 +4,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
+import android.database.Cursor;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.NavUtils;
@@ -11,6 +13,7 @@ import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
@@ -120,11 +123,17 @@ public class TripGuideActivity extends GeofenceActivity implements TripGuideFrag
 			activity.putExtra(TripLeg.tag, leg);		
 			startActivity(activity);
 		}		
+		else
+		{
+			
+		}
 	}
+	
 	
 	@Override
 	public void onConnectedServiceVoice()
 	{		
+		super.onConnectedServiceVoice();
 		TripGuideFragment f = (TripGuideFragment)getSupportFragmentManager().findFragmentById(R.id.fragmentTripGuideContainer);
 		if(f!=null)
 		{

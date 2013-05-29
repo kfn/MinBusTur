@@ -1,5 +1,8 @@
 package com.miracleas.minrute.service;
 
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.List;
 import java.util.Locale;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -7,6 +10,10 @@ import java.util.TimerTask;
 import com.google.android.gms.location.Geofence;
 import com.miracleas.minrute.R;
 import com.miracleas.minrute.model.TripLeg;
+import com.miracleas.minrute.model.VoiceState;
+import com.miracleas.minrute.model.VoiceStateBus;
+import com.miracleas.minrute.model.VoiceStateTrain;
+import com.miracleas.minrute.model.VoiceStateWalk;
 import com.miracleas.minrute.provider.TripLegMetaData;
 import com.miracleas.minrute.provider.TripMetaData;
 import com.miracleas.minrute.provider.GeofenceTransitionMetaData;
@@ -35,21 +42,14 @@ public class UpdateVoiceTripService extends Service implements android.speech.tt
 	private final IBinder mBinder = new LocalBinder();
 	private DateHelper mDateHelper = null;
 	private String mTripId = null;
-	private long mDeparturesIn = 0;
 	private TextToSpeech mTts;
 	private String mTextToSpeak;
 	private TransistionObserver mTransistionObserver = null;
+	private List<TripLeg> mLegs = null;
+	private int mCurrentStep = 0;
+	private VoiceState mCurrentVoiceState = null;
 	
-	private static final long FOURTY_FIVE_MINUTES = DateUtils.MINUTE_IN_MILLIS * 45;
-	private static final long ONE_HOUR_FOURTY_FIVE_MINUTES = DateUtils.HOUR_IN_MILLIS + FOURTY_FIVE_MINUTES;
-	private static final long TEN_MINUTES = DateUtils.MINUTE_IN_MILLIS * 10;
-	private static final long FIFTEEN_MINUTES = DateUtils.MINUTE_IN_MILLIS * 15;
-	private static final long FIVE_MINUTES = DateUtils.MINUTE_IN_MILLIS * 5;
-	private static final long ONE_MINUTE = DateUtils.MINUTE_IN_MILLIS;
-	private static final long TWO_MINUTE = DateUtils.MINUTE_IN_MILLIS * 2;
-	private static final long TWO_HOURS = DateUtils.HOUR_IN_MILLIS * 2;
-	private static final long TEN_SECONDS = DateUtils.SECOND_IN_MILLIS * 10;
-	private static final long TEN_SECONDS_MINUS = TEN_SECONDS * -1;
+	private static String[] projectionTripLegTrans = {TripLegMetaData.TableMetaData._ID, TripLegMetaData.TableMetaData.ORIGIN_NAME,TripLegMetaData.TableMetaData.GEOFENCE_EVENT_ID,  TripLegMetaData.TableMetaData.TYPE, TripLegMetaData.TableMetaData.STEP_NUMBER, TripLegMetaData.TableMetaData.updated};
 
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId)
@@ -88,9 +88,7 @@ public class UpdateVoiceTripService extends Service implements android.speech.tt
 		mDateHelper = new DateHelper(this);
 		mDateHelper.setVoice(true);
 		mTransistionObserver = new TransistionObserver(handler);
-		getContentResolver().registerContentObserver(
-				GeofenceTransitionMetaData.TableMetaData.CONTENT_URI, true,
-				mTransistionObserver);
+				
 		Log.d(tag, "onCreate");
 	}
 
@@ -113,10 +111,13 @@ public class UpdateVoiceTripService extends Service implements android.speech.tt
 		Log.d(tag, "onDestroy");
 
 	}
-	
+	/**
+	 * initializes the speech service
+	 */
 	public void startTextToSpeech()
 	{
-		if(mTts!=null)
+		Log.d(tag, "startTextToSpeech");
+		if(mTts==null)
 		{
 			// success, create the TTS instance
 			mTts = new TextToSpeech(this, this);
@@ -126,13 +127,15 @@ public class UpdateVoiceTripService extends Service implements android.speech.tt
 	@Override
 	public void onInit(int status)
 	{
+		Log.d(tag, "onInit");
 		if(status==TextToSpeech.SUCCESS)
 		{
 			Locale locale = Locale.getDefault();
 			if(mTts.isLanguageAvailable(locale)==android.speech.tts.TextToSpeech.LANG_AVAILABLE)
 			{
-				//mTts.setLanguage(locale);
-				mTts.setLanguage(Locale.US);
+				mTts.setLanguage(locale);
+				mTts.setSpeechRate(0.5f);
+				//((mTts.setLanguage(Locale.US);
 			}
 			else
 			{
@@ -143,9 +146,27 @@ public class UpdateVoiceTripService extends Service implements android.speech.tt
 				mTts.speak(mTextToSpeak, TextToSpeech.QUEUE_ADD, null);
 				mTextToSpeak = null;
 			}
-			startDepartureTimer();
+			
+			
 		}
-		
+	}
+	/**
+	 * sets the id for the current trip that needs voice support
+	 * invokes OnVoiceServiceReadyListener.onVoiceServiceReady()
+	 * when completed
+	 * @param tripId
+	 * @param listener
+	 */
+	public void LoadTripIdForVoiceService(String tripId, OnVoiceServiceReadyListener listener)
+	{
+		mOnVoiceServiceReadyListener = listener;
+		mTripId = tripId;
+		if(mLoadDepartueTask==null)
+		{
+			Log.d(tag, "LoadDepartueTask");
+			mLoadDepartueTask = new LoadDepartueTask();
+			mLoadDepartueTask.execute(null, null, null);
+		}
 		
 	}
 	
@@ -188,7 +209,7 @@ public class UpdateVoiceTripService extends Service implements android.speech.tt
 		return mTts!=null;
 	}
 
-	private Runnable runnable = new Runnable()
+	private Runnable runnableDeparture = new Runnable()
 	{
 		@Override
 		public void run()
@@ -196,10 +217,15 @@ public class UpdateVoiceTripService extends Service implements android.speech.tt
 			if (mTripId != null)
 			{
 				updateDepartureVoice();
-				long tick = getTickTime();
-				if(tick!=Long.MIN_VALUE)
+				long tick = mCurrentVoiceState.getTickTime();
+				if(tick==0)
 				{
-					handler.postDelayed(runnable, tick);
+					playStartTripLegNow();
+					stopDepartureHandler();
+				}	
+				else if(tick!=Long.MIN_VALUE)
+				{
+					handler.postDelayed(runnableDeparture, tick);
 				}
 				else
 				{
@@ -208,6 +234,37 @@ public class UpdateVoiceTripService extends Service implements android.speech.tt
 			}
 		}
 	};
+	
+	
+	private void changeState(int index)
+	{
+		stopDepartureHandler();
+		mCurrentStep = index;
+		if(mCurrentStep>-1 && mCurrentStep<mLegs.size())
+		{
+			TripLeg leg = mLegs.get(mCurrentStep);
+			mCurrentVoiceState = null;
+			if(leg.isWalk())
+			{
+				mCurrentVoiceState = new VoiceStateWalk(UpdateVoiceTripService.this, leg);
+			}
+			else if(leg.isTrain())
+			{
+				mCurrentVoiceState = new VoiceStateTrain(UpdateVoiceTripService.this, leg);
+			}
+			else if(leg.isBus())
+			{
+				mCurrentVoiceState = new VoiceStateBus(UpdateVoiceTripService.this, leg);
+			}
+			if(mCurrentVoiceState!=null)
+			{
+				startDepartureTimer();
+			}
+			
+		}
+		
+		
+	}
 
 	private void startDepartureTimer()
 	{
@@ -216,10 +273,23 @@ public class UpdateVoiceTripService extends Service implements android.speech.tt
 			if (handler == null)
 			{
 				handler = new Handler();
-				long tick = getTickTime();
-				if(tick!=Long.MIN_VALUE)
+				long tick = mCurrentVoiceState.getTickTime();
+				if(tick==0)
 				{
-					handler.postDelayed(runnable, tick);
+					playStartTripLegNow();
+					stopDepartureHandler();
+					
+				}				
+				else if(tick!=Long.MIN_VALUE)
+				{
+					Calendar c = Calendar.getInstance();
+					int milliseconds = c.get(Calendar.MILLISECOND);
+					long seconds = c.get(Calendar.SECOND);
+					seconds = (60 - seconds) * DateUtils.SECOND_IN_MILLIS;
+					
+					tick = (seconds-(DateUtils.SECOND_IN_MILLIS*2)) - milliseconds;
+					Log.d(tag, "start in "+(tick/DateUtils.SECOND_IN_MILLIS)+" secs");
+					handler.postDelayed(runnableDeparture, tick);
 				}		
 				else
 				{
@@ -229,58 +299,19 @@ public class UpdateVoiceTripService extends Service implements android.speech.tt
 		}
 	}
 	
-	private long getTickTime()
+	private void playStartTripLegNow()
 	{
-		long departures =  mDeparturesIn - System.currentTimeMillis();
-		long tick = 0;
-		if(departures >= DateUtils.DAY_IN_MILLIS )
+		if(mCurrentVoiceState!=null)
 		{
-			tick = Long.MIN_VALUE;
+			playVoice(mCurrentVoiceState.startUsingTransport());
 		}
-		else if(departures >= TWO_HOURS)
-		{
-			tick = ONE_HOUR_FOURTY_FIVE_MINUTES;
-		}
-		else if(departures >= DateUtils.HOUR_IN_MILLIS)
-		{
-			tick = FOURTY_FIVE_MINUTES;
-		}
-		else if(departures >= FIFTEEN_MINUTES)
-		{
-			tick = FIVE_MINUTES;
-		}
-		else if(departures > TEN_MINUTES)
-		{
-			tick = TWO_MINUTE;
-		}
-		else if(departures> DateUtils.MINUTE_IN_MILLIS)
-		{
-			tick = ONE_MINUTE;
-		}
-		else if(departures> TEN_SECONDS)
-		{
-			tick = TEN_SECONDS;
-		}
-		else if(departures> 0)
-		{
-			tick = DateUtils.SECOND_IN_MILLIS;
-		}
-		else if(departures > TEN_SECONDS_MINUS)
-		{
-			tick = TEN_SECONDS;
-		}
-		else
-		{
-			tick = Long.MIN_VALUE;
-		}
-		return tick;
 	}
 
 	public void stopDepartureHandler()
 	{
 		if (handler != null)
 		{
-			handler.removeCallbacks(runnable);
+			handler.removeCallbacks(runnableDeparture);
 			handler = null;
 		}
 	}
@@ -298,44 +329,53 @@ public class UpdateVoiceTripService extends Service implements android.speech.tt
 	
 	private void updateDepartureVoice()
 	{
-		long departures =  mDeparturesIn - System.currentTimeMillis();
-		String str = String.format(getString(R.string.voice_departure), mDateHelper.getDurationLabel(departures, true));
-		playVoice(str);	
+		//long departures =  mLegs.get(mCurrentStep).departureTime - System.currentTimeMillis();
+		//String str = String.format(getString(R.string.voice_departure), mDateHelper.getDurationLabel(departures, true));
+		if(mCurrentVoiceState!=null)
+		{
+			playVoice(mCurrentVoiceState.departuresIn());	
+		}	
 	}
 
 	private LoadDepartueTask mLoadDepartueTask = null;
 	private OnVoiceServiceReadyListener mOnVoiceServiceReadyListener = null;
 	
-	public void initVoiceService(String tripId, OnVoiceServiceReadyListener listener)
-	{
-		mOnVoiceServiceReadyListener = listener;
-		mTripId = tripId;
-		if(mLoadDepartueTask==null)
-		{
-			Log.d(tag, "LoadDepartueTask");
-			mLoadDepartueTask = new LoadDepartueTask();
-			mLoadDepartueTask.execute(null, null, null);
-		}
-		
-	}
+
 	
-	private class LoadDepartueTask extends AsyncTask<Void, Void, Long>
+	private class LoadDepartueTask extends AsyncTask<Void, Void, ArrayList<TripLeg>>
 	{
 		@Override
-		protected Long doInBackground(Void... params)
+		protected ArrayList<TripLeg> doInBackground(Void... params)
 		{
+			ArrayList<TripLeg> legs = new ArrayList<TripLeg>(0);
 			ContentResolver cr = getContentResolver();
 			Cursor c = null;
-			long departures = 0;
 			try
 			{
-				String[] projection = { TripMetaData.TableMetaData.DEPATURES_TIME_LONG };
-				Uri uri = Uri.withAppendedPath(TripMetaData.TableMetaData.CONTENT_URI, mTripId);
-				c = cr.query(uri, projection, null, null, null);
+				String[] projection = {TripLegMetaData.TableMetaData._ID, TripLegMetaData.TableMetaData.NAME, TripLegMetaData.TableMetaData.DEST_NAME, TripLegMetaData.TableMetaData.DEPARTURES_IN_TIME_LONG, TripLegMetaData.TableMetaData.TYPE, TripLegMetaData.TableMetaData.DURATION };
+				String selection = TripLegMetaData.TableMetaData.TRIP_ID + "=?";
+				String[] selectionArgs = {mTripId};
+				
+				c = cr.query(TripLegMetaData.TableMetaData.CONTENT_URI, projection, selection, selectionArgs, TripLegMetaData.TableMetaData.STEP_NUMBER);
+				legs = new ArrayList<TripLeg>(c.getCount());
 				if (c.moveToFirst())
 				{
-					int i = c.getColumnIndex(TripMetaData.TableMetaData.DEPATURES_TIME_LONG);
-					departures = c.getLong(i);
+					int iDestName = c.getColumnIndex(TripLegMetaData.TableMetaData.DEST_NAME);
+					int iType = c.getColumnIndex(TripLegMetaData.TableMetaData.TYPE);
+					int iDuration = c.getColumnIndex(TripLegMetaData.TableMetaData.DURATION);
+					int iDepartures = c.getColumnIndex(TripLegMetaData.TableMetaData.DEPARTURES_IN_TIME_LONG);
+					int iTransportName = c.getColumnIndex(TripLegMetaData.TableMetaData.NAME);
+					int iId = c.getColumnIndex(TripLegMetaData.TableMetaData._ID);
+					do{
+						TripLeg leg = new TripLeg();
+						leg.destName = c.getString(iDestName);
+						leg.type = c.getString(iType);
+						leg.setDuration(c.getLong(iDuration));
+						leg.departureTime = c.getLong(iDepartures);
+						leg.name = c.getString(iTransportName);
+						leg.id = c.getInt(iId);
+						legs.add(leg);
+					}while(c.moveToNext());
 				}
 
 			} finally
@@ -346,15 +386,25 @@ public class UpdateVoiceTripService extends Service implements android.speech.tt
 				}
 			}
 
-			return departures;
+			return legs;
 		}
 
 		@Override
-		public void onPostExecute(Long result)
+		public void onPostExecute(ArrayList<TripLeg> result)
 		{
-			mDeparturesIn = result;
-			mOnVoiceServiceReadyListener.onVoiceServiceReady();
-			mOnVoiceServiceReadyListener = null;
+			mLegs = result;
+			if(result.size()>0)
+			{
+				changeState(0);
+				mOnVoiceServiceReadyListener.onVoiceServiceReady();
+				mOnVoiceServiceReadyListener = null;
+				
+				getContentResolver().registerContentObserver(
+						GeofenceTransitionMetaData.TableMetaData.CONTENT_URI, true,
+						mTransistionObserver);
+			}
+			
+			
 		}
 	}
 	
@@ -398,140 +448,61 @@ public class UpdateVoiceTripService extends Service implements android.speech.tt
 	
 	private class LoadNewTransitionTask extends AsyncTask<Void, Void, Integer>
 	{
+		
 		@Override
 		protected Integer doInBackground(Void... params)
+		{		
+			int tripLegId = getTripLegIdTransition();	
+			return findTripLegIndex(tripLegId);
+		}
+		
+		private int getTripLegIdTransition()
 		{
-			ContentResolver cr = getContentResolver();
+			int legId = -1;
 			Cursor c = null;
-			int voiceRes = -1;
 			try
 			{
-				long now = System.currentTimeMillis() - (DateUtils.SECOND_IN_MILLIS * 5);
-				String[] projection = { TripLegMetaData.TableMetaData.GEOFENCE_EVENT_ID,  TripLegMetaData.TableMetaData.TYPE, TripLegMetaData.TableMetaData.STEP_NUMBER, TripLegMetaData.TableMetaData.updated};
-				String selection = TripLegMetaData.TableMetaData.TRIP_ID + "=? AND "+TripLegMetaData.TableMetaData.updated + ">? AND "+TripLegMetaData.TableMetaData.GEOFENCE_EVENT_ID+"!=?";
-				String[] selectionArgs = {mTripId,now+"", "0"};
-				
-				c = cr.query(TripLegMetaData.TableMetaData.CONTENT_URI, projection, selection, selectionArgs, TripLegMetaData.TableMetaData.updated + " DESC LIMIT 1");
-				if (c.moveToFirst())
+				String[] projection = {GeofenceTransitionMetaData.TableMetaData.TRIP_LEG_ID};
+				c = getContentResolver().query(GeofenceTransitionMetaData.TableMetaData.CONTENT_URI, projection, null, null, GeofenceTransitionMetaData.TableMetaData.updated+" DESC LIMIT 1");
+				if(c.moveToFirst())
 				{
-					int iStepNumber = c.getColumnIndex(TripLegMetaData.TableMetaData.STEP_NUMBER);
-					int iType = c.getColumnIndex(TripLegMetaData.TableMetaData.TYPE);
-					int i = c.getColumnIndex(TripLegMetaData.TableMetaData.GEOFENCE_EVENT_ID);
-					
-					String transportType = c.getString(iType);					
-					int transitionType = c.getInt(i);
-					int stepNumber = c.getInt(iStepNumber);
-					voiceRes = getVoiceRessouce(transportType, transitionType);
-				}
-
-			} finally
+					legId = c.getInt(c.getColumnIndex(GeofenceTransitionMetaData.TableMetaData.TRIP_LEG_ID));
+				}		
+			}
+			finally
 			{
-				if (c != null)
+				if(c!=null && !c.isClosed())
 				{
 					c.close();
 				}
 			}
-
-			return voiceRes;
+			return legId;
 		}
 		
-		private int getVoiceRessouce(String typeOfTransport, int typeOfTransition)
+		private int findTripLegIndex(int legId)
 		{
-			int radius = -1;
-			if(typeOfTransition == Geofence.GEOFENCE_TRANSITION_ENTER)
+			int index = -1;
+			boolean found = false;
+			for(int i = 0; i < mLegs.size() && !found; i++)
 			{
-				radius = getEnterRessourceVoice(typeOfTransport);
+				if(mLegs.get(i).id==legId)
+				{
+					found = true;
+					index = i;
+				}
 			}
-			else if(typeOfTransition == Geofence.GEOFENCE_TRANSITION_EXIT)
-			{
-				radius = getExitRessourceVoice(typeOfTransport);;
-			}
-			return radius;
+			return index;
 		}
 		
-		private int getEnterRessourceVoice(String typeOfTransport)
-		{
-			int radius = -1;
-			if(typeOfTransport.equals(TripLeg.TYPE_WALK))
-			{
-				radius = R.string.voice_enter;
-			}
-			else if(typeOfTransport.equals(TripLeg.TYPE_BUS))
-			{
-				radius = R.string.voice_enter;
-			}
-			else if(typeOfTransport.equals(TripLeg.TYPE_EXB))
-			{
-				radius = R.string.voice_enter;
-			}
-			else if(typeOfTransport.equals(TripLeg.TYPE_IC))
-			{
-				radius = R.string.voice_enter;
-			}
-			else if(typeOfTransport.equals(TripLeg.TYPE_LYN))
-			{
-				radius = R.string.voice_enter;
-			}
-			else if(typeOfTransport.equals(TripLeg.TYPE_REG))
-			{
-				radius = R.string.voice_enter;
-			}
-			else if(typeOfTransport.equals(TripLeg.TYPE_TB))
-			{
-				radius = R.string.voice_enter;
-			}
-			else if(typeOfTransport.equals(TripLeg.TYPE_TRAIN))
-			{
-				radius = R.string.voice_enter;
-			}
-			return radius;
-		}
-		
-		private int getExitRessourceVoice(String typeOfTransport)
-		{
-			int radius = -1;
-			if(typeOfTransport.equals(TripLeg.TYPE_WALK))
-			{
-				radius = R.string.voice_exit;
-			}
-			else if(typeOfTransport.equals(TripLeg.TYPE_BUS))
-			{
-				radius = R.string.voice_exit;
-			}
-			else if(typeOfTransport.equals(TripLeg.TYPE_EXB))
-			{
-				radius = R.string.voice_exit;
-			}
-			else if(typeOfTransport.equals(TripLeg.TYPE_IC))
-			{
-				radius = R.string.voice_exit;
-			}
-			else if(typeOfTransport.equals(TripLeg.TYPE_LYN))
-			{
-				radius = R.string.voice_exit;
-			}
-			else if(typeOfTransport.equals(TripLeg.TYPE_REG))
-			{
-				radius = R.string.voice_exit;
-			}
-			else if(typeOfTransport.equals(TripLeg.TYPE_TB))
-			{
-				radius = R.string.voice_exit;
-			}
-			else if(typeOfTransport.equals(TripLeg.TYPE_TRAIN))
-			{
-				radius = R.string.voice_exit;
-			}
-			return radius;
-		}
 
 		@Override
-		public void onPostExecute(Integer result)
+		public void onPostExecute(Integer newIndex)
 		{
-			if(result!=-1)
+			if(newIndex!=-1)
 			{
-				playVoice(getString(result));
-			}
+				mCurrentVoiceState.leaveTransportIn();
+				changeState(newIndex);
+			}		
 		}
 	}
 }

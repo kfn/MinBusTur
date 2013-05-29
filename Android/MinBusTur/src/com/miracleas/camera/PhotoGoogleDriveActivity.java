@@ -75,8 +75,9 @@ public class PhotoGoogleDriveActivity extends MinRuteBaseActivity implements IIm
 	}
 
 	@Override
-	protected void onActivityResult(final int requestCode, final int resultCode, final Intent data)
+	public void onActivityResult(final int requestCode, final int resultCode, final Intent data)
 	{
+		super.onActivityResult(requestCode, resultCode, data);
 		switch (requestCode)
 		{
 		case REQUEST_ACCOUNT_PICKER:
@@ -292,7 +293,7 @@ public class PhotoGoogleDriveActivity extends MinRuteBaseActivity implements IIm
 
 	// Some lifecycle callbacks so that the image can survive orientation change
 	@Override
-	protected void onSaveInstanceState(Bundle outState)
+	public void onSaveInstanceState(Bundle outState)
 	{
 		outState.putParcelable(FILE_URI, fileUri);
 		outState.putString(LAT, mLat);
@@ -304,7 +305,7 @@ public class PhotoGoogleDriveActivity extends MinRuteBaseActivity implements IIm
 	}
 
 	@Override
-	protected void onRestoreInstanceState(Bundle savedInstanceState)
+	public void onRestoreInstanceState(Bundle savedInstanceState)
 	{
 		super.onRestoreInstanceState(savedInstanceState);
 		fileUri = savedInstanceState.getParcelable(FILE_URI);
@@ -484,12 +485,6 @@ public class PhotoGoogleDriveActivity extends MinRuteBaseActivity implements IIm
 		
 	}
 
-	@Override
-	public void onConnectedServiceVoice()
-	{
-		// TODO Auto-generated method stub
-		
-	}
 
 	@Override
 	public void onConnectedServiceLocation()

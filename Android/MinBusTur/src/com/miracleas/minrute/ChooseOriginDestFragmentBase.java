@@ -38,7 +38,7 @@ import com.miracleas.minrute.provider.AddressProviderMetaData;
 import com.miracleas.minrute.utils.DateHelper;
 import com.miracleas.minrute.utils.ViewHelper;
 
-public abstract class ChooseOriginDestFragmentBase extends SherlockFragment implements LoaderCallbacks<Cursor>, OnClickListener, OnFocusChangeListener
+public abstract class ChooseOriginDestFragmentBase extends SherlockFragment implements OnClickListener, OnFocusChangeListener //LoaderCallbacks<Cursor>, 
 {
 	public static final String tag = ChooseOriginDestFragmentBase.class.getName();
 	protected AutoCompleteTextView mAutoCompleteTextViewFromAddress;
@@ -63,7 +63,7 @@ public abstract class ChooseOriginDestFragmentBase extends SherlockFragment impl
 	protected View mBtnFindRoute = null;
 	protected int mLoadCount = 0;
 	protected TripRequest mTripRequest = null;
-	protected View mFocusedView = null;
+	private View mFocusedView = null;
 	
 	protected TextView mTextViewDate = null;
 	protected TextView mTextViewTime = null;
@@ -203,25 +203,10 @@ public abstract class ChooseOriginDestFragmentBase extends SherlockFragment impl
 		{
 			mAutoCompleteTextViewFromAddress.setHint(address);
 			mAutoCompleteAdapterFrom.getFilter().filter(address);	
-			//mAutoCompleteTextViewToAddress.requestFocus();
+			mAutoCompleteTextViewToAddress.requestFocus();
 		}
 	}
-	
-	public int getActiveLoader()
-	{
-		int loaderId = 0;
-		int id = mFocusedView.getId();
-		switch(id)
-		{
-		case R.id.autoCompleteTextViewFrom:
-			loaderId = LoaderConstants.LOADER_ADDRESS_FROM;
-			break;
-		case R.id.autoCompleteTextViewTo:
-			loaderId = LoaderConstants.LOADER_ADDRESS_TO;
-			break;
-		}
-		return loaderId;
-	}
+
 	@Override
 	public void onClick(View v)
 	{
@@ -306,10 +291,12 @@ public abstract class ChooseOriginDestFragmentBase extends SherlockFragment impl
 		private LayoutInflater mInf = null;
 		private CharSequence mPreviousConstraint = "";
 		private String mTag = null;
+		private int mLoaderId;
 		
 		public AutoCompleteAddressAdapter(Context context, Cursor c, int flags, final int loaderId, String tag1)
 		{
 			super(context, c, FLAG_REGISTER_CONTENT_OBSERVER);
+			mLoaderId = loaderId;
 			mInf = LayoutInflater.from(context);
 			mTag = tag1;
 			setFilterQueryProvider(new FilterQueryProvider()
@@ -361,7 +348,8 @@ public abstract class ChooseOriginDestFragmentBase extends SherlockFragment impl
 			Log.d(tag, mTag+" changeCursor");
 			if(newCursor.getCount()==1)
 			{
-				if(mFocusedView == mAutoCompleteTextViewToAddress)
+				Log.d(tag, mTag+" size is one");
+				if(mLoaderId==LoaderConstants.LOADER_ADDRESS_TO)
 				{		
 					mSelectedAddressToPosition = 0;
 				}

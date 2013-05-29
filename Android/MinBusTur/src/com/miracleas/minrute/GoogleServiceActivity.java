@@ -23,6 +23,12 @@ public abstract class GoogleServiceActivity extends MinRuteBaseActivity implemen
 	 * returned in Activity.onActivityResult
 	 */
 	private final static int CONNECTION_FAILURE_RESOLUTION_REQUEST = 9000;
+	@Override
+	public void onCreate(Bundle savedInstanceState)
+	{
+		super.onCreate(savedInstanceState);
+	}
+	
 	
 	@Override
 	protected void onStart()
@@ -81,8 +87,9 @@ public abstract class GoogleServiceActivity extends MinRuteBaseActivity implemen
 	 * Handle results returned to the FragmentActivity by Google Play services
 	 */
 	@Override
-	protected void onActivityResult(int requestCode, int resultCode, Intent data)
+	public void onActivityResult(int requestCode, int resultCode, Intent data)
 	{
+		super.onActivityResult(requestCode, resultCode, data);
 		// Decide what to do based on the original request code
 		switch (requestCode)
 		{
@@ -132,13 +139,6 @@ public abstract class GoogleServiceActivity extends MinRuteBaseActivity implemen
 			return mDialog;
 		}
 
-	}
-
-	@Override
-	public void onConnectedServiceVoice()
-	{
-		// TODO Auto-generated method stub
-		
 	}
 
 	@Override

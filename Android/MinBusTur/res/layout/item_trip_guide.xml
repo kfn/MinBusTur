@@ -58,16 +58,6 @@
         android:gravity="center_vertical"
         android:textSize="14sp" />
 
-    <TextView
-        android:id="@+id/textViewDeparturesIn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/textViewNotes"
-        android:layout_marginTop="4dp"
-        android:drawablePadding="10dp"
-        android:gravity="center_vertical"
-        android:textSize="14sp" />
-
     
 
 </RelativeLayout>

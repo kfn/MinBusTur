@@ -45,6 +45,7 @@ public class TripLeg implements Parcelable
 	public String originName;
 	public String destName;
 	public String time;
+	public long departureTime = 0;
 	
 	public TripLeg(Parcel in)
 	{
@@ -89,7 +90,7 @@ public class TripLeg implements Parcelable
 	
 	public TripLeg(){}
 	
-	public long getDuration()
+	public long getCalculatedDuration()
 	{
 		if(duration==0 && origin!=null && dest!=null)
 		{
@@ -110,6 +111,16 @@ public class TripLeg implements Parcelable
 		return duration;
 	}
 	
+	public long getDuration()
+	{
+		return duration;
+	}
+	
+	public void setDuration(long duration)
+	{
+		this.duration = duration;
+	}
+	
 	public String getFormattedDuration()
 	{
 		b = new StringBuilder();
@@ -118,7 +129,7 @@ public class TripLeg implements Parcelable
 		return b.toString();
 	}
 	
-	public long getDeparturesIn()
+	public long getCalculatedDeparturesIn()
 	{
 		long s = 0l;
 		if(start!=null)
@@ -128,7 +139,7 @@ public class TripLeg implements Parcelable
 		return s;
 	}
 	
-	public long getDepartures()
+	public long getCalculatedDepartures()
 	{
 		long s = 0l;
 		if(start!=null)
@@ -200,7 +211,22 @@ public class TripLeg implements Parcelable
 	
 	public static boolean isTrain(String type)
 	{
-		return !(type.equals(TripLeg.TYPE_WALK) || type.equals(TripLeg.TYPE_BUS) || type.equals(TripLeg.TYPE_EXB) || type.equals(TripLeg.TYPE_TB));
+		return (type.equals(TripLeg.TYPE_REG) || type.equals(TripLeg.TYPE_LYN) || type.equals(TripLeg.TYPE_TRAIN) || type.equals(TripLeg.TYPE_IC));
+	}
+	
+	public boolean isWalk()
+	{
+		return type.equals(TYPE_WALK);
+	}
+	
+	public boolean isTrain()
+	{
+		return isTrain(type);
+	}
+	
+	public boolean isBus()
+	{
+		return (type.equals(TripLeg.TYPE_BUS) || type.equals(TripLeg.TYPE_EXB) || type.equals(TripLeg.TYPE_TB));
 	}
 
 }

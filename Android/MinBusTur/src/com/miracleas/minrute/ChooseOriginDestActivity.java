@@ -224,8 +224,8 @@ public class ChooseOriginDestActivity extends GeofenceActivity implements Choose
 		if(mBoundVoice)
 		{
 			mServiceVoice.stopVoices();
-			mServiceVoice.startTextToSpeech();
 		}
+		super.onConnectedServiceVoice();		
 	}
 
 }

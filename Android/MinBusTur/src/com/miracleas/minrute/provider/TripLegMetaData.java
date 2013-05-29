@@ -39,7 +39,7 @@ public class TripLegMetaData
 				+ TableMetaData.DURATION_FORMATTED + " TEXT,"	
 				+ TableMetaData.PROGRESS_BAR_PROGRESS + " INTEGER,"	
 				+ TableMetaData.PROGRESS_BAR_MAX + " INTEGER,"	
-				+ TableMetaData.DEPARTURES_IN_TIME_LABEL + " TEXT,"	
+				+ TableMetaData.DEPARTURES_IN_TIME_LONG + " LONG,"	
 				+ TableMetaData.COMPLETED + " TEXT,"	
 				+ TableMetaData.GEOFENCE_EVENT_ID + " INTEGER,"
 				+ TableMetaData.ORIGIN_TRACK + " TEXT,"	
@@ -87,7 +87,7 @@ public class TripLegMetaData
 		
 		public static final String PROGRESS_BAR_PROGRESS = "progress_bar_progress";
 		public static final String PROGRESS_BAR_MAX = "progress_bar_max";
-		public static final String DEPARTURES_IN_TIME_LABEL = "progress_departures_in_label";
+		public static final String DEPARTURES_IN_TIME_LONG = "progress_departures_in_long";
 		public static final String COMPLETED = "completed";
 		public static final String GEOFENCE_EVENT_ID = "geofence_event_id";
 		/*public static final String ORIGIN_LATITUDE = "origin_latitude";

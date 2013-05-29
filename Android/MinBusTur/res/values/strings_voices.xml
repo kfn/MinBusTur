@@ -3,19 +3,32 @@
 
   
     
-    <string name="voice_enter">You are approaching a stop</string>
-    <string name="voice_exit">You have left a stop</string>
-    <string name="voice_seconds_more">seconds</string>
-    <string name="voice_seconds_one">second</string>
-    <string name="voice_minutes_more">minutes</string>
-    <string name="voice_minutes_one">minute</string>
-    <string name="voice_hours_more">hours</string>
-    <string name="voice_hours_one">hour</string>
-    <string name="voice_days_more">days</string>
-    <string name="voice_days_one">day</string>
-    <string name="voice_departure">departures in <xliff:g ID="time_label">%1$s</xliff:g></string>
-    <string name="voice_departure_now">right now</string>
-    <string name="voice_departured">ago</string>
+    <string name="voice_enter">Du er ved</string>
+    <string name="voice_exit">Du har forladt</string>
+    <string name="voice_seconds_more">sekunder</string>
+    <string name="voice_seconds_one">sekund</string>
+    <string name="voice_minutes_more">minutter</string>
+    <string name="voice_minutes_one">minut</string>
+    <string name="voice_hours_more">timer</string>
+    <string name="voice_hours_one">timer</string>
+    <string name="voice_days_more">dage</string>
+    <string name="voice_days_one">dag</string>
+    <string name="voice_departure">Afgang om <xliff:g ID="time_label">%1$s</xliff:g></string>
+    <string name="voice_departure_now">Lige nu</string>
+    <string name="voice_departured">Tiden er udløbet</string>
     
+    <string name="voice_departure_walk">Du skal gå om <xliff:g ID="time">%1$s</xliff:g></string>
+    <string name="voice_departure_vechical">Du skal køre om <xliff:g ID="time">%1$s</xliff:g></string>
     
+    <string name="voice_start_using_transport_walk">Du skal nu gå i <xliff:g ID="time_label">%1$s</xliff:g> til <xliff:g ID="dest_name">%2$s</xliff:g></string>   
+    <string name="voice_start_using_transport_bus">Tag <xliff:g ID="bus_name">%1$s</xliff:g> nu. Transporttid er <xliff:g ID="time">%2$s</xliff:g></string> 
+    <string name="voice_start_using_transport_train">Tag tog <xliff:g ID="train_name">%1$s</xliff:g> nu. Transporttid er <xliff:g ID="time">%2$s</xliff:g></string> 
+    
+    <string name="voice_start_using_next_transport_in_bus">Du skal tage <xliff:g ID="bus_name">%1$s</xliff:g> om <xliff:g ID="time">%2$s</xliff:g> til <xliff:g ID="dest_name">%3$s</xliff:g></string>   
+    <string name="voice_start_using_next_transport_in_train">Du skal tage toget <xliff:g ID="train_name">%1$s</xliff:g> om <xliff:g ID="time">%2$s</xliff:g> til <xliff:g ID="dest_name">%3$s</xliff:g></string>
+    
+    <string name="voice_leave_next_stop">Du skal af ved næste stop</string>
+    
+    <string name="voice_arrives_in">Du skal af ved næste stop</string>
+   
 </resources>

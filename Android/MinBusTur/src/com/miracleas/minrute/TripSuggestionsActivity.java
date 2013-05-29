@@ -87,14 +87,20 @@ public class TripSuggestionsActivity extends GeofenceActivity implements TripSug
 		intent.putExtra(TripRequest.tag, tripRequest);
 		startActivity(intent);
 	}
-	@Override
-	public void onConnectedServiceVoice()
-	{
-		mServiceVoice.startTextToSpeech();
-	}
+
 	@Override
 	public void onConnectedServiceLocation()
 	{
 		mServiceLocation.stopLocationListening();
+	}
+	
+	@Override
+	public void onConnectedServiceVoice()
+	{
+		if(mBoundVoice)
+		{
+			mServiceVoice.stopVoices();
+		}
+		super.onConnectedServiceVoice();		
 	}
 }

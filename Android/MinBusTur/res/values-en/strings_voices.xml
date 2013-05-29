@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources  xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+
+  
+    
+    <string name="voice_enter">You are approaching a stop</string>
+    <string name="voice_exit">You have left a stop</string>
+    <string name="voice_seconds_more">seconds</string>
+    <string name="voice_seconds_one">second</string>
+    <string name="voice_minutes_more">minutes</string>
+    <string name="voice_minutes_one">minute</string>
+    <string name="voice_hours_more">hours</string>
+    <string name="voice_hours_one">hour</string>
+    <string name="voice_days_more">days</string>
+    <string name="voice_days_one">day</string>
+    <string name="voice_departure">departures in <xliff:g ID="time_label">%1$s</xliff:g></string>
+    <string name="voice_departure_now">right now</string>
+    <string name="voice_departured">Time is out</string>
+    
+    
+</resources>

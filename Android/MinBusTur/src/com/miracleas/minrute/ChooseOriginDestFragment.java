@@ -45,7 +45,8 @@ public class ChooseOriginDestFragment extends ChooseOriginDestFragmentBase
 {
 	public static final String tag = ChooseOriginDestFragment.class.getName();
 	
-	private LoadAddressesRun mLoadAddressesRun = null;
+	private LoadAddressesFromRun mLoadAddressesFromRun = null;
+	private LoadAddressesToRun mLoadAddressesToRun = null;
 	
 	private LoadTrips mLoadTrips = null;
 	protected AddressFetcher mAddressFetcher = null;
@@ -88,18 +89,13 @@ public class ChooseOriginDestFragment extends ChooseOriginDestFragmentBase
 	{
 		super.onCreate(savedInstanceState);
 		mHandler = new Handler();
-		mLoadAddressesRun = new LoadAddressesRun(null, 0);
-		
-
-		mDataUri = AddressProviderMetaData.TableMetaData.CONTENT_URI;// Uri.withAppendedPath(AddressProviderMetaData.TableMetaData.CONTENT_URI,
-						// "search");
+		mLoadAddressesFromRun = new LoadAddressesFromRun(null, 0);		
+		mLoadAddressesToRun = new LoadAddressesToRun(null, 0);		
+		mDataUri = AddressProviderMetaData.TableMetaData.CONTENT_URI;
 		mAddressFetcher = new AddressFetcher(getActivity(), mDataUri);
-		Bundle args = new Bundle();
-		args.putString(AddressProviderMetaData.TableMetaData.address, "a");
-		args.putString(ContactsContract.Contacts.DISPLAY_NAME, "abc");
 	}
 
-	@Override
+	/*@Override
 	public Loader<Cursor> onCreateLoader(int id, Bundle args)
 	{
 		if (id == LoaderConstants.LOADER_ADDRESS_FROM || id == LoaderConstants.LOADER_ADDRESS_TO)
@@ -117,9 +113,9 @@ public class ChooseOriginDestFragment extends ChooseOriginDestFragmentBase
 			return new CursorLoader(getActivity(), ContactsContract.Contacts.CONTENT_URI, PROJECTION_CONTACTS, selection, null, null);
 		}
 		return null;
-	}
+	}*/
 
-	@Override
+	/*@Override
 	public void onLoadFinished(Loader<Cursor> loader, Cursor newCursor)
 	{
 		if (newCursor.isClosed())
@@ -138,18 +134,10 @@ public class ChooseOriginDestFragment extends ChooseOriginDestFragmentBase
 		{
 			mAutoCompleteAdapterTo.swapCursor(newCursor);
 			updateCursor(newCursor, mAutoCompleteTextViewToAddress);
-		} /*else if (loader.getId() == LoaderConstants.LOADER_TITLE_FROM)
-		{
-			mAutoCompleteContactsAdapterFrom.swapCursor(newCursor);
-			updateCursor(newCursor, mAutoCompleteTextViewFromTitle);
-		} else if (loader.getId() == LoaderConstants.LOADER_TITLE_TO)
-		{
-			mAutoCompleteContactsAdapterTo.swapCursor(newCursor);
-			updateCursor(newCursor, mAutoCompleteTextViewToTitle);
-		}*/
-	}
+		} 
+	}*/
 
-	private void updateCursor(Cursor newCursor, AutoCompleteTextView a)
+	/*private void updateCursor(Cursor newCursor, AutoCompleteTextView a)
 	{
 
 		if (newCursor != null && newCursor.getCount() > 0)
@@ -161,9 +149,9 @@ public class ChooseOriginDestFragment extends ChooseOriginDestFragmentBase
 			}
 		}
 
-	}
+	}*/
 
-	@Override
+	/*@Override
 	public void onLoaderReset(Loader<Cursor> loader)
 	{
 		if (loader.getId() == LoaderConstants.LOADER_ADDRESS_FROM)
@@ -172,14 +160,9 @@ public class ChooseOriginDestFragment extends ChooseOriginDestFragmentBase
 		} else if (loader.getId() == LoaderConstants.LOADER_ADDRESS_TO)
 		{
 			mAutoCompleteAdapterTo.swapCursor(null);
-		} /*else if (loader.getId() == LoaderConstants.LOADER_TITLE_FROM)
-		{
-			mAutoCompleteContactsAdapterFrom.swapCursor(null);
-		} else if (loader.getId() == LoaderConstants.LOADER_TITLE_TO)
-		{
-			mAutoCompleteContactsAdapterTo.swapCursor(null);
-		}*/
-	}
+		} 
+	}*/
+	
 
 	@Override
 	public void textChangedHelper(CharSequence s, int loaderId)
@@ -194,16 +177,24 @@ public class ChooseOriginDestFragment extends ChooseOriginDestFragmentBase
 				if (loaderId == LoaderConstants.LOADER_ADDRESS_TO)
 				{
 					doAddressSearch = !mTripRequest.destCoordNameNotEncoded.equals(value);
+					if(doAddressSearch)
+					{
+						mHandler.removeCallbacks(mLoadAddressesToRun);
+						mLoadAddressesToRun = new LoadAddressesToRun(value, loaderId);
+						mHandler.postDelayed(mLoadAddressesToRun, 1000);
+					}
+					
 				} else
 				{
 					doAddressSearch = !mTripRequest.originCoordNameNotEncoded.equals(value);
+					if(doAddressSearch)
+					{
+						mHandler.removeCallbacks(mLoadAddressesFromRun);
+						mLoadAddressesFromRun = new LoadAddressesFromRun(value, loaderId);
+						mHandler.postDelayed(mLoadAddressesFromRun, 1000);
+					}
 				}
-				if (doAddressSearch)
-				{
-					mHandler.removeCallbacks(mLoadAddressesRun);
-					mLoadAddressesRun = new LoadAddressesRun(value, loaderId);
-					mHandler.postDelayed(mLoadAddressesRun, 1000);
-				}
+
 
 			} 
 			/*else if (loaderId == LoaderConstants.LOADER_TITLE_FROM || loaderId == LoaderConstants.LOADER_TITLE_TO)
@@ -227,22 +218,34 @@ public class ChooseOriginDestFragment extends ChooseOriginDestFragmentBase
 			Log.d(tag, "lookup for: " + query);
 			mLoadAddresses = new LoadAddresses(loaderId);
 			mLoadAddresses.execute(query);
-			Bundle args = new Bundle();
-			args.putString(AddressProviderMetaData.TableMetaData.address, query);
+			
 			getProgressBar(loaderId).setVisibility(View.VISIBLE);
 			if (loaderId == LoaderConstants.LOADER_ADDRESS_FROM)
 			{
 				mAutoCompleteAdapterFrom.runQueryOnBackgroundThread(query);
-			} else if (loaderId == LoaderConstants.LOADER_ADDRESS_TO)
+			} 
+			else if (loaderId == LoaderConstants.LOADER_ADDRESS_TO)
 			{
 				mAutoCompleteAdapterTo.runQueryOnBackgroundThread(query);
 			}
-		} else
+		} 
+		else
 		{
-			Log.d(tag, "delay lookup for: " + query);
-			mHandler.removeCallbacks(mLoadAddressesRun);
-			mLoadAddressesRun = new LoadAddressesRun(query, loaderId);
-			mHandler.postDelayed(mLoadAddressesRun, 500);
+			if(loaderId==LoaderConstants.LOADER_ADDRESS_TO)
+			{
+				Log.d(tag, "delay lookup for: " + query);
+				mHandler.removeCallbacks(mLoadAddressesToRun);
+				mLoadAddressesToRun = new LoadAddressesToRun(query, loaderId);
+				mHandler.postDelayed(mLoadAddressesToRun, 500);
+			}
+			else if(loaderId==LoaderConstants.LOADER_ADDRESS_TO)
+			{
+				Log.d(tag, "delay lookup for: " + query);
+				mHandler.removeCallbacks(mLoadAddressesFromRun);
+				mLoadAddressesFromRun = new LoadAddressesFromRun(query, loaderId);
+				mHandler.postDelayed(mLoadAddressesFromRun, 500);
+			}
+			
 		}
 	}
 
@@ -293,24 +296,23 @@ public class ChooseOriginDestFragment extends ChooseOriginDestFragmentBase
 			mIsLoadingAddresses = false;
 			mLoadCount--;
 			getProgressBar(mLoaderId).setVisibility(View.GONE);
-			int loader = getActiveLoader();
-			if(loader==LoaderConstants.LOADER_ADDRESS_FROM)
+			if(mLoaderId==LoaderConstants.LOADER_ADDRESS_FROM)
 			{		
 				mAutoCompleteAdapterFrom.getFilter().filter(mAddress);
 			}
-			else if(loader==LoaderConstants.LOADER_ADDRESS_TO)
+			else if(mLoaderId==LoaderConstants.LOADER_ADDRESS_TO)
 			{
 				mAutoCompleteAdapterTo.getFilter().filter(mAddress);
 			}	
 		}
 	}
 
-	private class LoadAddressesRun implements Runnable
+	private class LoadAddressesToRun implements Runnable
 	{
 		private final String mQuery;
 		private final int loaderId;
 
-		LoadAddressesRun(String q, int loaderId)
+		LoadAddressesToRun(String q, int loaderId)
 		{
 			mQuery = q;
 			this.loaderId = loaderId;
@@ -324,7 +326,23 @@ public class ChooseOriginDestFragment extends ChooseOriginDestFragmentBase
 	}
 
 
+	private class LoadAddressesFromRun implements Runnable
+	{
+		private final String mQuery;
+		private final int loaderId;
 
+		LoadAddressesFromRun(String q, int loaderId)
+		{
+			mQuery = q;
+			this.loaderId = loaderId;
+		}
+
+		@Override
+		public void run()
+		{
+			loadAddress(mQuery, loaderId);
+		}
+	}
 
 
 	private class LoadTrips extends AsyncTask<String, Void, Void>

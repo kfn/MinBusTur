@@ -77,7 +77,7 @@ public class DateHelper
 		boolean inFuture = time >=0;
 		if(!inFuture)
 		{
-			time = time * -1;
+			return "";//(" "+ c.getString(R.string.voice_departured));
 		}
 
 		if(time>0)
@@ -142,20 +142,7 @@ public class DateHelper
 			}
 			
 		}	
-		if(!inFuture)
-		{
-			if(mVoice)
-			{
-				b.append(" ");
-				b.append(c.getString(R.string.voice_departured));
-			}
-			else
-			{
-				b.append(" ");
-				b.append(c.getString(R.string.departured));
-			}
 		
-		}
 		return b.toString();
 	}
 	

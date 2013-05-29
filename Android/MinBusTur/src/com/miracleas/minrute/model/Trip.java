@@ -43,7 +43,7 @@ public class Trip
 		long t = 0l;
 		if(legs.size()>0)
 		{
-			t = legs.get(0).getDeparturesIn();
+			t = legs.get(0).getCalculatedDeparturesIn();
 		}
 		return t;
 	}
@@ -66,42 +66,42 @@ public class Trip
 		}
 		else if(leg.type.equals(TripLeg.TYPE_WALK))
 		{
-			durationWalk = durationWalk + leg.getDuration();
+			durationWalk = durationWalk + leg.getCalculatedDuration();
 		}
 		else if(leg.type.equals(TripLeg.TYPE_BUS))
 		{
 			transportChanges++;
-			durationBus = durationBus + leg.getDuration();
+			durationBus = durationBus + leg.getCalculatedDuration();
 		}
 		else if(leg.type.equals(TripLeg.TYPE_EXB))
 		{
 			transportChanges++;
-			durationBus = durationBus + leg.getDuration();
+			durationBus = durationBus + leg.getCalculatedDuration();
 		}
 		else if(leg.type.equals(TripLeg.TYPE_TB))
 		{
 			transportChanges++;
-			durationBus = durationBus + leg.getDuration();
+			durationBus = durationBus + leg.getCalculatedDuration();
 		}
 		else if(leg.type.equals(TripLeg.TYPE_IC))
 		{
 			transportChanges++;
-			durationTrain = durationTrain + leg.getDuration();
+			durationTrain = durationTrain + leg.getCalculatedDuration();
 		}
 		else if(leg.type.equals(TripLeg.TYPE_TRAIN))
 		{
 			transportChanges++;
-			durationTrain = durationTrain + leg.getDuration();
+			durationTrain = durationTrain + leg.getCalculatedDuration();
 		}
 		else if(leg.type.equals(TripLeg.TYPE_LYN))
 		{
 			transportChanges++;
-			durationTrain = durationTrain + leg.getDuration();
+			durationTrain = durationTrain + leg.getCalculatedDuration();
 		}
 		else if(leg.type.equals(TripLeg.TYPE_REG))
 		{
 			transportChanges++;
-			durationTrain = durationTrain + leg.getDuration();
+			durationTrain = durationTrain + leg.getCalculatedDuration();
 		}
 	}
 	
@@ -150,7 +150,7 @@ public class Trip
 		long s = 0;
 		if(!legs.isEmpty())
 		{
-			s = legs.get(0).getDepartures();
+			s = legs.get(0).getCalculatedDepartures();
 		}
 		return s;
 	}

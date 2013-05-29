@@ -13,6 +13,7 @@ import android.database.Cursor;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesClient;
@@ -267,6 +268,7 @@ public abstract class GeofenceActivity extends GoogleServiceActivity implements 
 			 * the UI.
 			 */
 			Log.e(tag, "adding the geofences failed");
+			Toast.makeText(this, "adding the geofences failed", Toast.LENGTH_SHORT).show();
 		}
 		// Turn off the in progress flag and disconnect the client
 		mInProgress = false;

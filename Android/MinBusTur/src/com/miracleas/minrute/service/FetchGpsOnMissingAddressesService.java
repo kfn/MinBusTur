@@ -79,6 +79,10 @@ public class FetchGpsOnMissingAddressesService extends IntentService
 			}		
 			markAllGpsAddressesIsLoaded(tripId);			
 		}
+		else
+		{
+			Log.e(tag, "tripid is null");
+		}
 	}
 	
 	private void insertStartAndEndLocationsForTrip(TripRequest tripRequest)
@@ -103,9 +107,9 @@ public class FetchGpsOnMissingAddressesService extends IntentService
 			hasAddressCached = cr.update(AddressGPSMetaData.TableMetaData.CONTENT_URI, values, where, selectionArgs) > 0;
 			if(!hasAddressCached)
 			{
-				hasAddressCached = cr.insert(AddressGPSMetaData.TableMetaData.CONTENT_URI, values)!=null;
-				saveGoogleStreetViewImage(latY, lngX, address);
+				hasAddressCached = cr.insert(AddressGPSMetaData.TableMetaData.CONTENT_URI, values)!=null;				
 			}
+			saveGoogleStreetViewImage(latY, lngX, address);
 		}
 		return hasAddressCached;
 		
