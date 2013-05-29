@@ -39,7 +39,7 @@ public class Utils
 		{
 			exportDir.mkdirs();
 		}
-		File file = new File(exportDir, dbFile.getName());
+		File file = new File(exportDir, dbFile.getName() + ".sqlite3");
 
 		try
 		{

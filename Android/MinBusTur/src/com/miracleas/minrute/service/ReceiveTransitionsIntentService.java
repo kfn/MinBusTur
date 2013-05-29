@@ -7,6 +7,7 @@ import com.google.android.gms.location.Geofence;
 import com.google.android.gms.location.LocationClient;
 import com.miracleas.minrute.R;
 import com.miracleas.minrute.provider.JourneyDetailNoteMetaData;
+import com.miracleas.minrute.provider.JourneyDetailStopImagesMetaData;
 import com.miracleas.minrute.provider.TripLegMetaData;
 import com.miracleas.minrute.provider.GeofenceTransitionMetaData;
 
@@ -75,54 +76,61 @@ public class ReceiveTransitionsIntentService extends IntentService
 				if (transitionType == Geofence.GEOFENCE_TRANSITION_ENTER)
 				{
 					Log.d(tag, "Enter");
-				} else if (transitionType == Geofence.GEOFENCE_TRANSITION_EXIT)
+					saveTransistion(transitionType, intent);
+				} 
+				else if (transitionType == Geofence.GEOFENCE_TRANSITION_EXIT)
 				{
 					Log.d(tag, "Exit");
-
-				}
-
-				List<Geofence> triggerList = LocationClient.getTriggeringGeofences(intent);
-				ArrayList<ContentProviderOperation> mDbOperations = new ArrayList<ContentProviderOperation>(triggerList.size());
-				long now = System.currentTimeMillis();
-				for (int i = 0; i < triggerList.size(); i++)
-				{
-					String legId = triggerList.get(i).getRequestId();
-					Log.d(tag, "legid: "+legId);
-					Uri uri = Uri.withAppendedPath(TripLegMetaData.TableMetaData.CONTENT_URI, legId);
-					ContentProviderOperation.Builder b = ContentProviderOperation.newUpdate(uri);	
-					b.withValue(TripLegMetaData.TableMetaData.GEOFENCE_EVENT_ID, transitionType);
-					b.withValue(TripLegMetaData.TableMetaData.updated, now);
-					mDbOperations.add(b.build());
-					
-					b = ContentProviderOperation.newInsert(GeofenceTransitionMetaData.TableMetaData.CONTENT_URI);	
-					b.withValue(GeofenceTransitionMetaData.TableMetaData.TRIP_LEG_ID, legId);
-					b.withValue(GeofenceTransitionMetaData.TableMetaData.GEOFENCE_TRANSITION_TYPE, transitionType);
-					b.withValue(GeofenceTransitionMetaData.TableMetaData.updated, System.currentTimeMillis());
-					mDbOperations.add(b.build());
-				}
-				if(!mDbOperations.isEmpty())
-				{					
-					try
-					{
-						int count = getContentResolver().applyBatch(TripLegMetaData.AUTHORITY, mDbOperations).length;
-						Log.d(tag, "applyBatch: "+count);
-					} catch (RemoteException e)
-					{
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					} catch (OperationApplicationException e)
-					{
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-					
-				}
+				}			
 			} else
 			{
 				// An invalid transition was reported
 				Log.e(tag, "Geofence transition error: " + Integer.toString(transitionType));
 			}
 
+		}
+	}
+	
+	private void saveTransistion(int transitionType, Intent intent)
+	{
+		List<Geofence> triggerList = LocationClient.getTriggeringGeofences(intent);
+		ArrayList<ContentProviderOperation> mDbOperations = new ArrayList<ContentProviderOperation>(triggerList.size());
+		long now = System.currentTimeMillis();
+		for (int i = 0; i < triggerList.size(); i++)
+		{
+			Geofence geofence = triggerList.get(i);
+			String legId = geofence.getRequestId();
+			Log.d(tag, "legid: "+legId);
+			Uri uri = Uri.withAppendedPath(TripLegMetaData.TableMetaData.CONTENT_URI, legId);
+			ContentProviderOperation.Builder b = ContentProviderOperation.newUpdate(uri);	
+			b.withValue(TripLegMetaData.TableMetaData.GEOFENCE_EVENT_ID, transitionType);
+			b.withValue(TripLegMetaData.TableMetaData.updated, now);
+			mDbOperations.add(b.build());
+			
+			b = ContentProviderOperation.newInsert(GeofenceTransitionMetaData.TableMetaData.CONTENT_URI);	
+			b.withValue(GeofenceTransitionMetaData.TableMetaData.TRIP_LEG_ID, legId);
+			b.withValue(GeofenceTransitionMetaData.TableMetaData.GEOFENCE_TRANSITION_TYPE, transitionType);
+			b.withValue(GeofenceTransitionMetaData.TableMetaData.updated, System.currentTimeMillis());
+			mDbOperations.add(b.build());
+		}
+		if(!mDbOperations.isEmpty())
+		{					
+			try
+			{
+				int count = getContentResolver().applyBatch(TripLegMetaData.AUTHORITY, mDbOperations).length;
+				Log.d(tag, "applyBatch: "+count);
+				Uri uri = Uri.withAppendedPath(TripLegMetaData.TableMetaData.CONTENT_URI, JourneyDetailStopImagesMetaData.TABLE_NAME);
+				getContentResolver().notifyChange(uri, null);
+			} catch (RemoteException e)
+			{
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (OperationApplicationException e)
+			{
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
 		}
 	}
 }

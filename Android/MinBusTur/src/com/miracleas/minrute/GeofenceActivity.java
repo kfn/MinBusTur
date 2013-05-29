@@ -5,8 +5,12 @@ import java.util.List;
 
 import android.app.Dialog;
 import android.app.PendingIntent;
+import android.content.ContentResolver;
+import android.content.ContentValues;
 import android.content.Intent;
 import android.content.IntentSender.SendIntentException;
+import android.database.Cursor;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 
@@ -18,6 +22,7 @@ import com.google.android.gms.location.LocationClient;
 import com.google.android.gms.location.LocationClient.OnAddGeofencesResultListener;
 import com.google.android.gms.location.LocationClient.OnRemoveGeofencesResultListener;
 import com.google.android.gms.location.LocationStatusCodes;
+import com.miracleas.minrute.provider.GeofenceMetaData;
 import com.miracleas.minrute.service.ReceiveTransitionsIntentService;
 import com.miracleas.minrute.service.RemoveGeofencesService;
 
@@ -29,7 +34,7 @@ public abstract class GeofenceActivity extends GoogleServiceActivity implements 
 	private LocationClient mLocationClient;
 	// Stores the PendingIntent used to request geofence monitoring
 	private PendingIntent mGeofenceRequestIntent;
-
+	private SaveGeofences mSaveGeofences = null;
 	// Defines the allowable request types.
 	// Enum type for controlling the type of removal requested
 	public enum REQUEST_TYPE
@@ -44,8 +49,6 @@ public abstract class GeofenceActivity extends GoogleServiceActivity implements 
 	// Store the list of geofence Ids to remove
 	private List<String> mGeofencesToRemove;
 
-	
-
 	@Override
 	public void onCreate(Bundle savedInstanceState)
 	{
@@ -53,8 +56,6 @@ public abstract class GeofenceActivity extends GoogleServiceActivity implements 
 		// Start with the request flag set to false
 		mInProgress = false;
 		mCurrentGeofences = new ArrayList<Geofence>();
-
-		
 
 	}
 
@@ -201,7 +202,7 @@ public abstract class GeofenceActivity extends GoogleServiceActivity implements 
 	 * Start a request to remove monitoring by calling LocationClient.connect()
 	 * 
 	 */
-	public void removeGeofences(List<String> geofenceIds)
+	private void removeGeofences(List<String> geofenceIds)
 	{
 		Log.d(tag, "removeGeofences request");
 		// If Google Play services is unavailable, exit
@@ -256,7 +257,7 @@ public abstract class GeofenceActivity extends GoogleServiceActivity implements 
 			 * broadcast intent or update the UI. geofences into the Intent's
 			 * extended data.
 			 */
-			
+			saveGeofences(true);
 			Log.d(tag, "added geofences!");
 		} else
 		{
@@ -346,6 +347,7 @@ public abstract class GeofenceActivity extends GoogleServiceActivity implements 
 			 * extended data.
 			 */
 			Log.d(tag, "removed geofences!");
+			saveGeofences(false);
 		} else
 		{
 			// If adding the geocodes failed
@@ -363,11 +365,105 @@ public abstract class GeofenceActivity extends GoogleServiceActivity implements 
 	}
 
 	@Override
-	public void onRemoveGeofencesByRequestIdsResult(int arg0, String[] arg1)
+	public void onRemoveGeofencesByRequestIdsResult(int statusCode, String[] geofenceRequestIds)
 	{
-		// TODO Auto-generated method stub
-		Log.d(tag, "removed geofences!");
+		if (statusCode == LocationStatusCodes.SUCCESS)
+		{
+			Log.d(tag, "onRemoveGeofencesByRequestIdsResult! removed: "+geofenceRequestIds.length);
+		}
+		else
+		{
+			Log.e(tag, "onRemoveGeofencesByRequestIdsResult! failed");
+		}
+	}
+
+	private void saveGeofences(boolean save)
+	{
+		if (mCurrentGeofences != null && !mCurrentGeofences.isEmpty() && (mSaveGeofences == null || mSaveGeofences.getStatus() == AsyncTask.Status.FINISHED))
+		{
+			mSaveGeofences = new SaveGeofences();
+			mSaveGeofences.execute(save, null, null);
+		}
+	}
+
+	private class SaveGeofences extends AsyncTask<Boolean, Void, Void>
+	{
+		@Override
+		protected Void doInBackground(Boolean... params)
+		{
+			ContentResolver cr = getContentResolver();
+			if (params[0])
+			{
+				for (Geofence g : mCurrentGeofences)
+				{
+					ContentValues values = new ContentValues();
+					values.put(GeofenceMetaData.TableMetaData.geofence_id, g.getRequestId());
+					cr.insert(GeofenceMetaData.TableMetaData.CONTENT_URI, values);
+				}
+			} 
+			else
+			{
+				cr.delete(GeofenceMetaData.TableMetaData.CONTENT_URI, null, null);		
+			}
+			return null;
+		}
+
+		protected void onPostExecute(Void result)
+		{
+
+		}
 	}
 	
+	public void removeSavedGeofences()
+	{
+		LoadGeofences();
+	}
+	
+	private void LoadGeofences()
+	{
+		if ((mLoadGeofences == null || mLoadGeofences.getStatus() == AsyncTask.Status.FINISHED))
+		{
+			mLoadGeofences = new LoadGeofences();
+			mLoadGeofences.execute(null, null, null);
+		}
+	}
+	private LoadGeofences mLoadGeofences = null;
+	
+	private class LoadGeofences extends AsyncTask<Boolean, Void, List<String>>
+	{
+		@Override
+		protected List<String> doInBackground(Boolean... params)
+		{
+			Cursor c = null;
+			List<String> geofenceIds = new ArrayList<String>();
+			try
+			{
+				c = getContentResolver().query(GeofenceMetaData.TableMetaData.CONTENT_URI, null, null, null, null);
+				if(c.moveToFirst())
+				{
+					int i = c.getColumnIndex(GeofenceMetaData.TableMetaData.geofence_id);
+					do{
+						geofenceIds.add(c.getString(i));
+					}while(c.moveToNext());
+				}
+			}
+			finally
+			{
+				if(c!=null && !c.isClosed())
+				{
+					c.close();
+				}
+			}
+			return geofenceIds;
+		}
+		@Override
+		protected void onPostExecute(List<String> geofenceIds)
+		{
+			if(!geofenceIds.isEmpty())
+			{
+				removeGeofences(geofenceIds);					
+			}
+		}
+	}
 
 }

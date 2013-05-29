@@ -68,9 +68,9 @@ public class ChooseOriginDestFragment extends ChooseOriginDestFragmentBase
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
 	{
 		View rootView = super.onCreateView(inflater, container, savedInstanceState);
-		mAutoCompleteAdapterFrom = new AutoCompleteAddressAdapter(getActivity(), null, 0, LoaderConstants.LOADER_ADDRESS_FROM);
+		mAutoCompleteAdapterFrom = new AutoCompleteAddressAdapter(getActivity(), null, 0, LoaderConstants.LOADER_ADDRESS_FROM, "FromAdapter");
 		mAutoCompleteTextViewFromAddress.setAdapter(mAutoCompleteAdapterFrom);
-		mAutoCompleteAdapterTo = new AutoCompleteAddressAdapter(getActivity(), null, 0, LoaderConstants.LOADER_ADDRESS_TO);
+		mAutoCompleteAdapterTo = new AutoCompleteAddressAdapter(getActivity(), null, 0, LoaderConstants.LOADER_ADDRESS_TO, "ToAdapter");
 		mAutoCompleteTextViewToAddress.setAdapter(mAutoCompleteAdapterTo);		
 		return rootView;
 	}
@@ -357,7 +357,8 @@ public class ChooseOriginDestFragment extends ChooseOriginDestFragmentBase
 		super.onClick(v);
 		if (v.getId() == R.id.btnFindRoute)
 		{		
-			int posFrom = mSelectedAddressFromPosition;
+			onAddressSelected(mSelectedAddressFromPosition, mSelectedAddressToPosition);	
+			/*int posFrom = mSelectedAddressFromPosition;
 			int posTo = mSelectedAddressToPosition;
 			if(posFrom!=-1 && posTo!=-1)
 			{
@@ -369,10 +370,10 @@ public class ChooseOriginDestFragment extends ChooseOriginDestFragmentBase
 			}
 			else
 			{
-				String from = mAutoCompleteTextViewFromAddress.getHint().toString();
-				
+				String from = mAutoCompleteTextViewFromAddress.getHint().toString();				
 				String to = mAutoCompleteTextViewToAddress.getHint().toString();
-			}
+				Toast.makeText(getActivity(), getString(R.string.trip_request_not_valid), Toast.LENGTH_SHORT).show();
+			}*/
 			
 			
 		}
@@ -411,6 +412,16 @@ public class ChooseOriginDestFragment extends ChooseOriginDestFragmentBase
 		@Override
 		protected Void doInBackground(Integer... params)
 		{
+			if(params[0]==-1)
+			{
+				int originPos = mAutoCompleteAdapterFrom.getPosition(mAutoCompleteTextViewFromAddress.getHint().toString());
+				params[0] = originPos;
+			}
+			if(params[1]==-1)
+			{
+				int destPos = mAutoCompleteAdapterTo.getPosition(mAutoCompleteTextViewToAddress.getHint().toString());
+				params[1] = destPos;
+			}
 			
 			String text = mAutoCompleteAdapterFrom.getAddress(params[0]);
 			String y = mAutoCompleteAdapterFrom.getY(params[0]);
@@ -437,7 +448,19 @@ public class ChooseOriginDestFragment extends ChooseOriginDestFragmentBase
 		protected void onPostExecute(Void result)
 		{
 			mItemClicked = false;
-			mCallbacks.onFindTripSuggestion(mTripRequest);
+			
+			if(mTripRequest.destCoordNameNotEncoded.equals(mTripRequest.originCoordNameNotEncoded))
+			{
+				Toast.makeText(getActivity(), getString(R.string.start_end_must_not_be_equal), Toast.LENGTH_SHORT).show();
+			}
+			else if(mTripRequest.isValid())
+			{
+				mCallbacks.onFindTripSuggestion(mTripRequest);
+			}
+			else
+			{
+				Toast.makeText(getActivity(), getString(R.string.trip_request_not_valid), Toast.LENGTH_SHORT).show();
+			}
 		}
 	}
 

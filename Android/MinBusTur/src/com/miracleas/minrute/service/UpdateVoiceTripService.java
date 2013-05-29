@@ -89,7 +89,7 @@ public class UpdateVoiceTripService extends Service implements android.speech.tt
 		mDateHelper.setVoice(true);
 		mTransistionObserver = new TransistionObserver(handler);
 		getContentResolver().registerContentObserver(
-				GeofenceTransitionMetaData.TableMetaData.CONTENT_URI, false,
+				GeofenceTransitionMetaData.TableMetaData.CONTENT_URI, true,
 				mTransistionObserver);
 		Log.d(tag, "onCreate");
 	}
@@ -116,9 +116,11 @@ public class UpdateVoiceTripService extends Service implements android.speech.tt
 	
 	public void startTextToSpeech()
 	{
-		// success, create the TTS instance
-		mTts = new TextToSpeech(this, this);
-		
+		if(mTts!=null)
+		{
+			// success, create the TTS instance
+			mTts = new TextToSpeech(this, this);
+		}		
 	}
 	
 	@Override
@@ -165,6 +167,7 @@ public class UpdateVoiceTripService extends Service implements android.speech.tt
 	
 	public void stopVoices()
 	{
+		Log.d(tag, "stopVoices");
 		stopDepartureHandler();
 	}
 	
@@ -309,6 +312,7 @@ public class UpdateVoiceTripService extends Service implements android.speech.tt
 		mTripId = tripId;
 		if(mLoadDepartueTask==null)
 		{
+			Log.d(tag, "LoadDepartueTask");
 			mLoadDepartueTask = new LoadDepartueTask();
 			mLoadDepartueTask.execute(null, null, null);
 		}
@@ -366,14 +370,19 @@ public class UpdateVoiceTripService extends Service implements android.speech.tt
 
 	    @Override
 	    public boolean deliverSelfNotifications() {
-	        return true;
+	        return false;
 	    }
 
 	    @Override
 	    public void onChange(boolean selfChange) {
 	        Log.d(tag, "onChange");
 	        super.onChange(selfChange);
-	        loadTransition();
+	        if(!selfChange)
+	        {
+	        	Log.d(tag, "loadTransition");
+	        	loadTransition();
+	        }
+	        
 
 	    }
 	}

@@ -2,8 +2,10 @@ package com.miracleas.minrute.net;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URLEncoder;
+import java.util.ArrayList;
 
 import org.apache.http.protocol.HTTP;
 import org.xmlpull.v1.XmlPullParser;
@@ -11,9 +13,11 @@ import org.xmlpull.v1.XmlPullParserException;
 import org.xmlpull.v1.XmlPullParserFactory;
 
 import android.content.ContentProviderOperation;
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
+import android.text.TextUtils;
 import android.text.format.DateUtils;
 import android.util.Log;
 
@@ -21,6 +25,7 @@ import com.miracleas.minrute.R;
 import com.miracleas.minrute.model.AddressSearch;
 import com.miracleas.minrute.provider.AddressGPSMetaData;
 import com.miracleas.minrute.provider.AddressProviderMetaData;
+import com.miracleas.minrute.provider.JourneyDetailStopImagesMetaData;
 /**
  * searches for a Locations GPS values - uses first result
  * @author kfn
@@ -57,10 +62,10 @@ public class AddressToGPSFetcher extends BaseFetcher
 				mUpdated = System.currentTimeMillis();								
 				InputStream input = urlConnection.getInputStream();
 				parse(input);
-				if (!mDbOperations.isEmpty())
+				/*if (!mDbOperations.isEmpty())
 				{					
 					saveData(AddressGPSMetaData.AUTHORITY);
-				}
+				}*/
 
 			} 
 		} finally
@@ -105,14 +110,52 @@ public class AddressToGPSFetcher extends BaseFetcher
 	
 	private void saveLocation(XmlPullParser xpp, int type)
 	{
+		String lat = xpp.getAttributeValue(null, "y");
+		String lng = xpp.getAttributeValue(null, "x");
+		String locationName = mSearchTerm;
 		ContentProviderOperation.Builder b = ContentProviderOperation.newInsert(AddressGPSMetaData.TableMetaData.CONTENT_URI);	
 		b.withValue(AddressGPSMetaData.TableMetaData.type_int, type);
 		b.withValue(AddressGPSMetaData.TableMetaData.updated, mUpdated);
-		b.withValue(AddressGPSMetaData.TableMetaData.LATITUDE_Y, xpp.getAttributeValue(null, "y"));
-		b.withValue(AddressGPSMetaData.TableMetaData.LONGITUDE_X, xpp.getAttributeValue(null, "x"));
-		b.withValue(AddressGPSMetaData.TableMetaData.ADDRESS, mSearchTerm);
+		b.withValue(AddressGPSMetaData.TableMetaData.LATITUDE_Y, lat);
+		b.withValue(AddressGPSMetaData.TableMetaData.LONGITUDE_X, lng);
+		b.withValue(AddressGPSMetaData.TableMetaData.ADDRESS, locationName);
 		mDbOperations.add(b.build());
+		
+		saveGoogleStreetViewImage(lat, lng, locationName);
 	}
-
+	
+	private void saveGoogleStreetViewImage(String lat, String lng, String locationName)
+	{		
+		double lat1 = (double) (Integer.parseInt(lat) / 1000000d);
+		double lng1 = (double) (Integer.parseInt(lng) / 1000000d);
+		
+		
+		ContentValues values = new ContentValues();
+		values.put(JourneyDetailStopImagesMetaData.TableMetaData.STOP_NAME, locationName);
+		
+		String selection = JourneyDetailStopImagesMetaData.TableMetaData.STOP_NAME + "=?";
+		String[] selectionArgs = {locationName};
+		int updates = mContentResolver.update(JourneyDetailStopImagesMetaData.TableMetaData.CONTENT_URI, values, selection, selectionArgs);
+		if(updates==0)
+		{
+			StringBuilder b1 = new StringBuilder();
+			b1.append("http://maps.googleapis.com/maps/api/streetview?size=600x300&heading=151.78&pitch=-0.76&sensor=false&location=")
+			.append(lat1).append(",").append(lng1);
+			
+			values.put(JourneyDetailStopImagesMetaData.TableMetaData.URL, b1.toString());								
+			values.put(JourneyDetailStopImagesMetaData.TableMetaData.UPLOADED, "1");
+			values.put(JourneyDetailStopImagesMetaData.TableMetaData.STOP_NAME, locationName);
+			values.put(JourneyDetailStopImagesMetaData.TableMetaData.IS_GOOGLE_STREET_LAT_LNG, "1");
+			values.put(JourneyDetailStopImagesMetaData.TableMetaData.LAT, lat1);
+			values.put(JourneyDetailStopImagesMetaData.TableMetaData.LNG, lng1);
+			ContentProviderOperation.Builder b = ContentProviderOperation.newInsert(JourneyDetailStopImagesMetaData.TableMetaData.CONTENT_URI);
+			b.withValues(values);
+			mDbOperations.add(b.build());
+		}		
+	}
+	public ArrayList<ContentProviderOperation> getDbOpersions()
+	{
+		return mDbOperations;
+	}
 
 }

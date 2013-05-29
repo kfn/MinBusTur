@@ -74,6 +74,7 @@ public class ChooseOriginDestActivity extends GeofenceActivity implements Choose
 	public void onStart()
 	{
 		super.onStart();
+		removeSavedGeofences();
 	}
 	
 	@Override
@@ -158,6 +159,7 @@ public class ChooseOriginDestActivity extends GeofenceActivity implements Choose
 	{
 		if (tripRequest.isValid())
 		{
+			
 			Intent service = new Intent(this, TripService.class);
 			service.putExtra(TripFetcher.TRIP_REQUEST, tripRequest);
 			startService(service);
@@ -215,6 +217,15 @@ public class ChooseOriginDestActivity extends GeofenceActivity implements Choose
 			((ChooseOriginDestFragment)f).setAddress(address);
 		}
 		mServiceLocation.setOnNewLocationReceived(null);
+	}
+	@Override
+	public void onConnectedServiceVoice()
+	{
+		if(mBoundVoice)
+		{
+			mServiceVoice.stopVoices();
+			mServiceVoice.startTextToSpeech();
+		}
 	}
 
 }

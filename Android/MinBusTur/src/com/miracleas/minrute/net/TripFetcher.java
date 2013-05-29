@@ -206,7 +206,7 @@ public class TripFetcher extends BaseFetcher
 			mFoundDestination = false;
 		}
 		
-		saveGoogleStreetViewImage(leg.name);
+		//saveGoogleStreetViewImage(leg.name);
 		return leg;
 	}
 	

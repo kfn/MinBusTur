@@ -29,7 +29,7 @@ public class TripSuggestionsActivity extends GeofenceActivity implements TripSug
 		{
 			if(servicesConnected())
 			{
-				removeAllGeofences();
+				removeSavedGeofences();
 			}
 			Intent intent = getIntent();	
 			TripRequest tripRequest = intent.getParcelableExtra(TripRequest.tag);
@@ -67,6 +67,13 @@ public class TripSuggestionsActivity extends GeofenceActivity implements TripSug
 			return super.onOptionsItemSelected(item);
 		}
 	}
+	
+	@Override
+	public void onStart()
+	{
+		super.onStart();
+		removeSavedGeofences();
+	}
 	@Override
 	public void onTripSuggestionSelected(String id, int stepCount, TripRequest tripRequest)
 	{
@@ -80,7 +87,11 @@ public class TripSuggestionsActivity extends GeofenceActivity implements TripSug
 		intent.putExtra(TripRequest.tag, tripRequest);
 		startActivity(intent);
 	}
-	
+	@Override
+	public void onConnectedServiceVoice()
+	{
+		mServiceVoice.startTextToSpeech();
+	}
 	@Override
 	public void onConnectedServiceLocation()
 	{

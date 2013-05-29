@@ -67,7 +67,7 @@ public class TripGuideFragment extends SherlockListFragment implements LoaderCal
 
 	private IImageDownloader mIImageDownloader = null;
 	private TripAdapter mTripAdapter = null;
-	private String mTextToSpeak;
+	
 	
 	public static final String tag = TripGuideFragment.class.getName();
 
@@ -95,7 +95,6 @@ public class TripGuideFragment extends SherlockListFragment implements LoaderCal
 	public void onSaveInstanceState(Bundle outState)
 	{
 		super.onSaveInstanceState(outState);
-		outState.putString("mTextToSpeak", mTextToSpeak);
 	}
 
 	@Override
@@ -105,10 +104,6 @@ public class TripGuideFragment extends SherlockListFragment implements LoaderCal
 		View rootView = inflater.inflate(R.layout.fragment_trip_guide, container, false);
 		FrameLayout frame = (FrameLayout) rootView.findViewById(R.id.listContainer);
 		frame.addView(listView);
-		if (savedInstanceState != null)
-		{
-			mTextToSpeak = savedInstanceState.getString("mTextToSpeak");
-		}
 
 		return rootView;
 
@@ -301,6 +296,7 @@ public class TripGuideFragment extends SherlockListFragment implements LoaderCal
 		{
 			GeofenceActivity geo = (GeofenceActivity) getActivity();
 			geo.addGeofences(geofences);
+			getLoaderManager().restartLoader(LoaderConstants.LOAD_TRIP_LEGS, getArguments(), TripGuideFragment.this);
 		}
 	}
 

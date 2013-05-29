@@ -36,6 +36,7 @@ import com.miracleas.minrute.model.AddressSearch;
 import com.miracleas.minrute.model.TripRequest;
 import com.miracleas.minrute.provider.AddressProviderMetaData;
 import com.miracleas.minrute.utils.DateHelper;
+import com.miracleas.minrute.utils.ViewHelper;
 
 public abstract class ChooseOriginDestFragmentBase extends SherlockFragment implements LoaderCallbacks<Cursor>, OnClickListener, OnFocusChangeListener
 {
@@ -116,9 +117,9 @@ public abstract class ChooseOriginDestFragmentBase extends SherlockFragment impl
 			public void onItemClick(AdapterView<?> arg0, View v, int position, long id)
 			{
 				mSelectedAddressToPosition = position;
-				mAutoCompleteTextViewToAddress.clearFocus();
-				
-				//ViewHelper.hideKeyboard(getActivity(), mAutoCompleteTextViewToAddress);
+				//mAutoCompleteTextViewToAddress.clearFocus();
+				mBtnFindRoute.requestFocus();
+				ViewHelper.hideKeyboard(getActivity(), mAutoCompleteTextViewToAddress);
 			}			
 		});
 		initAutoComplete(mAutoCompleteTextViewFromAddress);
@@ -196,11 +197,13 @@ public abstract class ChooseOriginDestFragmentBase extends SherlockFragment impl
 		{
 			mAutoCompleteTextViewToAddress.setHint(address);
 			mAutoCompleteAdapterTo.getFilter().filter(address);
+			
 		}
 		else
 		{
 			mAutoCompleteTextViewFromAddress.setHint(address);
-			mAutoCompleteAdapterFrom.getFilter().filter(address);			
+			mAutoCompleteAdapterFrom.getFilter().filter(address);	
+			//mAutoCompleteTextViewToAddress.requestFocus();
 		}
 	}
 	
@@ -302,13 +305,13 @@ public abstract class ChooseOriginDestFragmentBase extends SherlockFragment impl
 		private int iId;
 		private LayoutInflater mInf = null;
 		private CharSequence mPreviousConstraint = "";
-		private int mLoaderId = 0;
+		private String mTag = null;
 		
-		public AutoCompleteAddressAdapter(Context context, Cursor c, int flags, final int loaderId)
+		public AutoCompleteAddressAdapter(Context context, Cursor c, int flags, final int loaderId, String tag1)
 		{
 			super(context, c, FLAG_REGISTER_CONTENT_OBSERVER);
 			mInf = LayoutInflater.from(context);
-			mLoaderId = loaderId;
+			mTag = tag1;
 			setFilterQueryProvider(new FilterQueryProvider()
 			{
 				@Override
@@ -324,7 +327,7 @@ public abstract class ChooseOriginDestFragmentBase extends SherlockFragment impl
 						mPreviousConstraint = constraint;
 					}
 
-					Log.d(tag, "autocomplete: "+constraint);
+					Log.d(tag, mTag+" autocomplete: "+constraint);
 					//) GROUP BY (").append(AddressProviderMetaData.TableMetaData.address);
 					StringBuilder b = new StringBuilder();
 					b.append(AddressProviderMetaData.TableMetaData.address).append(" LIKE '").append(constraint).append("%') GROUP BY (").append(AddressProviderMetaData.TableMetaData.address);
@@ -355,15 +358,16 @@ public abstract class ChooseOriginDestFragmentBase extends SherlockFragment impl
 			}
 			getActivity().startManagingCursor(newCursor);
 			
+			Log.d(tag, mTag+" changeCursor");
 			if(newCursor.getCount()==1)
 			{
-				if(mLoaderId==LoaderConstants.LOADER_ADDRESS_FROM)
+				if(mFocusedView == mAutoCompleteTextViewToAddress)
 				{		
-					mSelectedAddressFromPosition = 0;
-				}
-				else if(mLoaderId==LoaderConstants.LOADER_ADDRESS_TO)
-				{
 					mSelectedAddressToPosition = 0;
+				}
+				else
+				{
+					mSelectedAddressFromPosition = 0;
 				}	
 			}
 			
@@ -462,6 +466,7 @@ public abstract class ChooseOriginDestFragmentBase extends SherlockFragment impl
 		
 		public int getPosition(String address)
 		{
+			Log.d(tag, mTag+" getPosition");
 			int pos = -1;
 			Cursor c = getCursor();
 			boolean found = false;

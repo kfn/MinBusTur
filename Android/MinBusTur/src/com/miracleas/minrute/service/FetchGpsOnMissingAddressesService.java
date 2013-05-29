@@ -4,28 +4,36 @@ import java.util.ArrayList;
 import java.util.List;
 
 import android.app.IntentService;
+import android.content.ContentProviderOperation;
+import android.content.ContentProviderResult;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Intent;
+import android.content.OperationApplicationException;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.RemoteException;
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.miracleas.minrute.model.TripRequest;
 import com.miracleas.minrute.net.AddressToGPSFetcher;
 import com.miracleas.minrute.provider.AddressGPSMetaData;
+import com.miracleas.minrute.provider.JourneyDetailStopImagesMetaData;
 import com.miracleas.minrute.provider.TripLegMetaData;
 import com.miracleas.minrute.provider.TripMetaData;
 
 public class FetchGpsOnMissingAddressesService extends IntentService
 {
+	public static final String tag = FetchGpsOnMissingAddressesService.class.getName();
 	public static final String TRIP_ID = "trip_id";
-	private static final String[] PROJECTION_LEGS = { TripLegMetaData.TableMetaData.DEST_NAME, TripLegMetaData.TableMetaData._ID};
+	private static final String[] PROJECTION_LEGS = { TripLegMetaData.TableMetaData.ORIGIN_NAME, TripLegMetaData.TableMetaData._ID};
 	private static final String[] PROJECTION_ADDRESS = {AddressGPSMetaData.TableMetaData.ADDRESS};
 	private boolean mHasStartLocation = false;
 	private boolean mHasStopLocation = false;
+	private ArrayList<ContentProviderOperation> mDbOperations;
 	
-	private ContentResolver cr;
+	private ContentResolver mContentResolver;
 	
 	public FetchGpsOnMissingAddressesService()
 	{
@@ -40,7 +48,8 @@ public class FetchGpsOnMissingAddressesService extends IntentService
 	public void onCreate()
 	{
 		super.onCreate();
-		cr = getContentResolver();
+		mContentResolver = getContentResolver();
+		mDbOperations = new ArrayList<ContentProviderOperation>();
 	}
 
 	@Override
@@ -95,11 +104,42 @@ public class FetchGpsOnMissingAddressesService extends IntentService
 			if(!hasAddressCached)
 			{
 				hasAddressCached = cr.insert(AddressGPSMetaData.TableMetaData.CONTENT_URI, values)!=null;
+				saveGoogleStreetViewImage(latY, lngX, address);
 			}
 		}
 		return hasAddressCached;
 		
 	}
+	
+	private void saveGoogleStreetViewImage(String lat, String lng, String locationName)
+	{		
+		double lat1 = (double) (Integer.parseInt(lat) / 1000000d);
+		double lng1 = (double) (Integer.parseInt(lng) / 1000000d);
+		
+		
+		ContentValues values = new ContentValues();
+		values.put(JourneyDetailStopImagesMetaData.TableMetaData.STOP_NAME, locationName);
+		
+		String selection = JourneyDetailStopImagesMetaData.TableMetaData.STOP_NAME + "=?";
+		String[] selectionArgs = {locationName};
+		int updates = mContentResolver.update(JourneyDetailStopImagesMetaData.TableMetaData.CONTENT_URI, values, selection, selectionArgs);
+		if(updates==0)
+		{
+			StringBuilder b1 = new StringBuilder();
+			b1.append("http://maps.googleapis.com/maps/api/streetview?size=600x300&heading=151.78&pitch=-0.76&sensor=false&location=")
+			.append(lat1).append(",").append(lng1);
+			
+			values.put(JourneyDetailStopImagesMetaData.TableMetaData.URL, b1.toString());								
+			values.put(JourneyDetailStopImagesMetaData.TableMetaData.UPLOADED, "1");
+			values.put(JourneyDetailStopImagesMetaData.TableMetaData.STOP_NAME, locationName);
+			values.put(JourneyDetailStopImagesMetaData.TableMetaData.IS_GOOGLE_STREET_LAT_LNG, "1");
+			values.put(JourneyDetailStopImagesMetaData.TableMetaData.LAT, lat1);
+			values.put(JourneyDetailStopImagesMetaData.TableMetaData.LNG, lng1);
+			ContentProviderOperation.Builder b = ContentProviderOperation.newInsert(JourneyDetailStopImagesMetaData.TableMetaData.CONTENT_URI);
+			b.withValues(values);
+			mDbOperations.add(b.build());
+		}		
+	} 
 	
 	
 	private void markAllGpsAddressesIsLoaded(String tripId)
@@ -109,12 +149,12 @@ public class FetchGpsOnMissingAddressesService extends IntentService
 		String[] selectionArgs = {"0"};
 		ContentValues values = new ContentValues();
 		values.put(TripMetaData.TableMetaData.HAS_ALL_ADDRESS_GPSES, "1");
-		cr.update(uri, values, selection, selectionArgs);
+		mContentResolver.update(uri, values, selection, selectionArgs);
 	}
 	
 	private List<String> fetchStopLocationNames(String tripId)
 	{
-		ContentResolver cr = getContentResolver();
+		
 		String selection = TripLegMetaData.TableMetaData.TRIP_ID + "=?";
 		String[] selectionArgs = { tripId};
 		
@@ -122,7 +162,7 @@ public class FetchGpsOnMissingAddressesService extends IntentService
 		Cursor c = null;
 		try
 		{
-			c = cr.query(TripLegMetaData.TableMetaData.CONTENT_URI, PROJECTION_LEGS, selection, selectionArgs, null);
+			c = mContentResolver.query(TripLegMetaData.TableMetaData.CONTENT_URI, PROJECTION_LEGS, selection, selectionArgs, null);
 			addresses = getRequestedAddesses(c);
 		}
 		finally
@@ -141,7 +181,34 @@ public class FetchGpsOnMissingAddressesService extends IntentService
 		{
 			AddressToGPSFetcher fetcher = new AddressToGPSFetcher(this, address);
 			fetcher.startFetch();
+			mDbOperations.addAll(fetcher.getDbOpersions());
 		}
+		try
+		{
+			saveData(AddressGPSMetaData.AUTHORITY);
+		} 
+		catch (RemoteException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} 
+		catch (OperationApplicationException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	protected ContentProviderResult[] saveData(String authority) throws RemoteException, OperationApplicationException
+	{
+		ContentProviderResult[] results = null;
+		if(!mDbOperations.isEmpty())
+		{
+			results  = mContentResolver.applyBatch(authority, mDbOperations);			
+			Log.d(tag, "applyBatch: "+results.length);		
+			mDbOperations.clear();
+		}
+		return results;
 	}
 	
 	private List<String> getRequestedAddesses(Cursor c)
@@ -150,7 +217,7 @@ public class FetchGpsOnMissingAddressesService extends IntentService
 		if(c.moveToFirst())
 		{
 
-			int i = c.getColumnIndex(TripLegMetaData.TableMetaData.DEST_NAME);
+			int i = c.getColumnIndex(TripLegMetaData.TableMetaData.ORIGIN_NAME);
 			do{	
 				if(!((c.isFirst() && mHasStartLocation) || (c.isLast() && mHasStopLocation)))
 				{
@@ -171,7 +238,7 @@ public class FetchGpsOnMissingAddressesService extends IntentService
 			String selection = inClause;
 			String[] selectionArgs = null;
 			//MAN KUNNE OGSAA SOEGE I SUGGESTION ADDRESS TABELLEN
-			c = cr.query(AddressGPSMetaData.TableMetaData.CONTENT_URI, PROJECTION_ADDRESS, selection, selectionArgs, null);
+			c = mContentResolver.query(AddressGPSMetaData.TableMetaData.CONTENT_URI, PROJECTION_ADDRESS, selection, selectionArgs, null);
 			if(c.moveToFirst())
 			{
 				addresses = new ArrayList<String>(c.getCount());
