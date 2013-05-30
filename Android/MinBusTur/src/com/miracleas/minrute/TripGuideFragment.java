@@ -209,8 +209,8 @@ public class TripGuideFragment extends SherlockListFragment implements LoaderCal
 			List<Geofence> list = getGeofencesFromGeofenceDb();
 			cr.delete(GeofenceMetaData.TableMetaData.CONTENT_URI, null, null);	
 			List<Geofence> listFromAdresses = getGeofencesFromAddressTbl(params[0]);
-			listFromAdresses.addAll(list);
-			for (Geofence g : listFromAdresses)
+			list.addAll(listFromAdresses);
+			for (Geofence g : list)
 			{
 				ContentValues values = new ContentValues();
 				values.put(GeofenceMetaData.TableMetaData.geofence_id, g.getRequestId());
