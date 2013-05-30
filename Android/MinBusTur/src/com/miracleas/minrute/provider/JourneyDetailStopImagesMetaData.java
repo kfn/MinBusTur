@@ -30,13 +30,16 @@ public class JourneyDetailStopImagesMetaData
 				+ TableMetaData.FILE_MIME_TYPE + " TEXT,"
 				+ TableMetaData.STOP_NAME + " TEXT,"
 				+ TableMetaData.IS_GOOGLE_STREET_LAT_LNG + " INTEGER DEFAULT 0,"
-				+ TableMetaData.IS_GOOGLE_STREET_NAME_SEARCH + " INTEGER DEFAULT 0"
+				+ TableMetaData.IS_GOOGLE_STREET_NAME_SEARCH + " INTEGER DEFAULT 0,"
+				+ TableMetaData.TRANSPORT_TYPE + " TEXT,"
+				+ TableMetaData.TRANSPORT_DIRECTION + " TEXT"
 				;
 	}
 
 	// inner class describing columns and their types
 	public static final class TableMetaData implements BaseColumns
 	{		
+		
 		
 		
 		
@@ -62,5 +65,8 @@ public class JourneyDetailStopImagesMetaData
 		public static final String STOP_NAME = "stop_name";
 		public static final String IS_GOOGLE_STREET_LAT_LNG = "is_google_street_latlng_search";
 		public static final String IS_GOOGLE_STREET_NAME_SEARCH = "is_google_street_name_search";
+		
+		public static final String TRANSPORT_DIRECTION = "transport_direction";
+		public static final String TRANSPORT_TYPE = "transport_type";
 	}
 }

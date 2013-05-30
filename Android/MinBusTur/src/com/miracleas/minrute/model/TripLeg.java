@@ -41,11 +41,15 @@ public class TripLeg implements Parcelable
 	private Calendar start;
 	private Calendar end;
 
+	
+	//---------------
 	public int id;
 	public String originName;
 	public String destName;
-	public String time;
 	public long departureTime = 0;
+	public String originTime;
+	public String destTime;
+	//---------------
 	
 	public TripLeg(Parcel in)
 	{
@@ -55,7 +59,9 @@ public class TripLeg implements Parcelable
 		id = in.readInt();
 		originName = in.readString();
 		destName = in.readString();
-		time = in.readString();
+		originTime = in.readString();
+		destTime = in.readString();
+		notes = in.readString();
 	}
 	@Override
 	public int describeContents()
@@ -72,7 +78,9 @@ public class TripLeg implements Parcelable
 		dest.writeInt(this.id);
 		dest.writeString(this.originName);	
 		dest.writeString(destName);
-		dest.writeString(time);
+		dest.writeString(originTime);
+		dest.writeString(destTime);
+		dest.writeString(notes);
 	}
 	public static final Parcelable.Creator<TripLeg> CREATOR = new Parcelable.Creator<TripLeg>()
 	{

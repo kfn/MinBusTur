@@ -40,7 +40,7 @@ public class FetchGpsOnMissingAddressesService extends IntentService
 		super(FetchGpsOnMissingAddressesService.class.getName());
 	}
 	public FetchGpsOnMissingAddressesService(String name)
-	{
+	{ 
 		super(name);
 	}
 	

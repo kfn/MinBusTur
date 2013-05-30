@@ -41,6 +41,8 @@ import com.miracleas.imagedownloader.ImageDownloaderActivity;
 import com.miracleas.imagedownloader.ImageFetcher;
 import com.miracleas.minrute.MinRuteBaseActivity;
 import com.miracleas.minrute.R;
+import com.miracleas.minrute.model.TripLeg;
+import com.miracleas.minrute.model.TripLegStop;
 import com.miracleas.minrute.provider.JourneyDetailStopImagesMetaData;
 import com.miracleas.minrute.service.UploadImagesService;
 import com.miracleas.minrute.utils.MyPrefs;
@@ -56,15 +58,15 @@ public class PhotoGoogleDriveActivity extends MinRuteBaseActivity implements IIm
 	static final int REQUEST_AUTHORIZATION = 2;
 	static final int CAPTURE_IMAGE = 3;
 	static final String AUTH_TOKEN = "AUTH_TOKEN";
-	private String mLat = null;
-	private String mLng = null;
+	
 	private IImageDownloader mImageLoader = null;
 	private static final String CACHE_DIR = IImageDownloader.CACHE_DIR;
 	private static Uri fileUri;
 	private static Drive service;
 	protected GoogleAccountCredential credential;
 	private String mAuth = null;
-	private String mStopName;
+	private TripLegStop mStop;
+	private TripLeg mLeg;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState)
@@ -146,7 +148,7 @@ public class PhotoGoogleDriveActivity extends MinRuteBaseActivity implements IIm
 		{
 			String mediaStorageDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).getPath();
 			String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(new Date());
-			fileUri = Uri.fromFile(new java.io.File(mediaStorageDir + java.io.File.separator + mLat + "-" + mLng + "-" + timeStamp + ".jpg"));
+			fileUri = Uri.fromFile(new java.io.File(mediaStorageDir + java.io.File.separator + mStop.lat + "-" + mStop.lng + "-" + timeStamp + ".jpg"));
 
 			Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
 			cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, fileUri);
@@ -171,9 +173,10 @@ public class PhotoGoogleDriveActivity extends MinRuteBaseActivity implements IIm
 				{
 					ContentResolver cr = getContentResolver();
 					ContentValues values = new ContentValues();
-					values.put(JourneyDetailStopImagesMetaData.TableMetaData.LAT, mLat);
-					values.put(JourneyDetailStopImagesMetaData.TableMetaData.LNG, mLng);
-					values.put(JourneyDetailStopImagesMetaData.TableMetaData.STOP_NAME, mStopName);
+					values.put(JourneyDetailStopImagesMetaData.TableMetaData.LAT, mStop.lat);
+					values.put(JourneyDetailStopImagesMetaData.TableMetaData.LNG, mStop.lng);
+					values.put(JourneyDetailStopImagesMetaData.TableMetaData.STOP_NAME, mStop.name);
+					values.put(JourneyDetailStopImagesMetaData.TableMetaData.TRANSPORT_DIRECTION, mLeg.notes);
 					values.put(JourneyDetailStopImagesMetaData.TableMetaData.FILE_LOCALE_PATH, fileUri.getPath());
 					values.put(JourneyDetailStopImagesMetaData.TableMetaData.FILE_MIME_TYPE, "image/jpeg");
 					values.put(JourneyDetailStopImagesMetaData.TableMetaData.FILE_TITLE, fileContent.getName());
@@ -211,9 +214,10 @@ public class PhotoGoogleDriveActivity extends MinRuteBaseActivity implements IIm
 						showToast("Photo uploaded: " + file.getTitle());
 						ContentResolver cr = getContentResolver();
 						ContentValues values = new ContentValues();
-						values.put(JourneyDetailStopImagesMetaData.TableMetaData.LAT, mLat);
-						values.put(JourneyDetailStopImagesMetaData.TableMetaData.LNG, mLng);
-						values.put(JourneyDetailStopImagesMetaData.TableMetaData.STOP_NAME, mStopName);
+						values.put(JourneyDetailStopImagesMetaData.TableMetaData.LAT, mStop.lat);
+						values.put(JourneyDetailStopImagesMetaData.TableMetaData.LNG, mStop.lng);
+						values.put(JourneyDetailStopImagesMetaData.TableMetaData.STOP_NAME, mStop.name);
+						values.put(JourneyDetailStopImagesMetaData.TableMetaData.TRANSPORT_DIRECTION, mLeg.notes);
 						values.put(JourneyDetailStopImagesMetaData.TableMetaData.URL, file.getDownloadUrl());
 						values.put(JourneyDetailStopImagesMetaData.TableMetaData.FILE_ID, file.getId());
 						cr.insert(JourneyDetailStopImagesMetaData.TableMetaData.CONTENT_URI, values);
@@ -247,13 +251,12 @@ public class PhotoGoogleDriveActivity extends MinRuteBaseActivity implements IIm
 		});
 	}
 
-	public void setBtnListenerOrDisable(Button btn, final String lat, final String lng, final String stopName)
+	public void setBtnListenerOrDisable(Button btn, final TripLegStop stop, final TripLeg leg)
 	{
+		mStop = stop;
+		mLeg = leg;
 		if (isIntentAvailable(this, MediaStore.ACTION_IMAGE_CAPTURE))
 		{
-			mLat = lat;
-			mLng = lng;
-			mStopName = stopName;
 			btn.setOnClickListener(new OnClickListener()
 			{
 				@Override
@@ -296,11 +299,8 @@ public class PhotoGoogleDriveActivity extends MinRuteBaseActivity implements IIm
 	public void onSaveInstanceState(Bundle outState)
 	{
 		outState.putParcelable(FILE_URI, fileUri);
-		outState.putString(LAT, mLat);
-		outState.putString(LNG, mLng);
 		outState.putString(AUTH_TOKEN, mAuth);
 		outState.putString("account", mAccountName);
-		outState.putString("stopName", mStopName);
 		super.onSaveInstanceState(outState);
 	}
 
@@ -309,11 +309,8 @@ public class PhotoGoogleDriveActivity extends MinRuteBaseActivity implements IIm
 	{
 		super.onRestoreInstanceState(savedInstanceState);
 		fileUri = savedInstanceState.getParcelable(FILE_URI);
-		mLat = savedInstanceState.getString(LAT);
-		mLng = savedInstanceState.getString(LNG);
 		mAuth = savedInstanceState.getString(AUTH_TOKEN);
 		mAccountName = savedInstanceState.getString("account");
-		mStopName = savedInstanceState.getString("stopName");
 	}
 
 	public IImageDownloader getIImageDownloader()

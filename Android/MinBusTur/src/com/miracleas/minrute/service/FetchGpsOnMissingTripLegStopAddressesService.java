@@ -6,6 +6,7 @@ import java.util.List;
 import com.miracleas.minrute.model.GeofenceHelper;
 import com.miracleas.minrute.model.TripLeg;
 import com.miracleas.minrute.model.TripLegStop;
+import com.miracleas.minrute.model.TripRequest;
 import com.miracleas.minrute.net.JourneyDetailFetcher;
 import com.miracleas.minrute.provider.AddressGPSMetaData;
 import com.miracleas.minrute.provider.GeofenceMetaData;
@@ -30,9 +31,9 @@ import android.util.Log;
  * @author kfn
  *
  */
-public class FetchAllTripsStopLocationsService extends IntentService
+public class FetchGpsOnMissingTripLegStopAddressesService extends IntentService
 {
-	public static final String tag = FetchAllTripsStopLocationsService.class.getName();
+	public static final String tag = FetchGpsOnMissingTripLegStopAddressesService.class.getName();
 	
 	public static final String TRIP_ID = "tripId";
 	private ContentResolver mCr = null;
@@ -44,7 +45,8 @@ public class FetchAllTripsStopLocationsService extends IntentService
 		TripLegMetaData.TableMetaData._ID,
 		TripLegMetaData.TableMetaData.ORIGIN_NAME,
 		TripLegMetaData.TableMetaData.DEST_NAME,
-		TripLegMetaData.TableMetaData.REF
+		TripLegMetaData.TableMetaData.REF,
+		TripLegMetaData.TableMetaData.TYPE
 		};
 	
 	private static final String[] PROJECTION_STOP_DETAILS = {
@@ -57,11 +59,11 @@ public class FetchAllTripsStopLocationsService extends IntentService
 	
 	private long mUpdated = 0;
 	
-	public FetchAllTripsStopLocationsService()
+	public FetchGpsOnMissingTripLegStopAddressesService()
 	{
-		super(FetchAllTripsStopLocationsService.class.getName());
+		super(FetchGpsOnMissingTripLegStopAddressesService.class.getName());
 	}
-	public FetchAllTripsStopLocationsService(String name)
+	public FetchGpsOnMissingTripLegStopAddressesService(String name)
 	{
 		super(name);
 	}
@@ -78,23 +80,35 @@ public class FetchAllTripsStopLocationsService extends IntentService
 	protected void onHandleIntent(Intent intent)
 	{
 		String tripId = intent.getStringExtra(TRIP_ID);
-		getAllJourneyDetails(tripId, intent);
-		List<TripLegStop> stops = findStopBeforeDestinationTripLeg();
-		addGeofences(stops);
 		
-		fetchGpsOnMissingAddresses(tripId);
-		try
+		if(!TextUtils.isEmpty(tripId))
 		{
-			saveData(JourneyDetailStopMetaData.AUTHORITY);
-		} catch (RemoteException e)
-		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (OperationApplicationException e)
-		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			getAllJourneyDetails(tripId, intent);
+			List<TripLegStop> stops = findStopBeforeDestinationTripLeg();
+			addGeofences(stops);			
+			fetchGpsOnMissingAddresses(tripId);
+			
+			try
+			{
+				saveData(JourneyDetailStopMetaData.AUTHORITY);
+			} catch (RemoteException e)
+			{
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (OperationApplicationException e)
+			{
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+			TripRequest tripRequest = intent.getParcelableExtra(TripRequest.tag);
+			Intent service = new Intent(this, FetchGpsOnMissingAddressesService.class);
+			service.putExtra(FetchGpsOnMissingAddressesService.TRIP_ID, tripId);			
+			service.putExtra(TripRequest.tag, tripRequest);
+			startService(service);
 		}
+		
+		
 	}
 	
 	private void addGeofences(List<TripLegStop> stops)
@@ -108,15 +122,7 @@ public class FetchAllTripsStopLocationsService extends IntentService
 	private void saveGeofence(TripLegStop stop)
 	{
 		String geofenceId = null;
-		if(stop.isFirst)
-		{
-			geofenceId = GeofenceHelper.LEG_ID + GeofenceHelper.DELIMITER + stop.legId;
-		}
-		else if(stop.isLast)
-		{
-			
-		}
-		else if(stop.isBeforLast)
+		if(stop.isBeforLast)
 		{
 			geofenceId = GeofenceHelper.LEG_ID_WITH_STOP_ID + GeofenceHelper.DELIMITER + stop.legId + GeofenceHelper.DELIMITER + stop.id;
 		}
@@ -154,6 +160,7 @@ public class FetchAllTripsStopLocationsService extends IntentService
 		for(TripLeg leg : mLegs)
 		{
 			List<TripLegStop> legStops = fetchTripLegStop(leg);
+			mAllStops.addAll(legStops);
 			TripLegStop first = null;
 			TripLegStop last = null;
 			TripLegStop beforeLast = null;
@@ -283,6 +290,7 @@ public class FetchAllTripsStopLocationsService extends IntentService
 				int iOriginName = c.getColumnIndex(TripLegMetaData.TableMetaData.ORIGIN_NAME);
 				int iDestName = c.getColumnIndex(TripLegMetaData.TableMetaData.DEST_NAME);
 				int iRef = c.getColumnIndex(TripLegMetaData.TableMetaData.REF);
+				int iType = c.getColumnIndex(TripLegMetaData.TableMetaData.TYPE);
 				do{
 					TripLeg leg = new TripLeg();
 					leg.ref = c.getString(iRef);
@@ -290,6 +298,7 @@ public class FetchAllTripsStopLocationsService extends IntentService
 					leg.destName = c.getString(iDestName);
 					leg.id = c.getInt(iId);
 					leg.tripId = tripId;
+					leg.type = c.getString(iType);;
 					legs.add(leg);
 				}while(c.moveToNext());
 			}
@@ -332,7 +341,7 @@ public class FetchAllTripsStopLocationsService extends IntentService
 					saveAddresses(addresses);
 				}
 			}		
-			markAllGpsAddressesIsLoaded(tripId);			
+				
 		}
 		else
 		{
@@ -340,7 +349,7 @@ public class FetchAllTripsStopLocationsService extends IntentService
 		}
 	}
 	
-	private void markAllGpsAddressesIsLoaded(String tripId)
+	/*private void markAllGpsAddressesIsLoaded(String tripId)
 	{
 		Uri uri = Uri.withAppendedPath(TripMetaData.TableMetaData.CONTENT_URI, tripId);
 		String selection = TripMetaData.TableMetaData.HAS_ALL_ADDRESS_GPSES + "=?";
@@ -348,7 +357,7 @@ public class FetchAllTripsStopLocationsService extends IntentService
 		ContentValues values = new ContentValues();
 		values.put(TripMetaData.TableMetaData.HAS_ALL_ADDRESS_GPSES, "1");
 		mCr.update(uri, values, selection, selectionArgs);
-	}
+	}*/
 	
 	private void saveAddresses(List<TripLegStop> addresses)
 	{

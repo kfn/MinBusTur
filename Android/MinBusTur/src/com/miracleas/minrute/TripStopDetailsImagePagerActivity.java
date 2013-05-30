@@ -44,6 +44,8 @@ import com.miracleas.imagedownloader.ImageFetcher;
 import com.miracleas.imagedownloader.Utils;
 
 import com.miracleas.minrute.model.MyLittleImage;
+import com.miracleas.minrute.model.TripLeg;
+import com.miracleas.minrute.model.TripLegStop;
 import com.miracleas.minrute.provider.JourneyDetailStopImagesMetaData;
 import com.miracleas.minrute.provider.JourneyDetailStopMetaData;
 
@@ -206,12 +208,14 @@ public class TripStopDetailsImagePagerActivity extends PhotoGoogleDriveActivity 
 	@Override
 	public Loader<Cursor> onCreateLoader(int id, Bundle args)
 	{
-		if (id == LOAD_TOILET_IMAGES && args.containsKey(JourneyDetailStopMetaData.TableMetaData._ID))
+		if (id == LOAD_TOILET_IMAGES)
 		{
+			TripLegStop stop = args.getParcelable(TripLegStop.tag);
+			TripLeg leg = args.getParcelable(TripLeg.tag);
 			//i.putExtra(JourneyDetailStopMetaData.TableMetaData.LATITUDE, args.getString(JourneyDetailStopMetaData.TableMetaData.LATITUDE));
 			//i.putExtra(JourneyDetailStopMetaData.TableMetaData.LONGITUDE, args.getString(JourneyDetailStopMetaData.TableMetaData.LONGITUDE));
-			String selection = JourneyDetailStopImagesMetaData.TableMetaData.LAT + "=? AND "+JourneyDetailStopImagesMetaData.TableMetaData.LNG + "=?";
-			String[] selectionArgs = { args.getString(JourneyDetailStopMetaData.TableMetaData.LATITUDE), args.getString(JourneyDetailStopMetaData.TableMetaData.LONGITUDE) };
+			String selection = JourneyDetailStopImagesMetaData.TableMetaData.STOP_NAME + "=? AND "+JourneyDetailStopImagesMetaData.TableMetaData.TRANSPORT_DIRECTION + "=?";
+			String[] selectionArgs = { stop.name, leg.notes};
 			return new CursorLoader(this, JourneyDetailStopImagesMetaData.TableMetaData.CONTENT_URI, PROJECTION, selection, selectionArgs, null);
 		}
 		return null;

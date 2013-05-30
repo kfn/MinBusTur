@@ -16,6 +16,7 @@ public abstract class VoiceState
 	protected static final long TWO_MINUTE = DateUtils.MINUTE_IN_MILLIS * 2;
 	protected static final long TWO_HOURS = DateUtils.HOUR_IN_MILLIS * 2;
 	protected static final long TEN_SECONDS = DateUtils.SECOND_IN_MILLIS * 10;
+	protected static final long TWENTY_SECONDS = DateUtils.SECOND_IN_MILLIS * 20;
 	protected static final long TEN_SECONDS_MINUS = TEN_SECONDS * -1;
 	
 	protected TripLeg mLeg = null;
@@ -33,6 +34,6 @@ public abstract class VoiceState
 	public abstract String departuresIn();
 	public abstract String startUsingTransport();
 	public abstract String startUsingNextTransportIn();
-	public abstract String leaveTransportIn();
+	public abstract String leaveTransportIn(String nameOfLocBeforeDest);
 	public abstract String nameOfDestination();
 }

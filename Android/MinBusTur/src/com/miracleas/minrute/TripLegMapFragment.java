@@ -37,12 +37,13 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import com.miracleas.minrute.model.TripLeg;
+import com.miracleas.minrute.model.TripLegStop;
 import com.miracleas.minrute.provider.JourneyDetailMetaData;
 import com.miracleas.minrute.provider.JourneyDetailStopMetaData;
 
 public class TripLegMapFragment extends SupportMapFragment implements LoaderCallbacks<Cursor>, OnCameraChangeListener, OnMarkerClickListener, OnInfoWindowClickListener
 {
-	private Handler mHandler = new Handler();
+	private TripLeg mLeg = null;
 	private boolean mStartUp = true;
 	private ProgressBar mProgressBar = null;
 	private boolean mIsTwoPane = false;
@@ -70,8 +71,7 @@ public class TripLegMapFragment extends SupportMapFragment implements LoaderCall
 		TripLegMapFragment f = new TripLegMapFragment();
 		Bundle args = new Bundle();
 		args.putString(JourneyDetailMetaData.TableMetaData._ID, journeyId);
-		args.putString(JourneyDetailStopMetaData.TableMetaData.LEG_ID, leg.id+"");
-		args.putString(JourneyDetailMetaData.TableMetaData.TYPE, leg.type);
+		args.putParcelable(TripLeg.tag, leg);
 		f.setArguments(args);
 		return f;
 	}
@@ -118,6 +118,8 @@ public class TripLegMapFragment extends SupportMapFragment implements LoaderCall
 		View v = inflater.inflate(R.layout.map, null);
 		FrameLayout frame = (FrameLayout)v.findViewById(R.id.map);
 		frame.addView(mapView);
+		
+		mLeg = getArguments().getParcelable(TripLeg.tag);
 		
 		if (mapView.getViewTreeObserver().isAlive())
 		{
@@ -248,8 +250,8 @@ public class TripLegMapFragment extends SupportMapFragment implements LoaderCall
 	public void onInfoWindowClick(Marker marker)
 	{
 		LegStop wrap = mMarkers.get(marker.getPosition());
-		String transportType = getArguments().getString(JourneyDetailMetaData.TableMetaData.TYPE);
-		mCallbacks.onStopSelected(wrap.dbId+"", wrap.latitude+"", wrap.longitude+"", transportType, marker.getSnippet());
+		TripLegStop stop = new TripLegStop(wrap.latitude+"", wrap.longitude+"", marker.getSnippet(), wrap.dbId);
+		mCallbacks.onStopSelected(stop, mLeg);
 	}
 
 	@Override
@@ -506,7 +508,7 @@ public class TripLegMapFragment extends SupportMapFragment implements LoaderCall
 		/**
 		 * Callback for when an item has been selected.
 		 */
-		public void onStopSelected(String stopId, String lat, String lng, String transportType, String stopName);
+		public void onStopSelected(TripLegStop stop, TripLeg leg);
 
 	}
 
@@ -517,7 +519,7 @@ public class TripLegMapFragment extends SupportMapFragment implements LoaderCall
 	private static Callbacks sDummyCallbacks = new Callbacks()
 	{
 		@Override
-		public void onStopSelected(String stopId, String lat, String lng, String transportType, String stopName)
+		public void onStopSelected(TripLegStop stop, TripLeg leg)
 		{
 		}
 	};

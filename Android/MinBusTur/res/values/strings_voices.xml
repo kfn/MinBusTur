@@ -18,7 +18,8 @@
     <string name="voice_departured">Tiden er udløbet</string>
     
     <string name="voice_departure_walk">Du skal gå om <xliff:g ID="time">%1$s</xliff:g></string>
-    <string name="voice_departure_vechical">Du skal køre om <xliff:g ID="time">%1$s</xliff:g></string>
+    <string name="voice_departure_train">Toget kører om <xliff:g ID="time">%1$s</xliff:g></string>
+    <string name="voice_departure_bus">Bussen kommer om <xliff:g ID="time">%1$s</xliff:g></string>
     
     <string name="voice_start_using_transport_walk">Du skal nu gå i <xliff:g ID="time_label">%1$s</xliff:g> til <xliff:g ID="dest_name">%2$s</xliff:g></string>   
     <string name="voice_start_using_transport_bus">Tag <xliff:g ID="bus_name">%1$s</xliff:g> nu. Transporttid er <xliff:g ID="time">%2$s</xliff:g></string> 
@@ -27,7 +28,7 @@
     <string name="voice_start_using_next_transport_in_bus">Du skal tage <xliff:g ID="bus_name">%1$s</xliff:g> om <xliff:g ID="time">%2$s</xliff:g> til <xliff:g ID="dest_name">%3$s</xliff:g></string>   
     <string name="voice_start_using_next_transport_in_train">Du skal tage toget <xliff:g ID="train_name">%1$s</xliff:g> om <xliff:g ID="time">%2$s</xliff:g> til <xliff:g ID="dest_name">%3$s</xliff:g></string>
     
-    <string name="voice_leave_next_stop">Du skal af ved næste stop</string>
+    <string name="voice_leave_next_stop_bus">Du er ved <xliff:g ID="location">%1$s</xliff:g>. Du skal af ved næste stop: <xliff:g ID="location">%2$s</xliff:g></string>
     
     <string name="voice_arrives_in">Du skal af ved næste stop</string>
    

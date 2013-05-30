@@ -42,7 +42,7 @@ public class VoiceStateWalk extends VoiceState
 	}
 
 	@Override
-	public String leaveTransportIn()
+	public String leaveTransportIn(String nameOfLocBeforeDest)
 	{
 		// TODO Auto-generated method stub
 		return "";
@@ -73,11 +73,11 @@ public class VoiceStateWalk extends VoiceState
 		{
 			tick = TWO_MINUTE;
 		}
-		else if(departures> DateUtils.MINUTE_IN_MILLIS)
+		else if(departures> (DateUtils.MINUTE_IN_MILLIS + TEN_SECONDS))
 		{
 			tick = ONE_MINUTE;
 		}
-		else if(departures> TEN_SECONDS)
+		else if(departures> TWENTY_SECONDS)
 		{
 			tick = TEN_SECONDS;
 		}

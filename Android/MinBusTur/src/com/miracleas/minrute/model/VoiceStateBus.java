@@ -19,7 +19,7 @@ public class VoiceStateBus extends VoiceState
 	{		
 		long departue = mLeg.departureTime - System.currentTimeMillis();
 		String strDuration = mDateHelper.getDurationLabel(departue, true);
-		String text = String.format(mContext.getString(R.string.voice_departure_vechical), strDuration);
+		String text = String.format(mContext.getString(R.string.voice_departure_bus), strDuration);
 		return text;		
 	}
 
@@ -43,11 +43,11 @@ public class VoiceStateBus extends VoiceState
 	}
 
 	@Override
-	public String leaveTransportIn()
+	public String leaveTransportIn(String nameOfLocBeforeDest)
 	{
-		return mContext.getString(R.string.voice_leave_next_stop);
+		String s = String.format(mContext.getString(R.string.voice_leave_next_stop_bus), nameOfLocBeforeDest, mLeg.destName);
+		return s;
 	}
-	@Override
 	public long getTickTime()
 	{
 		long departures =  mLeg.departureTime - System.currentTimeMillis();
@@ -72,15 +72,15 @@ public class VoiceStateBus extends VoiceState
 		{
 			tick = TWO_MINUTE;
 		}
-		else if(departures> DateUtils.MINUTE_IN_MILLIS)
+		else if(departures> (DateUtils.MINUTE_IN_MILLIS + TEN_SECONDS))
 		{
 			tick = ONE_MINUTE;
 		}
-		else if(departures> TEN_SECONDS)
+		else if(departures> TWENTY_SECONDS)
 		{
 			tick = TEN_SECONDS;
 		}
-		else if(departures> TEN_SECONDS_MINUS)
+		else if(departures>= 0)
 		{
 			tick = 0;
 		}

@@ -7,6 +7,7 @@ import java.util.Locale;
 import android.app.Activity;
 import android.app.PendingIntent;
 import android.content.ContentResolver;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
@@ -37,10 +38,12 @@ import com.google.android.gms.location.LocationClient.OnAddGeofencesResultListen
 
 import com.miracleas.imagedownloader.IImageDownloader;
 import com.miracleas.minrute.TripSuggestionsFragment.Callbacks;
+import com.miracleas.minrute.model.GeofenceHelper;
 import com.miracleas.minrute.model.Trip;
 import com.miracleas.minrute.model.TripLeg;
 import com.miracleas.minrute.model.TripRequest;
 import com.miracleas.minrute.provider.AddressGPSMetaData;
+import com.miracleas.minrute.provider.GeofenceMetaData;
 import com.miracleas.minrute.provider.JourneyDetailMetaData;
 import com.miracleas.minrute.provider.JourneyDetailStopImagesMetaData;
 import com.miracleas.minrute.provider.JourneyDetailStopMetaData;
@@ -48,7 +51,9 @@ import com.miracleas.minrute.provider.TripLegMetaData;
 import com.miracleas.minrute.provider.TripMetaData;
 import com.miracleas.minrute.provider.TripMetaData.TableMetaData;
 import com.miracleas.minrute.provider.GeofenceTransitionMetaData;
+import com.miracleas.minrute.service.FetchAllTripsStopLocationsService;
 import com.miracleas.minrute.service.FetchGpsOnMissingAddressesService;
+import com.miracleas.minrute.service.FetchGpsOnMissingTripLegStopAddressesService;
 import com.miracleas.minrute.service.JourneyDetailsService;
 import com.miracleas.minrute.service.ReceiveTransitionsIntentService;
 import com.miracleas.minrute.utils.App;
@@ -121,8 +126,8 @@ public class TripGuideFragment extends SherlockListFragment implements LoaderCal
 		// getArguments(), this);
 		if (savedInstanceState == null)
 		{
-			Intent service = new Intent(getActivity(), FetchGpsOnMissingAddressesService.class);
-			service.putExtra(FetchGpsOnMissingAddressesService.TRIP_ID, getArguments().getString(TripMetaData.TableMetaData._ID));
+			Intent service = new Intent(getActivity(), FetchGpsOnMissingTripLegStopAddressesService.class);
+			service.putExtra(FetchAllTripsStopLocationsService.TRIP_ID, getArguments().getString(TripMetaData.TableMetaData._ID));
 			service.putExtra(TripRequest.tag, getArguments().getParcelable(TripRequest.tag));
 			getActivity().startService(service);
 		}
@@ -189,70 +194,140 @@ public class TripGuideFragment extends SherlockListFragment implements LoaderCal
 
 	private class LoadGeofencesTask extends AsyncTask<String, Void, List<Geofence>>
 	{
-		private final String[] projection = {TripLegMetaData.TableMetaData._ID,TripLegMetaData.TableMetaData.TYPE,AddressGPSMetaData.TableMetaData.ADDRESS ,AddressGPSMetaData.TableMetaData.LATITUDE_Y, AddressGPSMetaData.TableMetaData.LONGITUDE_X };
+		private final String[] projection = {GeofenceMetaData.TableMetaData.geofence_id
+				,GeofenceMetaData.TableMetaData.TYPE_OF_TRANSPORT,
+				GeofenceMetaData.TableMetaData.LAT, GeofenceMetaData.TableMetaData.LNG };
+		
+		private final String[] projectionAddress = {TripLegMetaData.TableMetaData._ID
+				,TripLegMetaData.TableMetaData.TYPE,
+				AddressGPSMetaData.TableMetaData.ADDRESS ,AddressGPSMetaData.TableMetaData.LATITUDE_Y, AddressGPSMetaData.TableMetaData.LONGITUDE_X };
 
 		@Override
 		protected List<Geofence> doInBackground(String... params)
 		{
-			List<Geofence> geofences = new ArrayList<Geofence>();
-			String tripId = params[0];
-			String selection = TripLegMetaData.TableMetaData.TRIP_ID + "=?";
-			String[] selectionArgs = { tripId};
-			Uri uri = Uri.withAppendedPath(TripLegMetaData.TableMetaData.CONTENT_URI, AddressGPSMetaData.TABLE_NAME);
 			ContentResolver cr = getActivity().getContentResolver();
-
+			List<Geofence> list = getGeofencesFromGeofenceDb();
+			cr.delete(GeofenceMetaData.TableMetaData.CONTENT_URI, null, null);	
+			List<Geofence> listFromAdresses = getGeofencesFromAddressTbl(params[0]);
+			listFromAdresses.addAll(list);
+			for (Geofence g : listFromAdresses)
+			{
+				ContentValues values = new ContentValues();
+				values.put(GeofenceMetaData.TableMetaData.geofence_id, g.getRequestId());
+				cr.insert(GeofenceMetaData.TableMetaData.CONTENT_URI, values);
+			}
+											
+			return list;
+		}
+		
+		private List<Geofence> getGeofencesFromGeofenceDb()
+		{
+			List<Geofence> geofences = new ArrayList<Geofence>();
+			ContentResolver cr = getActivity().getContentResolver();
 			Cursor c = null;
 			try
 			{
-				c = cr.query(uri, projection, selection, selectionArgs, null);
-				if (c.moveToFirst())
+				c = cr.query(GeofenceMetaData.TableMetaData.CONTENT_URI, projection, null, null, null);
+				if(c.moveToFirst())
 				{
+					int iId = c.getColumnIndex(GeofenceMetaData.TableMetaData.geofence_id);
+					int iType = c.getColumnIndex(GeofenceMetaData.TableMetaData.TYPE_OF_TRANSPORT);
+					int iLat = c.getColumnIndex(GeofenceMetaData.TableMetaData.LAT);
+					int iLng = c.getColumnIndex(GeofenceMetaData.TableMetaData.LNG);
+					
+					do
+					{
+						String strLat = c.getString(iLat);
+						String strLng = c.getString(iLng);
+						if(!TextUtils.isEmpty(strLat) && !TextUtils.isEmpty(strLng))
+						{
+							double latd = Double.parseDouble(strLat);
+							double lngd = Double.parseDouble(strLng);					
+							
+							if(latd!=0d && lngd!=0d)
+							{
+								String typeOfTransport = c.getString(iType);							
+								int radius = getRadius(typeOfTransport);
+								String geofenceId = c.getString(iId);
+								int transition = Geofence.GEOFENCE_TRANSITION_ENTER; // | Geofence.GEOFENCE_TRANSITION_EXIT
+								geofences.add(toGeofence(geofenceId, transition, latd, lngd, radius, DateUtils.DAY_IN_MILLIS));
+								Log.e(tag, "added id: "+geofenceId);
+							}
+						}
+
+					} while (c.moveToNext());
+				}
+			}
+			finally
+			{
+				if(c!=null && !c.isClosed())
+				{
+					c.close();
+				}
+			}
+			return geofences;
+		}
+		
+		private List<Geofence> getGeofencesFromAddressTbl(String tripId)
+		{
+ 			List<Geofence> geofences = new ArrayList<Geofence>();
+			String selection = TripLegMetaData.TableMetaData.TRIP_ID + "=?";
+ 			String[] selectionArgs = { tripId};
+ 			Uri uri = Uri.withAppendedPath(TripLegMetaData.TableMetaData.CONTENT_URI, AddressGPSMetaData.TABLE_NAME);
+ 			ContentResolver cr = getActivity().getContentResolver();
+ 
+ 			Cursor c = null;
+ 			try
+ 			{
+ 				c = cr.query(uri, projectionAddress, selection, selectionArgs, null);			
+				if(c.moveToFirst())
+ 				{
 					int iId = c.getColumnIndex(TripLegMetaData.TableMetaData._ID);
 					int iType = c.getColumnIndex(TripLegMetaData.TableMetaData.TYPE);
 					int iLat = c.getColumnIndex(AddressGPSMetaData.TableMetaData.LATITUDE_Y);
 					int iLng = c.getColumnIndex(AddressGPSMetaData.TableMetaData.LONGITUDE_X);
 					int iAddress = c.getColumnIndex(AddressGPSMetaData.TableMetaData.ADDRESS);
-					do
-					{
-						int latd = c.getInt(iLat);
-						int lngd = c.getInt(iLng);
-						
-						String address = c.getString(iAddress);
-						if(address!=null)
-						{
-							Log.d(tag, address);
-						}
-						else
-						{
-							Log.e(tag, "address was null");
-							Log.e(tag, "lat:"+latd+",lng:"+lngd);
-						}
-						
-						if(latd!=0 && lngd!=0)
-						{
-							String typeOfTransport = c.getString(iType);
-							
-							int radius = getRadius(typeOfTransport);
-							double lat = (double) latd / 1000000d;
-							double lng = (double) lngd / 1000000d;
-							int id = c.getInt(iId);
-							int transition = Geofence.GEOFENCE_TRANSITION_ENTER; // | Geofence.GEOFENCE_TRANSITION_EXIT
-							geofences.add(toGeofence(id + "", transition, lat, lng, radius, DateUtils.DAY_IN_MILLIS));
-						}
-						
-
-					} while (c.moveToNext());
-				}
-			} finally
-			{
-				if(c!=null)
-				{
-					c.close();
-				}
-				
+ 					do
+ 					{
+ 						int latd = c.getInt(iLat);
+ 						int lngd = c.getInt(iLng); 						
+ 						String address = c.getString(iAddress);									
+ 						if(latd!=0 && lngd!=0)
+ 						{
+ 							Log.d(tag, address);
+ 							String typeOfTransport = c.getString(iType);							
+ 							int radius = getRadius(typeOfTransport);
+ 							double lat = (double) latd / 1000000d;
+ 							double lng = (double) lngd / 1000000d;
+ 							int id = c.getInt(iId);
+ 							String geofenceId = GeofenceHelper.LEG_ID + GeofenceHelper.DELIMITER + id;
+ 							int transition = Geofence.GEOFENCE_TRANSITION_ENTER; // | Geofence.GEOFENCE_TRANSITION_EXIT							
+							geofences.add(toGeofence(geofenceId, transition, lat, lng, radius, DateUtils.DAY_IN_MILLIS));
+							Log.d(tag, "added id: "+geofenceId);
+ 						}
+ 						else
+ 						{
+ 							Log.e(tag, "not valid address");
+ 						}
+ 
+ 					} while (c.moveToNext());
+ 				}
+ 			
 			}
-			return geofences;
-		}
+			finally
+ 			{
+ 				
+				if(c!=null && !c.isClosed())
+ 				{
+ 					c.close();
+ 				}
+ 				
+ 			}
+ 			return geofences;
+ 		}
+		
+	
+
 		
 		private int getRadius(String typeOfTransport)
 		{
@@ -326,22 +401,22 @@ public class TripGuideFragment extends SherlockListFragment implements LoaderCal
 		private int iDestType;
 		private int iOriginDate;
 
-		private int iOriginTime = -1;
-		private int iOriginType = -1;
-		private int iDuration = -1;
-		private int iDurationFormatted = -1;
-		private int iName = -1;
-		private int iNotes = -1;
-		private int iRef = -1;
-		private int iType = -1;
-		private int iProgressBarProgress = -1;
+		private int iOriginTime =  -1;
+		private int iOriginType =  -1;
+		private int iDuration =  -1;
+		private int iDurationFormatted =  -1;
+		private int iName =  -1;
+		private int iNotes =  -1;
+		private int iRef =  -1;
+		private int iType =  -1;
+		private int iProgressBarProgress =  -1;
 		private int iProgressBarMax = -1;
-		private int iDeparturesInTimeLabel = -1;
-		private int iCompleted = -1;
-		private int iGeofenceTransition = -1;
-		private int iRtTrack = -1;
-		private int iDestTrack = -1;
-		private int iUrl = -1;
+		private int iDeparturesInTimeLabel =  -1;
+		private int iCompleted =  -1;
+		private int iGeofenceTransition =  -1;
+		private int iRtTrack =  -1;
+		private int iDestTrack =  -1;
+		private int iUrl =  -1;
 
 		private LayoutInflater mInf = null;
 
@@ -375,10 +450,12 @@ public class TripGuideFragment extends SherlockListFragment implements LoaderCal
 			
 			if(TextUtils.isEmpty(url))
 			{
+				imageViewThumb.setVisibility(View.GONE);
 				imageViewThumb.setImageResource(R.drawable.empty_photo);
 			}
 			else
 			{
+				imageViewThumb.setVisibility(View.VISIBLE);
 				mIImageDownloader.download(url, imageViewThumb);
 			}
 			
@@ -491,101 +568,39 @@ public class TripGuideFragment extends SherlockListFragment implements LoaderCal
 			return super.swapCursor(newCursor);
 		}
 
-		String getRef(int position)
+		
+		TripLeg getTripLeg(int position)
 		{
-			String ref = "";
+			TripLeg leg = new TripLeg();
 			Cursor c = getCursor();
 			if (c.moveToPosition(position))
 			{
-				ref = c.getString(iRef);
+				leg.originTime = c.getString(iOriginTime);
+				leg.destTime = c.getString(iDestTime);
+				leg.destName = c.getString(iDestName);
+				leg.originName = c.getString(iOriginName);
+				leg.type = c.getString(iType);
+				leg.ref = c.getString(iRef);
+				leg.notes = c.getString(iNotes);				
 			}
-			return ref;
-		}
-
-		String getType(int position)
-		{
-			String type = "";
-			Cursor c = getCursor();
-			if (c.moveToPosition(position))
-			{
-				type = c.getString(iType);
-			}
-			return type;
-		}
-
-		String getOriginName(int position)
-		{
-			String name = "";
-			Cursor c = getCursor();
-			if (c.moveToPosition(position))
-			{
-				name = c.getString(iOriginName);
-			}
-			return name;
-		}
-
-		String getDestName(int position)
-		{
-			String name = "";
-			Cursor c = getCursor();
-			if (c.moveToPosition(position))
-			{
-				name = c.getString(iDestName);
-			}
-			return name;
-		}
-		String getDestTime(int position)
-		{
-			String name = "";
-			Cursor c = getCursor();
-			if (c.moveToPosition(position))
-			{
-				name = c.getString(iDestTime);
-			}
-			return name;
-		}
-		String getOriginTime(int position)
-		{
-			String name = "";
-			Cursor c = getCursor();
-			if (c.moveToPosition(position))
-			{
-				name = c.getString(iOriginTime);
-			}
-			return name;
+			return leg;
 		}
 	}
 
 	@Override
 	public void onItemClick(AdapterView<?> parent, View view, int position, long id)
 	{
-		String ref = mTripAdapter.getRef(position);
-		String type = mTripAdapter.getType(position);
-		String tripId = getArguments().getString(TripMetaData.TableMetaData._ID);
-		if (!TextUtils.isEmpty(ref))
+		TripLeg leg = mTripAdapter.getTripLeg(position);
+		leg.id = (int)id;
+		leg.tripId = getArguments().getString(TripMetaData.TableMetaData._ID);
+		if (!TextUtils.isEmpty(leg.ref))
 		{
-			String origin = mTripAdapter.getOriginName(position);
-			String dest = mTripAdapter.getDestName(position);
 			Intent service = new Intent(getActivity(), JourneyDetailsService.class);
-			service.putExtra(JourneyDetailsService.LEG, id + "");
-			service.putExtra(JourneyDetailsService.TRIP_ID, tripId);
-			service.putExtra(JourneyDetailsService.URL, ref);
-			service.putExtra(JourneyDetailsService.ADDRESS_DEST, dest);
-			service.putExtra(JourneyDetailsService.ADDRESS_ORIGIN, origin);
+			service.putExtra(TripLeg.tag, leg);
 			getActivity().startService(service);
 			
-			TripLeg leg = new TripLeg();
-			leg.id = (int)id;
-			leg.ref = ref;
-			leg.type = type;
-			leg.tripId = tripId;
-			leg.originName = origin;
-			leg.destName = dest;
-			leg.time = mTripAdapter.getOriginTime(position) + "-"+mTripAdapter.getDestTime(position);
 			mCallbacks.onTripLegSelected(leg);
-		}
-
-		
+		}	
 	}
 
 	@Override

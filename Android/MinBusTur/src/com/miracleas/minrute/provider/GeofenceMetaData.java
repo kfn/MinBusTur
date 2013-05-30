@@ -19,7 +19,10 @@ public class GeofenceMetaData
 	public static String getTableSchema()
 	{
 		return TableMetaData._ID + " INTEGER PRIMARY KEY AUTOINCREMENT," +
-				TableMetaData.geofence_id + " INTEGER" 
+				TableMetaData.geofence_id + " TEXT," +
+				TableMetaData.TYPE_OF_TRANSPORT + " TEXT," +
+				TableMetaData.LAT + " TEXT," +
+				TableMetaData.LNG + " TEXT" 
 				;
 	}
 
@@ -36,7 +39,10 @@ public class GeofenceMetaData
 		public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd." + PACKAGE_NAME + ITEM_TYPE;
 
 		public static final String geofence_id = "geofence_id";
-		public static final String updated = "updated";
+		public static final String updated = "geoupdated";
+		public static final String TYPE_OF_TRANSPORT = "geotransporttype";
+		public static final String LAT = "geolat";
+		public static final String LNG = "geolng";
 
 	}
 }

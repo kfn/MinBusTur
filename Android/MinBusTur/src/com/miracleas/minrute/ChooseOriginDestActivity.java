@@ -74,7 +74,11 @@ public class ChooseOriginDestActivity extends GeofenceActivity implements Choose
 	public void onStart()
 	{
 		super.onStart();
-		removeSavedGeofences();
+		if (servicesConnected())
+		{
+			removeSavedGeofences();
+		}
+		
 	}
 	
 	@Override

@@ -23,6 +23,7 @@ import android.text.TextUtils;
 import android.util.Log;
 
 import com.miracleas.minrute.model.JourneyDetail;
+import com.miracleas.minrute.model.TripLeg;
 import com.miracleas.minrute.provider.JourneyDetailMetaData;
 import com.miracleas.minrute.provider.JourneyDetailNoteMetaData;
 import com.miracleas.minrute.provider.JourneyDetailStopImagesMetaData;
@@ -33,34 +34,27 @@ public class JourneyDetailFetcher extends BaseFetcher
 {
 	public static final String URL = "URL";
 	public static final String tag = JourneyDetailFetcher.class.getName();
-	private String mUrl;
 	private List<String> mIds = null;
-	private String mTripId;
-	private String mLegId;
 	private static final String[] PROJECTION = { JourneyDetailMetaData.TableMetaData._ID };
 	private static final String[] PROJECTION_IMG = { JourneyDetailStopImagesMetaData.TableMetaData._ID };
-	private final String mOriginName;
-	private final String mDestName;
+	
 	private boolean mFoundOriginName = false;
 	private boolean mFoundDestName = false;
 	private List<MyImage> mUrls;
+	private TripLeg mLeg = null;
 
-	public JourneyDetailFetcher(Context c, Intent intent, String url, String tripId, String legId, String originName, String destName)
+	public JourneyDetailFetcher(Context c, Intent intent, TripLeg leg)
 	{
 		super(c, intent);
 		mIds = new ArrayList<String>();
-		mUrl = url;
-		mTripId = tripId;
-		mLegId = legId;
-		mOriginName = originName;
-		mDestName = destName;
+		mLeg = leg;
 		mUrls = new ArrayList<MyImage>();
 	}
 
 	@Override
 	protected boolean start()
 	{
-		return !TextUtils.isEmpty(mUrl);
+		return !TextUtils.isEmpty(mLeg.ref);
 	}
 
 	@Override
@@ -71,7 +65,7 @@ public class JourneyDetailFetcher extends BaseFetcher
 		try
 		{
 			String selection = JourneyDetailMetaData.TableMetaData.REF + "=?";
-			String[] selectionArgs = { mUrl };
+			String[] selectionArgs = { mLeg.ref };
 			cursor = mContentResolver.query(JourneyDetailMetaData.TableMetaData.CONTENT_URI, PROJECTION, selection, selectionArgs, JourneyDetailMetaData.TableMetaData._ID + " LIMIT 1");
 			hasCachedResult = cursor.getCount() > 0;
 		} finally
@@ -90,7 +84,7 @@ public class JourneyDetailFetcher extends BaseFetcher
 
 	private void fetchJourneyDetails() throws Exception
 	{
-		HttpURLConnection urlConnection = initHttpURLConnection(mUrl);
+		HttpURLConnection urlConnection = initHttpURLConnection(mLeg.ref);
 		try
 		{
 			int repsonseCode = urlConnection.getResponseCode();
@@ -239,12 +233,12 @@ public class JourneyDetailFetcher extends BaseFetcher
 
 			if (!mFoundOriginName)
 			{
-				mFoundOriginName = name.equals(mOriginName);
+				mFoundOriginName = name.equals(mLeg.originName);
 			}
 
 			if (mFoundOriginName && !mFoundDestName)
 			{
-				mFoundDestName = name.equals(mDestName);
+				mFoundDestName = name.equals(mLeg.destName);
 				if (mFoundDestName)
 				{
 					b.withValue(JourneyDetailStopMetaData.TableMetaData.IS_PART_OF_USER_ROUTE, 1);
@@ -280,8 +274,8 @@ public class JourneyDetailFetcher extends BaseFetcher
 			b.withValue(JourneyDetailStopMetaData.TableMetaData.TRACK, track);
 			b.withValue(JourneyDetailStopMetaData.TableMetaData.NAME, name);
 			b.withValue(JourneyDetailStopMetaData.TableMetaData.JOURNEY_DETAIL_ID, jouney.id);
-			b.withValue(JourneyDetailStopMetaData.TableMetaData.LEG_ID, mLegId);
-			b.withValue(JourneyDetailStopMetaData.TableMetaData.TRIP_ID, mTripId);
+			b.withValue(JourneyDetailStopMetaData.TableMetaData.LEG_ID, mLeg.id);
+			b.withValue(JourneyDetailStopMetaData.TableMetaData.TRIP_ID, mLeg.tripId);
 			b.withValue(JourneyDetailStopMetaData.TableMetaData.DEP_TIME, depTime);
 			b.withValue(JourneyDetailStopMetaData.TableMetaData.ARR_TIME, arrTime);
 			mDbOperations.add(b.build());
@@ -336,9 +330,9 @@ public class JourneyDetailFetcher extends BaseFetcher
 		b.withValue(JourneyDetailMetaData.TableMetaData.TYPE, t.type);
 		b.withValue(JourneyDetailMetaData.TableMetaData.TYPE_ROUTE_ID_X_FROM, t.typeRouteIdxFrom);
 		b.withValue(JourneyDetailMetaData.TableMetaData.TYPE_ROUTE_ID_X_TO, t.typeRouteIdxTo);
-		b.withValue(JourneyDetailMetaData.TableMetaData.REF, mUrl);
-		b.withValue(JourneyDetailMetaData.TableMetaData.TRIP_ID, mTripId);
-		b.withValue(JourneyDetailMetaData.TableMetaData.LEG_ID, mLegId);
+		b.withValue(JourneyDetailMetaData.TableMetaData.REF, mLeg.ref);
+		b.withValue(JourneyDetailMetaData.TableMetaData.TRIP_ID, mLeg.tripId);
+		b.withValue(JourneyDetailMetaData.TableMetaData.LEG_ID, mLeg.id);
 		b.withValue(JourneyDetailMetaData.TableMetaData.COUNT_OF_STOPS, t.countOfStops);
 		mDbOperations.add(b.build());
 	}

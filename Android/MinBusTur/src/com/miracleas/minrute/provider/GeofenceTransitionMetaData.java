@@ -20,7 +20,7 @@ public class GeofenceTransitionMetaData
 	{
 		return TableMetaData._ID + " INTEGER PRIMARY KEY AUTOINCREMENT," +
 				TableMetaData.GEOFENCE_TRANSITION_TYPE + " INTEGER," 
-				+ TableMetaData.TRIP_LEG_ID + " INTEGER," 
+				+ TableMetaData.GEOFENCE_ID + " TEXT," 
 				+ TableMetaData.updated + " LONG"
 				;
 	}
@@ -38,7 +38,7 @@ public class GeofenceTransitionMetaData
 		public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd." + PACKAGE_NAME + ITEM_TYPE;
 
 		public static final String GEOFENCE_TRANSITION_TYPE = "geofence_transition_type";
-		public static final String TRIP_LEG_ID = "trip_leg_id";
+		public static final String GEOFENCE_ID = "trip_leg_id";
 		public static final String updated = "updated";
 
 	}

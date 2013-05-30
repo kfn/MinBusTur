@@ -1,6 +1,5 @@
 package com.miracleas.minrute;
 
-import android.app.Activity;
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
@@ -8,24 +7,18 @@ import android.os.Bundle;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
-import android.text.Html;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.ImageButton;
 import android.widget.TableLayout;
 import android.widget.TextView;
 
 import com.actionbarsherlock.app.SherlockFragment;
-import com.miracleas.camera.PhotoIntentActivity;
-
-import com.miracleas.minrute.TripLegDetailsFragment.Callbacks;
+import com.miracleas.minrute.model.TripLeg;
+import com.miracleas.minrute.model.TripLegStop;
 import com.miracleas.minrute.provider.JourneyDetailMetaData;
 import com.miracleas.minrute.provider.JourneyDetailStopMetaData;
-import com.miracleas.minrute.provider.JourneyDetailStopMetaData.TableMetaData;
 import com.miracleas.minrute.widget.TableRowKeyValue;
 
 /**
@@ -37,20 +30,16 @@ public class TripStopDetailsFragment extends SherlockFragment implements LoaderC
 {
 	public static final String tag = TripStopDetailsFragment.class.getName();
 	
-	private static final int LOAD_TOILET = 1;
-	
 	private TableLayout mTblLayout = null;
 	private TextView mTextViewTitle = null;
 	
 	
-	public static TripStopDetailsFragment createInstance(String stopId, String lat, String lng, String transportType)
+	public static TripStopDetailsFragment createInstance(TripLegStop stop, TripLeg leg)
 	{
 		TripStopDetailsFragment f = new TripStopDetailsFragment();
 		Bundle args = new Bundle();
-		args.putString(JourneyDetailStopMetaData.TableMetaData._ID, stopId);
-		args.putString(JourneyDetailStopMetaData.TableMetaData.LATITUDE, lat);
-		args.putString(JourneyDetailStopMetaData.TableMetaData.LONGITUDE, lng);
-		args.putString(JourneyDetailMetaData.TableMetaData.TYPE, transportType);
+		args.putParcelable(TripLegStop.tag, stop);
+		args.putParcelable(TripLeg.tag, leg);
 		f.setArguments(args);
 		return f;
 	}
@@ -87,8 +76,9 @@ public class TripStopDetailsFragment extends SherlockFragment implements LoaderC
 		if (id == LoaderConstants.LOADER_TRIP_STOP_DETAILS)
 		{
 			String selection = null;
-			String[] selectionArgs = null;				
-			Uri uri =  Uri.withAppendedPath(JourneyDetailStopMetaData.TableMetaData.CONTENT_URI, args.getString(JourneyDetailStopMetaData.TableMetaData._ID));
+			String[] selectionArgs = null;		
+			TripLegStop stop = args.getParcelable(TripLegStop.tag);
+			Uri uri =  Uri.withAppendedPath(JourneyDetailStopMetaData.TableMetaData.CONTENT_URI, stop.id + "");
 			return new CursorLoader(getActivity(), uri, null, selection, selectionArgs, null);
 		}
 		return null;

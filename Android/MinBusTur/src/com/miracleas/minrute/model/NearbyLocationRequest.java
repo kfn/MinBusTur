@@ -17,6 +17,11 @@ public class NearbyLocationRequest implements Parcelable
 	
 	public NearbyLocationRequest(){}
 	
+	public NearbyLocationRequest(TripLegStop stop)
+	{
+		this(stop.id+"", stop.lng, stop.lat, stop.name);
+	}
+	
 	public NearbyLocationRequest(String stopId, String coordX,  String coordY, String stopName)
 	{
 		this(stopId, coordX, coordY, 10, 1, stopName);

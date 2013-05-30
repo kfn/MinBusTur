@@ -24,6 +24,7 @@ import android.widget.TextView;
 import com.actionbarsherlock.app.SherlockListFragment;
 
 import com.miracleas.minrute.model.TripLeg;
+import com.miracleas.minrute.model.TripLegStop;
 import com.miracleas.minrute.model.TripRequest;
 import com.miracleas.minrute.provider.JourneyDetailMetaData;
 import com.miracleas.minrute.provider.JourneyDetailNoteMetaData;
@@ -91,7 +92,7 @@ public class TripLegDetailsFragment extends SherlockListFragment implements Load
 		mTextViewJourneyName = (TextView)rootView.findViewById(R.id.textViewJourneyName);
 		mTextViewJourneyTimes = (TextView)rootView.findViewById(R.id.textViewJourneyTimes);
 		//String locationName = getArguments().getString(TripLegMetaData.TableMetaData.ORIGIN_NAME);
-		mTextViewJourneyTimes.setText(mTripLeg.time);
+		mTextViewJourneyTimes.setText(mTripLeg.originTime + "-"+mTripLeg.destTime);
 		return rootView;
 		
 	}
@@ -176,6 +177,7 @@ public class TripLegDetailsFragment extends SherlockListFragment implements Load
 		private int iLng;
 		private int iName;
 		private int iTrack;
+		private int iId;
 		private String mTransportType;
 		private boolean mIsTrain = false;
 		private int iPartOfUserRoute;
@@ -255,49 +257,31 @@ public class TripLegDetailsFragment extends SherlockListFragment implements Load
 				iName = newCursor.getColumnIndex(JourneyDetailStopMetaData.TableMetaData.NAME);		
 				iTrack = newCursor.getColumnIndex(JourneyDetailStopMetaData.TableMetaData.TRACK);	
 				iPartOfUserRoute = newCursor.getColumnIndex(JourneyDetailStopMetaData.TableMetaData.IS_PART_OF_USER_ROUTE);	
+				iId = newCursor.getColumnIndex(JourneyDetailStopMetaData.TableMetaData._ID);	
 			}
 			return super.swapCursor(newCursor);
 		}
 		
-		public String getLat(int position)
+		public TripLegStop getTripLegStop(int position)
 		{
-			String lat = "";
+			TripLegStop stop = null;;
 			Cursor c = getCursor();
 			if(c.moveToPosition(position))
 			{
-				lat = c.getString(iLat);
+				int id = (int)c.getLong(iId);
+				String name = c.getString(iName);
+				String lng = c.getString(iLng);
+				String lat = c.getString(iLat);
+				stop = new TripLegStop(lat, lng, name, id);
 			}
-			return lat;
-		}
-		public String getLng(int position)
-		{
-			String lng = "";
-			Cursor c = getCursor();
-			if(c.moveToPosition(position))
-			{
-				lng = c.getString(iLng);
-			}
-			return lng;
-		}
-		public String getStopName(int position)
-		{
-			String name = "";
-			Cursor c = getCursor();
-			if(c.moveToPosition(position))
-			{
-				name = c.getString(iName);
-			}
-			return name;
+			return stop;
 		}
 	}
 	@Override
 	public void onItemClick(AdapterView<?> parent, View view, int position, long id)
 	{
-		String lat = mTripAdapter.getLat(position);
-		String lng = mTripAdapter.getLng(position);
-		String name = mTripAdapter.getStopName(position);
-		String transportType = mTripLeg.type;
-		mCallbacks.onStopSelected(id+"", lat, lng, transportType, name);		
+		TripLegStop stop = mTripAdapter.getTripLegStop(position);		
+		mCallbacks.onStopSelected(stop, mTripLeg);		
 	}
 	
 	@Override
@@ -328,7 +312,7 @@ public class TripLegDetailsFragment extends SherlockListFragment implements Load
 	 */
 	public interface Callbacks
 	{
-		public void onStopSelected(String stopId, String lat, String lng, String transportType, String stopName);
+		public void onStopSelected(TripLegStop stop, TripLeg leg);
 		public void setJourneyDetailId(long id, String LegId, String transportType);
 	}
 
@@ -340,7 +324,7 @@ public class TripLegDetailsFragment extends SherlockListFragment implements Load
 	{
 
 		@Override
-		public void onStopSelected(String stopId, String lat, String lng, String transportType, String stopName)
+		public void onStopSelected(TripLegStop stop, TripLeg leg)
 		{
 			
 		}

@@ -25,6 +25,8 @@ import com.miracleas.imagedownloader.ImageDownloaderActivity;
 import com.miracleas.imagedownloader.ImageFetcher;
 
 import com.miracleas.minrute.model.NearbyLocationRequest;
+import com.miracleas.minrute.model.TripLeg;
+import com.miracleas.minrute.model.TripLegStop;
 import com.miracleas.minrute.provider.JourneyDetailMetaData;
 import com.miracleas.minrute.provider.JourneyDetailStopImagesMetaData;
 import com.miracleas.minrute.provider.JourneyDetailStopMetaData;
@@ -46,12 +48,8 @@ public class TripStopDetailsActivity extends PhotoGoogleDriveActivity implements
 	 * The {@link ViewPager} that will host the section contents.
 	 */
 	private ViewPager mViewPager;
-	
-
-	
-	private NearbyLocationRequest mNearbyLocationRequest = null;
-
-	private String mTransportType;
+	private TripLeg mTripLeg = null;
+	private TripLegStop mTripLegStop = null;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState)
@@ -95,13 +93,9 @@ public class TripStopDetailsActivity extends PhotoGoogleDriveActivity implements
 			// this tab is selected.
 			actionBar.addTab(actionBar.newTab().setText(mSectionsPagerAdapter.getPageTitle(i)).setTabListener(this));
 		}
-		
-		String lat = getIntent().getStringExtra(JourneyDetailStopMetaData.TableMetaData.LATITUDE);
-		String lng = getIntent().getStringExtra(JourneyDetailStopMetaData.TableMetaData.LONGITUDE);
-		String id = getIntent().getStringExtra(JourneyDetailStopMetaData.TableMetaData._ID);
-		String stopName = getIntent().getStringExtra(JourneyDetailStopImagesMetaData.TableMetaData.STOP_NAME);
-		mTransportType = getIntent().getStringExtra(JourneyDetailMetaData.TableMetaData.TYPE);
-		mNearbyLocationRequest = new NearbyLocationRequest(id, lng, lat, stopName);
+		Intent intent = getIntent();
+		mTripLegStop = intent.getParcelableExtra(TripLegStop.tag);
+		mTripLeg = intent.getParcelableExtra(TripLeg.tag);		
 	}
 
 	@Override
@@ -138,7 +132,7 @@ public class TripStopDetailsActivity extends PhotoGoogleDriveActivity implements
 			break;
 		case R.id.menu_streetview:
 			handled = true;
-			showStreetView(mNearbyLocationRequest.getLat()+"", mNearbyLocationRequest.getLng()+"");
+			showStreetView(mTripLegStop.lat, mTripLegStop.lng);
 			break;
 
 		default:
@@ -151,7 +145,9 @@ public class TripStopDetailsActivity extends PhotoGoogleDriveActivity implements
 
 	private void showStreetView(String latitude, String longitude)
 	{
-		String uri = "google.streetview:cbll=" + latitude + "," + longitude + "&cbp=1,99.56,,1,-5.27&mz=21";
+		double lat = (double)(Integer.parseInt(latitude)) / 1000000d;
+		double lng = (double)(Integer.parseInt(longitude)) / 1000000d;
+		String uri = "google.streetview:cbll=" + lat + "," + lng + "&cbp=1,99.56,,1,-5.27&mz=21";
 		Intent streetView = new Intent(android.content.Intent.ACTION_VIEW, Uri.parse(uri));
 		startActivity(streetView);
 	}
@@ -203,15 +199,15 @@ public class TripStopDetailsActivity extends PhotoGoogleDriveActivity implements
 			{
 				
 				String id = getIntent().getStringExtra(JourneyDetailStopMetaData.TableMetaData._ID);
-				fragment = TripStopDetailsFragment.createInstance(id, mNearbyLocationRequest.coordY, mNearbyLocationRequest.coordX, mTransportType);
+				fragment = TripStopDetailsFragment.createInstance(mTripLegStop, mTripLeg);
 			}
 			else if (position == 1)
 			{
-				fragment = TripStopDetailsImagesFragment.createInstance(getIntent().getStringExtra(JourneyDetailStopMetaData.TableMetaData._ID),  mNearbyLocationRequest.coordY, mNearbyLocationRequest.coordX, mNearbyLocationRequest.stopName);
+				fragment = TripStopDetailsImagesFragment.createInstance(mTripLegStop, mTripLeg);
 			}
 			else if (position == 2)
 			{
-				fragment = TripStopDetailsDepartureBoardFragment.createInstance(getIntent().getStringExtra(JourneyDetailStopMetaData.TableMetaData._ID), mNearbyLocationRequest.coordY, mNearbyLocationRequest.coordX);
+				fragment = TripStopDetailsDepartureBoardFragment.createInstance(mTripLegStop, mTripLeg);
 			} 
 			return fragment;
 		}
@@ -244,9 +240,9 @@ public class TripStopDetailsActivity extends PhotoGoogleDriveActivity implements
 
 	public void navigateToDirectionMap()
 	{
-		if (mNearbyLocationRequest.getLat()!=0d && mNearbyLocationRequest.getLng()!=0d)
+		if (mTripLegStop!=null)
 		{
-			String uriString = "http://maps.google.com/maps?daddr=" + mNearbyLocationRequest.getLat() + "," + mNearbyLocationRequest.getLng() + "&view=map";
+			String uriString = "http://maps.google.com/maps?daddr=" + mTripLegStop.lat + "," + mTripLegStop.lng + "&view=map";
 			Uri uri = Uri.parse(uriString);
 			Intent intent = new Intent(Intent.ACTION_VIEW, uri);
 			startActivity(intent);

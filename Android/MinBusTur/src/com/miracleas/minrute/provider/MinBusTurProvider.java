@@ -23,7 +23,7 @@ import android.util.Log;
 public class MinBusTurProvider extends ContentProvider
 {
 	public static final String DATABASE_NAME = "minrejseplan";
-	public static final int DATABASE_VERSION = 7;
+	public static final int DATABASE_VERSION = 8;
 	// Logging helper tag. No significance to providers.
 	private static final String tag = MinBusTurProvider.class.getName();
 
@@ -204,8 +204,8 @@ public class MinBusTurProvider extends ContentProvider
 			.append(" as i ON (i.").append(JourneyDetailStopImagesMetaData.TableMetaData._ID)
 			.append("= (SELECT MAX(z.").append(JourneyDetailStopImagesMetaData.TableMetaData._ID)
 			.append(") FROM ").append(JourneyDetailStopImagesMetaData.TABLE_NAME).append(" as z WHERE z.").append(JourneyDetailStopImagesMetaData.TableMetaData.STOP_NAME)
-			.append("=t.").append(TripLegMetaData.TableMetaData.ORIGIN_NAME).append(" AND ").append(JourneyDetailStopImagesMetaData.TableMetaData.URL)
-			.append(" NOT NULL")
+			.append("=t.").append(TripLegMetaData.TableMetaData.ORIGIN_NAME).append(" AND ").append(JourneyDetailStopImagesMetaData.TableMetaData.URL).append(" NOT NULL")
+			.append(" AND ").append(JourneyDetailStopImagesMetaData.TableMetaData.TRANSPORT_DIRECTION).append("=").append(TripLegMetaData.TableMetaData.NOTES)			
 			.append("))");
 			qb.setTables(b1.toString());
 			break; 	

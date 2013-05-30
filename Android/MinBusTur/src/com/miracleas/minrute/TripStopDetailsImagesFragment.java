@@ -37,6 +37,8 @@ import com.actionbarsherlock.view.MenuItem;
 import com.miracleas.camera.PhotoGoogleDriveActivity;
 import com.miracleas.imagedownloader.IImageDownloader;
 import com.miracleas.imagedownloader.Utils;
+import com.miracleas.minrute.model.TripLeg;
+import com.miracleas.minrute.model.TripLegStop;
 import com.miracleas.minrute.net.BaseFetcher;
 import com.miracleas.minrute.provider.JourneyDetailStopImagesMetaData;
 import com.miracleas.minrute.provider.JourneyDetailStopMetaData;
@@ -73,13 +75,11 @@ public class TripStopDetailsImagesFragment extends LocaleImageHandlerFragment im
 		JourneyDetailStopImagesMetaData.TableMetaData.FILE_LOCALE_PATH
 	};
 	
-	public static TripStopDetailsImagesFragment createInstance(String stopId, String lat, String lng, String stopName)
+	public static TripStopDetailsImagesFragment createInstance(TripLegStop stop, TripLeg leg)
 	{
 		Bundle args = new Bundle();
-		args.putString(JourneyDetailStopMetaData.TableMetaData._ID, stopId);
-		args.putString(JourneyDetailStopMetaData.TableMetaData.LATITUDE, lat);
-		args.putString(JourneyDetailStopMetaData.TableMetaData.LONGITUDE, lng);
-		args.putString(JourneyDetailStopImagesMetaData.TableMetaData.STOP_NAME, stopName);
+		args.putParcelable(TripLegStop.tag, stop);
+		args.putParcelable(TripLeg.tag, leg);
 		TripStopDetailsImagesFragment fragment = new TripStopDetailsImagesFragment();
 		fragment.setArguments(args);
 		return fragment;
@@ -180,26 +180,32 @@ public class TripStopDetailsImagesFragment extends LocaleImageHandlerFragment im
 		mBtnUploadPictures.setOnClickListener(this);
 		PhotoGoogleDriveActivity activity = (PhotoGoogleDriveActivity)getActivity();
 		Bundle args = getArguments();
-		String lat = args.getString(JourneyDetailStopMetaData.TableMetaData.LATITUDE);
-		String lng = args.getString(JourneyDetailStopMetaData.TableMetaData.LONGITUDE);	
-		String stopName = args.getString(JourneyDetailStopImagesMetaData.TableMetaData.STOP_NAME);
-		activity.setBtnListenerOrDisable(mBtnTakePicture, lat, lng, stopName);
+		
+		TripLegStop stop = args.getParcelable(TripLegStop.tag);
+		TripLeg leg = args.getParcelable(TripLeg.tag);
+		activity.setBtnListenerOrDisable(mBtnTakePicture, stop, leg);
 		return v;
 	}
 	
 	@Override
 	public Loader<Cursor> onCreateLoader(int id, Bundle args)
 	{
-		if (id == LoaderConstants.LOADER_TRIP_STOP_IMAGES && args.containsKey(JourneyDetailStopMetaData.TableMetaData.LATITUDE))
+		TripLegStop stop = args.getParcelable(TripLegStop.tag);
+		TripLeg leg = args.getParcelable(TripLeg.tag);
+		
+		if (id == LoaderConstants.LOADER_TRIP_STOP_IMAGES)
 		{
-			String selection = JourneyDetailStopImagesMetaData.TableMetaData.LAT + "=? AND "+JourneyDetailStopImagesMetaData.TableMetaData.LNG+"=?";
-			String[] selectionArgs = {args.getString(JourneyDetailStopMetaData.TableMetaData.LATITUDE), args.getString(JourneyDetailStopMetaData.TableMetaData.LONGITUDE)};				
+			
+			String selection = JourneyDetailStopImagesMetaData.TableMetaData.STOP_NAME + "=? AND "+JourneyDetailStopImagesMetaData.TableMetaData.TRANSPORT_DIRECTION + "=?";
+			String[] selectionArgs = {stop.name, leg.notes};				
 			return new CursorLoader(getActivity(), JourneyDetailStopImagesMetaData.TableMetaData.CONTENT_URI, PROJECTION, selection, selectionArgs, null);
 		}
-		else if (id == LoaderConstants.LOADER_COUNT_OF_NOT_UPLOADED_IMAGES && args.containsKey(JourneyDetailStopMetaData.TableMetaData.LATITUDE))
+		else if (id == LoaderConstants.LOADER_COUNT_OF_NOT_UPLOADED_IMAGES)
 		{
-			String selection = JourneyDetailStopImagesMetaData.TableMetaData.LAT + "=? AND "+JourneyDetailStopImagesMetaData.TableMetaData.LNG+"=? AND "+JourneyDetailStopImagesMetaData.TableMetaData.UPLOADED+"=?";
-			String[] selectionArgs = {args.getString(JourneyDetailStopMetaData.TableMetaData.LATITUDE), args.getString(JourneyDetailStopMetaData.TableMetaData.LONGITUDE), "0"};				
+			
+			String selection = JourneyDetailStopImagesMetaData.TableMetaData.STOP_NAME + "=? AND "
+			   +JourneyDetailStopImagesMetaData.TableMetaData.UPLOADED+"=? AND "+JourneyDetailStopImagesMetaData.TableMetaData.TRANSPORT_DIRECTION + "=?";;
+			String[] selectionArgs = {stop.name, "0", leg.notes};				
 			return new CursorLoader(getActivity(), JourneyDetailStopImagesMetaData.TableMetaData.CONTENT_URI, PROJECTION, selection, selectionArgs, null);
 		}
 		return null;
@@ -246,9 +252,9 @@ public class TripStopDetailsImagesFragment extends LocaleImageHandlerFragment im
 
 	}
 
-	public void resetLoader(Bundle args)
+	private void resetLoader(Bundle args)
 	{
-		if (args != null && args.containsKey(JourneyDetailStopMetaData.TableMetaData._ID))
+		if (args != null)
 		{
 			if(getLoaderManager().getLoader(LoaderConstants.LOADER_TRIP_STOP_IMAGES)==null)
 			{
@@ -273,9 +279,10 @@ public class TripStopDetailsImagesFragment extends LocaleImageHandlerFragment im
 		final Intent i = new Intent(getActivity(), TripStopDetailsImagePagerActivity.class);
 		i.putExtra(TripStopDetailsImagePagerActivity.EXTRA_IMAGE_POSITION, position);
 		Bundle args = getArguments();
-		i.putExtra(JourneyDetailStopMetaData.TableMetaData.LATITUDE, args.getString(JourneyDetailStopMetaData.TableMetaData.LATITUDE));
-		i.putExtra(JourneyDetailStopMetaData.TableMetaData.LONGITUDE, args.getString(JourneyDetailStopMetaData.TableMetaData.LONGITUDE));
-		i.putExtra(JourneyDetailStopMetaData.TableMetaData._ID, args.getString(JourneyDetailStopMetaData.TableMetaData._ID));
+		TripLegStop stop = args.getParcelable(TripLegStop.tag);
+		TripLeg leg = args.getParcelable(TripLeg.tag);
+		i.putExtra(TripLegStop.tag, stop);
+		i.putExtra(TripLeg.tag, leg);
 		
 		if (Utils.hasJellyBean())
 		{
@@ -328,7 +335,7 @@ public class TripStopDetailsImagesFragment extends LocaleImageHandlerFragment im
 			}
 			else
 			{
-				mImageDownloaderActivity.download(cursor.getString(iUrl), ((ImageView)v));	
+				mImageDownloaderActivity.download(url, ((ImageView)v));	
 			}
 			
 		}

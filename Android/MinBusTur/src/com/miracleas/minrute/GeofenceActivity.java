@@ -258,8 +258,8 @@ public abstract class GeofenceActivity extends GoogleServiceActivity implements 
 			 * broadcast intent or update the UI. geofences into the Intent's
 			 * extended data.
 			 */
-			saveGeofences(true);
-			Log.d(tag, "added geofences!");
+			//saveGeofences(true);
+			Log.d(tag, "added geofences: "+geofenceRequestIds.length);
 		} else
 		{
 			// If adding the geofences failed
@@ -372,6 +372,7 @@ public abstract class GeofenceActivity extends GoogleServiceActivity implements 
 		if (statusCode == LocationStatusCodes.SUCCESS)
 		{
 			Log.d(tag, "onRemoveGeofencesByRequestIdsResult! removed: "+geofenceRequestIds.length);
+			saveGeofences(false);
 		}
 		else
 		{
@@ -394,7 +395,8 @@ public abstract class GeofenceActivity extends GoogleServiceActivity implements 
 		protected Void doInBackground(Boolean... params)
 		{
 			ContentResolver cr = getContentResolver();
-			if (params[0])
+			cr.delete(GeofenceMetaData.TableMetaData.CONTENT_URI, null, null);	
+			/*if (params[0])
 			{
 				for (Geofence g : mCurrentGeofences)
 				{
@@ -402,11 +404,7 @@ public abstract class GeofenceActivity extends GoogleServiceActivity implements 
 					values.put(GeofenceMetaData.TableMetaData.geofence_id, g.getRequestId());
 					cr.insert(GeofenceMetaData.TableMetaData.CONTENT_URI, values);
 				}
-			} 
-			else
-			{
-				cr.delete(GeofenceMetaData.TableMetaData.CONTENT_URI, null, null);		
-			}
+			}*/ 
 			return null;
 		}
 

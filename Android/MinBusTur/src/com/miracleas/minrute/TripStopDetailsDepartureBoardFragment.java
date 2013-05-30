@@ -23,6 +23,8 @@ import android.widget.TextView;
 import com.actionbarsherlock.app.SherlockFragment;
 
 import com.miracleas.minrute.model.NearbyLocationRequest;
+import com.miracleas.minrute.model.TripLeg;
+import com.miracleas.minrute.model.TripLegStop;
 import com.miracleas.minrute.provider.JourneyDetailStopDeparturesMetaData;
 import com.miracleas.minrute.provider.JourneyDetailStopMetaData;
 import com.miracleas.minrute.service.DepartureBoardsService;
@@ -49,13 +51,12 @@ public class TripStopDetailsDepartureBoardFragment extends SherlockFragment impl
 	private View mLoadingView = null;
 	private Button mBtnFetchDepartures = null;
 	
-	public static TripStopDetailsDepartureBoardFragment createInstance(String stopId, String lat, String lng)
+	public static TripStopDetailsDepartureBoardFragment createInstance(TripLegStop stop, TripLeg leg)
 	{
 		TripStopDetailsDepartureBoardFragment f = new TripStopDetailsDepartureBoardFragment();
 		Bundle args = new Bundle();
-		args.putString(JourneyDetailStopMetaData.TableMetaData._ID, stopId);
-		args.putString(JourneyDetailStopMetaData.TableMetaData.LATITUDE, lat);
-		args.putString(JourneyDetailStopMetaData.TableMetaData.LONGITUDE, lng);
+		args.putParcelable(TripLegStop.tag, stop);
+		args.putParcelable(TripLeg.tag, leg);
 		f.setArguments(args);
 		return f;
 	}
@@ -88,11 +89,8 @@ public class TripStopDetailsDepartureBoardFragment extends SherlockFragment impl
 		mListView.setAdapter(mTripAdapter);		
 		
 		Bundle args = getArguments();
-		mNearbyLocationRequest = new NearbyLocationRequest();
-		mNearbyLocationRequest.stopId = args.getString(JourneyDetailStopMetaData.TableMetaData._ID);
-		mNearbyLocationRequest.coordX = args.getString(JourneyDetailStopMetaData.TableMetaData.LONGITUDE);
-		mNearbyLocationRequest.coordY = args.getString(JourneyDetailStopMetaData.TableMetaData.LATITUDE);
-		
+		TripLegStop stop = args.getParcelable(TripLegStop.tag);
+		mNearbyLocationRequest = new NearbyLocationRequest(stop);		
 		getLoaderManager().initLoader(LoaderConstants.LOADER_STOP_DEPARTURES, getArguments(), this);
 	}
 
@@ -107,8 +105,9 @@ public class TripStopDetailsDepartureBoardFragment extends SherlockFragment impl
 	{		
 		if(id==LoaderConstants.LOADER_STOP_DEPARTURES)
 		{
+			TripLegStop stop = args.getParcelable(TripLegStop.tag);
 			String selection = JourneyDetailStopDeparturesMetaData.TableMetaData.STOP_ID + "=?";
-			String[] selectionArgs = {args.getString(JourneyDetailStopMetaData.TableMetaData._ID)};
+			String[] selectionArgs = {stop.id + ""};
 			return new CursorLoader(getActivity(), JourneyDetailStopDeparturesMetaData.TableMetaData.CONTENT_URI, PROJECTION_DEPARTURE, selection, selectionArgs, null);
 		}
 

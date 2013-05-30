@@ -28,6 +28,7 @@ public class AddressFetcher extends BaseFetcher
 	private String sort = null;
 	private String selection;
 	public static final String URL = BASE_URL + "location?input=";
+	public static final int MAX = 40;
 	 
 	private String mSearchTerm;
 	private long mUpdated = 0;
@@ -119,10 +120,10 @@ public class AddressFetcher extends BaseFetcher
 		int count = 0;
 		while (eventType != XmlPullParser.END_DOCUMENT)
 		{
-			if (count<11 && eventType == XmlPullParser.START_TAG && xpp.getName().equals("LocationList"))
+			if (count<MAX && eventType == XmlPullParser.START_TAG && xpp.getName().equals("LocationList"))
 			{
 				eventType = xpp.next();
-				while (count<11 && !(eventType == XmlPullParser.END_TAG && xpp.getName().equals("LocationList")))
+				while (count<MAX && !(eventType == XmlPullParser.END_TAG && xpp.getName().equals("LocationList")))
 				{
 					if (eventType == XmlPullParser.START_TAG && xpp.getName().equals("StopLocation"))
 					{						

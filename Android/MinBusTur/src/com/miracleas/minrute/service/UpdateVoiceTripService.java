@@ -9,11 +9,13 @@ import java.util.TimerTask;
 
 import com.google.android.gms.location.Geofence;
 import com.miracleas.minrute.R;
+import com.miracleas.minrute.model.GeofenceHelper;
 import com.miracleas.minrute.model.TripLeg;
 import com.miracleas.minrute.model.VoiceState;
 import com.miracleas.minrute.model.VoiceStateBus;
 import com.miracleas.minrute.model.VoiceStateTrain;
 import com.miracleas.minrute.model.VoiceStateWalk;
+import com.miracleas.minrute.provider.JourneyDetailStopMetaData;
 import com.miracleas.minrute.provider.TripLegMetaData;
 import com.miracleas.minrute.provider.TripMetaData;
 import com.miracleas.minrute.provider.GeofenceTransitionMetaData;
@@ -22,6 +24,7 @@ import com.miracleas.minrute.utils.DateHelper;
 import android.app.Service;
 import android.content.ContentResolver;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.Intent;
 import android.database.ContentObserver;
 import android.database.Cursor;
@@ -30,6 +33,8 @@ import android.os.AsyncTask;
 import android.os.Binder;
 import android.os.Handler;
 import android.os.IBinder;
+import android.os.PowerManager;
+import android.os.PowerManager.WakeLock;
 import android.speech.tts.TextToSpeech;
 import android.text.TextUtils;
 import android.text.format.DateUtils;
@@ -46,8 +51,9 @@ public class UpdateVoiceTripService extends Service implements android.speech.tt
 	private String mTextToSpeak;
 	private TransistionObserver mTransistionObserver = null;
 	private List<TripLeg> mLegs = null;
-	private int mCurrentStep = 0;
+	private int mCurrentStep = -1;
 	private VoiceState mCurrentVoiceState = null;
+	private WakeLock wl;
 	
 	private static String[] projectionTripLegTrans = {TripLegMetaData.TableMetaData._ID, TripLegMetaData.TableMetaData.ORIGIN_NAME,TripLegMetaData.TableMetaData.GEOFENCE_EVENT_ID,  TripLegMetaData.TableMetaData.TYPE, TripLegMetaData.TableMetaData.STEP_NUMBER, TripLegMetaData.TableMetaData.updated};
 
@@ -80,6 +86,13 @@ public class UpdateVoiceTripService extends Service implements android.speech.tt
 			return UpdateVoiceTripService.this;
 		}
 	}
+	
+	private void startWakelock()
+	{
+		PowerManager pm = (PowerManager)getSystemService(Context.POWER_SERVICE);
+	    wl = pm.newWakeLock(PowerManager.FULL_WAKE_LOCK | PowerManager.ACQUIRE_CAUSES_WAKEUP, tag);
+	    wl.acquire();
+	}
 
 	@Override
 	public void onCreate()
@@ -88,7 +101,7 @@ public class UpdateVoiceTripService extends Service implements android.speech.tt
 		mDateHelper = new DateHelper(this);
 		mDateHelper.setVoice(true);
 		mTransistionObserver = new TransistionObserver(handler);
-				
+		startWakelock();
 		Log.d(tag, "onCreate");
 	}
 
@@ -96,6 +109,7 @@ public class UpdateVoiceTripService extends Service implements android.speech.tt
 	public void onDestroy()
 	{
 		super.onDestroy();
+		wl.release();
 		stopDepartureHandler();
 		mLoadDepartueTask = null;
 		if(mTts!=null)
@@ -134,7 +148,7 @@ public class UpdateVoiceTripService extends Service implements android.speech.tt
 			if(mTts.isLanguageAvailable(locale)==android.speech.tts.TextToSpeech.LANG_AVAILABLE)
 			{
 				mTts.setLanguage(locale);
-				mTts.setSpeechRate(0.5f);
+				mTts.setSpeechRate(0.4f);
 				//((mTts.setLanguage(Locale.US);
 			}
 			else
@@ -234,6 +248,7 @@ public class UpdateVoiceTripService extends Service implements android.speech.tt
 	
 	private void changeState(int index)
 	{
+		Log.d(tag, "changeState: "+index);
 		stopDepartureHandler();
 		mCurrentStep = index;
 		if(mCurrentStep>-1 && mCurrentStep<mLegs.size())
@@ -444,25 +459,44 @@ public class UpdateVoiceTripService extends Service implements android.speech.tt
 	
 	private class LoadNewTransitionTask extends AsyncTask<Void, Void, Integer>
 	{
-		
+		private int mStopId = -1;
+		private String mNameOfLocationBeforeDest;
 		@Override
 		protected Integer doInBackground(Void... params)
 		{		
-			int tripLegId = getTripLegIdTransition();	
+			int tripLegId = getTripLegIdTransition();
+			if(mStopId!=-1)
+			{
+				mNameOfLocationBeforeDest = getNameOfStopBeforeDestination(mStopId);
+			}
 			return findTripLegIndex(tripLegId);
 		}
 		
 		private int getTripLegIdTransition()
 		{
+			Log.d(tag, "getTripLegIdTransition()");
 			int legId = -1;
 			Cursor c = null;
 			try
 			{
-				String[] projection = {GeofenceTransitionMetaData.TableMetaData.TRIP_LEG_ID};
+				String[] projection = {GeofenceTransitionMetaData.TableMetaData.GEOFENCE_ID};
 				c = getContentResolver().query(GeofenceTransitionMetaData.TableMetaData.CONTENT_URI, projection, null, null, GeofenceTransitionMetaData.TableMetaData.updated+" DESC LIMIT 1");
 				if(c.moveToFirst())
 				{
-					legId = c.getInt(c.getColumnIndex(GeofenceTransitionMetaData.TableMetaData.TRIP_LEG_ID));
+					String geofenceId = c.getString(c.getColumnIndex(GeofenceTransitionMetaData.TableMetaData.GEOFENCE_ID));
+					Log.d(tag, "getTripLegIdTransition: "+geofenceId);
+					if(geofenceId.contains(GeofenceHelper.LEG_ID))
+					{
+						
+						String[] temp = geofenceId.split(GeofenceHelper.DELIMITER);
+						legId = Integer.parseInt(temp[1]);
+					}
+					else if(geofenceId.contains(GeofenceHelper.LEG_ID_WITH_STOP_ID))
+					{
+						String[] temp = geofenceId.split(GeofenceHelper.DELIMITER);
+						legId = Integer.parseInt(temp[1]);
+						mStopId = Integer.parseInt(temp[2]);
+					}
 				}		
 			}
 			finally
@@ -475,18 +509,46 @@ public class UpdateVoiceTripService extends Service implements android.speech.tt
 			return legId;
 		}
 		
+		private String getNameOfStopBeforeDestination(int stopId)
+		{
+			String name = "";
+			Cursor c = null;
+			try
+			{
+				String[] projection = {JourneyDetailStopMetaData.TableMetaData.NAME};
+				Uri uri = Uri.withAppendedPath(JourneyDetailStopMetaData.TableMetaData.CONTENT_URI, stopId+"");
+				c = getContentResolver().query(uri, projection, null, null, JourneyDetailStopMetaData.TableMetaData._ID+" DESC LIMIT 1");
+				if(c.moveToFirst())
+				{
+					name = c.getString(c.getColumnIndex(JourneyDetailStopMetaData.TableMetaData.NAME));
+					Log.d(tag, "getNameOfStopBeforeDestination: "+name);
+				}		
+			}
+			finally
+			{
+				if(c!=null && !c.isClosed())
+				{
+					c.close();
+				}
+			}
+			return name;
+		}
+		
 		private int findTripLegIndex(int legId)
 		{
+			Log.d(tag, "findTripLegIndex: "+legId);
 			int index = -1;
 			boolean found = false;
 			for(int i = 0; i < mLegs.size() && !found; i++)
 			{
+				Log.d(tag, mLegs.get(i).id+"=="+legId);
 				if(mLegs.get(i).id==legId)
 				{
 					found = true;
 					index = i;
 				}
 			}
+			Log.d(tag, "new state index is: "+index);
 			return index;
 		}
 		
@@ -494,11 +556,14 @@ public class UpdateVoiceTripService extends Service implements android.speech.tt
 		@Override
 		public void onPostExecute(Integer newIndex)
 		{
-			if(newIndex!=-1)
+			if(newIndex!=-1 && mCurrentStep!=newIndex)
 			{
-				mCurrentVoiceState.leaveTransportIn();
 				changeState(newIndex);
-			}		
+			}	
+			else if(mStopId!=-1 && !TextUtils.isEmpty(mNameOfLocationBeforeDest))
+			{				
+				playVoice(mCurrentVoiceState.leaveTransportIn(mNameOfLocationBeforeDest));
+			}
 		}
 	}
 }

@@ -34,6 +34,7 @@ import android.widget.TimePicker;
 import com.actionbarsherlock.app.SherlockFragment;
 import com.miracleas.minrute.model.AddressSearch;
 import com.miracleas.minrute.model.TripRequest;
+import com.miracleas.minrute.net.AddressFetcher;
 import com.miracleas.minrute.provider.AddressProviderMetaData;
 import com.miracleas.minrute.utils.DateHelper;
 import com.miracleas.minrute.utils.ViewHelper;
@@ -93,7 +94,7 @@ public abstract class ChooseOriginDestFragmentBase extends SherlockFragment impl
 		mTextViewTime.setOnClickListener(this);
 		
 		Calendar c = Calendar.getInstance();
-		
+		c.add(Calendar.MINUTE, 5);
 		mTextViewDate.setText(getDateFormat(c));
 		mTextViewTime.setText(getTimeFormat(c));
 		mTripRequest.setTime(DateHelper.convertDateToString(c, DateHelper.formatterTime));
@@ -318,7 +319,7 @@ public abstract class ChooseOriginDestFragmentBase extends SherlockFragment impl
 					//) GROUP BY (").append(AddressProviderMetaData.TableMetaData.address);
 					StringBuilder b = new StringBuilder();
 					b.append(AddressProviderMetaData.TableMetaData.address).append(" LIKE '").append(constraint).append("%') GROUP BY (").append(AddressProviderMetaData.TableMetaData.address);
-					return getActivity().getContentResolver().query(AddressProviderMetaData.TableMetaData.CONTENT_URI, PROJECTION, b.toString(), null, AddressProviderMetaData.TableMetaData.address+" LIMIT 10");
+					return getActivity().getContentResolver().query(AddressProviderMetaData.TableMetaData.CONTENT_URI, PROJECTION, b.toString(), null, AddressProviderMetaData.TableMetaData.address+" LIMIT "+AddressFetcher.MAX);
 				}
 			});
 			
