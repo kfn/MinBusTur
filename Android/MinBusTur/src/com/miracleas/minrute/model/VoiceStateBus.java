@@ -48,50 +48,7 @@ public class VoiceStateBus extends VoiceState
 		String s = String.format(mContext.getString(R.string.voice_leave_next_stop_bus), nameOfLocBeforeDest, mLeg.destName);
 		return s;
 	}
-	public long getTickTime(long currentTime)
-	{
-		long departures =  mLeg.departureTime - System.currentTimeMillis();
-		long tick = 0;
-		if(departures >= DateUtils.DAY_IN_MILLIS )
-		{
-			tick = Long.MIN_VALUE;
-		}
-		else if(departures >= TWO_HOURS)
-		{
-			tick = ONE_HOUR_FOURTY_FIVE_MINUTES;
-		}
-		else if(departures >= DateUtils.HOUR_IN_MILLIS)
-		{
-			tick = FOURTY_FIVE_MINUTES;
-		}
-		else if(departures >= FIFTEEN_MINUTES)
-		{
-			tick = FIVE_MINUTES;
-		}
-		else if(departures > TEN_MINUTES)
-		{
-			tick = TWO_MINUTE;
-		}
-		else if(departures> (DateUtils.MINUTE_IN_MILLIS + TEN_SECONDS))
-		{
-			tick = ONE_MINUTE;
-		}
-		else if(departures> TWENTY_SECONDS)
-		{
-			tick = TEN_SECONDS;
-		}
-		else if(departures>= 0)
-		{
-			tick = 0;
-		}
-		else
-		{
-			tick = Long.MIN_VALUE;
-		}
-		
-		Log.d(tag, "wait: "+tick / DateUtils.SECOND_IN_MILLIS+" seks.");
-		return tick;
-	}
+
 
 	@Override
 	public String nameOfDestination()

@@ -47,78 +47,7 @@ public class VoiceStateWalk extends VoiceState
 		// TODO Auto-generated method stub
 		return "";
 	}
-	
-	@Override
-	public long getTickTime(long currentTime)
-	{
-		long departures =  mLeg.departureTime - currentTime;
-		long tick = 0;
-		if(departures >= DateUtils.DAY_IN_MILLIS )
-		{
-			tick = Long.MIN_VALUE;
-		}
-		else if(departures >= TWO_HOURS)
-		{
-			long temp = (mLeg.departureTime - DateUtils.HOUR_IN_MILLIS) - currentTime;
-			tick = temp;
-		}
-		else if(departures >= DateUtils.HOUR_IN_MILLIS)
-		{
-			long temp = (mLeg.departureTime - (DateUtils.MINUTE_IN_MILLIS * 30)) - currentTime;
-			tick = temp;
-		}
-		else if(departures >= DateUtils.MINUTE_IN_MILLIS * 30)
-		{
-			long temp = (mLeg.departureTime - FIFTEEN_MINUTES) - currentTime;
-			tick = temp;
-		}
-		else if(departures >= FIFTEEN_MINUTES)
-		{
-			long temp = (mLeg.departureTime - TEN_MINUTES) - currentTime;
-			tick = temp;
-		}
-		else if(departures >= TEN_MINUTES)
-		{
-			long temp = (mLeg.departureTime - FIVE_MINUTES) - currentTime;
-			tick = temp;
-		}
-		else if(departures>= FIVE_MINUTES)
-		{
-			long temp = (mLeg.departureTime - THREE_MINUTE) - currentTime;
-			tick = temp;
-		}
-		else if(departures>= THREE_MINUTE)
-		{
-			long temp = (mLeg.departureTime - TWO_MINUTE) - currentTime;
-			tick = temp;
-		}
-		else if(departures>= TWO_MINUTE)
-		{
-			long temp = (mLeg.departureTime - ONE_MINUTE) - currentTime;
-			tick = temp;
-		}
-		else if(departures>= ONE_MINUTE)
-		{
-			long temp = (mLeg.departureTime - (DateUtils.SECOND_IN_MILLIS * 30)) - currentTime;
-			tick = temp;
-		}
-		else if(departures>= DateUtils.SECOND_IN_MILLIS * 30)
-		{		
-			long temp = (mLeg.departureTime - TEN_SECONDS) - currentTime;
-			tick = temp;
-		}
-		else if(departures>= 0)
-		{
-			tick = 0;
-		}
-		else
-		{
-			tick = Long.MIN_VALUE;
-		}
-		
-		Log.d(tag, "wait: "+tick / DateUtils.SECOND_IN_MILLIS+" seks.");
-		return tick;
-	}
+
 	
 	/*public long getTickTime()
 	{

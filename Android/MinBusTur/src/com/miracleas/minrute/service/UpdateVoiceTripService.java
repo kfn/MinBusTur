@@ -218,30 +218,57 @@ public class UpdateVoiceTripService extends Service implements android.speech.tt
 	{
 		return mTts!=null;
 	}
+	
+
+	private void startDepartureTimer()
+	{
+		Log.d(tag, "startDepartureTimer");
+		if (mTripId != null)
+		{
+			if (handler == null)
+			{
+				handler = new Handler();
+				playDepartureVoice();
+			}			
+		}
+	}
+	
+	private void playDepartureVoice()
+	{
+		long departues = departues();
+		if(departues<=VoiceState.THIRTY_SECONDS)
+		{
+			mCurrentVoiceState.startUsingTransport();
+		}
+		else
+		{
+			long tick = mCurrentVoiceState.getTickTime(System.currentTimeMillis());
+			if(tick<=0)
+			{
+				playStartTripLegNow();
+				stopDepartureHandler();
+				
+			}				
+			else if(tick!=Long.MIN_VALUE)
+			{
+				//tick = tick - DateUtils.SECOND_IN_MILLIS;
+				playVoice(mCurrentVoiceState.departuresIn());	
+				Log.d(tag, "start in "+(tick/DateUtils.SECOND_IN_MILLIS)+" secs");
+				handler.postDelayed(runnableDeparture, tick);
+			}		
+			else
+			{
+				stopDepartureHandler();
+			}
+		}
+	}
 
 	private Runnable runnableDeparture = new Runnable()
 	{
 		@Override
 		public void run()
 		{
-			if (mTripId != null)
-			{
-				updateDepartureVoice();
-				long tick = mCurrentVoiceState.getTickTime(System.currentTimeMillis());
-				if(tick==0)
-				{
-					playStartTripLegNow();
-					stopDepartureHandler();
-				}	
-				else if(tick!=Long.MIN_VALUE)
-				{
-					handler.postDelayed(runnableDeparture, tick);
-				}
-				else
-				{
-					stopDepartureHandler();
-				}
-			}
+			playDepartureVoice();
 		}
 	};
 	
@@ -274,39 +301,12 @@ public class UpdateVoiceTripService extends Service implements android.speech.tt
 			}			
 		}
 	}
-
-	private void startDepartureTimer()
+	
+	private long departues()
 	{
-		if (mTripId != null)
-		{
-			if (handler == null)
-			{
-				handler = new Handler();
-				long tick = mCurrentVoiceState.getTickTime(System.currentTimeMillis());
-				if(tick==0)
-				{
-					playStartTripLegNow();
-					stopDepartureHandler();
-					
-				}				
-				else if(tick!=Long.MIN_VALUE)
-				{
-					Calendar c = Calendar.getInstance();
-					int milliseconds = c.get(Calendar.MILLISECOND);
-					long seconds = c.get(Calendar.SECOND);
-					seconds = (60 - seconds) * DateUtils.SECOND_IN_MILLIS;
-					
-					tick = (seconds-(DateUtils.SECOND_IN_MILLIS*2)) - milliseconds;
-					Log.d(tag, "start in "+(tick/DateUtils.SECOND_IN_MILLIS)+" secs");
-					handler.postDelayed(runnableDeparture, tick);
-				}		
-				else
-				{
-					stopDepartureHandler();
-				}
-			}			
-		}
+		return mLegs.get(mCurrentStep).departureTime;
 	}
+
 	
 	private void playStartTripLegNow()
 	{
