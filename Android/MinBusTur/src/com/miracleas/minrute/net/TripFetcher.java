@@ -23,7 +23,7 @@ import com.miracleas.minrute.model.Trip;
 import com.miracleas.minrute.model.TripLeg;
 import com.miracleas.minrute.model.TripLocation;
 import com.miracleas.minrute.model.TripRequest;
-import com.miracleas.minrute.provider.JourneyDetailStopImagesMetaData;
+import com.miracleas.minrute.provider.StopImagesMetaData;
 import com.miracleas.minrute.provider.TripLegMetaData;
 import com.miracleas.minrute.provider.TripMetaData;
 import com.miracleas.minrute.provider.GeofenceTransitionMetaData;
@@ -216,18 +216,18 @@ public class TripFetcher extends BaseFetcher
 		{
 			String url = "http://maps.googleapis.com/maps/api/streetview?size=600x300&heading=151.78&pitch=-0.76&sensor=false&location="+URLEncoder.encode(locationName, HTTP.UTF_8);
 			ContentValues values = new ContentValues();
-			values.put(JourneyDetailStopImagesMetaData.TableMetaData.STOP_NAME, locationName);
+			values.put(StopImagesMetaData.TableMetaData.STOP_NAME, locationName);
 			
-			String selection = JourneyDetailStopImagesMetaData.TableMetaData.STOP_NAME + "=?";
+			String selection = StopImagesMetaData.TableMetaData.STOP_NAME + "=?";
 			String[] selectionArgs = {locationName};
-			int updates = mContentResolver.update(JourneyDetailStopImagesMetaData.TableMetaData.CONTENT_URI, values, selection, selectionArgs);
+			int updates = mContentResolver.update(StopImagesMetaData.TableMetaData.CONTENT_URI, values, selection, selectionArgs);
 			if(updates==0)
 			{
-				values.put(JourneyDetailStopImagesMetaData.TableMetaData.URL, url);								
-				values.put(JourneyDetailStopImagesMetaData.TableMetaData.UPLOADED, "1");
-				values.put(JourneyDetailStopImagesMetaData.TableMetaData.STOP_NAME, locationName);
-				values.put(JourneyDetailStopImagesMetaData.TableMetaData.IS_GOOGLE_STREET_NAME_SEARCH, "1");
-				ContentProviderOperation.Builder b = ContentProviderOperation.newInsert(JourneyDetailStopImagesMetaData.TableMetaData.CONTENT_URI);
+				values.put(StopImagesMetaData.TableMetaData.URL, url);								
+				values.put(StopImagesMetaData.TableMetaData.UPLOADED, "1");
+				values.put(StopImagesMetaData.TableMetaData.STOP_NAME, locationName);
+				values.put(StopImagesMetaData.TableMetaData.IS_GOOGLE_STREET_NAME_SEARCH, "1");
+				ContentProviderOperation.Builder b = ContentProviderOperation.newInsert(StopImagesMetaData.TableMetaData.CONTENT_URI);
 				b.withValues(values);
 				mDbOperations.add(b.build());
 			}

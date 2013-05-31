@@ -43,7 +43,7 @@ import com.miracleas.minrute.MinRuteBaseActivity;
 import com.miracleas.minrute.R;
 import com.miracleas.minrute.model.TripLeg;
 import com.miracleas.minrute.model.TripLegStop;
-import com.miracleas.minrute.provider.JourneyDetailStopImagesMetaData;
+import com.miracleas.minrute.provider.StopImagesMetaData;
 import com.miracleas.minrute.service.UploadImagesService;
 import com.miracleas.minrute.utils.MyPrefs;
 
@@ -173,15 +173,15 @@ public class PhotoGoogleDriveActivity extends MinRuteBaseActivity implements IIm
 				{
 					ContentResolver cr = getContentResolver();
 					ContentValues values = new ContentValues();
-					values.put(JourneyDetailStopImagesMetaData.TableMetaData.LAT, mStop.lat);
-					values.put(JourneyDetailStopImagesMetaData.TableMetaData.LNG, mStop.lng);
-					values.put(JourneyDetailStopImagesMetaData.TableMetaData.STOP_NAME, mStop.name);
-					values.put(JourneyDetailStopImagesMetaData.TableMetaData.TRANSPORT_DIRECTION, mLeg.notes);
-					values.put(JourneyDetailStopImagesMetaData.TableMetaData.FILE_LOCALE_PATH, fileUri.getPath());
-					values.put(JourneyDetailStopImagesMetaData.TableMetaData.FILE_MIME_TYPE, "image/jpeg");
-					values.put(JourneyDetailStopImagesMetaData.TableMetaData.FILE_TITLE, fileContent.getName());
-					values.put(JourneyDetailStopImagesMetaData.TableMetaData.UPLOADED, "0");
-					cr.insert(JourneyDetailStopImagesMetaData.TableMetaData.CONTENT_URI, values);
+					values.put(StopImagesMetaData.TableMetaData.LAT, mStop.lat);
+					values.put(StopImagesMetaData.TableMetaData.LNG, mStop.lng);
+					values.put(StopImagesMetaData.TableMetaData.STOP_NAME, mStop.name);
+					values.put(StopImagesMetaData.TableMetaData.TRANSPORT_DIRECTION, mLeg.notes);
+					values.put(StopImagesMetaData.TableMetaData.FILE_LOCALE_PATH, fileUri.getPath());
+					values.put(StopImagesMetaData.TableMetaData.FILE_MIME_TYPE, "image/jpeg");
+					values.put(StopImagesMetaData.TableMetaData.FILE_TITLE, fileContent.getName());
+					values.put(StopImagesMetaData.TableMetaData.UPLOADED, "0");
+					cr.insert(StopImagesMetaData.TableMetaData.CONTENT_URI, values);
 				}
 			}
 		});
@@ -214,13 +214,13 @@ public class PhotoGoogleDriveActivity extends MinRuteBaseActivity implements IIm
 						showToast("Photo uploaded: " + file.getTitle());
 						ContentResolver cr = getContentResolver();
 						ContentValues values = new ContentValues();
-						values.put(JourneyDetailStopImagesMetaData.TableMetaData.LAT, mStop.lat);
-						values.put(JourneyDetailStopImagesMetaData.TableMetaData.LNG, mStop.lng);
-						values.put(JourneyDetailStopImagesMetaData.TableMetaData.STOP_NAME, mStop.name);
-						values.put(JourneyDetailStopImagesMetaData.TableMetaData.TRANSPORT_DIRECTION, mLeg.notes);
-						values.put(JourneyDetailStopImagesMetaData.TableMetaData.URL, file.getDownloadUrl());
-						values.put(JourneyDetailStopImagesMetaData.TableMetaData.FILE_ID, file.getId());
-						cr.insert(JourneyDetailStopImagesMetaData.TableMetaData.CONTENT_URI, values);
+						values.put(StopImagesMetaData.TableMetaData.LAT, mStop.lat);
+						values.put(StopImagesMetaData.TableMetaData.LNG, mStop.lng);
+						values.put(StopImagesMetaData.TableMetaData.STOP_NAME, mStop.name);
+						values.put(StopImagesMetaData.TableMetaData.TRANSPORT_DIRECTION, mLeg.notes);
+						values.put(StopImagesMetaData.TableMetaData.URL, file.getDownloadUrl());
+						values.put(StopImagesMetaData.TableMetaData.FILE_ID, file.getId());
+						cr.insert(StopImagesMetaData.TableMetaData.CONTENT_URI, values);
 					}
 				} catch (UserRecoverableAuthIOException e)
 				{

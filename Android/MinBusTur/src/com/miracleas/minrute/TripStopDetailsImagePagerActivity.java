@@ -46,8 +46,8 @@ import com.miracleas.imagedownloader.Utils;
 import com.miracleas.minrute.model.MyLittleImage;
 import com.miracleas.minrute.model.TripLeg;
 import com.miracleas.minrute.model.TripLegStop;
-import com.miracleas.minrute.provider.JourneyDetailStopImagesMetaData;
-import com.miracleas.minrute.provider.JourneyDetailStopMetaData;
+import com.miracleas.minrute.provider.StopImagesMetaData;
+import com.miracleas.minrute.provider.TripLegDetailStopMetaData;
 
 public class TripStopDetailsImagePagerActivity extends PhotoGoogleDriveActivity implements OnClickListener, LoaderCallbacks<Cursor>
 {
@@ -61,9 +61,9 @@ public class TripStopDetailsImagePagerActivity extends PhotoGoogleDriveActivity 
 	 * The columns needed by the cursor adapter
 	 */
 	protected static final String[] PROJECTION = new String[] { 
-		JourneyDetailStopImagesMetaData.TableMetaData._ID, 
-		JourneyDetailStopImagesMetaData.TableMetaData.URL,
-		JourneyDetailStopImagesMetaData.TableMetaData.FILE_LOCALE_PATH};
+		StopImagesMetaData.TableMetaData._ID, 
+		StopImagesMetaData.TableMetaData.URL,
+		StopImagesMetaData.TableMetaData.FILE_LOCALE_PATH};
 
 	private IImageDownloader mImageLoader = null;
 	private ImagePagerAdapter mAdapter;
@@ -214,9 +214,9 @@ public class TripStopDetailsImagePagerActivity extends PhotoGoogleDriveActivity 
 			TripLeg leg = args.getParcelable(TripLeg.tag);
 			//i.putExtra(JourneyDetailStopMetaData.TableMetaData.LATITUDE, args.getString(JourneyDetailStopMetaData.TableMetaData.LATITUDE));
 			//i.putExtra(JourneyDetailStopMetaData.TableMetaData.LONGITUDE, args.getString(JourneyDetailStopMetaData.TableMetaData.LONGITUDE));
-			String selection = JourneyDetailStopImagesMetaData.TableMetaData.STOP_NAME + "=? AND "+JourneyDetailStopImagesMetaData.TableMetaData.TRANSPORT_DIRECTION + "=?";
+			String selection = StopImagesMetaData.TableMetaData.STOP_NAME + "=? AND "+StopImagesMetaData.TableMetaData.TRANSPORT_DIRECTION + "=?";
 			String[] selectionArgs = { stop.name, leg.notes};
-			return new CursorLoader(this, JourneyDetailStopImagesMetaData.TableMetaData.CONTENT_URI, PROJECTION, selection, selectionArgs, null);
+			return new CursorLoader(this, StopImagesMetaData.TableMetaData.CONTENT_URI, PROJECTION, selection, selectionArgs, null);
 		}
 		return null;
 	}
@@ -228,9 +228,9 @@ public class TripStopDetailsImagePagerActivity extends PhotoGoogleDriveActivity 
 		{
 			MyLittleImage[] images = new MyLittleImage[cursor.getCount()];
 
-			int iUrl = cursor.getColumnIndex(JourneyDetailStopImagesMetaData.TableMetaData.URL);
-			int iId = cursor.getColumnIndex(JourneyDetailStopImagesMetaData.TableMetaData._ID);
-			int iPathToImg = cursor.getColumnIndex(JourneyDetailStopImagesMetaData.TableMetaData.FILE_LOCALE_PATH);
+			int iUrl = cursor.getColumnIndex(StopImagesMetaData.TableMetaData.URL);
+			int iId = cursor.getColumnIndex(StopImagesMetaData.TableMetaData._ID);
+			int iPathToImg = cursor.getColumnIndex(StopImagesMetaData.TableMetaData.FILE_LOCALE_PATH);
 			int i = 0;
 			do
 			{

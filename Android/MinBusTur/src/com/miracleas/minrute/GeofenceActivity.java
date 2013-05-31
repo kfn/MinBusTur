@@ -35,7 +35,7 @@ public abstract class GeofenceActivity extends GoogleServiceActivity implements 
 	private LocationClient mLocationClient;
 	// Stores the PendingIntent used to request geofence monitoring
 	private PendingIntent mGeofenceRequestIntent;
-	private SaveGeofences mSaveGeofences = null;
+	private RemoveGeofences mRemoveGeofences = null;
 	// Defines the allowable request types.
 	// Enum type for controlling the type of removal requested
 	public enum REQUEST_TYPE
@@ -349,7 +349,7 @@ public abstract class GeofenceActivity extends GoogleServiceActivity implements 
 			 * extended data.
 			 */
 			Log.d(tag, "removed geofences!");
-			saveGeofences(false);
+			removeGeofences();
 		} else
 		{
 			// If adding the geocodes failed
@@ -372,7 +372,7 @@ public abstract class GeofenceActivity extends GoogleServiceActivity implements 
 		if (statusCode == LocationStatusCodes.SUCCESS)
 		{
 			Log.d(tag, "onRemoveGeofencesByRequestIdsResult! removed: "+geofenceRequestIds.length);
-			saveGeofences(false);
+			removeGeofences();
 		}
 		else
 		{
@@ -380,31 +380,22 @@ public abstract class GeofenceActivity extends GoogleServiceActivity implements 
 		}
 	}
 
-	private void saveGeofences(boolean save)
+	private void removeGeofences()
 	{
-		if (mCurrentGeofences != null && !mCurrentGeofences.isEmpty() && (mSaveGeofences == null || mSaveGeofences.getStatus() == AsyncTask.Status.FINISHED))
+		if (mCurrentGeofences != null && !mCurrentGeofences.isEmpty() && (mRemoveGeofences == null || mRemoveGeofences.getStatus() == AsyncTask.Status.FINISHED))
 		{
-			mSaveGeofences = new SaveGeofences();
-			mSaveGeofences.execute(save, null, null);
+			mRemoveGeofences = new RemoveGeofences();
+			mRemoveGeofences.execute(null, null, null);
 		}
 	}
 
-	private class SaveGeofences extends AsyncTask<Boolean, Void, Void>
+	private class RemoveGeofences extends AsyncTask<Void, Void, Void>
 	{
 		@Override
-		protected Void doInBackground(Boolean... params)
+		protected Void doInBackground(Void... params)
 		{
 			ContentResolver cr = getContentResolver();
 			cr.delete(GeofenceMetaData.TableMetaData.CONTENT_URI, null, null);	
-			/*if (params[0])
-			{
-				for (Geofence g : mCurrentGeofences)
-				{
-					ContentValues values = new ContentValues();
-					values.put(GeofenceMetaData.TableMetaData.geofence_id, g.getRequestId());
-					cr.insert(GeofenceMetaData.TableMetaData.CONTENT_URI, values);
-				}
-			}*/ 
 			return null;
 		}
 

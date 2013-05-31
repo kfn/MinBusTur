@@ -3,16 +3,16 @@ package com.miracleas.minrute.provider;
 import android.net.Uri;
 import android.provider.BaseColumns;
 
-public class JourneyDetailStopImagesMetaData
+public class StopImagesMetaData
 {
 	public static final String PROVIDER_NAME = "MinBusTurProvider";
 	public static final String PACKAGE_NAME = "com.miracleas.minrute.provider.";
 	public static final String AUTHORITY = PACKAGE_NAME + PROVIDER_NAME;
 	public static final String COLLECTION_TYPE = "journey_detail_stop_images";
 	public static final String ITEM_TYPE = "journey_detail_stop_image";
-	public static final String TABLE_NAME = JourneyDetailStopImagesMetaData.COLLECTION_TYPE;
+	public static final String TABLE_NAME = StopImagesMetaData.COLLECTION_TYPE;
 
-	private JourneyDetailStopImagesMetaData()
+	private StopImagesMetaData()
 	{
 	}
 

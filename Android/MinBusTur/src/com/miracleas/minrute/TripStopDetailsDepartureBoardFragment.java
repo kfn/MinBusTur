@@ -25,23 +25,23 @@ import com.actionbarsherlock.app.SherlockFragment;
 import com.miracleas.minrute.model.NearbyLocationRequest;
 import com.miracleas.minrute.model.TripLeg;
 import com.miracleas.minrute.model.TripLegStop;
-import com.miracleas.minrute.provider.JourneyDetailStopDeparturesMetaData;
-import com.miracleas.minrute.provider.JourneyDetailStopMetaData;
+import com.miracleas.minrute.provider.TripLegDetailStopDeparturesMetaData;
+import com.miracleas.minrute.provider.TripLegDetailStopMetaData;
 import com.miracleas.minrute.service.DepartureBoardsService;
 
 public class TripStopDetailsDepartureBoardFragment extends SherlockFragment implements LoaderCallbacks<Cursor>, OnItemClickListener, OnClickListener
 {
 	private static final String[] PROJECTION_DEPARTURE = { 
-		JourneyDetailStopDeparturesMetaData.TableMetaData._ID, 
-		JourneyDetailStopDeparturesMetaData.TableMetaData.DATE,
-		JourneyDetailStopDeparturesMetaData.TableMetaData.DIRECTION,
-		JourneyDetailStopDeparturesMetaData.TableMetaData.NAME,
-		JourneyDetailStopDeparturesMetaData.TableMetaData.REF,
-		JourneyDetailStopDeparturesMetaData.TableMetaData.STOP,
-		JourneyDetailStopDeparturesMetaData.TableMetaData.STOP_ID,
-		JourneyDetailStopDeparturesMetaData.TableMetaData.STOP_SEARCH_ID,
-		JourneyDetailStopDeparturesMetaData.TableMetaData.TIME,
-		JourneyDetailStopDeparturesMetaData.TableMetaData.TYPE,
+		TripLegDetailStopDeparturesMetaData.TableMetaData._ID, 
+		TripLegDetailStopDeparturesMetaData.TableMetaData.DATE,
+		TripLegDetailStopDeparturesMetaData.TableMetaData.DIRECTION,
+		TripLegDetailStopDeparturesMetaData.TableMetaData.NAME,
+		TripLegDetailStopDeparturesMetaData.TableMetaData.REF,
+		TripLegDetailStopDeparturesMetaData.TableMetaData.STOP,
+		TripLegDetailStopDeparturesMetaData.TableMetaData.STOP_ID,
+		TripLegDetailStopDeparturesMetaData.TableMetaData.STOP_SEARCH_ID,
+		TripLegDetailStopDeparturesMetaData.TableMetaData.TIME,
+		TripLegDetailStopDeparturesMetaData.TableMetaData.TYPE,
 	};
 
 
@@ -106,9 +106,9 @@ public class TripStopDetailsDepartureBoardFragment extends SherlockFragment impl
 		if(id==LoaderConstants.LOADER_STOP_DEPARTURES)
 		{
 			TripLegStop stop = args.getParcelable(TripLegStop.tag);
-			String selection = JourneyDetailStopDeparturesMetaData.TableMetaData.STOP_ID + "=?";
+			String selection = TripLegDetailStopDeparturesMetaData.TableMetaData.STOP_ID + "=?";
 			String[] selectionArgs = {stop.id + ""};
-			return new CursorLoader(getActivity(), JourneyDetailStopDeparturesMetaData.TableMetaData.CONTENT_URI, PROJECTION_DEPARTURE, selection, selectionArgs, null);
+			return new CursorLoader(getActivity(), TripLegDetailStopDeparturesMetaData.TableMetaData.CONTENT_URI, PROJECTION_DEPARTURE, selection, selectionArgs, null);
 		}
 
 		return null;
@@ -177,13 +177,13 @@ public class TripStopDetailsDepartureBoardFragment extends SherlockFragment impl
 		{
 			if (newCursor != null)
 			{
-				iDate = newCursor.getColumnIndex(JourneyDetailStopDeparturesMetaData.TableMetaData.DATE);
-				iDirection = newCursor.getColumnIndex(JourneyDetailStopDeparturesMetaData.TableMetaData.DIRECTION);
-				iName = newCursor.getColumnIndex(JourneyDetailStopDeparturesMetaData.TableMetaData.NAME);
-				iRef = newCursor.getColumnIndex(JourneyDetailStopDeparturesMetaData.TableMetaData.REF);
-				iStop = newCursor.getColumnIndex(JourneyDetailStopDeparturesMetaData.TableMetaData.STOP);		
-				iTime = newCursor.getColumnIndex(JourneyDetailStopDeparturesMetaData.TableMetaData.TIME);	
-				iType = newCursor.getColumnIndex(JourneyDetailStopDeparturesMetaData.TableMetaData.TYPE);	
+				iDate = newCursor.getColumnIndex(TripLegDetailStopDeparturesMetaData.TableMetaData.DATE);
+				iDirection = newCursor.getColumnIndex(TripLegDetailStopDeparturesMetaData.TableMetaData.DIRECTION);
+				iName = newCursor.getColumnIndex(TripLegDetailStopDeparturesMetaData.TableMetaData.NAME);
+				iRef = newCursor.getColumnIndex(TripLegDetailStopDeparturesMetaData.TableMetaData.REF);
+				iStop = newCursor.getColumnIndex(TripLegDetailStopDeparturesMetaData.TableMetaData.STOP);		
+				iTime = newCursor.getColumnIndex(TripLegDetailStopDeparturesMetaData.TableMetaData.TIME);	
+				iType = newCursor.getColumnIndex(TripLegDetailStopDeparturesMetaData.TableMetaData.TYPE);	
 			}
 			return super.swapCursor(newCursor);
 		}

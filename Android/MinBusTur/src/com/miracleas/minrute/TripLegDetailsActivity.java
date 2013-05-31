@@ -13,9 +13,9 @@ import com.actionbarsherlock.view.MenuItem;
 import com.miracleas.minrute.model.TripLeg;
 import com.miracleas.minrute.model.TripLegStop;
 import com.miracleas.minrute.model.TripRequest;
-import com.miracleas.minrute.provider.JourneyDetailMetaData;
-import com.miracleas.minrute.provider.JourneyDetailStopImagesMetaData;
-import com.miracleas.minrute.provider.JourneyDetailStopMetaData;
+import com.miracleas.minrute.provider.TripLegDetailMetaData;
+import com.miracleas.minrute.provider.StopImagesMetaData;
+import com.miracleas.minrute.provider.TripLegDetailStopMetaData;
 import com.miracleas.minrute.provider.TripLegMetaData;
 
 public class TripLegDetailsActivity extends GeofenceActivity implements TripLegDetailsFragment.Callbacks, TripLegMapFragment.Callbacks

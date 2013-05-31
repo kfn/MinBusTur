@@ -15,7 +15,7 @@ import com.miracleas.minrute.model.VoiceState;
 import com.miracleas.minrute.model.VoiceStateBus;
 import com.miracleas.minrute.model.VoiceStateTrain;
 import com.miracleas.minrute.model.VoiceStateWalk;
-import com.miracleas.minrute.provider.JourneyDetailStopMetaData;
+import com.miracleas.minrute.provider.TripLegDetailStopMetaData;
 import com.miracleas.minrute.provider.TripLegMetaData;
 import com.miracleas.minrute.provider.TripMetaData;
 import com.miracleas.minrute.provider.GeofenceTransitionMetaData;
@@ -148,7 +148,7 @@ public class UpdateVoiceTripService extends Service implements android.speech.tt
 			if(mTts.isLanguageAvailable(locale)==android.speech.tts.TextToSpeech.LANG_AVAILABLE)
 			{
 				mTts.setLanguage(locale);
-				mTts.setSpeechRate(0.4f);
+				mTts.setSpeechRate(0.3f);
 				//((mTts.setLanguage(Locale.US);
 			}
 			else
@@ -515,12 +515,12 @@ public class UpdateVoiceTripService extends Service implements android.speech.tt
 			Cursor c = null;
 			try
 			{
-				String[] projection = {JourneyDetailStopMetaData.TableMetaData.NAME};
-				Uri uri = Uri.withAppendedPath(JourneyDetailStopMetaData.TableMetaData.CONTENT_URI, stopId+"");
-				c = getContentResolver().query(uri, projection, null, null, JourneyDetailStopMetaData.TableMetaData._ID+" DESC LIMIT 1");
+				String[] projection = {TripLegDetailStopMetaData.TableMetaData.NAME};
+				Uri uri = Uri.withAppendedPath(TripLegDetailStopMetaData.TableMetaData.CONTENT_URI, stopId+"");
+				c = getContentResolver().query(uri, projection, null, null, TripLegDetailStopMetaData.TableMetaData._ID+" DESC LIMIT 1");
 				if(c.moveToFirst())
 				{
-					name = c.getString(c.getColumnIndex(JourneyDetailStopMetaData.TableMetaData.NAME));
+					name = c.getString(c.getColumnIndex(TripLegDetailStopMetaData.TableMetaData.NAME));
 					Log.d(tag, "getNameOfStopBeforeDestination: "+name);
 				}		
 			}

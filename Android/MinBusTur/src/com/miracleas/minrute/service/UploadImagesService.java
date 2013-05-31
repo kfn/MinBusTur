@@ -16,10 +16,10 @@ import com.miracleas.camera.PhotoGoogleDriveActivity;
 import com.miracleas.minrute.R;
 import com.miracleas.minrute.net.BaseFetcher;
 import com.miracleas.minrute.net.TripFetcher;
-import com.miracleas.minrute.provider.JourneyDetailStopDeparturesMetaData;
-import com.miracleas.minrute.provider.JourneyDetailStopImagesMetaData;
+import com.miracleas.minrute.provider.TripLegDetailStopDeparturesMetaData;
+import com.miracleas.minrute.provider.StopImagesMetaData;
 import com.miracleas.minrute.provider.TripLegMetaData;
-import com.miracleas.minrute.provider.JourneyDetailStopImagesMetaData.TableMetaData;
+import com.miracleas.minrute.provider.StopImagesMetaData.TableMetaData;
 
 import android.accounts.AccountManager;
 import android.app.IntentService;
@@ -88,18 +88,18 @@ public class UploadImagesService extends Service
 			Cursor c = null;
 			try
 			{
-				String[] projection = {JourneyDetailStopImagesMetaData.TableMetaData.STOP_NAME, JourneyDetailStopImagesMetaData.TableMetaData._ID, JourneyDetailStopImagesMetaData.TableMetaData.FILE_ID, JourneyDetailStopImagesMetaData.TableMetaData.FILE_LOCALE_PATH, JourneyDetailStopImagesMetaData.TableMetaData.FILE_MIME_TYPE, JourneyDetailStopImagesMetaData.TableMetaData.FILE_TITLE };
-				String selection = JourneyDetailStopImagesMetaData.TableMetaData.UPLOADED + "=? AND "+ JourneyDetailStopImagesMetaData.TableMetaData.UPLOADED+"=?";
+				String[] projection = {StopImagesMetaData.TableMetaData.STOP_NAME, StopImagesMetaData.TableMetaData._ID, StopImagesMetaData.TableMetaData.FILE_ID, StopImagesMetaData.TableMetaData.FILE_LOCALE_PATH, StopImagesMetaData.TableMetaData.FILE_MIME_TYPE, StopImagesMetaData.TableMetaData.FILE_TITLE };
+				String selection = StopImagesMetaData.TableMetaData.UPLOADED + "=? AND "+ StopImagesMetaData.TableMetaData.UPLOADED+"=?";
 				String[] selectionArgs = { "0", "0" };
 				ContentResolver cr = getContentResolver();
-				c = cr.query(JourneyDetailStopImagesMetaData.TableMetaData.CONTENT_URI, projection, selection, selectionArgs, null);
+				c = cr.query(StopImagesMetaData.TableMetaData.CONTENT_URI, projection, selection, selectionArgs, null);
 				if (c.moveToFirst())
 				{
-					int iLocalePath = c.getColumnIndex(JourneyDetailStopImagesMetaData.TableMetaData.FILE_LOCALE_PATH);
-					int iMimeType = c.getColumnIndex(JourneyDetailStopImagesMetaData.TableMetaData.FILE_MIME_TYPE);
-					int iTitle = c.getColumnIndex(JourneyDetailStopImagesMetaData.TableMetaData.FILE_TITLE);
-					int iId = c.getColumnIndex(JourneyDetailStopImagesMetaData.TableMetaData._ID);
-					int iStopName = c.getColumnIndex(JourneyDetailStopImagesMetaData.TableMetaData.STOP_NAME);
+					int iLocalePath = c.getColumnIndex(StopImagesMetaData.TableMetaData.FILE_LOCALE_PATH);
+					int iMimeType = c.getColumnIndex(StopImagesMetaData.TableMetaData.FILE_MIME_TYPE);
+					int iTitle = c.getColumnIndex(StopImagesMetaData.TableMetaData.FILE_TITLE);
+					int iId = c.getColumnIndex(StopImagesMetaData.TableMetaData._ID);
+					int iStopName = c.getColumnIndex(StopImagesMetaData.TableMetaData.STOP_NAME);
 					do
 					{						
 						int id = c.getInt(iId);
@@ -127,7 +127,7 @@ public class UploadImagesService extends Service
 			}
 			try
 			{
-				saveData(JourneyDetailStopImagesMetaData.AUTHORITY);
+				saveData(StopImagesMetaData.AUTHORITY);
 			} catch (RemoteException e)
 			{
 				// TODO Auto-generated catch block
@@ -154,9 +154,9 @@ public class UploadImagesService extends Service
 	
 	private void updateImageWithNewUrl(File file, String stopName, int imageId)
 	{		
-		Uri uri = Uri.withAppendedPath(JourneyDetailStopImagesMetaData.TableMetaData.CONTENT_URI, imageId+"");
+		Uri uri = Uri.withAppendedPath(StopImagesMetaData.TableMetaData.CONTENT_URI, imageId+"");
 		ContentProviderOperation.Builder b = ContentProviderOperation.newUpdate(uri);
-		b.withValue(JourneyDetailStopImagesMetaData.TableMetaData.URL, file.getDownloadUrl());
+		b.withValue(StopImagesMetaData.TableMetaData.URL, file.getDownloadUrl());
 		mDbOperations.add(b.build());
 	}
 
@@ -164,9 +164,9 @@ public class UploadImagesService extends Service
 	{
 		File file = null;
 		ContentResolver cr = getContentResolver();
-		Uri uri = Uri.withAppendedPath(JourneyDetailStopImagesMetaData.TableMetaData.CONTENT_URI, id+"");
+		Uri uri = Uri.withAppendedPath(StopImagesMetaData.TableMetaData.CONTENT_URI, id+"");
 		ContentValues values = new ContentValues();
-		values.put(JourneyDetailStopImagesMetaData.TableMetaData.IS_UPLOADING, "1");		
+		values.put(StopImagesMetaData.TableMetaData.IS_UPLOADING, "1");		
 		cr.update(uri, values, null, null);
 		int uploaded = 0;
 		try
@@ -195,8 +195,8 @@ public class UploadImagesService extends Service
 			e.printStackTrace();
 		}
 		values = new ContentValues();
-		values.put(JourneyDetailStopImagesMetaData.TableMetaData.IS_UPLOADING, "0");
-		values.put(JourneyDetailStopImagesMetaData.TableMetaData.UPLOADED, uploaded+"");
+		values.put(StopImagesMetaData.TableMetaData.IS_UPLOADING, "0");
+		values.put(StopImagesMetaData.TableMetaData.UPLOADED, uploaded+"");
 		cr.update(uri, values, null, null);
 		return file;
 	}

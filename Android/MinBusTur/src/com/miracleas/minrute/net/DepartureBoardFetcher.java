@@ -14,12 +14,12 @@ import android.database.Cursor;
 import android.text.format.DateUtils;
 
 import com.miracleas.minrute.model.StopDeparture;
-import com.miracleas.minrute.provider.JourneyDetailStopDeparturesMetaData;
+import com.miracleas.minrute.provider.TripLegDetailStopDeparturesMetaData;
 
 public class DepartureBoardFetcher extends BaseFetcher
 {
 	public static final String tag = DepartureBoardFetcher.class.getName();
-	private static final String[] PROJECTION = {JourneyDetailStopDeparturesMetaData.TableMetaData._ID};
+	private static final String[] PROJECTION = {TripLegDetailStopDeparturesMetaData.TableMetaData._ID};
 	public static final String URL = BASE_URL + "departureBoard?id=";
 	private String mSearchId;
 	private long mUpdated = 0;
@@ -41,9 +41,9 @@ public class DepartureBoardFetcher extends BaseFetcher
 		try
 		{	
 			long cacheTime = System.currentTimeMillis() - DateUtils.HOUR_IN_MILLIS;
-			String selection = JourneyDetailStopDeparturesMetaData.TableMetaData.STOP_ID + "=? AND "+JourneyDetailStopDeparturesMetaData.TableMetaData.UPDATED+">=?";
+			String selection = TripLegDetailStopDeparturesMetaData.TableMetaData.STOP_ID + "=? AND "+TripLegDetailStopDeparturesMetaData.TableMetaData.UPDATED+">=?";
 			String[] selectionArgs = {mSearchId, cacheTime+""};
-			cursor = mContentResolver.query(JourneyDetailStopDeparturesMetaData.TableMetaData.CONTENT_URI, PROJECTION, selection, selectionArgs, JourneyDetailStopDeparturesMetaData.TableMetaData._ID+" LIMIT 1");
+			cursor = mContentResolver.query(TripLegDetailStopDeparturesMetaData.TableMetaData.CONTENT_URI, PROJECTION, selection, selectionArgs, TripLegDetailStopDeparturesMetaData.TableMetaData._ID+" LIMIT 1");
 			hasCachedResult = cursor.getCount()>0;
 		}
 		finally
@@ -74,7 +74,7 @@ public class DepartureBoardFetcher extends BaseFetcher
 				parse(input);
 				if (!mDbOperations.isEmpty())
 				{		
-					saveData(JourneyDetailStopDeparturesMetaData.AUTHORITY);
+					saveData(TripLegDetailStopDeparturesMetaData.AUTHORITY);
 				}
 			} 
 		} finally
@@ -127,17 +127,17 @@ public class DepartureBoardFetcher extends BaseFetcher
 	
 	private void insertStopLocation(StopDeparture dep)
 	{
-		ContentProviderOperation.Builder b = ContentProviderOperation.newInsert(JourneyDetailStopDeparturesMetaData.TableMetaData.CONTENT_URI);	
-		b.withValue(JourneyDetailStopDeparturesMetaData.TableMetaData.DATE, dep.date)
-		.withValue(JourneyDetailStopDeparturesMetaData.TableMetaData.DIRECTION, dep.direction)
-		.withValue(JourneyDetailStopDeparturesMetaData.TableMetaData.NAME, dep.name)
-		.withValue(JourneyDetailStopDeparturesMetaData.TableMetaData.REF, dep.ref)
-		.withValue(JourneyDetailStopDeparturesMetaData.TableMetaData.STOP, dep.stop)
-		.withValue(JourneyDetailStopDeparturesMetaData.TableMetaData.TIME, dep.time)
-		.withValue(JourneyDetailStopDeparturesMetaData.TableMetaData.STOP_SEARCH_ID, mSearchId)
-		.withValue(JourneyDetailStopDeparturesMetaData.TableMetaData.STOP_ID, mStopId)
-		.withValue(JourneyDetailStopDeparturesMetaData.TableMetaData.TYPE, dep.type)
-		.withValue(JourneyDetailStopDeparturesMetaData.TableMetaData.UPDATED, mUpdated);
+		ContentProviderOperation.Builder b = ContentProviderOperation.newInsert(TripLegDetailStopDeparturesMetaData.TableMetaData.CONTENT_URI);	
+		b.withValue(TripLegDetailStopDeparturesMetaData.TableMetaData.DATE, dep.date)
+		.withValue(TripLegDetailStopDeparturesMetaData.TableMetaData.DIRECTION, dep.direction)
+		.withValue(TripLegDetailStopDeparturesMetaData.TableMetaData.NAME, dep.name)
+		.withValue(TripLegDetailStopDeparturesMetaData.TableMetaData.REF, dep.ref)
+		.withValue(TripLegDetailStopDeparturesMetaData.TableMetaData.STOP, dep.stop)
+		.withValue(TripLegDetailStopDeparturesMetaData.TableMetaData.TIME, dep.time)
+		.withValue(TripLegDetailStopDeparturesMetaData.TableMetaData.STOP_SEARCH_ID, mSearchId)
+		.withValue(TripLegDetailStopDeparturesMetaData.TableMetaData.STOP_ID, mStopId)
+		.withValue(TripLegDetailStopDeparturesMetaData.TableMetaData.TYPE, dep.type)
+		.withValue(TripLegDetailStopDeparturesMetaData.TableMetaData.UPDATED, mUpdated);
 		mDbOperations.add(b.build());
 	}
 

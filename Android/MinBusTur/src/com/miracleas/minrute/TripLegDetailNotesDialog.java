@@ -22,8 +22,8 @@ import android.widget.TextView;
 import com.actionbarsherlock.app.SherlockDialogFragment;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 
-import com.miracleas.minrute.provider.JourneyDetailMetaData;
-import com.miracleas.minrute.provider.JourneyDetailNoteMetaData;
+import com.miracleas.minrute.provider.TripLegDetailMetaData;
+import com.miracleas.minrute.provider.TripLegDetailNoteMetaData;
 /**
  * @author kfn
  * 
@@ -34,15 +34,15 @@ public class TripLegDetailNotesDialog extends SherlockDialogFragment implements 
 	private Context cxt;
 	private LinearLayout mContainerNotes = null;	
 	private static final String[] PROJECTION_NOTES = { 
-		JourneyDetailNoteMetaData.TableMetaData._ID, 
-		JourneyDetailNoteMetaData.TableMetaData.NOTE
+		TripLegDetailNoteMetaData.TableMetaData._ID, 
+		TripLegDetailNoteMetaData.TableMetaData.NOTE
 	};
 
 	public static TripLegDetailNotesDialog createInstance(long journeyDetailId)
 	{
 		TripLegDetailNotesDialog instance = new TripLegDetailNotesDialog();				
 		Bundle args = new Bundle();
-		args.putLong(JourneyDetailMetaData.TableMetaData._ID, journeyDetailId);
+		args.putLong(TripLegDetailMetaData.TableMetaData._ID, journeyDetailId);
 		instance.setArguments(args);
 		return instance;
 	}
@@ -101,9 +101,9 @@ public class TripLegDetailNotesDialog extends SherlockDialogFragment implements 
 	@Override
 	public Loader<Cursor> onCreateLoader(int id, Bundle args)
 	{
-		String selection = JourneyDetailNoteMetaData.TableMetaData.JOURNEY_DETAIL_ID + "=?";
-		String[] selectionArgs = {args.getLong(JourneyDetailMetaData.TableMetaData._ID)+""};
-		return new CursorLoader(getActivity(), JourneyDetailNoteMetaData.TableMetaData.CONTENT_URI, PROJECTION_NOTES, selection, selectionArgs, null);
+		String selection = TripLegDetailNoteMetaData.TableMetaData.JOURNEY_DETAIL_ID + "=?";
+		String[] selectionArgs = {args.getLong(TripLegDetailMetaData.TableMetaData._ID)+""};
+		return new CursorLoader(getActivity(), TripLegDetailNoteMetaData.TableMetaData.CONTENT_URI, PROJECTION_NOTES, selection, selectionArgs, null);
 	}
 
 	@Override
@@ -112,7 +112,7 @@ public class TripLegDetailNotesDialog extends SherlockDialogFragment implements 
 		if(loader.getId()==LoaderConstants.LOADER_TRIP_LEG_NOTE_DETAILS && newCursor.moveToFirst())
 		{
 			mContainerNotes.removeAllViews();
-			int iNote = newCursor.getColumnIndex(JourneyDetailNoteMetaData.TableMetaData.NOTE);
+			int iNote = newCursor.getColumnIndex(TripLegDetailNoteMetaData.TableMetaData.NOTE);
 			int margin = getResources().getDimensionPixelOffset(R.dimen.note_marginTop);
 			do{
 				TextView tv = new TextView(getActivity());

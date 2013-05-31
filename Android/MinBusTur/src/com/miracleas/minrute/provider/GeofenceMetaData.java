@@ -20,15 +20,18 @@ public class GeofenceMetaData
 	{
 		return TableMetaData._ID + " INTEGER PRIMARY KEY AUTOINCREMENT," +
 				TableMetaData.geofence_id + " TEXT," +
-				TableMetaData.TYPE_OF_TRANSPORT + " TEXT," +
 				TableMetaData.LAT + " TEXT," +
-				TableMetaData.LNG + " TEXT" 
+				TableMetaData.LNG + " TEXT," +
+				TableMetaData.RADIUS + " INTEGER," +
+				TableMetaData.TRIP_ID + " TEXT," +
+				TableMetaData.TRANSITION_TYPE + " INTEGER" 
 				;
 	}
 
 	// inner class describing columns and their types
 	public static final class TableMetaData implements BaseColumns
 	{
+		
 		private TableMetaData()
 		{
 		}
@@ -40,10 +43,11 @@ public class GeofenceMetaData
 
 		public static final String geofence_id = "geofence_id";
 		public static final String updated = "geoupdated";
-		public static final String TYPE_OF_TRANSPORT = "geotransporttype";
 		public static final String LAT = "geolat";
 		public static final String LNG = "geolng";
-
+		public static final String TRIP_ID = "geoTripId";
+		public static final String RADIUS = "geoRadius";
+		public static final String TRANSITION_TYPE = "transition_type";
 	}
 }
 

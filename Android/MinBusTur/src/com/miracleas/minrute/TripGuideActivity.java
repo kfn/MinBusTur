@@ -24,7 +24,7 @@ import com.miracleas.imagedownloader.IImageDownloader;
 import com.miracleas.imagedownloader.ImageFetcher;
 import com.miracleas.minrute.model.TripLeg;
 import com.miracleas.minrute.model.TripRequest;
-import com.miracleas.minrute.provider.JourneyDetailMetaData;
+import com.miracleas.minrute.provider.TripLegDetailMetaData;
 import com.miracleas.minrute.provider.TripLegMetaData;
 import com.miracleas.minrute.provider.TripMetaData;
 import com.miracleas.minrute.utils.MyPrefs;

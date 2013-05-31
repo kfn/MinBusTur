@@ -17,8 +17,8 @@ import android.widget.TextView;
 import com.actionbarsherlock.app.SherlockFragment;
 import com.miracleas.minrute.model.TripLeg;
 import com.miracleas.minrute.model.TripLegStop;
-import com.miracleas.minrute.provider.JourneyDetailMetaData;
-import com.miracleas.minrute.provider.JourneyDetailStopMetaData;
+import com.miracleas.minrute.provider.TripLegDetailMetaData;
+import com.miracleas.minrute.provider.TripLegDetailStopMetaData;
 import com.miracleas.minrute.widget.TableRowKeyValue;
 
 /**
@@ -78,7 +78,7 @@ public class TripStopDetailsFragment extends SherlockFragment implements LoaderC
 			String selection = null;
 			String[] selectionArgs = null;		
 			TripLegStop stop = args.getParcelable(TripLegStop.tag);
-			Uri uri =  Uri.withAppendedPath(JourneyDetailStopMetaData.TableMetaData.CONTENT_URI, stop.id + "");
+			Uri uri =  Uri.withAppendedPath(TripLegDetailStopMetaData.TableMetaData.CONTENT_URI, stop.id + "");
 			return new CursorLoader(getActivity(), uri, null, selection, selectionArgs, null);
 		}
 		return null;
@@ -92,19 +92,19 @@ public class TripStopDetailsFragment extends SherlockFragment implements LoaderC
 			if(cursor.moveToFirst())
 			{					
 				Context c = getActivity();
-				int iName = cursor.getColumnIndex(JourneyDetailStopMetaData.TableMetaData.NAME);
-				int iArrTime = cursor.getColumnIndex(JourneyDetailStopMetaData.TableMetaData.ARR_TIME);
-				int iArrDate = cursor.getColumnIndex(JourneyDetailStopMetaData.TableMetaData.ARR_DATE);
-				int iDepTime = cursor.getColumnIndex(JourneyDetailStopMetaData.TableMetaData.DEP_TIME);
-				int iDepDate = cursor.getColumnIndex(JourneyDetailStopMetaData.TableMetaData.DEP_DATE);
-				int iTrack = cursor.getColumnIndex(JourneyDetailStopMetaData.TableMetaData.TRACK);
-				int iRtDepTime = cursor.getColumnIndex(JourneyDetailStopMetaData.TableMetaData.RT_DEP_TIME);
-				int iRtDepDate = cursor.getColumnIndex(JourneyDetailStopMetaData.TableMetaData.RT_DEP_DATE);
-				int iRtArrTime = cursor.getColumnIndex(JourneyDetailStopMetaData.TableMetaData.RT_ARR_TIME);
-				int iRtArrDate = cursor.getColumnIndex(JourneyDetailStopMetaData.TableMetaData.RT_ARR_DATE);
+				int iName = cursor.getColumnIndex(TripLegDetailStopMetaData.TableMetaData.NAME);
+				int iArrTime = cursor.getColumnIndex(TripLegDetailStopMetaData.TableMetaData.ARR_TIME);
+				int iArrDate = cursor.getColumnIndex(TripLegDetailStopMetaData.TableMetaData.ARR_DATE);
+				int iDepTime = cursor.getColumnIndex(TripLegDetailStopMetaData.TableMetaData.DEP_TIME);
+				int iDepDate = cursor.getColumnIndex(TripLegDetailStopMetaData.TableMetaData.DEP_DATE);
+				int iTrack = cursor.getColumnIndex(TripLegDetailStopMetaData.TableMetaData.TRACK);
+				int iRtDepTime = cursor.getColumnIndex(TripLegDetailStopMetaData.TableMetaData.RT_DEP_TIME);
+				int iRtDepDate = cursor.getColumnIndex(TripLegDetailStopMetaData.TableMetaData.RT_DEP_DATE);
+				int iRtArrTime = cursor.getColumnIndex(TripLegDetailStopMetaData.TableMetaData.RT_ARR_TIME);
+				int iRtArrDate = cursor.getColumnIndex(TripLegDetailStopMetaData.TableMetaData.RT_ARR_DATE);
 				do
 				{
-					String transportType = getArguments().getString(JourneyDetailMetaData.TableMetaData.TYPE);
+					String transportType = getArguments().getString(TripLegDetailMetaData.TableMetaData.TYPE);
 					String name = cursor.getString(iName);
 					mTextViewTitle.setText(name);
 					addKeyValue(getString(R.string.transport_type), transportType, c);

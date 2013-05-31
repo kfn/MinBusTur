@@ -14,9 +14,9 @@
     <string name="trip_request_not_valid">Ugyldigt forespørgsel</string>
     
     <string name="action_settings">Settings</string>
-    <string name="title_section1">Info</string>
-    <string name="title_section2">Billeder</string>
-    <string name="title_section3">Afgange</string>
+    <string name="title_section1">Ny rute</string>
+    <string name="title_section2">Gemte ruter</string>
+    
     
     
     <string name="seconds">sekunder</string>

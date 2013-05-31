@@ -4,23 +4,37 @@ import android.content.Intent;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.app.FragmentStatePagerAdapter;
+import android.support.v4.app.FragmentTransaction;
+import android.support.v4.view.ViewPager;
 import android.widget.DatePicker;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
 import com.actionbarsherlock.app.ActionBar;
+import com.actionbarsherlock.app.ActionBar.Tab;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 import com.miracleas.minrute.model.TripRequest;
 import com.miracleas.minrute.net.TripFetcher;
 import com.miracleas.minrute.service.TripService;
 
-public class ChooseOriginDestActivity extends GeofenceActivity implements ChooseOriginDestFragment.Callbacks, android.app.DatePickerDialog.OnDateSetListener, 
+public class ChooseOriginDestActivity extends GeofenceActivity implements ActionBar.TabListener,ChooseOriginDestFragment.Callbacks, android.app.DatePickerDialog.OnDateSetListener, 
 							android.app.TimePickerDialog.OnTimeSetListener, com.miracleas.minrute.service.LocationService.OnNewLocationReceivedListener
 {
 	
 	private MenuItem mLocationItem;
 	private boolean mLoading = false;
+	
+	private SectionsPagerAdapter mSectionsPagerAdapter;
+
+	/**
+	 * The {@link ViewPager} that will host the section contents.
+	 */
+	ViewPager mViewPager;
+	
 	@Override
 	public void onCreate(Bundle savedInstanceState)
 	{
@@ -29,29 +43,36 @@ public class ChooseOriginDestActivity extends GeofenceActivity implements Choose
 
 		// Set up the action bar.
 		final ActionBar actionBar = getSupportActionBar();
-		// Show the Up button in the action bar.
-		//actionBar.setDisplayHomeAsUpEnabled(true);
-		//actionBar.setTitle(null);
-		// actionBar.setDisplayShowHomeEnabled(false);
+		actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
 		
-		// savedInstanceState is non-null when there is fragment state
-		// saved from previous configurations of this activity
-		// (e.g. when rotating the screen from portrait to landscape).
-		// In this case, the fragment will automatically be re-added
-		// to its container so we don't need to manually add it.
-		// For more information, see the Fragments API guide at:
-		//
-		// http://developer.android.com/guide/components/fragments.html
-		//
+		mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
 
-		/*if (savedInstanceState == null)
+		// Set up the ViewPager with the sections adapter.
+		mViewPager = (ViewPager) findViewById(R.id.pager);
+		mViewPager.setOffscreenPageLimit(2);
+		mViewPager.setAdapter(mSectionsPagerAdapter);
+
+		// When swiping between different sections, select the corresponding
+		// tab. We can also use ActionBar.Tab#select() to do this if we have
+		// a reference to the Tab.
+		mViewPager.setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener()
 		{
-			Intent intent = getIntent();
-			// Create the detail fragment and add it to the activity
-			// using a fragment transaction.
-			CreateRouteFragment fragment = CreateRouteFragment.createInstance();
-			getSupportFragmentManager().beginTransaction().add(android.R.id.content, fragment).commit();
-		}*/
+			@Override
+			public void onPageSelected(int position)
+			{
+				actionBar.setSelectedNavigationItem(position);	
+			}
+		});
+
+		// For each of the sections in the app, add a tab to the action bar.
+		for (int i = 0; i < mSectionsPagerAdapter.getCount(); i++)
+		{
+			// Create a tab with text corresponding to the page title defined by
+			// the adapter. Also specify this Activity object, which implements
+			// the TabListener interface, as the callback (listener) for when
+			// this tab is selected.
+			actionBar.addTab(actionBar.newTab().setText(mSectionsPagerAdapter.getPageTitle(i)).setTabListener(this));
+		}
 		
 		
 	}
@@ -178,22 +199,12 @@ public class ChooseOriginDestActivity extends GeofenceActivity implements Choose
 	@Override
 	public void onTimeSet(TimePicker view, int hourOfDay, int minute)
 	{
-		Fragment f = getSupportFragmentManager().findFragmentById(R.id.fragmentEnterAddresses);
-		if(f!=null)
-		{
-			((ChooseOriginDestFragment)f).onTimeSet(view, hourOfDay, minute);
-		}
-		
+		mSectionsPagerAdapter.getChooseOriginDestFragment().onTimeSet(view, hourOfDay, minute);	
 	}
 	@Override
 	public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth)
 	{
-		Fragment f = getSupportFragmentManager().findFragmentById(R.id.fragmentEnterAddresses);
-		if(f!=null)
-		{
-			((ChooseOriginDestFragment)f).onDateSet(view, year, monthOfYear, dayOfMonth);
-		}
-		
+		mSectionsPagerAdapter.getChooseOriginDestFragment().onDateSet(view, year, monthOfYear, dayOfMonth);		
 	}
 	@Override
 	public void onNewLocationReceived(Location loc)
@@ -215,11 +226,7 @@ public class ChooseOriginDestActivity extends GeofenceActivity implements Choose
 	{
 		mLoading = false;
 		showLoadSpinner();
-		Fragment f = getSupportFragmentManager().findFragmentById(R.id.fragmentEnterAddresses);
-		if(f!=null)
-		{					
-			((ChooseOriginDestFragment)f).setAddress(address);
-		}
+		mSectionsPagerAdapter.getChooseOriginDestFragment().setAddress(address);
 		mServiceLocation.setOnNewLocationReceived(null);
 	}
 	@Override
@@ -230,6 +237,91 @@ public class ChooseOriginDestActivity extends GeofenceActivity implements Choose
 			mServiceVoice.stopVoices();
 		}
 		super.onConnectedServiceVoice();		
+	}
+	@Override
+	public void onTabSelected(Tab tab, FragmentTransaction ft)
+	{
+		// When the given tab is selected, switch to the corresponding page in
+		// the ViewPager.
+		int position = tab.getPosition();
+		mViewPager.setCurrentItem(position);
+		
+	}
+	@Override
+	public void onTabUnselected(Tab tab, FragmentTransaction ft)
+	{
+		// TODO Auto-generated method stub
+		
+	}
+	@Override
+	public void onTabReselected(Tab tab, FragmentTransaction ft)
+	{
+		// TODO Auto-generated method stub
+		
+	}
+	
+	/**
+	 * A {@link FragmentPagerAdapter} that returns a fragment corresponding to
+	 * one of the sections/tabs/pages.
+	 */
+	public class SectionsPagerAdapter extends FragmentStatePagerAdapter
+	{
+		private ChooseOriginDestFragment mChooseOriginDestFragment = null;
+		private SavedTripsFragment mSavedTrips = null;
+		
+
+		public SectionsPagerAdapter(FragmentManager fm)
+		{
+			super(fm);
+		}
+
+		@Override
+		public Fragment getItem(int position)
+		{
+			Fragment f = null;
+			if (position == 0)
+			{
+				f = getChooseOriginDestFragment();
+			} 
+			else if (position == 1)
+			{
+				if (mSavedTrips == null)
+				{
+					mSavedTrips = SavedTripsFragment.createInstance();
+				}
+				f = mSavedTrips;
+			} 
+
+			return f;
+		}
+
+		@Override
+		public int getCount()
+		{
+			return 2;
+		}
+
+		@Override
+		public CharSequence getPageTitle(int position)
+		{
+			switch (position)
+			{
+			case 0:
+				return getString(R.string.title_section1).toUpperCase();
+			case 1:
+				return getString(R.string.title_section2).toUpperCase();
+			}
+			return null;
+		}
+		
+		public ChooseOriginDestFragment getChooseOriginDestFragment()
+		{
+			if (mChooseOriginDestFragment == null)
+			{
+				mChooseOriginDestFragment = ChooseOriginDestFragment.createInstance();
+			}
+			return mChooseOriginDestFragment;
+		}
 	}
 
 }

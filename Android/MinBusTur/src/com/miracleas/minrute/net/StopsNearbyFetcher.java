@@ -15,12 +15,12 @@ import android.database.Cursor;
 import android.net.Uri;
 
 import com.miracleas.minrute.model.NearbyLocationRequest;
-import com.miracleas.minrute.provider.JourneyDetailStopMetaData;
+import com.miracleas.minrute.provider.TripLegDetailStopMetaData;
 
 public class StopsNearbyFetcher extends BaseFetcher
 {
 	public static final String tag = StopsNearbyFetcher.class.getName();
-	private static final String[] PROJECTION = {JourneyDetailStopMetaData.TableMetaData.SEARCH_ID};
+	private static final String[] PROJECTION = {TripLegDetailStopMetaData.TableMetaData.SEARCH_ID};
 	//http://xmlopen.rejseplanen.dk/bin/rest.exe/stopsNearby?coordX=10119067&coordY=56138605&maxRadius=10&maxNumber=1
 	public static final String URL = BASE_URL + "stopsNearby?";
 	private NearbyLocationRequest mRequest;
@@ -39,12 +39,12 @@ public class StopsNearbyFetcher extends BaseFetcher
 		Cursor cursor = null;
 		try
 		{	
-			String selection = JourneyDetailStopMetaData.TableMetaData._ID + "=? AND "+JourneyDetailStopMetaData.TableMetaData.SEARCH_ID+" NOT NULL";
+			String selection = TripLegDetailStopMetaData.TableMetaData._ID + "=? AND "+TripLegDetailStopMetaData.TableMetaData.SEARCH_ID+" NOT NULL";
 			String[] selectionArgs = {mRequest.stopId};
-			cursor = mContentResolver.query(JourneyDetailStopMetaData.TableMetaData.CONTENT_URI, PROJECTION, selection, selectionArgs, JourneyDetailStopMetaData.TableMetaData._ID+" LIMIT 1");
+			cursor = mContentResolver.query(TripLegDetailStopMetaData.TableMetaData.CONTENT_URI, PROJECTION, selection, selectionArgs, TripLegDetailStopMetaData.TableMetaData._ID+" LIMIT 1");
 			if(cursor.moveToFirst())
 			{
-				mSearchId = cursor.getString(cursor.getColumnIndex(JourneyDetailStopMetaData.TableMetaData.SEARCH_ID));
+				mSearchId = cursor.getString(cursor.getColumnIndex(TripLegDetailStopMetaData.TableMetaData.SEARCH_ID));
 				hasCachedResult = true;
 			}
 		}
@@ -76,7 +76,7 @@ public class StopsNearbyFetcher extends BaseFetcher
 				parse(input);
 				if (!mDbOperations.isEmpty())
 				{		
-					saveData(JourneyDetailStopMetaData.AUTHORITY);
+					saveData(TripLegDetailStopMetaData.AUTHORITY);
 				}
 			} 
 		} finally
@@ -113,10 +113,10 @@ public class StopsNearbyFetcher extends BaseFetcher
 	
 	private void updateStopLocation(XmlPullParser xpp)
 	{
-		Uri uri = Uri.withAppendedPath(JourneyDetailStopMetaData.TableMetaData.CONTENT_URI, mRequest.stopId);
+		Uri uri = Uri.withAppendedPath(TripLegDetailStopMetaData.TableMetaData.CONTENT_URI, mRequest.stopId);
 		ContentProviderOperation.Builder b = ContentProviderOperation.newUpdate(uri);	
 		String searchId =  xpp.getAttributeValue(null, "id");
-		b.withValue(JourneyDetailStopMetaData.TableMetaData.SEARCH_ID, searchId);
+		b.withValue(TripLegDetailStopMetaData.TableMetaData.SEARCH_ID, searchId);
 		mSearchId = searchId;
 		mDbOperations.add(b.build());
 	}

@@ -27,9 +27,9 @@ import com.miracleas.imagedownloader.ImageFetcher;
 import com.miracleas.minrute.model.NearbyLocationRequest;
 import com.miracleas.minrute.model.TripLeg;
 import com.miracleas.minrute.model.TripLegStop;
-import com.miracleas.minrute.provider.JourneyDetailMetaData;
-import com.miracleas.minrute.provider.JourneyDetailStopImagesMetaData;
-import com.miracleas.minrute.provider.JourneyDetailStopMetaData;
+import com.miracleas.minrute.provider.TripLegDetailMetaData;
+import com.miracleas.minrute.provider.StopImagesMetaData;
+import com.miracleas.minrute.provider.TripLegDetailStopMetaData;
 
 public class TripStopDetailsActivity extends PhotoGoogleDriveActivity implements com.actionbarsherlock.app.ActionBar.TabListener
 {
@@ -198,7 +198,7 @@ public class TripStopDetailsActivity extends PhotoGoogleDriveActivity implements
 			if (position == 0)
 			{
 				
-				String id = getIntent().getStringExtra(JourneyDetailStopMetaData.TableMetaData._ID);
+				String id = getIntent().getStringExtra(TripLegDetailStopMetaData.TableMetaData._ID);
 				fragment = TripStopDetailsFragment.createInstance(mTripLegStop, mTripLeg);
 			}
 			else if (position == 1)
@@ -227,8 +227,6 @@ public class TripStopDetailsActivity extends PhotoGoogleDriveActivity implements
 				return getString(R.string.title_section1).toUpperCase();
 			case 1:
 				return getString(R.string.title_section2).toUpperCase();
-			case 2:
-				return getString(R.string.title_section3).toUpperCase();
 			}
 		
 		

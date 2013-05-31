@@ -38,8 +38,8 @@ import com.google.android.gms.maps.model.MarkerOptions;
 
 import com.miracleas.minrute.model.TripLeg;
 import com.miracleas.minrute.model.TripLegStop;
-import com.miracleas.minrute.provider.JourneyDetailMetaData;
-import com.miracleas.minrute.provider.JourneyDetailStopMetaData;
+import com.miracleas.minrute.provider.TripLegDetailMetaData;
+import com.miracleas.minrute.provider.TripLegDetailStopMetaData;
 
 public class TripLegMapFragment extends SupportMapFragment implements LoaderCallbacks<Cursor>, OnCameraChangeListener, OnMarkerClickListener, OnInfoWindowClickListener
 {
@@ -54,23 +54,23 @@ public class TripLegMapFragment extends SupportMapFragment implements LoaderCall
 	 * The columns needed by the cursor adapter
 	 */
 	private static final String[] PROJECTION_STOP = { 
-		JourneyDetailStopMetaData.TableMetaData._ID, 
-		JourneyDetailStopMetaData.TableMetaData.ARR_DATE,
-		JourneyDetailStopMetaData.TableMetaData.ARR_TIME,
-		JourneyDetailStopMetaData.TableMetaData.DEP_DATE,
-		JourneyDetailStopMetaData.TableMetaData.DEP_TIME,
-		JourneyDetailStopMetaData.TableMetaData.LATITUDE,
-		JourneyDetailStopMetaData.TableMetaData.LONGITUDE,
-		JourneyDetailStopMetaData.TableMetaData.NAME,
-		JourneyDetailStopMetaData.TableMetaData.TRACK,
-		JourneyDetailStopMetaData.TableMetaData.IS_PART_OF_USER_ROUTE,
+		TripLegDetailStopMetaData.TableMetaData._ID, 
+		TripLegDetailStopMetaData.TableMetaData.ARR_DATE,
+		TripLegDetailStopMetaData.TableMetaData.ARR_TIME,
+		TripLegDetailStopMetaData.TableMetaData.DEP_DATE,
+		TripLegDetailStopMetaData.TableMetaData.DEP_TIME,
+		TripLegDetailStopMetaData.TableMetaData.LATITUDE,
+		TripLegDetailStopMetaData.TableMetaData.LONGITUDE,
+		TripLegDetailStopMetaData.TableMetaData.NAME,
+		TripLegDetailStopMetaData.TableMetaData.TRACK,
+		TripLegDetailStopMetaData.TableMetaData.IS_PART_OF_USER_ROUTE,
 	};
 	
 	public static TripLegMapFragment createInstance(String journeyId, TripLeg leg)
 	{
 		TripLegMapFragment f = new TripLegMapFragment();
 		Bundle args = new Bundle();
-		args.putString(JourneyDetailMetaData.TableMetaData._ID, journeyId);
+		args.putString(TripLegDetailMetaData.TableMetaData._ID, journeyId);
 		args.putParcelable(TripLeg.tag, leg);
 		f.setArguments(args);
 		return f;
@@ -265,9 +265,9 @@ public class TripLegMapFragment extends SupportMapFragment implements LoaderCall
 	{
 		if (id == LoaderConstants.LOADER_TRIP_LEG_STOPS_MAP)
 		{			
-			String selection = JourneyDetailStopMetaData.TableMetaData.JOURNEY_DETAIL_ID + "=?";
-			String[] selectionArgs = { args.getString(JourneyDetailMetaData.TableMetaData._ID) };			
-			return new CursorLoader(getActivity(), JourneyDetailStopMetaData.TableMetaData.CONTENT_URI, PROJECTION_STOP, selection, selectionArgs, JourneyDetailStopMetaData.TableMetaData.ROUTE_ID_X);
+			String selection = TripLegDetailStopMetaData.TableMetaData.JOURNEY_DETAIL_ID + "=?";
+			String[] selectionArgs = { args.getString(TripLegDetailMetaData.TableMetaData._ID) };			
+			return new CursorLoader(getActivity(), TripLegDetailStopMetaData.TableMetaData.CONTENT_URI, PROJECTION_STOP, selection, selectionArgs, TripLegDetailStopMetaData.TableMetaData.ROUTE_ID_X);
 		}
 		return null;
 	}
@@ -302,14 +302,14 @@ public class TripLegMapFragment extends SupportMapFragment implements LoaderCall
 		if (getMap() != null && data.moveToFirst())
 		{			
 			Location myLocation = getMap().getMyLocation();
-			int iId = data.getColumnIndex(JourneyDetailStopMetaData.TableMetaData._ID);
-			int iArrTime = data.getColumnIndex(JourneyDetailStopMetaData.TableMetaData.ARR_TIME);
-			int iDepTime = data.getColumnIndex(JourneyDetailStopMetaData.TableMetaData.DEP_TIME);
-			int iLat = data.getColumnIndex(JourneyDetailStopMetaData.TableMetaData.LATITUDE);
-			int iLng = data.getColumnIndex(JourneyDetailStopMetaData.TableMetaData.LONGITUDE);
-			int iName = data.getColumnIndex(JourneyDetailStopMetaData.TableMetaData.NAME);		
-			int iTrack = data.getColumnIndex(JourneyDetailStopMetaData.TableMetaData.TRACK);	
-			int iPartOfUserRoute = data.getColumnIndex(JourneyDetailStopMetaData.TableMetaData.IS_PART_OF_USER_ROUTE);	
+			int iId = data.getColumnIndex(TripLegDetailStopMetaData.TableMetaData._ID);
+			int iArrTime = data.getColumnIndex(TripLegDetailStopMetaData.TableMetaData.ARR_TIME);
+			int iDepTime = data.getColumnIndex(TripLegDetailStopMetaData.TableMetaData.DEP_TIME);
+			int iLat = data.getColumnIndex(TripLegDetailStopMetaData.TableMetaData.LATITUDE);
+			int iLng = data.getColumnIndex(TripLegDetailStopMetaData.TableMetaData.LONGITUDE);
+			int iName = data.getColumnIndex(TripLegDetailStopMetaData.TableMetaData.NAME);		
+			int iTrack = data.getColumnIndex(TripLegDetailStopMetaData.TableMetaData.TRACK);	
+			int iPartOfUserRoute = data.getColumnIndex(TripLegDetailStopMetaData.TableMetaData.IS_PART_OF_USER_ROUTE);	
 			
 			Builder bounds = LatLngBounds.builder();
 

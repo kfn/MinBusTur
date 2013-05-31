@@ -8,8 +8,8 @@ import com.google.android.gms.location.LocationClient;
 import com.miracleas.minrute.R;
 import com.miracleas.minrute.model.GeofenceHelper;
 import com.miracleas.minrute.provider.GeofenceMetaData;
-import com.miracleas.minrute.provider.JourneyDetailNoteMetaData;
-import com.miracleas.minrute.provider.JourneyDetailStopImagesMetaData;
+import com.miracleas.minrute.provider.TripLegDetailNoteMetaData;
+import com.miracleas.minrute.provider.StopImagesMetaData;
 import com.miracleas.minrute.provider.TripLegMetaData;
 import com.miracleas.minrute.provider.GeofenceTransitionMetaData;
 
@@ -155,7 +155,7 @@ public class ReceiveTransitionsIntentService extends IntentService
 			{
 				int count = getContentResolver().applyBatch(TripLegMetaData.AUTHORITY, mDbOperations).length;
 				Log.d(tag, "applyBatch: "+count);
-				Uri uri = Uri.withAppendedPath(TripLegMetaData.TableMetaData.CONTENT_URI, JourneyDetailStopImagesMetaData.TABLE_NAME);
+				Uri uri = Uri.withAppendedPath(TripLegMetaData.TableMetaData.CONTENT_URI, StopImagesMetaData.TABLE_NAME);
 				getContentResolver().notifyChange(uri, null);
 			} catch (RemoteException e)
 			{

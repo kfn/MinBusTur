@@ -26,9 +26,9 @@ import com.actionbarsherlock.app.SherlockListFragment;
 import com.miracleas.minrute.model.TripLeg;
 import com.miracleas.minrute.model.TripLegStop;
 import com.miracleas.minrute.model.TripRequest;
-import com.miracleas.minrute.provider.JourneyDetailMetaData;
-import com.miracleas.minrute.provider.JourneyDetailNoteMetaData;
-import com.miracleas.minrute.provider.JourneyDetailStopMetaData;
+import com.miracleas.minrute.provider.TripLegDetailMetaData;
+import com.miracleas.minrute.provider.TripLegDetailNoteMetaData;
+import com.miracleas.minrute.provider.TripLegDetailStopMetaData;
 import com.miracleas.minrute.provider.TripLegMetaData;
 import com.miracleas.minrute.provider.TripMetaData;
 import com.miracleas.minrute.provider.TripMetaData.TableMetaData;
@@ -36,21 +36,21 @@ import com.miracleas.minrute.provider.TripMetaData.TableMetaData;
 public class TripLegDetailsFragment extends SherlockListFragment implements LoaderCallbacks<Cursor>, OnItemClickListener
 {
 	private static final String[] PROJECTION = { 
-		JourneyDetailMetaData.TableMetaData._ID, 
-		JourneyDetailMetaData.TableMetaData.NAME,
-		JourneyDetailMetaData.TableMetaData.TYPE
+		TripLegDetailMetaData.TableMetaData._ID, 
+		TripLegDetailMetaData.TableMetaData.NAME,
+		TripLegDetailMetaData.TableMetaData.TYPE
 	};
 	private static final String[] PROJECTION_STOP = { 
-		JourneyDetailStopMetaData.TableMetaData._ID, 
-		JourneyDetailStopMetaData.TableMetaData.ARR_DATE,
-		JourneyDetailStopMetaData.TableMetaData.ARR_TIME,
-		JourneyDetailStopMetaData.TableMetaData.DEP_DATE,
-		JourneyDetailStopMetaData.TableMetaData.DEP_TIME,
-		JourneyDetailStopMetaData.TableMetaData.LATITUDE,
-		JourneyDetailStopMetaData.TableMetaData.LONGITUDE,
-		JourneyDetailStopMetaData.TableMetaData.NAME,
-		JourneyDetailStopMetaData.TableMetaData.TRACK,
-		JourneyDetailStopMetaData.TableMetaData.IS_PART_OF_USER_ROUTE,
+		TripLegDetailStopMetaData.TableMetaData._ID, 
+		TripLegDetailStopMetaData.TableMetaData.ARR_DATE,
+		TripLegDetailStopMetaData.TableMetaData.ARR_TIME,
+		TripLegDetailStopMetaData.TableMetaData.DEP_DATE,
+		TripLegDetailStopMetaData.TableMetaData.DEP_TIME,
+		TripLegDetailStopMetaData.TableMetaData.LATITUDE,
+		TripLegDetailStopMetaData.TableMetaData.LONGITUDE,
+		TripLegDetailStopMetaData.TableMetaData.NAME,
+		TripLegDetailStopMetaData.TableMetaData.TRACK,
+		TripLegDetailStopMetaData.TableMetaData.IS_PART_OF_USER_ROUTE,
 	};
 
 	private TripAdapter mTripAdapter = null;
@@ -120,15 +120,15 @@ public class TripLegDetailsFragment extends SherlockListFragment implements Load
 	{		
 		if(id==LoaderConstants.LOADER_TRIP_LEG_DETAILS)
 		{
-			String selection = JourneyDetailMetaData.TableMetaData.LEG_ID + "=?";
+			String selection = TripLegDetailMetaData.TableMetaData.LEG_ID + "=?";
 			String[] selectionArgs = {mTripLeg.id+""};
-			return new CursorLoader(getActivity(), JourneyDetailMetaData.TableMetaData.CONTENT_URI, PROJECTION, selection, selectionArgs, null);
+			return new CursorLoader(getActivity(), TripLegDetailMetaData.TableMetaData.CONTENT_URI, PROJECTION, selection, selectionArgs, null);
 		}
 		else if(id==LoaderConstants.LOADER_TRIP_LEG_STOP_DETAILS)
 		{
-			String selection = JourneyDetailStopMetaData.TableMetaData.JOURNEY_DETAIL_ID + "=?";
-			String[] selectionArgs = {args.getLong(JourneyDetailMetaData.TableMetaData._ID)+""};
-			return new CursorLoader(getActivity(), JourneyDetailStopMetaData.TableMetaData.CONTENT_URI, PROJECTION_STOP, selection, selectionArgs, null);
+			String selection = TripLegDetailStopMetaData.TableMetaData.JOURNEY_DETAIL_ID + "=?";
+			String[] selectionArgs = {args.getLong(TripLegDetailMetaData.TableMetaData._ID)+""};
+			return new CursorLoader(getActivity(), TripLegDetailStopMetaData.TableMetaData.CONTENT_URI, PROJECTION_STOP, selection, selectionArgs, null);
 		}
 
 		return null;
@@ -141,17 +141,17 @@ public class TripLegDetailsFragment extends SherlockListFragment implements Load
 		int id = loader.getId();
 		if(id==LoaderConstants.LOADER_TRIP_LEG_DETAILS && newCursor.moveToFirst())
 		{
-			journeyDetailId = newCursor.getLong(newCursor.getColumnIndex(JourneyDetailMetaData.TableMetaData._ID));
+			journeyDetailId = newCursor.getLong(newCursor.getColumnIndex(TripLegDetailMetaData.TableMetaData._ID));
 			String transportType = mTripLeg.type;
 			String legId = mTripLeg.id+"";
 			Bundle args = new Bundle();
-			args.putLong(JourneyDetailMetaData.TableMetaData._ID, journeyDetailId);
+			args.putLong(TripLegDetailMetaData.TableMetaData._ID, journeyDetailId);
 			getLoaderManager().initLoader(LoaderConstants.LOADER_TRIP_LEG_STOP_DETAILS, args, this);
 
 			mCallbacks.setJourneyDetailId(journeyDetailId, legId, transportType);
-			String name = newCursor.getString(newCursor.getColumnIndex(JourneyDetailMetaData.TableMetaData.NAME));
+			String name = newCursor.getString(newCursor.getColumnIndex(TripLegDetailMetaData.TableMetaData.NAME));
 			mTextViewJourneyName.setText(name+"\n"+mTripLeg.originName+"-"+mTripLeg.destName);
-			String type = newCursor.getString(newCursor.getColumnIndex(JourneyDetailMetaData.TableMetaData.TYPE));
+			String type = newCursor.getString(newCursor.getColumnIndex(TripLegDetailMetaData.TableMetaData.TYPE));
 			int iconRes = TripLeg.getIcon(type);
 			mTextViewJourneyName.setCompoundDrawablesWithIntrinsicBounds(iconRes, 0, 0, 0);
 		}
@@ -250,14 +250,14 @@ public class TripLegDetailsFragment extends SherlockListFragment implements Load
 		{
 			if (newCursor != null)
 			{
-				iArrTime = newCursor.getColumnIndex(JourneyDetailStopMetaData.TableMetaData.ARR_TIME);
-				iDepTime = newCursor.getColumnIndex(JourneyDetailStopMetaData.TableMetaData.DEP_TIME);
-				iLat = newCursor.getColumnIndex(JourneyDetailStopMetaData.TableMetaData.LATITUDE);
-				iLng = newCursor.getColumnIndex(JourneyDetailStopMetaData.TableMetaData.LONGITUDE);
-				iName = newCursor.getColumnIndex(JourneyDetailStopMetaData.TableMetaData.NAME);		
-				iTrack = newCursor.getColumnIndex(JourneyDetailStopMetaData.TableMetaData.TRACK);	
-				iPartOfUserRoute = newCursor.getColumnIndex(JourneyDetailStopMetaData.TableMetaData.IS_PART_OF_USER_ROUTE);	
-				iId = newCursor.getColumnIndex(JourneyDetailStopMetaData.TableMetaData._ID);	
+				iArrTime = newCursor.getColumnIndex(TripLegDetailStopMetaData.TableMetaData.ARR_TIME);
+				iDepTime = newCursor.getColumnIndex(TripLegDetailStopMetaData.TableMetaData.DEP_TIME);
+				iLat = newCursor.getColumnIndex(TripLegDetailStopMetaData.TableMetaData.LATITUDE);
+				iLng = newCursor.getColumnIndex(TripLegDetailStopMetaData.TableMetaData.LONGITUDE);
+				iName = newCursor.getColumnIndex(TripLegDetailStopMetaData.TableMetaData.NAME);		
+				iTrack = newCursor.getColumnIndex(TripLegDetailStopMetaData.TableMetaData.TRACK);	
+				iPartOfUserRoute = newCursor.getColumnIndex(TripLegDetailStopMetaData.TableMetaData.IS_PART_OF_USER_ROUTE);	
+				iId = newCursor.getColumnIndex(TripLegDetailStopMetaData.TableMetaData._ID);	
 			}
 			return super.swapCursor(newCursor);
 		}

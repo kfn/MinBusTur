@@ -40,8 +40,8 @@ import com.miracleas.imagedownloader.Utils;
 import com.miracleas.minrute.model.TripLeg;
 import com.miracleas.minrute.model.TripLegStop;
 import com.miracleas.minrute.net.BaseFetcher;
-import com.miracleas.minrute.provider.JourneyDetailStopImagesMetaData;
-import com.miracleas.minrute.provider.JourneyDetailStopMetaData;
+import com.miracleas.minrute.provider.StopImagesMetaData;
+import com.miracleas.minrute.provider.TripLegDetailStopMetaData;
 
 /**
  * A fragment representing a single Ejendom detail screen. This fragment is
@@ -70,9 +70,9 @@ public class TripStopDetailsImagesFragment extends LocaleImageHandlerFragment im
 	 * The columns needed by the cursor adapter
 	 */
 	protected static final String[] PROJECTION = new String[] { 
-		JourneyDetailStopImagesMetaData.TableMetaData._ID,
-		JourneyDetailStopImagesMetaData.TableMetaData.URL,
-		JourneyDetailStopImagesMetaData.TableMetaData.FILE_LOCALE_PATH
+		StopImagesMetaData.TableMetaData._ID,
+		StopImagesMetaData.TableMetaData.URL,
+		StopImagesMetaData.TableMetaData.FILE_LOCALE_PATH
 	};
 	
 	public static TripStopDetailsImagesFragment createInstance(TripLegStop stop, TripLeg leg)
@@ -196,17 +196,17 @@ public class TripStopDetailsImagesFragment extends LocaleImageHandlerFragment im
 		if (id == LoaderConstants.LOADER_TRIP_STOP_IMAGES)
 		{
 			
-			String selection = JourneyDetailStopImagesMetaData.TableMetaData.STOP_NAME + "=? AND "+JourneyDetailStopImagesMetaData.TableMetaData.TRANSPORT_DIRECTION + "=?";
+			String selection = StopImagesMetaData.TableMetaData.STOP_NAME + "=? AND "+StopImagesMetaData.TableMetaData.TRANSPORT_DIRECTION + "=?";
 			String[] selectionArgs = {stop.name, leg.notes};				
-			return new CursorLoader(getActivity(), JourneyDetailStopImagesMetaData.TableMetaData.CONTENT_URI, PROJECTION, selection, selectionArgs, null);
+			return new CursorLoader(getActivity(), StopImagesMetaData.TableMetaData.CONTENT_URI, PROJECTION, selection, selectionArgs, null);
 		}
 		else if (id == LoaderConstants.LOADER_COUNT_OF_NOT_UPLOADED_IMAGES)
 		{
 			
-			String selection = JourneyDetailStopImagesMetaData.TableMetaData.STOP_NAME + "=? AND "
-			   +JourneyDetailStopImagesMetaData.TableMetaData.UPLOADED+"=? AND "+JourneyDetailStopImagesMetaData.TableMetaData.TRANSPORT_DIRECTION + "=?";;
+			String selection = StopImagesMetaData.TableMetaData.STOP_NAME + "=? AND "
+			   +StopImagesMetaData.TableMetaData.UPLOADED+"=? AND "+StopImagesMetaData.TableMetaData.TRANSPORT_DIRECTION + "=?";;
 			String[] selectionArgs = {stop.name, "0", leg.notes};				
-			return new CursorLoader(getActivity(), JourneyDetailStopImagesMetaData.TableMetaData.CONTENT_URI, PROJECTION, selection, selectionArgs, null);
+			return new CursorLoader(getActivity(), StopImagesMetaData.TableMetaData.CONTENT_URI, PROJECTION, selection, selectionArgs, null);
 		}
 		return null;
 	}
@@ -344,9 +344,9 @@ public class TripStopDetailsImagesFragment extends LocaleImageHandlerFragment im
 		{
 			if(newCursor!=null)
 			{
-				iUrl = newCursor.getColumnIndex(JourneyDetailStopImagesMetaData.TableMetaData.URL);
-				iId = newCursor.getColumnIndex(JourneyDetailStopImagesMetaData.TableMetaData._ID);
-				iLocalePath = newCursor.getColumnIndex(JourneyDetailStopImagesMetaData.TableMetaData.FILE_LOCALE_PATH);
+				iUrl = newCursor.getColumnIndex(StopImagesMetaData.TableMetaData.URL);
+				iId = newCursor.getColumnIndex(StopImagesMetaData.TableMetaData._ID);
+				iLocalePath = newCursor.getColumnIndex(StopImagesMetaData.TableMetaData.FILE_LOCALE_PATH);
 			}
 			return super.swapCursor(newCursor);
 		}
