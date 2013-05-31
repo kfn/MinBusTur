@@ -179,10 +179,18 @@ public class UploadImagesService extends Service
 			File body = new File();
 			body.setTitle(title);
 			body.setMimeType(mimeType);
-
+			
 			file = service.files().insert(body, mediaContent).execute();
 			if (file != null)
-			{				
+			{			
+				Log.d(tag, "getAlternateLink: "+file.getAlternateLink());
+				Log.d(tag, "getDefaultOpenWithLink: "+file.getDefaultOpenWithLink());
+				Log.d(tag, "getEmbedLink: "+file.getEmbedLink());
+				Log.d(tag, "getIconLink: "+file.getIconLink());
+				Log.d(tag, "getSelfLink: "+file.getSelfLink());
+				Log.d(tag, "getWebContentLink: "+file.getWebContentLink());
+				Log.d(tag, "getWebViewLink: "+file.getWebViewLink());
+				Log.d(tag, "getDownloadUrl: "+file.getDownloadUrl());
 				uploaded = 1;				
 			}
 		}

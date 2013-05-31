@@ -50,7 +50,7 @@ public class VoiceStateTrain extends VoiceState
 		return s;
 	}
 	
-	public long getTickTime()
+	public long getTickTime(long currentTime)
 	{
 		long departures =  mLeg.departureTime - System.currentTimeMillis();
 		long tick = 0;

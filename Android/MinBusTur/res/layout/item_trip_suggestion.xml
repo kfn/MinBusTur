@@ -5,29 +5,55 @@
     android:padding="4dp" >
 
     <TextView
-        android:id="@+id/textViewDepature"
+        android:id="@+id/textViewDepatureLabel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:drawableLeft="@drawable/ic_menu_home"
         android:gravity="center_vertical"
-        android:text="Afg. 16:11"
+        android:text="Afgang:"
         android:textSize="19sp" />
 
-    <TextView 
-        android:id="@+id/textViewArrival"
+    <TextView
+        android:id="@+id/textViewDepatureValue"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/textViewDepature"
+        android:layout_alignBottom="@+id/textViewDepatureLabel"
+        android:layout_alignLeft="@+id/textViewArrivalValue"
+        android:layout_marginBottom="2dp"
+        android:gravity="center_vertical"
+        android:text="16:11"
+        android:textSize="19sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/textViewArrivalLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/textViewDepatureLabel"
         android:drawableLeft="@drawable/ic_menu_myplaces"
         android:gravity="center_vertical"
-        android:text="Ank. 17:11"
+        android:text="Ankomst:"
         android:textSize="19sp" />
+
+    <TextView
+        android:id="@+id/textViewArrivalValue"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/textViewArrivalLabel"
+        android:layout_below="@+id/textViewDepatureLabel"
+        android:layout_marginBottom="2dp"
+        android:layout_marginLeft="10dp"
+        android:layout_toRightOf="@+id/textViewArrivalLabel"
+        android:gravity="center_vertical"
+        android:text="Ank. 17:11"
+        android:textSize="19sp"
+        android:textStyle="bold" />
 
     <TextView
         android:id="@+id/textViewTransport"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/textViewArrival"
+        android:layout_below="@+id/textViewArrivalLabel"
         android:layout_marginTop="4dp"
         android:drawableLeft="@drawable/ic_menu_info_details"
         android:gravity="center_vertical"

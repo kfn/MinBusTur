@@ -5,6 +5,8 @@
     
     <string name="voice_enter">Du er ved</string>
     <string name="voice_exit">Du har forladt</string>
+    
+     <string name="voice_and">og</string>
     <string name="voice_seconds_more">sekunder</string>
     <string name="voice_seconds_one">sekund</string>
     <string name="voice_minutes_more">minutter</string>

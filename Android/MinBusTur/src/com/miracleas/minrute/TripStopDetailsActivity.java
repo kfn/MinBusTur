@@ -224,9 +224,11 @@ public class TripStopDetailsActivity extends PhotoGoogleDriveActivity implements
 			switch (position)
 			{
 			case 0:
-				return getString(R.string.title_section1).toUpperCase();
+				return getString(R.string.title_section_tripstop_details).toUpperCase();
 			case 1:
-				return getString(R.string.title_section2).toUpperCase();
+				return getString(R.string.title_section_tripstop_images).toUpperCase();
+			case 2:
+				return getString(R.string.title_section_tripstop_departures).toUpperCase();
 			}
 		
 		

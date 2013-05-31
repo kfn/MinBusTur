@@ -14,6 +14,7 @@ public abstract class VoiceState
 	protected static final long FIVE_MINUTES = DateUtils.MINUTE_IN_MILLIS * 5;
 	protected static final long ONE_MINUTE = DateUtils.MINUTE_IN_MILLIS;
 	protected static final long TWO_MINUTE = DateUtils.MINUTE_IN_MILLIS * 2;
+	protected static final long THREE_MINUTE = DateUtils.MINUTE_IN_MILLIS * 3;
 	protected static final long TWO_HOURS = DateUtils.HOUR_IN_MILLIS * 2;
 	protected static final long TEN_SECONDS = DateUtils.SECOND_IN_MILLIS * 10;
 	protected static final long TWENTY_SECONDS = DateUtils.SECOND_IN_MILLIS * 20;
@@ -30,7 +31,7 @@ public abstract class VoiceState
 		mDateHelper.setVoice(true);
 		mContext = context;
 	}
-	public abstract long getTickTime();
+	public abstract long getTickTime(long currentTime);
 	public abstract String departuresIn();
 	public abstract String startUsingTransport();
 	public abstract String startUsingNextTransportIn();

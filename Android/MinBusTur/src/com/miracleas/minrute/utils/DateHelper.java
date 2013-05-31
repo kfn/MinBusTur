@@ -85,8 +85,8 @@ public class DateHelper
 			int tempDays = (int)(time / 1000 / 60 / 60 / 24);
 			int tempHours = (int)(time / 1000 / 60 / 60) - (tempDays * 24);
 			int tempMinutes = (int)(time / 1000 / 60) - (tempHours * 60);
+			int tempSecs = (int)(time / 1000 ) - (tempMinutes * 60);
 			
-			//tempMinutes = (int) (Math.ceil(tempMinutes / 5d) * 5);
 			if(tempMinutes==60)
 			{
 				tempMinutes = 0;
@@ -109,16 +109,20 @@ public class DateHelper
 				{
 					if(tempHours>0)
 					{
-						b.append(" ");
+						b.append(" ").append(c.getString(R.string.voice_and)).append(" ");
 					}
 					String minutes = getMintues(tempMinutes);
 					b.append(tempMinutes).append(" ").append(minutes);
 				}
-				if(b.length()==0)
+				
+				if(tempSecs>0)
 				{
-					String seconds = getSeconds((int)time);
-					b.append(time / DateUtils.SECOND_IN_MILLIS).append(" ").append(seconds);
-					
+					if(tempMinutes>0 || tempHours>0)
+					{
+						b.append(" ").append(c.getString(R.string.voice_and)).append(" ");
+					}
+					String seconds = getSeconds(tempSecs);
+					b.append(tempSecs).append(" ").append(seconds);
 				}
 			}
 		}

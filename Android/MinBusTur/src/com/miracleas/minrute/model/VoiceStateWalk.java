@@ -48,8 +48,79 @@ public class VoiceStateWalk extends VoiceState
 		return "";
 	}
 	
+	@Override
+	public long getTickTime(long currentTime)
+	{
+		long departures =  mLeg.departureTime - currentTime;
+		long tick = 0;
+		if(departures >= DateUtils.DAY_IN_MILLIS )
+		{
+			tick = Long.MIN_VALUE;
+		}
+		else if(departures >= TWO_HOURS)
+		{
+			long temp = (mLeg.departureTime - DateUtils.HOUR_IN_MILLIS) - currentTime;
+			tick = temp;
+		}
+		else if(departures >= DateUtils.HOUR_IN_MILLIS)
+		{
+			long temp = (mLeg.departureTime - (DateUtils.MINUTE_IN_MILLIS * 30)) - currentTime;
+			tick = temp;
+		}
+		else if(departures >= DateUtils.MINUTE_IN_MILLIS * 30)
+		{
+			long temp = (mLeg.departureTime - FIFTEEN_MINUTES) - currentTime;
+			tick = temp;
+		}
+		else if(departures >= FIFTEEN_MINUTES)
+		{
+			long temp = (mLeg.departureTime - TEN_MINUTES) - currentTime;
+			tick = temp;
+		}
+		else if(departures >= TEN_MINUTES)
+		{
+			long temp = (mLeg.departureTime - FIVE_MINUTES) - currentTime;
+			tick = temp;
+		}
+		else if(departures>= FIVE_MINUTES)
+		{
+			long temp = (mLeg.departureTime - THREE_MINUTE) - currentTime;
+			tick = temp;
+		}
+		else if(departures>= THREE_MINUTE)
+		{
+			long temp = (mLeg.departureTime - TWO_MINUTE) - currentTime;
+			tick = temp;
+		}
+		else if(departures>= TWO_MINUTE)
+		{
+			long temp = (mLeg.departureTime - ONE_MINUTE) - currentTime;
+			tick = temp;
+		}
+		else if(departures>= ONE_MINUTE)
+		{
+			long temp = (mLeg.departureTime - (DateUtils.SECOND_IN_MILLIS * 30)) - currentTime;
+			tick = temp;
+		}
+		else if(departures>= DateUtils.SECOND_IN_MILLIS * 30)
+		{		
+			long temp = (mLeg.departureTime - TEN_SECONDS) - currentTime;
+			tick = temp;
+		}
+		else if(departures>= 0)
+		{
+			tick = 0;
+		}
+		else
+		{
+			tick = Long.MIN_VALUE;
+		}
+		
+		Log.d(tag, "wait: "+tick / DateUtils.SECOND_IN_MILLIS+" seks.");
+		return tick;
+	}
 	
-	public long getTickTime()
+	/*public long getTickTime()
 	{
 		long departures =  mLeg.departureTime - System.currentTimeMillis();
 		long tick = 0;
@@ -69,17 +140,18 @@ public class VoiceStateWalk extends VoiceState
 		{
 			tick = FIVE_MINUTES;
 		}
-		else if(departures > TEN_MINUTES)
+		else if(departures >= THREE_MINUTE)
 		{
 			tick = TWO_MINUTE;
 		}
-		else if(departures> (DateUtils.MINUTE_IN_MILLIS + TEN_SECONDS))
+		else if(departures>= (DateUtils.MINUTE_IN_MILLIS + TWENTY_SECONDS))
 		{
 			tick = ONE_MINUTE;
 		}
 		else if(departures> TWENTY_SECONDS)
 		{
-			tick = TEN_SECONDS;
+			long temp = (departures - TEN_SECONDS) - System.currentTimeMillis();
+			tick = TWENTY_SECONDS;
 		}
 		else if(departures>= 0)
 		{
@@ -92,7 +164,7 @@ public class VoiceStateWalk extends VoiceState
 		
 		Log.d(tag, "wait: "+tick / DateUtils.SECOND_IN_MILLIS+" seks.");
 		return tick;
-	}
+	}*/
 	
 	@Override
 	public String nameOfDestination()

@@ -16,7 +16,12 @@
     <string name="action_settings">Settings</string>
     <string name="title_section1">Ny rute</string>
     <string name="title_section2">Gemte ruter</string>
+    <string name="menu_call_for_help">Ring til ven</string>
+    <string name="save_trip">Gem rute</string>
     
+    <string name="title_section_tripstop_details">Info</string>
+    <string name="title_section_tripstop_images">Billeder</string>
+    <string name="title_section_tripstop_departures">Afgangstavle</string>
     
     
     <string name="seconds">sekunder</string>
@@ -33,7 +38,7 @@
     <string name="departured">siden</string>
     
     <string name="geocoding_service_not_available">geocoding_service_not_available</string>
-    <string name="departure">Afgang <xliff:g ID="time_label">%1$s</xliff:g></string>
+    <string name="departure">Afgang: <xliff:g ID="time_label">%1$s</xliff:g></string>
     <string name="parenthese_value">(<xliff:g ID="time_label">%1$s</xliff:g>)</string>
     <string name="arrival_within">Ankomst: <xliff:g ID="time_label">%1$s</xliff:g></string>
     <string name="duration">Varighed: <xliff:g ID="time_label">%1$s</xliff:g></string>

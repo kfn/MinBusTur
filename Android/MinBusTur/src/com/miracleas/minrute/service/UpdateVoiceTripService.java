@@ -156,7 +156,7 @@ public class UpdateVoiceTripService extends Service implements android.speech.tt
 				mTts.setLanguage(Locale.US);
 			}
 			
-			mTts.speak(getString(R.string.voice_is_on), TextToSpeech.QUEUE_ADD, null);	
+			//mTts.speak(getString(R.string.voice_is_on), TextToSpeech.QUEUE_ADD, null);	
 		}
 	}
 	/**
@@ -227,7 +227,7 @@ public class UpdateVoiceTripService extends Service implements android.speech.tt
 			if (mTripId != null)
 			{
 				updateDepartureVoice();
-				long tick = mCurrentVoiceState.getTickTime();
+				long tick = mCurrentVoiceState.getTickTime(System.currentTimeMillis());
 				if(tick==0)
 				{
 					playStartTripLegNow();
@@ -282,7 +282,7 @@ public class UpdateVoiceTripService extends Service implements android.speech.tt
 			if (handler == null)
 			{
 				handler = new Handler();
-				long tick = mCurrentVoiceState.getTickTime();
+				long tick = mCurrentVoiceState.getTickTime(System.currentTimeMillis());
 				if(tick==0)
 				{
 					playStartTripLegNow();

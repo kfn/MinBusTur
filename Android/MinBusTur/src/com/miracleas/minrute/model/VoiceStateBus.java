@@ -48,7 +48,7 @@ public class VoiceStateBus extends VoiceState
 		String s = String.format(mContext.getString(R.string.voice_leave_next_stop_bus), nameOfLocBeforeDest, mLeg.destName);
 		return s;
 	}
-	public long getTickTime()
+	public long getTickTime(long currentTime)
 	{
 		long departures =  mLeg.departureTime - System.currentTimeMillis();
 		long tick = 0;
