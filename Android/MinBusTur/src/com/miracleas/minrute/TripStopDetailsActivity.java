@@ -242,7 +242,9 @@ public class TripStopDetailsActivity extends PhotoGoogleDriveActivity implements
 	{
 		if (mTripLegStop!=null)
 		{
-			String uriString = "http://maps.google.com/maps?daddr=" + mTripLegStop.lat + "," + mTripLegStop.lng + "&view=map";
+			double lat = (double)(Integer.parseInt(mTripLegStop.lat)) / 1000000d;
+			double lng = (double)(Integer.parseInt(mTripLegStop.lng)) / 1000000d;
+			String uriString = "http://maps.google.com/maps?daddr=" +lat + "," + lng + "&view=map";
 			Uri uri = Uri.parse(uriString);
 			Intent intent = new Intent(Intent.ACTION_VIEW, uri);
 			startActivity(intent);

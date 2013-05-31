@@ -46,14 +46,23 @@ public class VoiceStateTrain extends VoiceState
 	@Override
 	public String leaveTransportIn(String nameOfLocBeforeDest)
 	{
-		String s = String.format(mContext.getString(R.string.voice_leave_next_stop_bus), nameOfLocBeforeDest, mLeg.destName);
+		String s = mContext.getString(R.string.voice_leave_next_stop_train);
 		return s;
 	}
 	
 	@Override
 	public String nameOfDestination()
 	{
-		return mLeg.originName.split(",")[0];
+		String text = "";
+		if(!mLeg.isDestiation)
+		{
+			text = mLeg.originName.split(",")[0];
+		}
+		else
+		{
+			text = String.format(mContext.getString(R.string.reached_destination), mLeg.originName.split(",")[0]);
+		}
+		return text;
 	}
 
 }

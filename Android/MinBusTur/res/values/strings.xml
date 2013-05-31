@@ -38,6 +38,7 @@
     <string name="arrival">Ankomst</string>
     <string name="departure_now">Lige nu</string>
     <string name="departured">siden</string>
+   
     
     <string name="geocoding_service_not_available">geocoding_service_not_available</string>
     <string name="departure">Afgang: <xliff:g ID="time_label">%1$s</xliff:g></string>

@@ -30,7 +30,7 @@ public class LocationService extends Service implements LocationListener, Google
 	private final IBinder mBinder = new LocalBinder();
 	// LOCATION
 	// Update frequency in seconds
-	public static final int UPDATE_INTERVAL_IN_SECONDS = 30;
+	public static final int UPDATE_INTERVAL_IN_SECONDS = 15;
 	// Update frequency in milliseconds
 	private static final long UPDATE_INTERVAL = DateUtils.SECOND_IN_MILLIS * UPDATE_INTERVAL_IN_SECONDS;
 	// The fastest update frequency, in seconds

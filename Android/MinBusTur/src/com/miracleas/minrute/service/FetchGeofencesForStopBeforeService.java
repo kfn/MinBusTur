@@ -155,7 +155,7 @@ public class FetchGeofencesForStopBeforeService extends IntentService
 			double lat = (double) Integer.parseInt(stop.lat) / 1000000d;
 			double lng = (double) Integer.parseInt(stop.lng) / 1000000d;
 			GeofenceMy geo = new GeofenceMy(tripId, geofenceId, radius, Geofence.GEOFENCE_TRANSITION_ENTER, lat, lng);			
-			GeofenceHelper.saveGeofence(geo, mDbOperations, mCr);
+			GeofenceHelper.saveGeofence(geo, mDbOperations, mCr, null);
 		}
 
 	}

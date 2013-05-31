@@ -49,6 +49,9 @@ public class TripLeg implements Parcelable
 	public long departureTime = 0;
 	public String originTime;
 	public String destTime;
+	public int step = 0;
+	public boolean isOrigin = false;
+	public boolean isDestiation = false;
 	//---------------
 	
 	public TripLeg(Parcel in)

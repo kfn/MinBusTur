@@ -5,12 +5,14 @@ import java.util.ArrayList;
 import android.content.ContentProviderOperation;
 import android.content.ContentResolver;
 import android.content.ContentValues;
+import android.util.Log;
 
 import com.google.android.gms.location.Geofence;
 import com.miracleas.minrute.provider.GeofenceMetaData;
 
 public class GeofenceHelper
 {
+	public static final String tag = GeofenceHelper.class.getName();
 	public static final String LEG_ID_WITH_STOP_ID = "legIdStopId";
 	public static final String LEG_ID = "lgId";
 	public static final String DELIMITER = "-";
@@ -21,7 +23,7 @@ public class GeofenceHelper
 		return new Geofence.Builder().setRequestId(id).setTransitionTypes(transitionType).setCircularRegion(lat, lng, radius).setExpirationDuration(expirationDuration).build();
 	}
 
-	public static void saveGeofence(GeofenceMy geo, ArrayList<ContentProviderOperation> dbOperations, ContentResolver cr)
+	public static void saveGeofence(GeofenceMy geo, ArrayList<ContentProviderOperation> dbOperations, ContentResolver cr, android.location.Location previousLoc)
 	{
 		ContentValues values = new ContentValues();
 		values.put(GeofenceMetaData.TableMetaData.geofence_id, geo.id);
@@ -32,6 +34,19 @@ public class GeofenceHelper
 
 		if (updated == 0)
 		{
+			float meters = 0;
+			if(previousLoc!=null)
+			{
+				android.location.Location current = new android.location.Location("");
+				current.setLatitude(geo.lat);
+				current.setLatitude(geo.lng);
+				meters = previousLoc.distanceTo(current);
+				if(geo.radius>meters)
+				{
+					geo.radius = (int)meters;
+				}
+				Log.d(tag, "distance: "+meters+" m.");
+			}
 			values.put(GeofenceMetaData.TableMetaData.LAT, geo.lat);
 			values.put(GeofenceMetaData.TableMetaData.LNG, geo.lng);
 			values.put(GeofenceMetaData.TableMetaData.TRIP_ID, geo.tripId);
@@ -51,25 +66,25 @@ public class GeofenceHelper
 			radius = 50;
 		} else if (typeOfTransport.equals(TripLeg.TYPE_BUS))
 		{
-			radius = 100;
+			radius = 120;
 		} else if (typeOfTransport.equals(TripLeg.TYPE_EXB))
 		{
-			radius = 100;
+			radius = 120;
 		} else if (typeOfTransport.equals(TripLeg.TYPE_IC))
 		{
-			radius = 100;
+			radius = 160;
 		} else if (typeOfTransport.equals(TripLeg.TYPE_LYN))
 		{
-			radius = 100;
+			radius = 180;
 		} else if (typeOfTransport.equals(TripLeg.TYPE_REG))
 		{
-			radius = 100;
+			radius = 180;
 		} else if (typeOfTransport.equals(TripLeg.TYPE_TB))
 		{
-			radius = 100;
+			radius = 180;
 		} else if (typeOfTransport.equals(TripLeg.TYPE_TRAIN))
 		{
-			radius = 100;
+			radius = 180;
 		}
 		return radius;
 	}

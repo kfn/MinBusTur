@@ -19,19 +19,37 @@ public class VoiceStateWalk extends VoiceState
 	@Override
 	public String departuresIn()
 	{		
-		long departue = mLeg.departureTime - System.currentTimeMillis();
-		String strDuration = mDateHelper.getDurationLabel(departue, true);
-		String text = String.format(mContext.getString(R.string.voice_departure_walk), strDuration);
+		String text = "";
+		if(!mLeg.isDestiation)
+		{
+			long departue = mLeg.departureTime - System.currentTimeMillis();
+			String strDuration = mDateHelper.getDurationLabel(departue, true);
+			
+			if(mLeg.isOrigin)
+			{
+				text = String.format(mContext.getString(R.string.voice_departure_walk), strDuration);
+			}
+			else
+			{
+				text = String.format(mContext.getString(R.string.voice_start_using_transport_walk), strDuration, mLeg.destName);
+			}
+		}
+		
 		return text;		
 	}
 
 	@Override
 	public String startUsingTransport()
 	{
-		long duration = mLeg.getDuration();
-		String destName = mLeg.destName;
-		String strDuration = mDateHelper.getDurationLabel(duration, false);
-		String text = String.format(mContext.getString(R.string.voice_start_using_transport_walk), strDuration, destName);
+		String text = "";
+		if(!mLeg.isDestiation)
+		{
+			long duration = mLeg.getDuration();
+			String destName = mLeg.destName;
+			String strDuration = mDateHelper.getDurationLabel(duration, false);
+			text = String.format(mContext.getString(R.string.voice_start_using_transport_walk), strDuration, destName);
+		}
+		
 		return text;			
 	}
 
@@ -98,7 +116,16 @@ public class VoiceStateWalk extends VoiceState
 	@Override
 	public String nameOfDestination()
 	{
-		return mLeg.originName.split(",")[0];
+		String text = "";
+		if(!mLeg.isDestiation)
+		{
+			text = mLeg.originName.split(",")[0];
+		}
+		else
+		{
+			text = String.format(mContext.getString(R.string.reached_destination), mLeg.originName.split(",")[0]);
+		}
+		return text;
 	}
 
 }

@@ -86,14 +86,13 @@ public class DateHelper
 			int tempHours = (int)(time / 1000 / 60 / 60) - (tempDays * 24);
 			int tempMinutes = (int)(time / 1000 / 60) - (tempHours * 60);
 			int tempSecs = (int)(time / 1000 ) - (tempMinutes * 60);
-			if(tempMinutes > 1 && tempSecs>40)
+			if(tempMinutes >= 0 && tempSecs>0 && tempSecs>40)
 			{
 				tempMinutes++;;
 				tempSecs = 0;
 			}
-			else if(tempMinutes > 1 && tempSecs<20)
+			else if(tempMinutes >= 1  && tempSecs>0 && tempSecs<20)
 			{
-				tempMinutes--;
 				tempSecs = 0;
 			}
 			

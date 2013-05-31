@@ -421,9 +421,13 @@ public class FetchGpsOnMissingAddressesService extends IntentService
 	private void saveGeofences(List<GeofenceMy> geofences)
 	{
 		ContentResolver cr = getContentResolver();
+		android.location.Location previous = null;
 		for(GeofenceMy geo : geofences)
 		{
-			GeofenceHelper.saveGeofence(geo, mDbOperations, cr);
+			GeofenceHelper.saveGeofence(geo, mDbOperations, cr, previous);
+			previous = new android.location.Location("");
+			previous.setLatitude(geo.lat);
+			previous.setLatitude(geo.lng);
 		}
 	}
 }

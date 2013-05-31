@@ -24,9 +24,11 @@ import android.widget.FrameLayout;
 import android.widget.ProgressBar;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.GoogleMap.OnCameraChangeListener;
 import com.google.android.gms.maps.GoogleMap.OnInfoWindowClickListener;
 import com.google.android.gms.maps.GoogleMap.OnMarkerClickListener;
+import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
@@ -146,7 +148,7 @@ public class TripLegMapFragment extends SupportMapFragment implements LoaderCall
 						}
 					}
 					
-					setUpMap();
+					setUpMap(getMap());
 					getActivity().getSupportLoaderManager().initLoader(LoaderConstants.LOADER_TRIP_LEG_STOPS_MAP, getArguments(), TripLegMapFragment.this);
 				}
 			});
@@ -187,25 +189,26 @@ public class TripLegMapFragment extends SupportMapFragment implements LoaderCall
 	 * This should only be called once and when we are sure that {@link #getMap()}
 	 * is not null.
 	 */
-	protected void setUpMap()
+	protected void setUpMap(GoogleMap map)
 	{
-		if (getMap() != null)
+		if (map != null)
 		{
 
 			// Setting an info window adapter allows us to change the both the
 			// contents and look of the
 			// info window.
 			//getMap().setInfoWindowAdapter(new CustomInfoWindowAdapter());
-			getMap().setOnInfoWindowClickListener(this);
+			map.setOnInfoWindowClickListener(this);
 			
-			getMap().setMyLocationEnabled(true);
+			
+			map.setMyLocationEnabled(true);
 			// Setting an info window adapter allows us to change the both the
 			// contents and look of the
 			// info window.
-			getMap().setOnMarkerClickListener(this);
-
-			getMap().setOnCameraChangeListener(this);
-			Location loc = getMap().getMyLocation();
+			map.setOnMarkerClickListener(this);
+			map.getUiSettings().setCompassEnabled(true);
+			map.setOnCameraChangeListener(this);
+			Location loc = map.getMyLocation();
 			if(loc!=null)
 			{
 				showPosition(loc.getLatitude(), loc.getLongitude());
@@ -213,6 +216,7 @@ public class TripLegMapFragment extends SupportMapFragment implements LoaderCall
 			
 		}
 	}
+
 
 	@Override
 	public boolean onMarkerClick(final Marker marker)
