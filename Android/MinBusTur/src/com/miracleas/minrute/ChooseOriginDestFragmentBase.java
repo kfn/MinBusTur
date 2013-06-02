@@ -250,7 +250,7 @@ public abstract class ChooseOriginDestFragmentBase extends SherlockFragment impl
 		}
 		else
 		{
-			Toast.makeText(getActivity(), "Kunne ikke sætte tid. Prøv igen.", Toast.LENGTH_SHORT).show();
+			Toast.makeText(getActivity(), getString(R.string.trip_request_time_error), Toast.LENGTH_SHORT).show();
 		}
 	}
 	

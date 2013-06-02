@@ -1130,7 +1130,7 @@ com.actionbarsherlock.ActionBarSherlock:
     public abstract void setUiOptions(int)
     public abstract void setUiOptions(int,int)
     public abstract void setTitle(java.lang.CharSequence)
-    703:704:public void setTitle(int)
+    701:704:public void setTitle(int)
     public abstract void setProgressBarVisibility(boolean)
     public abstract void setProgressBarIndeterminateVisibility(boolean)
     public abstract void setProgressBarIndeterminate(boolean)
@@ -1180,8 +1180,6 @@ com.actionbarsherlock.app.ActionBar:
     public abstract void setIcon(android.graphics.drawable.Drawable)
     public abstract void setLogo(int)
     public abstract void setLogo(android.graphics.drawable.Drawable)
-    public abstract void setListNavigationCallbacks(android.widget.SpinnerAdapter,com.actionbarsherlock.app.ActionBar$OnNavigationListener)
-    public abstract int getSelectedNavigationIndex()
     public abstract int getNavigationItemCount()
     public abstract void setTitle(java.lang.CharSequence)
     public abstract void setTitle(int)
@@ -1191,7 +1189,6 @@ com.actionbarsherlock.app.ActionBar:
     public abstract void setDisplayOptions(int,int)
     public abstract void setDisplayUseLogoEnabled(boolean)
     public abstract void setDisplayShowHomeEnabled(boolean)
-    public abstract void setDisplayShowTitleEnabled(boolean)
     public abstract void setDisplayShowCustomEnabled(boolean)
     public abstract void setBackgroundDrawable(android.graphics.drawable.Drawable)
     436:436:public void setStackedBackgroundDrawable(android.graphics.drawable.Drawable)
@@ -1256,13 +1253,13 @@ com.actionbarsherlock.internal.ActionBarSherlockCompat:
     private static final java.lang.String PANELS_TAG
     private com.actionbarsherlock.internal.widget.IcsProgressBar mHorizontalProgressBar
     58:59:public ActionBarSherlockCompat(android.app.Activity,int)
-    155:156:public void setTitle(java.lang.CharSequence)
-    162:201:public com.actionbarsherlock.view.ActionMode startActionMode(com.actionbarsherlock.view.ActionMode$Callback)
-    612:614:public void setProgressBarVisibility(boolean)
-    620:622:public void setProgressBarIndeterminateVisibility(boolean)
-    628:630:public void setProgressBarIndeterminate(boolean)
-    636:637:public void setProgress(int)
-    643:645:public void setSecondaryProgress(int)
+    153:156:public void setTitle(java.lang.CharSequence)
+    160:201:public com.actionbarsherlock.view.ActionMode startActionMode(com.actionbarsherlock.view.ActionMode$Callback)
+    610:614:public void setProgressBarVisibility(boolean)
+    618:622:public void setProgressBarIndeterminateVisibility(boolean)
+    626:630:public void setProgressBarIndeterminate(boolean)
+    634:637:public void setProgress(int)
+    641:645:public void setSecondaryProgress(int)
     648:649:private void setFeatureInt(int,int)
     654:665:private void updateInt(int,int,boolean)
     668:671:private void onIntChanged(int,int)
@@ -1270,9 +1267,9 @@ com.actionbarsherlock.internal.ActionBarSherlockCompat:
     718:728:private void showProgressBars(com.actionbarsherlock.internal.widget.IcsProgressBar,com.actionbarsherlock.internal.widget.IcsProgressBar)
     731:744:private void hideProgressBars(com.actionbarsherlock.internal.widget.IcsProgressBar,com.actionbarsherlock.internal.widget.IcsProgressBar)
     761:771:private com.actionbarsherlock.internal.widget.IcsProgressBar getHorizontalProgressBar(boolean)
-    782:782:private int getFeatures()
-    821:822:public void setUiOptions(int)
-    828:829:public void setUiOptions(int,int)
+    780:782:private int getFeatures()
+    819:822:public void setUiOptions(int)
+    826:829:public void setUiOptions(int,int)
     109:109:static synthetic com.actionbarsherlock.internal.widget.ActionBarContextView access$0(com.actionbarsherlock.internal.ActionBarSherlockCompat)
     107:107:static synthetic com.actionbarsherlock.view.ActionMode access$2(com.actionbarsherlock.internal.ActionBarSherlockCompat)
     107:107:static synthetic void access$3(com.actionbarsherlock.internal.ActionBarSherlockCompat,com.actionbarsherlock.view.ActionMode)
@@ -1280,17 +1277,17 @@ com.actionbarsherlock.internal.ActionBarSherlockCompat$ActionModeCallbackWrapper
 com.actionbarsherlock.internal.ActionBarSherlockNative:
     private com.actionbarsherlock.internal.ActionBarSherlockNative$ActionModeWrapper mActionMode
     28:29:public ActionBarSherlockNative(android.app.Activity,int)
-    102:104:public boolean hasFeature(int)
-    111:113:public boolean requestFeature(int)
-    120:121:public void setUiOptions(int)
-    127:128:public void setUiOptions(int,int)
-    158:159:public void setTitle(java.lang.CharSequence)
-    165:166:public void setProgressBarVisibility(boolean)
-    172:173:public void setProgressBarIndeterminateVisibility(boolean)
-    179:180:public void setProgressBarIndeterminate(boolean)
-    186:187:public void setProgress(int)
-    193:194:public void setSecondaryProgress(int)
-    214:233:public com.actionbarsherlock.view.ActionMode startActionMode(com.actionbarsherlock.view.ActionMode$Callback)
+    100:104:public boolean hasFeature(int)
+    109:113:public boolean requestFeature(int)
+    118:121:public void setUiOptions(int)
+    125:128:public void setUiOptions(int,int)
+    156:159:public void setTitle(java.lang.CharSequence)
+    163:166:public void setProgressBarVisibility(boolean)
+    170:173:public void setProgressBarIndeterminateVisibility(boolean)
+    177:180:public void setProgressBarIndeterminate(boolean)
+    184:187:public void setProgress(int)
+    191:194:public void setSecondaryProgress(int)
+    212:233:public com.actionbarsherlock.view.ActionMode startActionMode(com.actionbarsherlock.view.ActionMode$Callback)
     24:24:static synthetic void access$0(com.actionbarsherlock.internal.ActionBarSherlockNative,com.actionbarsherlock.internal.ActionBarSherlockNative$ActionModeWrapper)
     24:24:static synthetic com.actionbarsherlock.internal.ActionBarSherlockNative$ActionModeWrapper access$1(com.actionbarsherlock.internal.ActionBarSherlockNative)
     22:22:static synthetic android.app.Activity access$2(com.actionbarsherlock.internal.ActionBarSherlockNative)
@@ -1313,7 +1310,6 @@ com.actionbarsherlock.internal.app.ActionBarImpl:
     276:277:public void setCustomView(int)
     281:282:public void setDisplayUseLogoEnabled(boolean)
     286:287:public void setDisplayShowHomeEnabled(boolean)
-    296:297:public void setDisplayShowTitleEnabled(boolean)
     301:302:public void setDisplayShowCustomEnabled(boolean)
     311:312:public void setTitle(int)
     316:317:public void setSubtitle(int)
@@ -1343,7 +1339,6 @@ com.actionbarsherlock.internal.app.ActionBarImpl:
     627:639:void animateToMode(boolean)
     937:938:public void setCustomView(android.view.View)
     942:944:public void setCustomView(android.view.View,com.actionbarsherlock.app.ActionBar$LayoutParams)
-    948:950:public void setListNavigationCallbacks(android.widget.SpinnerAdapter,com.actionbarsherlock.app.ActionBar$OnNavigationListener)
     966:973:public int getNavigationItemCount()
     979:979:public int getTabCount()
     1008:1008:public com.actionbarsherlock.app.ActionBar$Tab getTabAt(int)
@@ -1374,8 +1369,6 @@ com.actionbarsherlock.internal.app.ActionBarWrapper:
     75:76:public void setIcon(android.graphics.drawable.Drawable)
     80:81:public void setLogo(int)
     85:86:public void setLogo(android.graphics.drawable.Drawable)
-    90:92:public void setListNavigationCallbacks(android.widget.SpinnerAdapter,com.actionbarsherlock.app.ActionBar$OnNavigationListener)
-    108:108:public int getSelectedNavigationIndex()
     113:113:public int getNavigationItemCount()
     118:119:public void setTitle(java.lang.CharSequence)
     123:124:public void setTitle(int)
@@ -1385,7 +1378,6 @@ com.actionbarsherlock.internal.app.ActionBarWrapper:
     146:152:public void setDisplayOptions(int,int)
     156:157:public void setDisplayUseLogoEnabled(boolean)
     161:162:public void setDisplayShowHomeEnabled(boolean)
-    171:172:public void setDisplayShowTitleEnabled(boolean)
     176:177:public void setDisplayShowCustomEnabled(boolean)
     181:182:public void setBackgroundDrawable(android.graphics.drawable.Drawable)
     186:187:public void setStackedBackgroundDrawable(android.graphics.drawable.Drawable)
@@ -1553,7 +1545,6 @@ com.actionbarsherlock.internal.view.menu.ActionMenuItem:
     95:95:public char getNumericShortcut()
     99:99:public int getOrder()
     107:107:public java.lang.CharSequence getTitle()
-    111:111:public java.lang.CharSequence getTitleCondensed()
     119:119:public boolean isCheckable()
     123:123:public boolean isChecked()
     127:127:public boolean isEnabled()
@@ -1654,7 +1645,6 @@ com.actionbarsherlock.internal.view.menu.MenuItemWrapper:
     47:48:public com.actionbarsherlock.view.MenuItem setTitle(java.lang.CharSequence)
     53:54:public com.actionbarsherlock.view.MenuItem setTitle(int)
     59:59:public java.lang.CharSequence getTitle()
-    70:70:public java.lang.CharSequence getTitleCondensed()
     75:76:public com.actionbarsherlock.view.MenuItem setIcon(android.graphics.drawable.Drawable)
     92:93:public com.actionbarsherlock.view.MenuItem setIntent(android.content.Intent)
     98:98:public android.content.Intent getIntent()
@@ -1929,7 +1919,6 @@ com.actionbarsherlock.view.MenuItem:
     public abstract com.actionbarsherlock.view.MenuItem setTitle(java.lang.CharSequence)
     public abstract com.actionbarsherlock.view.MenuItem setTitle(int)
     public abstract java.lang.CharSequence getTitle()
-    public abstract java.lang.CharSequence getTitleCondensed()
     public abstract com.actionbarsherlock.view.MenuItem setIcon(android.graphics.drawable.Drawable)
     public abstract com.actionbarsherlock.view.MenuItem setIntent(android.content.Intent)
     public abstract android.content.Intent getIntent()
@@ -2860,7 +2849,6 @@ com.google.android.gms.maps.GoogleMap:
     public static final int MAP_TYPE_SATELLITE
     public static final int MAP_TYPE_TERRAIN
     public static final int MAP_TYPE_HYBRID
-    private com.google.android.gms.maps.UiSettings eU
     public final float getMaxZoomLevel()
     public final float getMinZoomLevel()
     public final void animateCamera(com.google.android.gms.maps.CameraUpdate,com.google.android.gms.maps.GoogleMap$CancelableCallback)
@@ -2879,7 +2867,6 @@ com.google.android.gms.maps.GoogleMap:
     public final boolean setIndoorEnabled(boolean)
     public final boolean isMyLocationEnabled()
     public final void setLocationSource(com.google.android.gms.maps.LocationSource)
-    public final com.google.android.gms.maps.UiSettings getUiSettings()
     public final void setOnMapClickListener(com.google.android.gms.maps.GoogleMap$OnMapClickListener)
     public final void setOnMapLongClickListener(com.google.android.gms.maps.GoogleMap$OnMapLongClickListener)
     public final void setOnMarkerDragListener(com.google.android.gms.maps.GoogleMap$OnMarkerDragListener)
@@ -2926,7 +2913,21 @@ com.google.android.gms.maps.Projection:
 com.google.android.gms.maps.SupportMapFragment:
     public static com.google.android.gms.maps.SupportMapFragment newInstance()
     public static com.google.android.gms.maps.SupportMapFragment newInstance(com.google.android.gms.maps.GoogleMapOptions)
-com.google.android.gms.maps.UiSettings
+com.google.android.gms.maps.UiSettings:
+    public void setZoomControlsEnabled(boolean)
+    public void setMyLocationButtonEnabled(boolean)
+    public void setScrollGesturesEnabled(boolean)
+    public void setZoomGesturesEnabled(boolean)
+    public void setTiltGesturesEnabled(boolean)
+    public void setRotateGesturesEnabled(boolean)
+    public void setAllGesturesEnabled(boolean)
+    public boolean isZoomControlsEnabled()
+    public boolean isCompassEnabled()
+    public boolean isMyLocationButtonEnabled()
+    public boolean isScrollGesturesEnabled()
+    public boolean isZoomGesturesEnabled()
+    public boolean isTiltGesturesEnabled()
+    public boolean isRotateGesturesEnabled()
 com.google.android.gms.maps.internal.ILocationSourceDelegate$a:
     public ILocationSourceDelegate$a()
 com.google.android.gms.maps.model.BitmapDescriptorFactory:
@@ -4270,20 +4271,17 @@ com.google.api.services.drive.model.CommentList
 com.google.api.services.drive.model.CommentReply
 com.google.api.services.drive.model.CommentReplyList
 com.google.api.services.drive.model.File:
-    367:367:public java.lang.String getAlternateLink()
     375:376:public com.google.api.services.drive.model.File setAlternateLink(java.lang.String)
     384:384:public java.lang.Boolean getAppDataContents()
     392:393:public com.google.api.services.drive.model.File setAppDataContents(java.lang.Boolean)
     401:401:public com.google.api.client.util.DateTime getCreatedDate()
     409:410:public com.google.api.services.drive.model.File setCreatedDate(com.google.api.client.util.DateTime)
-    419:419:public java.lang.String getDefaultOpenWithLink()
     428:429:public com.google.api.services.drive.model.File setDefaultOpenWithLink(java.lang.String)
     437:437:public java.lang.String getDescription()
     445:446:public com.google.api.services.drive.model.File setDescription(java.lang.String)
     464:465:public com.google.api.services.drive.model.File setDownloadUrl(java.lang.String)
     473:473:public java.lang.Boolean getEditable()
     481:482:public com.google.api.services.drive.model.File setEditable(java.lang.Boolean)
-    490:490:public java.lang.String getEmbedLink()
     498:499:public com.google.api.services.drive.model.File setEmbedLink(java.lang.String)
     507:507:public java.lang.String getEtag()
     515:516:public com.google.api.services.drive.model.File setEtag(java.lang.String)
@@ -4295,7 +4293,6 @@ com.google.api.services.drive.model.File:
     572:573:public com.google.api.services.drive.model.File setFileExtension(java.lang.String)
     581:581:public java.lang.Long getFileSize()
     589:590:public com.google.api.services.drive.model.File setFileSize(java.lang.Long)
-    598:598:public java.lang.String getIconLink()
     606:607:public com.google.api.services.drive.model.File setIconLink(java.lang.String)
     615:615:public java.lang.String getId()
     623:624:public com.google.api.services.drive.model.File setId(java.lang.String)
@@ -4332,7 +4329,6 @@ com.google.api.services.drive.model.File:
     917:918:public com.google.api.services.drive.model.File setParents(java.util.List)
     926:926:public java.lang.Long getQuotaBytesUsed()
     934:935:public com.google.api.services.drive.model.File setQuotaBytesUsed(java.lang.Long)
-    943:943:public java.lang.String getSelfLink()
     951:952:public com.google.api.services.drive.model.File setSelfLink(java.lang.String)
     960:960:public java.lang.Boolean getShared()
     968:969:public com.google.api.services.drive.model.File setShared(java.lang.Boolean)
@@ -4345,9 +4341,7 @@ com.google.api.services.drive.model.File:
     1030:1030:public java.lang.String getTitle()
     1047:1047:public com.google.api.services.drive.model.Permission getUserPermission()
     1055:1056:public com.google.api.services.drive.model.File setUserPermission(com.google.api.services.drive.model.Permission)
-    1066:1066:public java.lang.String getWebContentLink()
     1076:1077:public com.google.api.services.drive.model.File setWebContentLink(java.lang.String)
-    1086:1086:public java.lang.String getWebViewLink()
     1095:1096:public com.google.api.services.drive.model.File setWebViewLink(java.lang.String)
     1104:1104:public java.lang.Boolean getWritersCanShare()
     1112:1113:public com.google.api.services.drive.model.File setWritersCanShare(java.lang.Boolean)
@@ -4658,12 +4652,12 @@ com.miracleas.camera.PhotoGoogleDriveActivity:
     static final int CAPTURE_IMAGE
     static final java.lang.String AUTH_TOKEN
     private static final java.lang.String CACHE_DIR
-    189:230:private void saveFileToDrive()
-    239:247:public void showToast(java.lang.String)
-    401:401:public int getPlaceHolderRessource()
-    407:409:public void setImageFadeIn(boolean)
-    428:430:public void setContext(android.content.Context)
-    64:64:static synthetic com.google.api.services.drive.Drive access$4()
+    193:235:private void saveFileToDrive()
+    244:252:public void showToast(java.lang.String)
+    399:399:public int getPlaceHolderRessource()
+    405:407:public void setImageFadeIn(boolean)
+    426:428:public void setContext(android.content.Context)
+    65:65:static synthetic com.google.api.services.drive.Drive access$3()
 com.miracleas.camera.PhotoGoogleDriveActivity$3
 com.miracleas.camera.PhotoGoogleDriveActivity$4
 com.miracleas.camera.PhotoIntentActivity
@@ -4781,23 +4775,28 @@ com.miracleas.imagedownloader.Utils:
     33:35:private Utils()
     40:53:public static void enableStrictMode()
 com.miracleas.minrute.BuildConfig
+com.miracleas.minrute.ChooseOriginDestActivity:
+    private static final java.lang.String STATE_SELECTED_NAVIGATION_ITEM
+    android.support.v4.view.ViewPager mViewPager
 com.miracleas.minrute.ChooseOriginDestFragment:
-    60:63:public static com.miracleas.minrute.ChooseOriginDestFragment createInstance()
-    383:393:private void onAddressSelected2(boolean)
-com.miracleas.minrute.ChooseOriginDestFragment$LoadTrips:
-    330:330:private ChooseOriginDestFragment$LoadTrips(com.miracleas.minrute.ChooseOriginDestFragment)
+    55:55:static synthetic com.miracleas.minrute.net.TripFetcher access$2(com.miracleas.minrute.ChooseOriginDestFragment)
+com.miracleas.minrute.ChooseOriginDestFragment$LoadTrips
 com.miracleas.minrute.ChooseOriginDestFragmentBase:
     protected static final int THRESHOLD
     android.widget.ArrayAdapter adapter
 com.miracleas.minrute.ChooseOriginDestFragmentBase$AutoCompleteAddressAdapter:
-    465:480:public int getPosition(java.lang.String)
+    454:460:public java.lang.String getY(int)
+    465:471:public java.lang.String getX(int)
+    476:482:public java.lang.String getAddress(int)
+    487:493:public java.lang.String getId(int)
+    498:514:public int getPosition(java.lang.String)
 com.miracleas.minrute.ChooseOriginDestFragmentContactsBase
 com.miracleas.minrute.ChooseOriginDestFragmentContactsBase$AutoCompleteContactsAdapter
 com.miracleas.minrute.ChooseOriginDestFragmentContactsBase$ImageLoader
 com.miracleas.minrute.ChooseOriginDestFragmentContactsBase$LoadContactAddress
 com.miracleas.minrute.ChooseOriginDestFragmentContactsBase$LoadContactRun
 com.miracleas.minrute.GeofenceActivity:
-    206:241:public void removeGeofences(java.util.List)
+    169:200:public void removeAllGeofences()
 com.miracleas.minrute.GoogleServiceActivity:
     private static final int CONNECTION_FAILURE_RESOLUTION_REQUEST
 com.miracleas.minrute.LoaderConstants
@@ -4819,20 +4818,18 @@ com.miracleas.minrute.R$string
 com.miracleas.minrute.R$style
 com.miracleas.minrute.R$styleable
 com.miracleas.minrute.TripGuideActivity:
-    226:226:public int getPlaceHolderRessource()
-    232:234:public void setImageFadeIn(boolean)
-    253:255:public void setContext(android.content.Context)
+    235:235:public int getPlaceHolderRessource()
+    241:243:public void setImageFadeIn(boolean)
+    262:264:public void setContext(android.content.Context)
 com.miracleas.minrute.TripLegDetailNotesDialog:
     private android.content.Context cxt
 com.miracleas.minrute.TripLegMapFragment:
-    528:534:public static java.lang.String getFormatedValue(double,int)
-    539:540:public void setLocation(android.location.Location)
+    534:540:public static java.lang.String getFormatedValue(double,int)
+    545:546:public void setLocation(android.location.Location)
 com.miracleas.minrute.TripLegMapFragment$LegStop:
-    481:489:public java.lang.String getDistance()
+    487:495:public java.lang.String getDistance()
 com.miracleas.minrute.TripStopDetailsDepartureBoardFragment$TripAdapter:
-    194:200:public java.lang.String getRef(int)
-com.miracleas.minrute.TripStopDetailsFragment:
-    private static final int LOAD_TOILET
+    193:199:public java.lang.String getRef(int)
 com.miracleas.minrute.TripStopDetailsImagePagerActivity:
     private static final java.lang.String CACHE_DIR
     public static final java.lang.String EXTRA_IMAGE_POSITION
@@ -4842,17 +4839,37 @@ com.miracleas.minrute.TripStopDetailsImagePagerFragmentItem:
     private static final java.lang.String IMAGE_DATA_EXTRA
 com.miracleas.minrute.TripStopDetailsImagesFragment:
     private static final int LOAD_TOILET_IMAGES
-    251:267:public void resetLoader(android.os.Bundle)
+    257:273:private void resetLoader(android.os.Bundle)
 com.miracleas.minrute.TripSuggestionsFragment$TripAdapter:
     private int iArrivalInTime
     private int iDurationIC
-com.miracleas.minrute.model.AddressSearch
+com.miracleas.minrute.model.AddressSearch:
+    public static final int TYPE_STATION_STOP
+    public static final int TYPE_ADRESSE
+    public java.lang.String value
+    public java.lang.String latitude
+    public java.lang.String longitude
+    public java.lang.String u
+    public java.lang.String l
+    public java.lang.String b
+    public java.lang.String p
+    public java.lang.String extId
+    public java.lang.String typeStr
+    public java.lang.String state
+    public java.lang.String prodClass
+    public java.lang.String weight
+com.miracleas.minrute.model.GeofenceHelper:
+    public static final java.lang.String LEG_ID_WITH_STOP_ID
+    public static final java.lang.String LEG_ID
+    public static final java.lang.String DELIMITER
 com.miracleas.minrute.model.JourneyDetail:
     public int routeIdXfrom
     public int routeIdXto
 com.miracleas.minrute.model.NearbyLocationRequest:
-    41:41:public boolean hasGPSChoords()
-    46:46:public boolean hasLocationName()
+    46:46:public boolean hasGPSChoords()
+    51:51:public boolean hasLocationName()
+    56:56:public double getLat()
+    62:62:public double getLng()
 com.miracleas.minrute.model.StopDeparture:
     public java.lang.String stopId
 com.miracleas.minrute.model.Trip:
@@ -4872,16 +4889,35 @@ com.miracleas.minrute.model.TripLeg:
     public static final java.lang.String TYPE_EXB
     public static final java.lang.String TYPE_TB
     public java.lang.String updated
-    123:128:public long getDeparturesIn()
-    143:148:public long getArrivesIn()
-    153:160:private android.text.format.Time getTime(java.lang.String)
+    145:150:public long getCalculatedDeparturesIn()
+    165:170:public long getArrivesIn()
+    175:182:private android.text.format.Time getTime(java.lang.String)
 com.miracleas.minrute.model.TripRequest:
     172:187:public void setViaId(java.lang.String)
     218:219:public void setUseTog(int)
     226:227:public void setUseBus(int)
     234:235:public void setUseMetro(int)
+com.miracleas.minrute.model.VoiceState:
+    private static final long TEN_MINUTES
+    private static final long FIFTEEN_MINUTES
+    private static final long TWENTY_MINUTES
+    private static final long ONE_MINUTE
+    private static final long TEN_SECONDS
+    public static final long THIRTY_SECONDS
+    public static final long ONE_MINUTE_MINUS
+    private static final long ONE_MINUTE_FIFTY_SEC
+    private static final long FIFTY_SEC
+    public static final long TWENTY_SECONDS
+    public abstract java.lang.String startUsingNextTransportIn()
+com.miracleas.minrute.model.VoiceStateBus:
+    38:42:public java.lang.String startUsingNextTransportIn()
+com.miracleas.minrute.model.VoiceStateTrain:
+    39:43:public java.lang.String startUsingNextTransportIn()
+com.miracleas.minrute.model.VoiceStateWalk:
+    59:59:public java.lang.String startUsingNextTransportIn()
 com.miracleas.minrute.net.AddressFetcher:
     public static final java.lang.String URL
+    public static final int MAX
 com.miracleas.minrute.net.AddressToGPSFetcher:
     private static final java.lang.String URL
 com.miracleas.minrute.net.BaseFetcher:
@@ -4913,13 +4949,13 @@ com.miracleas.minrute.net.DepartureBoardFetcher:
     public static final java.lang.String URL
 com.miracleas.minrute.net.JourneyDetailFetcher:
     public static final java.lang.String URL
-    181:181:public java.util.ArrayList getDbOperations()
-    186:187:public void addContentProviderOperations(java.util.ArrayList)
+    180:181:public void addContentProviderOperations(java.util.ArrayList)
 com.miracleas.minrute.net.StopsNearbyFetcher:
     public static final java.lang.String URL
 com.miracleas.minrute.net.TripFetcher:
     public static final java.lang.String URL
     public static final java.lang.String TRIP_REQUEST
+    215:236:private void saveGoogleStreetViewImage(java.lang.String)
 com.miracleas.minrute.net.Utils
 com.miracleas.minrute.provider.AddressGPSMetaData:
     public static final java.lang.String PROVIDER_NAME
@@ -4957,6 +4993,25 @@ com.miracleas.minrute.provider.AddressProviderMetaData$TableMetaData:
     public static final java.lang.String id
     public static final java.lang.String updated
     36:38:private AddressProviderMetaData$TableMetaData()
+com.miracleas.minrute.provider.GeofenceMetaData:
+    public static final java.lang.String PROVIDER_NAME
+    public static final java.lang.String PACKAGE_NAME
+    public static final java.lang.String AUTHORITY
+    public static final java.lang.String COLLECTION_TYPE
+    public static final java.lang.String ITEM_TYPE
+    public static final java.lang.String TABLE_NAME
+    15:17:private GeofenceMetaData()
+com.miracleas.minrute.provider.GeofenceMetaData$TableMetaData:
+    public static final java.lang.String CONTENT_TYPE
+    public static final java.lang.String CONTENT_ITEM_TYPE
+    public static final java.lang.String geofence_id
+    public static final java.lang.String updated
+    public static final java.lang.String LAT
+    public static final java.lang.String LNG
+    public static final java.lang.String TRIP_ID
+    public static final java.lang.String RADIUS
+    public static final java.lang.String TRANSITION_TYPE
+    35:37:private GeofenceMetaData$TableMetaData()
 com.miracleas.minrute.provider.GeofenceTransitionMetaData:
     public static final java.lang.String PROVIDER_NAME
     public static final java.lang.String PACKAGE_NAME
@@ -4969,78 +5024,42 @@ com.miracleas.minrute.provider.GeofenceTransitionMetaData$TableMetaData:
     public static final java.lang.String CONTENT_TYPE
     public static final java.lang.String CONTENT_ITEM_TYPE
     public static final java.lang.String GEOFENCE_TRANSITION_TYPE
-    public static final java.lang.String TRIP_LEG_ID
+    public static final java.lang.String GEOFENCE_ID
     public static final java.lang.String updated
     31:33:private GeofenceTransitionMetaData$TableMetaData()
-com.miracleas.minrute.provider.JourneyDetailMetaData:
+com.miracleas.minrute.provider.MinBusTurProvider:
+    public static final java.lang.String DATABASE_NAME
+    public static final int DATABASE_VERSION
+    private static final int INCOMING_ADDRESS_COLLECTION_URI_INDICATOR
+    private static final int INCOMING_SINGLE_ADDRESS_URI_INDICATOR
+    private static final int INCOMING_TRIP_COLLECTION_URI_INDICATOR
+    private static final int INCOMING_SINGLE_TRIP_URI_INDICATOR
+    private static final int INCOMING_TRIPLEG_COLLECTION_URI_INDICATOR
+    private static final int INCOMING_SINGLE_TRIPLEG_URI_INDICATOR
+    private static final int INCOMING_JOURNEY_DETAIL_COLLECTION_URI_INDICATOR
+    private static final int INCOMING_SINGLE_JOURNEY_DETAIL_URI_INDICATOR
+    private static final int INCOMING_JOURNEY_DETAIL_STOP_COLLECTION_URI_INDICATOR
+    private static final int INCOMING_SINGLE_JOURNEY_DETAIL_STOP_URI_INDICATOR
+    private static final int INCOMING_JOURNEY_DETAIL_NOTE_COLLECTION_URI_INDICATOR
+    private static final int INCOMING_STOP_IMAGE_COLLECTION_URI_INDICATOR
+    private static final int INCOMING_SINGLE_STOP_IMAGE_URI_INDICATOR
+    private static final int INCOMING_STOP_DEPARTURES_COLLECTION_URI_INDICATOR
+    private static final int INCOMING_TRIP_VOICE_COLLECTION_URI_INDICATOR
+    private static final int INCOMING_SINGLE_TRIP_VOICE_URI_INDICATOR
+    private static final int INCOMING_ADDRESS_GPS_COLLECTION_URI_INDICATOR
+    private static final int INCOMING_TRIP_LEG_ADDRESS_GPS_JOIN_URI_INDICATOR
+    private static final int INCOMING_TRIPLEG_IMAGES_COLLECTION_URI_INDICATOR
+    private static final int INCOMING_GEOFENCE_COLLECTION_URI_INDICATOR
+    private static final int INCOMING_SINGLE_GEOFENCE_URI_INDICATOR
+com.miracleas.minrute.provider.StopImagesMetaData:
     public static final java.lang.String PROVIDER_NAME
     public static final java.lang.String PACKAGE_NAME
     public static final java.lang.String AUTHORITY
     public static final java.lang.String COLLECTION_TYPE
     public static final java.lang.String ITEM_TYPE
     public static final java.lang.String TABLE_NAME
-    15:17:private JourneyDetailMetaData()
-com.miracleas.minrute.provider.JourneyDetailMetaData$TableMetaData:
-    public static final java.lang.String CONTENT_TYPE
-    public static final java.lang.String CONTENT_ITEM_TYPE
-    public static final java.lang.String NAME
-    public static final java.lang.String NAME_ROUTE_ID_X_FROM
-    public static final java.lang.String NAME_ROUTE_ID_X_TO
-    public static final java.lang.String TYPE
-    public static final java.lang.String TYPE_ROUTE_ID_X_FROM
-    public static final java.lang.String TYPE_ROUTE_ID_X_TO
-    public static final java.lang.String REF
-    public static final java.lang.String TRIP_ID
-    public static final java.lang.String LEG_ID
-    public static final java.lang.String COUNT_OF_STOPS
-    41:43:private JourneyDetailMetaData$TableMetaData()
-com.miracleas.minrute.provider.JourneyDetailNoteMetaData:
-    public static final java.lang.String PROVIDER_NAME
-    public static final java.lang.String PACKAGE_NAME
-    public static final java.lang.String AUTHORITY
-    public static final java.lang.String COLLECTION_TYPE
-    public static final java.lang.String ITEM_TYPE
-    public static final java.lang.String TABLE_NAME
-    15:17:private JourneyDetailNoteMetaData()
-com.miracleas.minrute.provider.JourneyDetailNoteMetaData$TableMetaData:
-    public static final java.lang.String CONTENT_TYPE
-    public static final java.lang.String CONTENT_ITEM_TYPE
-    public static final java.lang.String NOTE
-    public static final java.lang.String JOURNEY_DETAIL_ID
-    public static final java.lang.String ROUTE_ID_X_FROM
-    public static final java.lang.String ROUTE_ID_X_TO
-    35:37:private JourneyDetailNoteMetaData$TableMetaData()
-com.miracleas.minrute.provider.JourneyDetailStopDeparturesMetaData:
-    public static final java.lang.String PROVIDER_NAME
-    public static final java.lang.String PACKAGE_NAME
-    public static final java.lang.String AUTHORITY
-    public static final java.lang.String COLLECTION_TYPE
-    public static final java.lang.String ITEM_TYPE
-    public static final java.lang.String TABLE_NAME
-    15:17:private JourneyDetailStopDeparturesMetaData()
-com.miracleas.minrute.provider.JourneyDetailStopDeparturesMetaData$TableMetaData:
-    public static final java.lang.String CONTENT_TYPE
-    public static final java.lang.String CONTENT_ITEM_TYPE
-    public static final java.lang.String STOP_ID
-    public static final java.lang.String NAME
-    public static final java.lang.String TYPE
-    public static final java.lang.String STOP
-    public static final java.lang.String TIME
-    public static final java.lang.String DATE
-    public static final java.lang.String DIRECTION
-    public static final java.lang.String REF
-    public static final java.lang.String UPDATED
-    public static final java.lang.String STOP_SEARCH_ID
-    40:42:private JourneyDetailStopDeparturesMetaData$TableMetaData()
-com.miracleas.minrute.provider.JourneyDetailStopImagesMetaData:
-    public static final java.lang.String PROVIDER_NAME
-    public static final java.lang.String PACKAGE_NAME
-    public static final java.lang.String AUTHORITY
-    public static final java.lang.String COLLECTION_TYPE
-    public static final java.lang.String ITEM_TYPE
-    public static final java.lang.String TABLE_NAME
-    15:17:private JourneyDetailStopImagesMetaData()
-com.miracleas.minrute.provider.JourneyDetailStopImagesMetaData$TableMetaData:
+    15:17:private StopImagesMetaData()
+com.miracleas.minrute.provider.StopImagesMetaData$TableMetaData:
     public static final java.lang.String CONTENT_TYPE
     public static final java.lang.String CONTENT_ITEM_TYPE
     public static final java.lang.String URL
@@ -5055,16 +5074,78 @@ com.miracleas.minrute.provider.JourneyDetailStopImagesMetaData$TableMetaData:
     public static final java.lang.String STOP_NAME
     public static final java.lang.String IS_GOOGLE_STREET_LAT_LNG
     public static final java.lang.String IS_GOOGLE_STREET_NAME_SEARCH
-    43:45:private JourneyDetailStopImagesMetaData$TableMetaData()
-com.miracleas.minrute.provider.JourneyDetailStopMetaData:
+    public static final java.lang.String TRANSPORT_DIRECTION
+    public static final java.lang.String TRANSPORT_TYPE
+    46:48:private StopImagesMetaData$TableMetaData()
+com.miracleas.minrute.provider.TripLegDetailMetaData:
     public static final java.lang.String PROVIDER_NAME
     public static final java.lang.String PACKAGE_NAME
     public static final java.lang.String AUTHORITY
     public static final java.lang.String COLLECTION_TYPE
     public static final java.lang.String ITEM_TYPE
     public static final java.lang.String TABLE_NAME
-    15:17:private JourneyDetailStopMetaData()
-com.miracleas.minrute.provider.JourneyDetailStopMetaData$TableMetaData:
+    15:17:private TripLegDetailMetaData()
+com.miracleas.minrute.provider.TripLegDetailMetaData$TableMetaData:
+    public static final java.lang.String CONTENT_TYPE
+    public static final java.lang.String CONTENT_ITEM_TYPE
+    public static final java.lang.String NAME
+    public static final java.lang.String NAME_ROUTE_ID_X_FROM
+    public static final java.lang.String NAME_ROUTE_ID_X_TO
+    public static final java.lang.String TYPE
+    public static final java.lang.String TYPE_ROUTE_ID_X_FROM
+    public static final java.lang.String TYPE_ROUTE_ID_X_TO
+    public static final java.lang.String REF
+    public static final java.lang.String TRIP_ID
+    public static final java.lang.String LEG_ID
+    public static final java.lang.String COUNT_OF_STOPS
+    41:43:private TripLegDetailMetaData$TableMetaData()
+com.miracleas.minrute.provider.TripLegDetailNoteMetaData:
+    public static final java.lang.String PROVIDER_NAME
+    public static final java.lang.String PACKAGE_NAME
+    public static final java.lang.String AUTHORITY
+    public static final java.lang.String COLLECTION_TYPE
+    public static final java.lang.String ITEM_TYPE
+    public static final java.lang.String TABLE_NAME
+    15:17:private TripLegDetailNoteMetaData()
+com.miracleas.minrute.provider.TripLegDetailNoteMetaData$TableMetaData:
+    public static final java.lang.String CONTENT_TYPE
+    public static final java.lang.String CONTENT_ITEM_TYPE
+    public static final java.lang.String NOTE
+    public static final java.lang.String JOURNEY_DETAIL_ID
+    public static final java.lang.String ROUTE_ID_X_FROM
+    public static final java.lang.String ROUTE_ID_X_TO
+    35:37:private TripLegDetailNoteMetaData$TableMetaData()
+com.miracleas.minrute.provider.TripLegDetailStopDeparturesMetaData:
+    public static final java.lang.String PROVIDER_NAME
+    public static final java.lang.String PACKAGE_NAME
+    public static final java.lang.String AUTHORITY
+    public static final java.lang.String COLLECTION_TYPE
+    public static final java.lang.String ITEM_TYPE
+    public static final java.lang.String TABLE_NAME
+    15:17:private TripLegDetailStopDeparturesMetaData()
+com.miracleas.minrute.provider.TripLegDetailStopDeparturesMetaData$TableMetaData:
+    public static final java.lang.String CONTENT_TYPE
+    public static final java.lang.String CONTENT_ITEM_TYPE
+    public static final java.lang.String STOP_ID
+    public static final java.lang.String NAME
+    public static final java.lang.String TYPE
+    public static final java.lang.String STOP
+    public static final java.lang.String TIME
+    public static final java.lang.String DATE
+    public static final java.lang.String DIRECTION
+    public static final java.lang.String REF
+    public static final java.lang.String UPDATED
+    public static final java.lang.String STOP_SEARCH_ID
+    40:42:private TripLegDetailStopDeparturesMetaData$TableMetaData()
+com.miracleas.minrute.provider.TripLegDetailStopMetaData:
+    public static final java.lang.String PROVIDER_NAME
+    public static final java.lang.String PACKAGE_NAME
+    public static final java.lang.String AUTHORITY
+    public static final java.lang.String COLLECTION_TYPE
+    public static final java.lang.String ITEM_TYPE
+    public static final java.lang.String TABLE_NAME
+    15:17:private TripLegDetailStopMetaData()
+com.miracleas.minrute.provider.TripLegDetailStopMetaData$TableMetaData:
     public static final java.lang.String CONTENT_TYPE
     public static final java.lang.String CONTENT_ITEM_TYPE
     public static final java.lang.String NAME
@@ -5085,53 +5166,7 @@ com.miracleas.minrute.provider.JourneyDetailStopMetaData$TableMetaData:
     public static final java.lang.String RT_ARR_DATE
     public static final java.lang.String IS_PART_OF_USER_ROUTE
     public static final java.lang.String SEARCH_ID
-    48:50:private JourneyDetailStopMetaData$TableMetaData()
-com.miracleas.minrute.provider.MinBusTurProvider:
-    public static final java.lang.String DATABASE_NAME
-    public static final int DATABASE_VERSION
-    private static final int INCOMING_ADDRESS_COLLECTION_URI_INDICATOR
-    private static final int INCOMING_SINGLE_ADDRESS_URI_INDICATOR
-    private static final int INCOMING_TRIP_COLLECTION_URI_INDICATOR
-    private static final int INCOMING_SINGLE_TRIP_URI_INDICATOR
-    private static final int INCOMING_TRIPLEG_COLLECTION_URI_INDICATOR
-    private static final int INCOMING_SINGLE_TRIPLEG_URI_INDICATOR
-    private static final int INCOMING_WAYPOINT_IMG_COLLECTION_URI_INDICATOR
-    private static final int INCOMING_SINGLE_WAYPOINT_IMG_URI_INDICATOR
-    private static final int INCOMING_JOURNEY_DETAIL_COLLECTION_URI_INDICATOR
-    private static final int INCOMING_SINGLE_JOURNEY_DETAIL_URI_INDICATOR
-    private static final int INCOMING_JOURNEY_DETAIL_STOP_COLLECTION_URI_INDICATOR
-    private static final int INCOMING_SINGLE_JOURNEY_DETAIL_STOP_URI_INDICATOR
-    private static final int INCOMING_JOURNEY_DETAIL_NOTE_COLLECTION_URI_INDICATOR
-    private static final int INCOMING_STOP_IMAGE_COLLECTION_URI_INDICATOR
-    private static final int INCOMING_SINGLE_STOP_IMAGE_URI_INDICATOR
-    private static final int INCOMING_STOP_DEPARTURES_COLLECTION_URI_INDICATOR
-    private static final int INCOMING_TRIP_VOICE_COLLECTION_URI_INDICATOR
-    private static final int INCOMING_SINGLE_TRIP_VOICE_URI_INDICATOR
-    private static final int INCOMING_ADDRESS_GPS_COLLECTION_URI_INDICATOR
-    private static final int INCOMING_TRIP_LEG_ADDRESS_GPS_JOIN_URI_INDICATOR
-    private static final int INCOMING_TRIPLEG_IMAGES_COLLECTION_URI_INDICATOR
-com.miracleas.minrute.provider.RouteMetaData
-com.miracleas.minrute.provider.RouteMetaData$TableMetaData
-com.miracleas.minrute.provider.RouteWaypointMetaData
-com.miracleas.minrute.provider.RouteWaypointMetaData$TableMetaData
-com.miracleas.minrute.provider.TripLegImageMetaData:
-    public static final java.lang.String PROVIDER_NAME
-    public static final java.lang.String PACKAGE_NAME
-    public static final java.lang.String AUTHORITY
-    public static final java.lang.String COLLECTION_TYPE
-    public static final java.lang.String ITEM_TYPE
-    public static final java.lang.String TABLE_NAME
-    15:17:private TripLegImageMetaData()
-com.miracleas.minrute.provider.TripLegImageMetaData$TableMetaData:
-    public static final java.lang.String CONTENT_TYPE
-    public static final java.lang.String CONTENT_ITEM_TYPE
-    public static final java.lang.String waypoint_url
-    public static final java.lang.String waypoint_id
-    public static final java.lang.String address
-    public static final java.lang.String lat
-    public static final java.lang.String lng
-    public static final java.lang.String updated
-    34:36:private TripLegImageMetaData$TableMetaData()
+    48:50:private TripLegDetailStopMetaData$TableMetaData()
 com.miracleas.minrute.provider.TripLegMetaData:
     public static final java.lang.String PROVIDER_NAME
     public static final java.lang.String PACKAGE_NAME
@@ -5164,7 +5199,7 @@ com.miracleas.minrute.provider.TripLegMetaData$TableMetaData:
     public static final java.lang.String DURATION_FORMATTED
     public static final java.lang.String PROGRESS_BAR_PROGRESS
     public static final java.lang.String PROGRESS_BAR_MAX
-    public static final java.lang.String DEPARTURES_IN_TIME_LABEL
+    public static final java.lang.String DEPARTURES_IN_TIME_LONG
     public static final java.lang.String COMPLETED
     public static final java.lang.String GEOFENCE_EVENT_ID
     public static final java.lang.String ORIGIN_TRACK
@@ -5201,13 +5236,9 @@ com.miracleas.minrute.provider.TripMetaData$TableMetaData:
 com.miracleas.minrute.service.DepartureBoardsService:
     public static final java.lang.String REQUEST
     public static final java.lang.String STOP_ID
-com.miracleas.minrute.service.FetchGpsOnMissingAddressesService:
+com.miracleas.minrute.service.FetchGeofencesForStopBeforeService:
     public static final java.lang.String TRIP_ID
-com.miracleas.minrute.service.JourneyDetailsService:
-    public static final java.lang.String ADDRESS_ORIGIN
-    public static final java.lang.String ADDRESS_DEST
-    public static final java.lang.String URL
-    public static final java.lang.String LEG
+com.miracleas.minrute.service.FetchGpsOnMissingAddressesService:
     public static final java.lang.String TRIP_ID
 com.miracleas.minrute.service.LocationService:
     public static final int UPDATE_INTERVAL_IN_SECONDS
@@ -5217,22 +5248,13 @@ com.miracleas.minrute.service.LocationService:
     120:120:public android.location.Location getLastLocation()
     188:188:public com.miracleas.minrute.service.LocationService$OnNewLocationReceivedListener getOnNewLocationReceived()
 com.miracleas.minrute.service.RemoveGeofencesService:
-    14:15:public RemoveGeofencesService(java.lang.String)
+    17:18:public RemoveGeofencesService(java.lang.String)
 com.miracleas.minrute.service.UpdateVoiceTripService:
-    private static final long FOURTY_FIVE_MINUTES
-    private static final long ONE_HOUR_FOURTY_FIVE_MINUTES
-    private static final long TEN_MINUTES
-    private static final long FIFTEEN_MINUTES
-    private static final long FIVE_MINUTES
-    private static final long ONE_MINUTE
-    private static final long TWO_MINUTE
-    private static final long TWO_HOURS
-    private static final long TEN_SECONDS
-    private static final long TEN_SECONDS_MINUS
-    175:175:public java.lang.String getTextToSpeak()
-    180:181:public void setTextToSpeak(java.lang.String)
-    287:287:public java.lang.String getTripId()
-    292:293:public void setTripId(java.lang.String)
+    220:220:public java.lang.String getTextToSpeak()
+    225:226:public void setTextToSpeak(java.lang.String)
+    385:385:public java.lang.String getTripId()
+    390:391:public void setTripId(java.lang.String)
+    398:402:private void updateDepartureVoice()
 com.miracleas.minrute.utils.App:
     4:4:public App()
 com.miracleas.minrute.utils.DateHelper:
@@ -5257,7 +5279,8 @@ com.miracleas.minrute.utils.Utils:
     60:105:public static boolean copyFile(java.io.InputStream,java.io.File)
     127:142:public static void copyStream(java.io.InputStream,java.io.OutputStream)
     154:223:public static void getDisplayInfo(android.app.Activity,java.lang.String)
-com.miracleas.minrute.utils.ViewHelper
+com.miracleas.minrute.utils.ViewHelper:
+    7:7:public ViewHelper()
 javax.annotation.CheckForNull
 javax.annotation.CheckForSigned
 javax.annotation.CheckReturnValue

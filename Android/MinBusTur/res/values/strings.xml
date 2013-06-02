@@ -18,6 +18,7 @@
     <string name="startaddress">Startadresse</string>
 	<string name="destination_address">Slutadresse</string>
 	<string name="trip_request_address_not_valid"><xliff:g ID="address">%1$s</xliff:g> er ikke gyldig</string>
+    <string name="trip_request_time_error">Kunne ikke sætte tid, prøv igen</string>
 	
 	<string name="from_origin_to_dest">Fra <xliff:g ID="address">%1$s</xliff:g>\nTil <xliff:g ID="address">%2$s</xliff:g></string>
     
