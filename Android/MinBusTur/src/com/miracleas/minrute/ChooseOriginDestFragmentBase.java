@@ -105,6 +105,7 @@ public abstract class ChooseOriginDestFragmentBase extends SherlockFragment impl
 		mTripRequest.setDate(DateHelper.convertDateToString(c, DateHelper.formatterDateRejseplanen));
 		
 		mAutoCompleteTextViewFromAddress = (AutoCompleteTextView) rootView.findViewById(R.id.autoCompleteTextViewFrom);
+        mAutoCompleteTextViewFromAddress.setText("Asavej 2");
 		mAutoCompleteTextViewToAddress = (AutoCompleteTextView) rootView.findViewById(R.id.autoCompleteTextViewTo);
 		
 		mAutoCompleteTextViewFromAddress.setOnItemClickListener(new OnItemClickListener()

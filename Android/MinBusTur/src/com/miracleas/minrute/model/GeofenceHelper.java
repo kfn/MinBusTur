@@ -86,6 +86,10 @@ public class GeofenceHelper
 		{
 			radius = 180;
 		}
+        else if (typeOfTransport.equals(TripLeg.TYPE_BOAT))
+        {
+            radius = 280;
+        }
 		return radius;
 	}
 }

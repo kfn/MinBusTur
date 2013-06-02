@@ -12,6 +12,7 @@ public class Trip
 	private long durationWalk = 0;
 	private long durationBus = 0;
 	private long durationTrain = 0;
+    private long durationBoat = 0;
 	private StringBuilder names = new StringBuilder();
 	private StringBuilder types = new StringBuilder();
 	private int transportChanges;
@@ -103,11 +104,16 @@ public class Trip
 			transportChanges++;
 			durationTrain = durationTrain + leg.getCalculatedDuration();
 		}
+        else if(leg.type.equals(TripLeg.TYPE_BOAT))
+        {
+            transportChanges++;
+            durationBoat = durationBoat + leg.getCalculatedDuration();
+        }
 	}
 	
 	public long getTotalDuration()
 	{
-		return durationWalk + durationBus  + durationTrain;
+		return durationWalk + durationBus  + durationTrain + durationBoat;
 	}
 	
 	public long getDurationWalk()

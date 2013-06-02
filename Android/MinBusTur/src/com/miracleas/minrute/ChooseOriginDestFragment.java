@@ -304,15 +304,15 @@ public class ChooseOriginDestFragment extends ChooseOriginDestFragmentBase
 	private String getAddress(AutoCompleteTextView ac, String hint)
 	{
 		String address = null;
-		String currentText = ac.getText().toString();
-		String selectedText = ac.getHint().toString();
-		if(TextUtils.isEmpty(currentText))
+		String enteredText = ac.getText().toString();
+		String hintText = ac.getHint().toString();
+		if(!TextUtils.isEmpty(enteredText))
 		{
-			address = selectedText;
+			address = enteredText;
 		}
-		else if(!selectedText.equals(hint))
+		else if(!hintText.equals(hint))
 		{
-			address = currentText;
+			address = hintText;
 		}
 		if(TextUtils.isEmpty(address))
 		{
@@ -468,8 +468,17 @@ public class ChooseOriginDestFragment extends ChooseOriginDestFragmentBase
 		protected void onPostExecute(Void result)
 		{
 			mItemClicked = false;
-			
-			if(mTripRequest.destCoordNameNotEncoded.equals(mTripRequest.originCoordNameNotEncoded))
+			if(TextUtils.isEmpty(mTripRequest.originCoordNameNotEncoded))
+            {
+                Toast.makeText(getActivity(), String.format(getString(R.string.trip_request_address_not_valid), getString(R.string.startaddress)), Toast.LENGTH_SHORT).show();
+                validateAddress(mAutoCompleteTextViewFromAddress, mAutoCompleteAdapterFrom, mOrginAddress, mOriginAddresses, mSelectedIndexOriginAddress);
+            }
+            else if(TextUtils.isEmpty(mTripRequest.destCoordNameNotEncoded))
+            {
+                Toast.makeText(getActivity(), String.format(getString(R.string.trip_request_address_not_valid), getString(R.string.destination_address)), Toast.LENGTH_SHORT).show();
+                validateAddress(mAutoCompleteTextViewToAddress, mAutoCompleteAdapterTo, mDestAddress, mDestAddresses, mSelectedDestinationAddress);
+            }
+			else if(mTripRequest.destCoordNameNotEncoded.equals(mTripRequest.originCoordNameNotEncoded))
 			{
 				Toast.makeText(getActivity(), getString(R.string.start_end_must_not_be_equal), Toast.LENGTH_SHORT).show();
 			}
@@ -491,17 +500,18 @@ public class ChooseOriginDestFragment extends ChooseOriginDestFragmentBase
 		
 		private boolean validateAddress(AutoCompleteTextView auto, AutoCompleteAddressAdapter adapter, String address, List<AddressSearch> addresses, int selectedIndex)
 		{
-			boolean handled = false;
+			boolean valid = true;
 			if(selectedIndex==-1)
 			{
 				auto.requestFocus();
 				adapter.resetPreviousConstraint();
 				address = getNewSearchAddress(address);	
 				auto.setText(address);
+
 				auto.showDropDown();
-				handled = true;
+                valid = false;
 			}
-			return handled;
+			return valid;
 		}
 	}
 

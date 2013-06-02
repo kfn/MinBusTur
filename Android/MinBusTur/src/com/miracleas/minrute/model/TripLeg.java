@@ -26,6 +26,7 @@ public class TripLeg implements Parcelable
 	public static final String TYPE_REG = "REG";
 	public static final String TYPE_EXB = "EXB";
 	public static final String TYPE_TB = "TB";
+    public static final String TYPE_BOAT = "F";
 	
 	
 	public String tripId;
@@ -217,6 +218,10 @@ public class TripLeg implements Parcelable
 		{
 			icon = R.drawable.driving;
 		}
+        else if(type.equals(TripLeg.TYPE_BOAT))
+        {
+            icon = R.drawable.driving;
+        }
 		return icon;
 	}
 	
