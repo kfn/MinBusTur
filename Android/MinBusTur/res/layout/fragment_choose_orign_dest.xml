@@ -62,6 +62,8 @@
             android:layout_height="wrap_content"
             android:layout_weight="0.8"
             android:background="@drawable/spinner_background_holo_light1"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
             android:textSize="16sp" />
 
         <TextView

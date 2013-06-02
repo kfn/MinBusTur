@@ -22,4 +22,17 @@ public class AddressSearch
 	public String state;
 	public String prodClass;
 	public String weight;
+	
+	public AddressSearch(){}
+	public AddressSearch(String id, String address, String type, String xcoord, String ycoord)
+	{
+		super();
+		this.id = id;
+		this.address = address;
+		this.type = type;
+		this.xcoord = xcoord;
+		this.ycoord = ycoord;
+	}
+	
+	
 }

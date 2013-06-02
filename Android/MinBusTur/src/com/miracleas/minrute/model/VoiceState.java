@@ -11,6 +11,7 @@ public abstract class VoiceState
 	public static final String tag = VoiceState.class.getName();
 	private static final long TEN_MINUTES = DateUtils.MINUTE_IN_MILLIS * 10;
 	private static final long FIFTEEN_MINUTES = DateUtils.MINUTE_IN_MILLIS * 15;	
+	private static final long TWENTY_MINUTES = DateUtils.MINUTE_IN_MILLIS * 20;
 	private static final long ONE_MINUTE = DateUtils.MINUTE_IN_MILLIS;
 	private static final long TEN_SECONDS = DateUtils.SECOND_IN_MILLIS * 10;	
 	public static final long THIRTY_SECONDS = DateUtils.SECOND_IN_MILLIS * 30;
@@ -48,7 +49,11 @@ public abstract class VoiceState
 		{
 			tick = Long.MIN_VALUE;
 		}
-		
+		else if(departures>= TWENTY_MINUTES)
+		{
+			long temp = (mLeg.departureTime - FIFTEEN_MINUTES) - currentTime;
+			tick = temp;
+		}
 		else if(departures>= FIFTEEN_MINUTES)
 		{
 			long temp = (mLeg.departureTime - TEN_MINUTES) - currentTime;

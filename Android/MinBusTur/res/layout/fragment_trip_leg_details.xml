@@ -21,11 +21,11 @@
     <View
         android:id="@+id/border"
         android:layout_width="match_parent"
-        android:layout_height="1dp" android:layout_marginBottom="4dp"
+        android:layout_height="1dp" 
         android:layout_below="@+id/textViewJourneyName"
         android:background="@color/abs__background_holo_light" />
 
-    <FrameLayout
+    <FrameLayout android:layout_marginBottom="4dp"
         android:id="@+id/listContainer"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

@@ -13,7 +13,10 @@ import android.provider.ContactsContract;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.widget.CursorAdapter;
+import android.text.Spannable;
+import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
+import android.text.style.StyleSpan;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -30,6 +33,7 @@ import android.widget.ProgressBar;
 import android.widget.RadioButton;
 import android.widget.TextView;
 import android.widget.TimePicker;
+import android.widget.Toast;
 
 import com.actionbarsherlock.app.SherlockFragment;
 import com.miracleas.minrute.model.AddressSearch;
@@ -119,7 +123,8 @@ public abstract class ChooseOriginDestFragmentBase extends SherlockFragment impl
 			{
 				mSelectedAddressToPosition = position;
 				//mAutoCompleteTextViewToAddress.clearFocus();
-				mBtnFindRoute.requestFocus();
+				//mBtnFindRoute.requestFocus();
+				//mTextViewDate.requestFocus();
 				ViewHelper.hideKeyboard(getActivity(), mAutoCompleteTextViewToAddress);
 			}			
 		});
@@ -235,21 +240,32 @@ public abstract class ChooseOriginDestFragmentBase extends SherlockFragment impl
 	
 	public void onTimeSet(TimePicker view, int hourOfDay, int minute)
 	{
-		Calendar c = Calendar.getInstance();
-		c.set(Calendar.HOUR_OF_DAY, hourOfDay);
-		c.set(Calendar.MINUTE, minute);
-		mTextViewTime.setText(getTimeFormat(c));
-		mTripRequest.setTime(DateHelper.convertDateToString(c, DateHelper.formatterTime));
+		if(mTextViewTime!=null)
+		{
+			Calendar c = Calendar.getInstance();
+			c.set(Calendar.HOUR_OF_DAY, hourOfDay);
+			c.set(Calendar.MINUTE, minute);
+			mTextViewTime.setText(getTimeFormat(c));
+			mTripRequest.setTime(DateHelper.convertDateToString(c, DateHelper.formatterTime));
+		}
+		else
+		{
+			Toast.makeText(getActivity(), "Kunne ikke sætte tid. Prøv igen.", Toast.LENGTH_SHORT).show();
+		}
 	}
 	
 	public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth)
 	{
-		Calendar c = Calendar.getInstance();
-		c.set(Calendar.YEAR, year);
-		c.set(Calendar.MONTH, monthOfYear);
-		c.set(Calendar.DAY_OF_MONTH, dayOfMonth);		
-		mTextViewDate.setText(getDateFormat(c));
-		mTripRequest.setDate(DateHelper.convertDateToString(c, DateHelper.formatterDateRejseplanen));
+		if(mTextViewDate!=null)
+		{
+			Calendar c = Calendar.getInstance();
+			c.set(Calendar.YEAR, year);
+			c.set(Calendar.MONTH, monthOfYear);
+			c.set(Calendar.DAY_OF_MONTH, dayOfMonth);		
+			mTextViewDate.setText(getDateFormat(c));
+			mTripRequest.setDate(DateHelper.convertDateToString(c, DateHelper.formatterDateRejseplanen));
+		}
+		
 	}
 	
 	private String getDateFormat(Calendar c)
@@ -293,6 +309,7 @@ public abstract class ChooseOriginDestFragmentBase extends SherlockFragment impl
 		private CharSequence mPreviousConstraint = "";
 		private String mTag = null;
 		private int mLoaderId;
+		private String mEnteredAddress = null;
 		
 		public AutoCompleteAddressAdapter(Context context, Cursor c, int flags, final int loaderId, String tag1)
 		{
@@ -309,6 +326,7 @@ public abstract class ChooseOriginDestFragmentBase extends SherlockFragment impl
 					if (constraint == null)
 						return null;
 					constraint = constraint.toString().trim();
+					mEnteredAddress = constraint.toString();
 					if(!mPreviousConstraint.equals(constraint))
 					{
 						textChangedHelper(constraint, loaderId);
@@ -323,6 +341,11 @@ public abstract class ChooseOriginDestFragmentBase extends SherlockFragment impl
 				}
 			});
 			
+		}
+		
+		public void resetPreviousConstraint()
+		{
+			mPreviousConstraint = "";
 		}
 		
 		//you need to override this to return the string value when
@@ -367,13 +390,30 @@ public abstract class ChooseOriginDestFragmentBase extends SherlockFragment impl
 		public void bindView(View v, Context context, Cursor cursor)
 		{
 			TextView tv = (TextView) v;
-			tv.setText(cursor.getString(iAddress));
+			makeBoldText(tv, cursor.getString(iAddress));
 			int icon = getIcon(cursor.getInt(iType));
 			if (icon != -1)
 			{
 				tv.setCompoundDrawablesWithIntrinsicBounds(icon, 0, 0, 0);
 			}
-
+		}
+		
+		private void makeBoldText(TextView tv, String address)
+		{
+			if(address.contains(mEnteredAddress))
+			{
+				final SpannableStringBuilder sb = new SpannableStringBuilder(address);
+				
+		        final StyleSpan bss = new StyleSpan(android.graphics.Typeface.BOLD); // Span to make text bold
+		        int length = mEnteredAddress.length();
+		        sb.setSpan(bss, 0, length, Spannable.SPAN_INCLUSIVE_INCLUSIVE);  	       
+		        tv.setText(sb);
+			}
+			else
+			{
+				tv.setText(address);
+			}
+			
 		}
 
 		private int getIcon(int type)

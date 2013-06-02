@@ -45,6 +45,7 @@ public class TripSuggestionsFragment extends SherlockFragment implements LoaderC
 	
 	private ListView mListView = null;
 	private View mLoadingView = null;
+	private TextView mTextViewOriginDestNames = null;
 	
 	public static TripSuggestionsFragment createInstance(TripRequest tripRequest)
 	{
@@ -68,6 +69,7 @@ public class TripSuggestionsFragment extends SherlockFragment implements LoaderC
 	{
 		View v = inflater.inflate(R.layout.fragment_trip_suggestions, container, false);
 		mListView = (ListView)v.findViewById(android.R.id.list);
+		mTextViewOriginDestNames = (TextView)v.findViewById(R.id.textViewOriginDestNames);
 		setEmptyView(LayoutInflater.from(getActivity()).inflate(R.layout.empty_list_view_waiting, null));
 		return v;
 		
@@ -79,6 +81,9 @@ public class TripSuggestionsFragment extends SherlockFragment implements LoaderC
 		mTripAdapter = new TripAdapter(getActivity(), null, 0);
 		mListView.setAdapter(mTripAdapter);
 		mListView.setOnItemClickListener(this);		
+		TripRequest tripRequest = getArguments().getParcelable(TripRequest.tag);
+		mTextViewOriginDestNames.setText(String.format(getString(R.string.from_origin_to_dest), tripRequest.originCoordNameNotEncoded, tripRequest.destCoordNameNotEncoded));
+		
 		getLoaderManager().initLoader(LoaderConstants.LOAD_TRIP_SUGGESTIONS, null, this);
 	}
 

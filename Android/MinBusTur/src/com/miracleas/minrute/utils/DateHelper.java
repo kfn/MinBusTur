@@ -96,6 +96,11 @@ public class DateHelper
 				tempSecs = 0;
 			}
 			
+			if(tempSecs>20 && tempSecs < 40)
+			{
+				tempSecs = 30;
+			}
+			
 			if(tempMinutes==60)
 			{
 				tempMinutes = 0;

@@ -1,5 +1,8 @@
 package com.miracleas.minrute;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.ContentResolver;
@@ -47,12 +50,9 @@ public class ChooseOriginDestFragment extends ChooseOriginDestFragmentBase
 	
 	private LoadAddressesFromRun mLoadAddressesFromRun = null;
 	private LoadAddressesToRun mLoadAddressesToRun = null;
-	
-	private LoadTrips mLoadTrips = null;
+		
 	protected AddressFetcher mAddressFetcher = null;
 	private TripFetcher mTripFetcher = null;
-	private static boolean mIsLoadingAddresses = false;
-	private boolean mUpdateCursor = true;
 	private boolean mItemClicked = false;
 	
 
@@ -95,75 +95,6 @@ public class ChooseOriginDestFragment extends ChooseOriginDestFragmentBase
 		mAddressFetcher = new AddressFetcher(getActivity(), mDataUri);
 	}
 
-	/*@Override
-	public Loader<Cursor> onCreateLoader(int id, Bundle args)
-	{
-		if (id == LoaderConstants.LOADER_ADDRESS_FROM || id == LoaderConstants.LOADER_ADDRESS_TO)
-		{
-			String address = args.getString(AddressProviderMetaData.TableMetaData.address);
-			Log.d(tag, "create loader id " + id + ": " + address);
-			String[] selectionArgs = { address };
-			return new CursorLoader(getActivity(), AddressProviderMetaData.TableMetaData.CONTENT_URI, PROJECTION, null, selectionArgs, AddressProviderMetaData.TableMetaData.address + " LIMIT 20");
-		} else if (id == LoaderConstants.LOADER_TITLE_FROM || id == LoaderConstants.LOADER_TITLE_TO)
-		{
-			String name = args.getString(ContactsContract.Contacts.DISPLAY_NAME);
-			Log.d(tag, "create loader: " + name);
-			String selection = ContactsContract.Contacts.DISPLAY_NAME + " LIKE '%" + name + "%'";
-			String[] selectionArgs = null;// { name };
-			return new CursorLoader(getActivity(), ContactsContract.Contacts.CONTENT_URI, PROJECTION_CONTACTS, selection, null, null);
-		}
-		return null;
-	}*/
-
-	/*@Override
-	public void onLoadFinished(Loader<Cursor> loader, Cursor newCursor)
-	{
-		if (newCursor.isClosed())
-			return;
-		Log.d(tag, "onLoadFinished id Swap cursor");
-		int currentLoaderId = loader.getId();
-		int focusedLoader = getActiveLoader();
-		if (currentLoaderId != focusedLoader)
-		{
-			Log.d(tag, "ignored loader changed");
-		} else if (loader.getId() == LoaderConstants.LOADER_ADDRESS_FROM)
-		{
-			mAutoCompleteAdapterFrom.swapCursor(newCursor);
-			updateCursor(newCursor, mAutoCompleteTextViewFromAddress);
-		} else if (loader.getId() == LoaderConstants.LOADER_ADDRESS_TO)
-		{
-			mAutoCompleteAdapterTo.swapCursor(newCursor);
-			updateCursor(newCursor, mAutoCompleteTextViewToAddress);
-		} 
-	}*/
-
-	/*private void updateCursor(Cursor newCursor, AutoCompleteTextView a)
-	{
-
-		if (newCursor != null && newCursor.getCount() > 0)
-		{
-			if (!a.isPopupShowing())
-			{
-				a.showDropDown();
-				Log.d(tag, "showDropDown");
-			}
-		}
-
-	}*/
-
-	/*@Override
-	public void onLoaderReset(Loader<Cursor> loader)
-	{
-		if (loader.getId() == LoaderConstants.LOADER_ADDRESS_FROM)
-		{
-			mAutoCompleteAdapterFrom.swapCursor(null);
-		} else if (loader.getId() == LoaderConstants.LOADER_ADDRESS_TO)
-		{
-			mAutoCompleteAdapterTo.swapCursor(null);
-		} 
-	}*/
-	
-
 	@Override
 	public void textChangedHelper(CharSequence s, int loaderId)
 	{
@@ -194,17 +125,8 @@ public class ChooseOriginDestFragment extends ChooseOriginDestFragmentBase
 						mHandler.postDelayed(mLoadAddressesFromRun, 1000);
 					}
 				}
-
-
 			} 
-			/*else if (loaderId == LoaderConstants.LOADER_TITLE_FROM || loaderId == LoaderConstants.LOADER_TITLE_TO)
-			{
-				mHandler.removeCallbacks(mLoadContactRun);
-				mLoadContactRun = new LoadContactRun(value, loaderId);
-				mHandler.postDelayed(mLoadContactRun, 200);
-			}*/
 		}
-
 	}
 
 	private LoadAddresses mLoadAddresses = null;
@@ -264,10 +186,6 @@ public class ChooseOriginDestFragment extends ChooseOriginDestFragmentBase
 	{
 		private int mLoaderId = 0;
 		private String mAddress = null;
-		public void onPreExecute()
-		{
-			mIsLoadingAddresses = true;
-		}
 
 		LoadAddresses(int loaderId)
 		{
@@ -293,7 +211,6 @@ public class ChooseOriginDestFragment extends ChooseOriginDestFragmentBase
 
 		protected void onPostExecute(Void result)
 		{
-			mIsLoadingAddresses = false;
 			mLoadCount--;
 			getProgressBar(mLoaderId).setVisibility(View.GONE);
 			if(mLoaderId==LoaderConstants.LOADER_ADDRESS_FROM)
@@ -375,48 +292,43 @@ public class ChooseOriginDestFragment extends ChooseOriginDestFragmentBase
 		super.onClick(v);
 		if (v.getId() == R.id.btnFindRoute)
 		{		
-			onAddressSelected(mSelectedAddressFromPosition, mSelectedAddressToPosition);	
-			/*int posFrom = mSelectedAddressFromPosition;
-			int posTo = mSelectedAddressToPosition;
-			if(posFrom!=-1 && posTo!=-1)
+			String fromAddress = getAddress(mAutoCompleteTextViewFromAddress, getString(R.string.startaddress));
+			String toAddress = getAddress(mAutoCompleteTextViewToAddress, getString(R.string.destination_address));
+			if(!TextUtils.isEmpty(fromAddress) && !TextUtils.isEmpty(toAddress))
 			{
-				onAddressSelected(posFrom, posTo);			
+				onAddressSelected(fromAddress, toAddress);	
 			}
-			else if(mTripRequest.isValid())
-			{
-				mCallbacks.onFindTripSuggestion(mTripRequest);
-			}
-			else
-			{
-				String from = mAutoCompleteTextViewFromAddress.getHint().toString();				
-				String to = mAutoCompleteTextViewToAddress.getHint().toString();
-				Toast.makeText(getActivity(), getString(R.string.trip_request_not_valid), Toast.LENGTH_SHORT).show();
-			}*/
-			
-			
 		}
 	}
 	
-	private void onAddressSelected2(boolean origin)
+	private String getAddress(AutoCompleteTextView ac, String hint)
 	{
-		mItemClicked = true;
-		if (origin)
+		String address = null;
+		String currentText = ac.getText().toString();
+		String selectedText = ac.getHint().toString();
+		if(TextUtils.isEmpty(currentText))
 		{
-			mAutoCompleteTextViewToAddress.requestFocus();
-		} else
-		{
-			ViewHelper.hideKeyboard(getActivity(), mAutoCompleteTextViewToAddress);
+			address = selectedText;
 		}
-		
-
+		else if(!selectedText.equals(hint))
+		{
+			address = currentText;
+		}
+		if(TextUtils.isEmpty(address))
+		{
+			Toast.makeText(getActivity(), String.format(getString(R.string.trip_request_enter_address), hint), Toast.LENGTH_SHORT).show();
+		}
+		return address;
 	}
+	
 	private AddressSelected mAddressSelected = null;
-	private void onAddressSelected(int positionOrigin, int positionDest)
+	private void onAddressSelected(String originAddress, String destinationAddress)
 	{
 		if(mAddressSelected==null || mAddressSelected.getStatus()==AsyncTask.Status.FINISHED)
 		{
-			mAddressSelected = new AddressSelected();
-			mAddressSelected.execute(positionOrigin,positionDest);
+			mTripRequest = new TripRequest();
+			mAddressSelected = new AddressSelected(mSelectedAddressFromPosition, mSelectedAddressToPosition);
+			mAddressSelected.execute(originAddress,destinationAddress);
 		}
 		else
 		{
@@ -424,44 +336,134 @@ public class ChooseOriginDestFragment extends ChooseOriginDestFragmentBase
 		}
 	}
 	
-	private class AddressSelected extends AsyncTask<Integer, Void, Void>
+	private class AddressSelected extends AsyncTask<String, Void, Void>
 	{
+		private List<AddressSearch> mOriginAddresses;
+		private List<AddressSearch> mDestAddresses;
+		private String mOrginAddress = null;
+		private String mDestAddress = null;
+		private int mSelectedIndexOriginAddress = -1;
+		private int mSelectedDestinationAddress = -1;
+		
+		
+		public AddressSelected(int selectedIndexOriginAddress, int selectedDestinationAddress)
+		{
+			mSelectedIndexOriginAddress = selectedIndexOriginAddress;
+			mSelectedDestinationAddress = selectedDestinationAddress;
+		}
 		
 		@Override
-		protected Void doInBackground(Integer... params)
+		protected Void doInBackground(String... params)
 		{
-			if(params[0]==-1)
-			{
-				int originPos = mAutoCompleteAdapterFrom.getPosition(mAutoCompleteTextViewFromAddress.getHint().toString());
-				params[0] = originPos;
-			}
-			if(params[1]==-1)
-			{
-				int destPos = mAutoCompleteAdapterTo.getPosition(mAutoCompleteTextViewToAddress.getHint().toString());
-				params[1] = destPos;
-			}
+			mOrginAddress = params[0];
+			mDestAddress = params[1];
+			List<AddressSearch> originAddresses = findAddrees(mOrginAddress);
+			List<AddressSearch> destAddresses = findAddrees(mDestAddress);
 			
-			String text = mAutoCompleteAdapterFrom.getAddress(params[0]);
-			String y = mAutoCompleteAdapterFrom.getY(params[0]);
-			String x = mAutoCompleteAdapterFrom.getX(params[0]);
-			String positionId = mAutoCompleteAdapterFrom.getId(params[0]);
-			mTripRequest.setOriginId(positionId);
-			mTripRequest.setOriginCoordName(text);
-			mTripRequest.setOriginCoordX(x);
-			mTripRequest.setOriginCoordY(y);
-			
-			text = mAutoCompleteAdapterTo.getAddress(params[1]);
-			y = mAutoCompleteAdapterTo.getY(params[1]);
-			x = mAutoCompleteAdapterTo.getX(params[1]);
-			positionId = mAutoCompleteAdapterTo.getId(params[1]);
-			mTripRequest.setDestId(positionId);
-			mTripRequest.setDestCoordName(text);
-			mTripRequest.setDestCoordX(x);
-			mTripRequest.setDestCoordY(y);		
+			if(!originAddresses.isEmpty() && mSelectedIndexOriginAddress!=-1)
+			{
+				mSelectedIndexOriginAddress = findAddressIndex(mOrginAddress, originAddresses);
+				if(mSelectedIndexOriginAddress!=-1)
+				{
+					AddressSearch orgin = originAddresses.get(mSelectedIndexOriginAddress);
+					mTripRequest.setOriginId(orgin.id);
+					mTripRequest.setOriginCoordName(orgin.address);
+					mTripRequest.setOriginCoordX(orgin.xcoord);
+					mTripRequest.setOriginCoordY(orgin.ycoord);
+				}
+				
+			}
+			if(!destAddresses.isEmpty() && mSelectedDestinationAddress!=-1)
+			{
+				mSelectedDestinationAddress = findAddressIndex(mDestAddress, destAddresses);
+				if(mSelectedDestinationAddress!=-1)
+				{
+					AddressSearch dest = destAddresses.get(mSelectedDestinationAddress);
+					mTripRequest.setDestId(dest.id);
+					mTripRequest.setDestCoordName(dest.address);
+					mTripRequest.setDestCoordX(dest.xcoord);
+					mTripRequest.setDestCoordY(dest.ycoord);
+				}
+				
+			}
+			mOriginAddresses = originAddresses;
+			mDestAddresses = destAddresses;
 			return null;
 		}
 		
+		private int findAddressIndex(String address, List<AddressSearch> addresses)
+		{
+			int index = -1;
+			if(addresses.size()==1)
+			{
+				index = 0;
+			}
+			for(int i = 0; i < addresses.size() && index==-1; i++)
+			{
+				String current = addresses.get(i).address;
+				if(current.equals(address))
+				{
+					index = i;
+				}
+			}
+			return index;
+		}
 		
+		private List<AddressSearch> findAddrees(String address)
+		{
+			List<AddressSearch> addresses = new ArrayList<AddressSearch>();
+			ContentResolver cr = getActivity().getContentResolver();
+			Cursor c = null;
+			try
+			{
+				StringBuilder b = new StringBuilder();
+				b.append(AddressProviderMetaData.TableMetaData.address).append(" LIKE '").append(address).append("%') GROUP BY (").append(AddressProviderMetaData.TableMetaData.address);
+							
+				c = cr.query(AddressProviderMetaData.TableMetaData.CONTENT_URI, PROJECTION, b.toString(), null, AddressProviderMetaData.TableMetaData.address);
+				if(c.moveToFirst())
+				{
+					int iAddress = c.getColumnIndex(AddressProviderMetaData.TableMetaData.address);
+					int iY = c.getColumnIndex(AddressProviderMetaData.TableMetaData.Y);
+					int iX = c.getColumnIndex(AddressProviderMetaData.TableMetaData.X);
+					int iType = c.getColumnIndex(AddressProviderMetaData.TableMetaData.type_int);
+					int iId = c.getColumnIndex(AddressProviderMetaData.TableMetaData.id);
+					do{
+						String addr = c.getString(iAddress);
+						String y = c.getString(iY);
+						String x = c.getString(iX);
+						String type = c.getString(iType);
+						String id = c.getString(iId);
+						AddressSearch as = new AddressSearch(id, addr, type, x, y);
+						addresses.add(as);						
+					}while(c.moveToNext());			
+				}
+			}
+			finally
+			{
+				if(c!=null && !c.isClosed())
+				{
+					c.close();
+				}
+			}
+			return addresses;
+		}
+		
+		private String getNewSearchAddress(String address)
+		{
+			if(address.contains(","))
+			{
+				String[] temp = address.split(",");
+				address = temp[0];
+			}
+			if(address.contains(" "))
+			{
+				String[] temp = address.split(" ");
+				address = temp[0];
+			}
+			
+			
+			return address;
+		}
 
 		protected void onPostExecute(Void result)
 		{
@@ -475,10 +477,31 @@ public class ChooseOriginDestFragment extends ChooseOriginDestFragmentBase
 			{
 				mCallbacks.onFindTripSuggestion(mTripRequest);
 			}
-			else
+			else if(!validateAddress(mAutoCompleteTextViewFromAddress, mAutoCompleteAdapterFrom, mOrginAddress, mOriginAddresses, mSelectedIndexOriginAddress))
 			{
-				Toast.makeText(getActivity(), getString(R.string.trip_request_not_valid), Toast.LENGTH_SHORT).show();
+				Log.d(tag, "originAddress not valid");
+				Toast.makeText(getActivity(), String.format(getString(R.string.trip_request_address_not_valid), getString(R.string.startaddress)), Toast.LENGTH_SHORT).show();		
 			}
+			else if(!validateAddress(mAutoCompleteTextViewToAddress, mAutoCompleteAdapterTo, mDestAddress, mDestAddresses, mSelectedDestinationAddress))
+			{
+				Log.d(tag, "destAddress not valid");
+				Toast.makeText(getActivity(), String.format(getString(R.string.trip_request_address_not_valid), getString(R.string.destination_address)), Toast.LENGTH_SHORT).show();
+			}
+		}
+		
+		private boolean validateAddress(AutoCompleteTextView auto, AutoCompleteAddressAdapter adapter, String address, List<AddressSearch> addresses, int selectedIndex)
+		{
+			boolean handled = false;
+			if(selectedIndex==-1)
+			{
+				auto.requestFocus();
+				adapter.resetPreviousConstraint();
+				address = getNewSearchAddress(address);	
+				auto.setText(address);
+				auto.showDropDown();
+				handled = true;
+			}
+			return handled;
 		}
 	}
 

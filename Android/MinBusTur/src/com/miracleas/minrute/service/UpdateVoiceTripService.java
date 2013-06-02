@@ -90,7 +90,7 @@ public class UpdateVoiceTripService extends Service implements android.speech.tt
 	private void startWakelock()
 	{
 		PowerManager pm = (PowerManager)getSystemService(Context.POWER_SERVICE);
-	    wl = pm.newWakeLock(PowerManager.FULL_WAKE_LOCK , tag);
+	    wl = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK , tag);
 	    wl.acquire();
 	}
 	
@@ -110,7 +110,7 @@ public class UpdateVoiceTripService extends Service implements android.speech.tt
 		mDateHelper = new DateHelper(this);
 		mDateHelper.setVoice(true);
 		mTransistionObserver = new TransistionObserver(handler);
-		startWakelock();
+		//startWakelock();
 		Log.d(tag, "onCreate");
 	}
 
@@ -194,10 +194,9 @@ public class UpdateVoiceTripService extends Service implements android.speech.tt
 		Log.d(tag, "playVoice: "+voice);
 		if(voice!=null && isVoiceInitialized())
 		{
-			startWakelock();
+			
 			mTts.speak(voice, TextToSpeech.QUEUE_ADD, null);
 			mTextToSpeak = null;
-			stopWakeLock();
 		}
 		else
 		{
@@ -209,6 +208,7 @@ public class UpdateVoiceTripService extends Service implements android.speech.tt
 	
 	public void stopVoices()
 	{
+		stopWakeLock();
 		Log.d(tag, "stopVoices");
 		stopDepartureHandler();
 	}
@@ -238,7 +238,7 @@ public class UpdateVoiceTripService extends Service implements android.speech.tt
 		{
 			if (handler == null)
 			{
-				
+				startWakelock();
 				long departues = departues();
 				if(departues<=VoiceState.THIRTY_SECONDS && departues >= VoiceState.ONE_MINUTE_MINUS)
 				{
@@ -289,7 +289,14 @@ public class UpdateVoiceTripService extends Service implements android.speech.tt
 				
 				playVoice(mCurrentVoiceState.departuresIn());	
 				Log.d(tag, "start in "+(tick/DateUtils.SECOND_IN_MILLIS)+" secs");
-				handler.postDelayed(runnableDeparture, tick);
+				if(handler==null)
+				{
+					startDepartureTimer();
+				}
+				else
+				{
+					handler.postDelayed(runnableDeparture, tick);
+				}
 			}		
 			else
 			{
@@ -609,15 +616,17 @@ public class UpdateVoiceTripService extends Service implements android.speech.tt
 		@Override
 		public void onPostExecute(Integer newIndex)
 		{
+			if(!TextUtils.isEmpty(mNameOfLocationBeforeDest))
+			{
+				stopDepartureHandler();
+				playVoice(mCurrentVoiceState.leaveTransportIn(mNameOfLocationBeforeDest));
+			}
+			
 			if(newIndex!=-1 && mCurrentStep!=newIndex && newIndex>mCurrentStep)
 			{
 				changeState(newIndex);
 			}	
-			else if(mStopId!=-1 && !TextUtils.isEmpty(mNameOfLocationBeforeDest))
-			{				
-				stopDepartureHandler();
-				playVoice(mCurrentVoiceState.leaveTransportIn(mNameOfLocationBeforeDest));
-			}
+
 		}
 	}
 }

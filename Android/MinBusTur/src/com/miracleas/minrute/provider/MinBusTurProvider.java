@@ -35,8 +35,6 @@ public class MinBusTurProvider extends ContentProvider
 	private static final int INCOMING_SINGLE_TRIP_URI_INDICATOR = 5;
 	private static final int INCOMING_TRIPLEG_COLLECTION_URI_INDICATOR = 6;
 	private static final int INCOMING_SINGLE_TRIPLEG_URI_INDICATOR = 7;
-	private static final int INCOMING_WAYPOINT_IMG_COLLECTION_URI_INDICATOR = 8;
-	private static final int INCOMING_SINGLE_WAYPOINT_IMG_URI_INDICATOR = 9;
 	private static final int INCOMING_JOURNEY_DETAIL_COLLECTION_URI_INDICATOR = 10;
 	private static final int INCOMING_SINGLE_JOURNEY_DETAIL_URI_INDICATOR = 11;
 	private static final int INCOMING_JOURNEY_DETAIL_STOP_COLLECTION_URI_INDICATOR = 12;
@@ -201,7 +199,8 @@ public class MinBusTurProvider extends ContentProvider
 			.append("= (SELECT MAX(z.").append(StopImagesMetaData.TableMetaData._ID)
 			.append(") FROM ").append(StopImagesMetaData.TABLE_NAME).append(" as z WHERE z.").append(StopImagesMetaData.TableMetaData.STOP_NAME)
 			.append("=t.").append(TripLegMetaData.TableMetaData.ORIGIN_NAME).append(" AND ").append(StopImagesMetaData.TableMetaData.URL).append(" NOT NULL")
-			.append(" AND ").append(StopImagesMetaData.TableMetaData.TRANSPORT_DIRECTION).append("=").append(TripLegMetaData.TableMetaData.NOTES)			
+			.append(" AND (").append(StopImagesMetaData.TableMetaData.TRANSPORT_DIRECTION).append("=").append(TripLegMetaData.TableMetaData.NOTES)
+			.append(" OR ").append(TripLegMetaData.TableMetaData.ORIGIN_TYPE).append("='ADR' )")
 			.append("))");
 			qb.setTables(b1.toString());
 			break; 	
