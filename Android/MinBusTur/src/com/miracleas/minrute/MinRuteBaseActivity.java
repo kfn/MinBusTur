@@ -142,7 +142,7 @@ public abstract class MinRuteBaseActivity extends SherlockFragmentActivity
 	public void onActivityResult(int requestCode, int resultCode, Intent data)
 	{
 		super.onActivityResult(requestCode, resultCode, data);
-		if (App.SUPPORTS_JELLY_BEAN || requestCode == MY_DATA_CHECK_CODE)
+		if (requestCode == MY_DATA_CHECK_CODE)
 		{
 			if (App.SUPPORTS_JELLY_BEAN || resultCode == TextToSpeech.Engine.CHECK_VOICE_DATA_PASS)
 			{

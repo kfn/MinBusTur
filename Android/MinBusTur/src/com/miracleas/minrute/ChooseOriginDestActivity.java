@@ -149,6 +149,13 @@ public class ChooseOriginDestActivity extends GeofenceActivity implements Choose
 		}
 	}
 
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data)
+    {
+        super.onActivityResult(requestCode, resultCode, data);
+        getChooseOriginDestFragment().onActivityResult(requestCode, resultCode, data);
+    }
+
     private void showHideWayPoint()
     {
         getChooseOriginDestFragment().onBtnShowWayPointClicked();

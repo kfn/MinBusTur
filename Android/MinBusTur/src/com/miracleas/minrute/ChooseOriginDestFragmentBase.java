@@ -2,11 +2,14 @@ package com.miracleas.minrute;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.content.ContentResolver;
+import android.content.ContentUris;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.ContactsContract;
@@ -312,26 +315,83 @@ public abstract class ChooseOriginDestFragmentBase extends SherlockFragment impl
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data)
     {
-        super.onActivityResult(requestCode, requestCode, data);
+        super.onActivityResult(requestCode, resultCode, data);
         switch (requestCode) {
             case (LoaderConstants.LOADER_ADDRESS_FROM) :
                 if (resultCode == Activity.RESULT_OK) {
                     Uri contactData = data.getData();
-
+                    fetchContactAddress(contactData, LoaderConstants.LOADER_ADDRESS_FROM);
                 }
                 break;
             case (LoaderConstants.LOADER_ADDRESS_TO) :
                 if (resultCode == Activity.RESULT_OK) {
                     Uri contactData = data.getData();
-
+                    fetchContactAddress(contactData, LoaderConstants.LOADER_ADDRESS_TO);
                 }
                 break;
             case (LoaderConstants.LOADER_ADDRESS_WAYPOINT) :
                 if (resultCode == Activity.RESULT_OK) {
                     Uri contactData = data.getData();
-
+                    fetchContactAddress(contactData, LoaderConstants.LOADER_ADDRESS_WAYPOINT);
                 }
                 break;
+        }
+    }
+
+    private void fetchContactAddress(Uri contactData, int loaderId)
+    {
+        String contactId = contactData.getLastPathSegment();
+        new LoadContactAddress(loaderId).execute(Long.parseLong(contactId));
+    }
+
+
+    private static final String[] PROJECTION_CONTACT_ADDRESS = { ContactsContract.CommonDataKinds.StructuredPostal.FORMATTED_ADDRESS };
+
+    private class LoadContactAddress extends AsyncTask<Long, Void, String>
+    {
+        private final int loaderId;
+
+        LoadContactAddress(int loaderId)
+        {
+            this.loaderId = loaderId;
+        }
+
+        protected String doInBackground(Long... args)
+        {
+            String address = "";
+            ContentResolver cr = getActivity().getContentResolver();
+            Cursor c = null;
+            try
+            {
+                Uri contactUri = ContentUris.withAppendedId(ContactsContract.CommonDataKinds.StructuredPostal.CONTENT_URI, args[0]);
+                c = cr.query(contactUri, PROJECTION_CONTACT_ADDRESS, null, null, null);
+                if (c.moveToFirst())
+                {
+                    address = c.getString(c.getColumnIndex(ContactsContract.CommonDataKinds.StructuredPostal.FORMATTED_ADDRESS));
+                }
+            } finally
+            {
+                if (c != null)
+                    c.close();
+            }
+
+            return address;
+        }
+
+        protected void onPostExecute(String address)
+        {
+            if (loaderId == LoaderConstants.LOADER_ADDRESS_FROM)
+            {
+                mAutoCompleteTextViewFromAddress.setText(address);
+            }
+            else if (loaderId == LoaderConstants.LOADER_ADDRESS_TO)
+            {
+                mAutoCompleteTextViewToAddress.setText(address);
+            }
+            else if (loaderId == LoaderConstants.LOADER_ADDRESS_WAYPOINT)
+            {
+                mAutoCompleteTextViewWayPoint.setText(address);
+            }
         }
     }
 
