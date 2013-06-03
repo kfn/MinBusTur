@@ -2,17 +2,14 @@ package com.miracleas.minrute;
 
 import android.app.Activity;
 import android.app.Dialog;
-import android.app.PendingIntent;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.util.Log;
 
-import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesClient.OnConnectionFailedListener;
 import com.google.android.gms.common.GooglePlayServicesUtil;
-import com.miracleas.minrute.service.ReceiveTransitionsIntentService;
 
 public abstract class GoogleServiceActivity extends MinRuteBaseActivity implements OnConnectionFailedListener
 {
@@ -34,14 +31,14 @@ public abstract class GoogleServiceActivity extends MinRuteBaseActivity implemen
 	protected void onStart()
 	{
 		super.onStart();
-		if (servicesConnected())
+		if (isGoogleServiceConnected())
 		{
-			
+
 		}
 
 	}
 
-	protected boolean servicesConnected()
+	protected boolean isGoogleServiceConnected()
 	{
 		// Check that Google Play services is available
 		int resultCode = GooglePlayServicesUtil.isGooglePlayServicesAvailable(this);
@@ -105,7 +102,7 @@ public abstract class GoogleServiceActivity extends MinRuteBaseActivity implemen
 				/*
 				 * Try the request again
 				 */
-				servicesConnected();
+				isGoogleServiceConnected();
 				break;
 			}
 

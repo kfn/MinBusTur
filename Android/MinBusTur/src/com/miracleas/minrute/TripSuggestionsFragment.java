@@ -8,6 +8,7 @@ import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v4.widget.CursorAdapter;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -82,7 +83,15 @@ public class TripSuggestionsFragment extends SherlockFragment implements LoaderC
 		mListView.setAdapter(mTripAdapter);
 		mListView.setOnItemClickListener(this);		
 		TripRequest tripRequest = getArguments().getParcelable(TripRequest.tag);
-		mTextViewOriginDestNames.setText(String.format(getString(R.string.from_origin_to_dest), tripRequest.originCoordNameNotEncoded, tripRequest.destCoordNameNotEncoded));
+        if(TextUtils.isEmpty(tripRequest.waypointNameNotEncoded))
+        {
+            mTextViewOriginDestNames.setText(String.format(getString(R.string.from_origin_to_dest), tripRequest.originCoordNameNotEncoded, tripRequest.destCoordNameNotEncoded));
+        }
+        else
+        {
+            mTextViewOriginDestNames.setText(String.format(getString(R.string.from_origin_via_to_dest), tripRequest.originCoordNameNotEncoded, tripRequest.waypointNameNotEncoded, tripRequest.destCoordNameNotEncoded));
+        }
+
 		
 		getLoaderManager().initLoader(LoaderConstants.LOAD_TRIP_SUGGESTIONS, null, this);
 	}

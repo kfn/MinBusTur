@@ -6,7 +6,6 @@ import java.util.List;
 import android.app.Dialog;
 import android.app.PendingIntent;
 import android.content.ContentResolver;
-import android.content.ContentValues;
 import android.content.Intent;
 import android.content.IntentSender.SendIntentException;
 import android.database.Cursor;
@@ -133,7 +132,7 @@ public abstract class GeofenceActivity extends GoogleServiceActivity implements 
 		 * Google Play services isn't present, the proper request can be
 		 * restarted.
 		 */
-		if (!servicesConnected())
+		if (!isGoogleServiceConnected())
 		{
 			return;
 		}
@@ -171,7 +170,7 @@ public abstract class GeofenceActivity extends GoogleServiceActivity implements 
 		 * Test for Google Play services after setting the request type. If
 		 * Google Play services isn't present, the request can be restarted.
 		 */
-		if (!servicesConnected())
+		if (!isGoogleServiceConnected())
 		{
 			return;
 		}
@@ -213,7 +212,7 @@ public abstract class GeofenceActivity extends GoogleServiceActivity implements 
 		 * Test for Google Play services after setting the request type. If
 		 * Google Play services isn't present, the request can be restarted.
 		 */
-		if (!servicesConnected())
+		if (!isGoogleServiceConnected())
 		{
 			return;
 		}

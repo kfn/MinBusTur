@@ -1,5 +1,9 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android" >
-    
+    <item
+            android:id="@+id/menu_show_way_point"
+            android:icon="@android:drawable/ic_menu_more"
+            android:showAsAction="ifRoom|withText"
+            android:title="@string/menu_show_waypoint"/>
     <item
         android:id="@+id/menu_my_location"
         android:icon="@drawable/ic_action_locate"

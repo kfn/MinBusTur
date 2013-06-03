@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.miracleas.minrute"
-    android:versionCode="7"
+    android:versionCode="8"
     android:versionName="0.0.1" >
 
     <uses-sdk
@@ -93,9 +93,9 @@
             android:name="android.support.PARENT_ACTIVITY"
             android:value="com.miracleas.minrute.TripStopDetailsActivity" />
           </activity>
-        
-        
-        
+        <activity android:name=".ChooseDestinationDialog"/>
+
+
         <provider
             android:name="com.miracleas.minrute.provider.MinBusTurProvider"
             android:authorities="com.miracleas.minrute.provider.MinBusTurProvider"        

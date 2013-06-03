@@ -24,6 +24,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.CheckBox;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -304,6 +305,7 @@ public class TripGuideFragment extends SherlockListFragment implements LoaderCal
 			TextView textViewNotes = (TextView) v.findViewById(R.id.textViewNotes);
 			//TextView textViewDeparturesIn = (TextView) v.findViewById(R.id.textViewDeparturesIn);
 			ImageView imageViewThumb = (ImageView)v.findViewById(R.id.imageViewThumb);
+            ImageView imageViewChecked = (ImageView)v.findViewById(R.id.imageViewChecked);
 			
 			
 			String originTime = cursor.getString(iOriginTime);
@@ -372,13 +374,13 @@ public class TripGuideFragment extends SherlockListFragment implements LoaderCal
 			int geofenceTransitionType = cursor.getInt(iGeofenceTransition);
 			if (geofenceTransitionType == Geofence.GEOFENCE_TRANSITION_ENTER)
 			{
-				v.setBackgroundResource(R.color.green_transparent);
+                imageViewChecked.setSelected(true);
 			} else if (geofenceTransitionType == Geofence.GEOFENCE_TRANSITION_EXIT)
 			{
-				v.setBackgroundResource(R.color.black_transparent);
+                imageViewChecked.setSelected(true);
 			} else
 			{
-				v.setBackgroundResource(R.drawable.selectable_background_minrutevejledning);
+                imageViewChecked.setSelected(false);
 			}
 			
 			

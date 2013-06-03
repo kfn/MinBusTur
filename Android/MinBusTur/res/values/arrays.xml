@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string-array  name="destination_types" >
+        <item>@string/current_location</item>
+        <item>@string/contacts</item>
+        <item>@string/location_on_map</item>
+        <item>@string/my_places</item>
+    </string-array>
+</resources>

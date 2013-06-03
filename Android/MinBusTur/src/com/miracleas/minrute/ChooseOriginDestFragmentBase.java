@@ -1,34 +1,36 @@
 package com.miracleas.minrute;
 
-import java.util.Calendar;
-import java.util.Locale;
-
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.ContactsContract;
 import android.support.v4.app.DialogFragment;
-import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.widget.CursorAdapter;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
 import android.text.style.StyleSpan;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnFocusChangeListener;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.DatePicker;
 import android.widget.FilterQueryProvider;
+import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.RadioButton;
 import android.widget.TextView;
@@ -43,16 +45,23 @@ import com.miracleas.minrute.provider.AddressProviderMetaData;
 import com.miracleas.minrute.utils.DateHelper;
 import com.miracleas.minrute.utils.ViewHelper;
 
+import java.util.Calendar;
+import java.util.Locale;
+
 public abstract class ChooseOriginDestFragmentBase extends SherlockFragment implements OnClickListener, OnFocusChangeListener //LoaderCallbacks<Cursor>, 
 {
 	public static final String tag = ChooseOriginDestFragmentBase.class.getName();
 	protected AutoCompleteTextView mAutoCompleteTextViewFromAddress;
 	protected AutoCompleteTextView mAutoCompleteTextViewToAddress;
-	protected int mSelectedAddressFromPosition = -1;
-	protected int mSelectedAddressToPosition = -1;
+    protected AutoCompleteTextView mAutoCompleteTextViewWayPoint;
 	
 	protected AutoCompleteAddressAdapter mAutoCompleteAdapterFrom = null;
-	protected AutoCompleteAddressAdapter mAutoCompleteAdapterTo = null;	
+    protected AutoCompleteAddressAdapter mAutoCompleteAdapterWaypoint = null;
+	protected AutoCompleteAddressAdapter mAutoCompleteAdapterTo = null;
+
+    private ImageButton mBtnShowAddressToOptions = null;
+    private ImageButton mBtnShowAddressFromOptions = null;
+    private ImageButton mBtnShowAddressWayPointOptions = null;
 
 	protected static final int THRESHOLD = 2;
 	
@@ -63,6 +72,7 @@ public abstract class ChooseOriginDestFragmentBase extends SherlockFragment impl
 	protected Uri mDataUri = null;
 
 	protected ProgressBar mProgressBarToAddress = null;
+    protected ProgressBar mProgressBarWaypointAddress;
 	protected ProgressBar mProgressBarFromAddress = null;
 	
 	protected View mBtnFindRoute = null;
@@ -72,14 +82,15 @@ public abstract class ChooseOriginDestFragmentBase extends SherlockFragment impl
 	
 	protected TextView mTextViewDate = null;
 	protected TextView mTextViewTime = null;
-	
+	protected ImageButton mBtnShowWaypoint = null;
 	
 
 	
 	ArrayAdapter<String> adapter;
     String dates[] = { ""};
-	
-	@SuppressLint("NewApi")
+
+
+    @SuppressLint("NewApi")
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
 	{
@@ -105,7 +116,7 @@ public abstract class ChooseOriginDestFragmentBase extends SherlockFragment impl
 		mTripRequest.setDate(DateHelper.convertDateToString(c, DateHelper.formatterDateRejseplanen));
 		
 		mAutoCompleteTextViewFromAddress = (AutoCompleteTextView) rootView.findViewById(R.id.autoCompleteTextViewFrom);
-        mAutoCompleteTextViewFromAddress.setText("Asavej 2");
+        mAutoCompleteTextViewWayPoint = (AutoCompleteTextView) rootView.findViewById(R.id.autoCompleteTextViewWayPoint);
 		mAutoCompleteTextViewToAddress = (AutoCompleteTextView) rootView.findViewById(R.id.autoCompleteTextViewTo);
 		
 		mAutoCompleteTextViewFromAddress.setOnItemClickListener(new OnItemClickListener()
@@ -113,26 +124,55 @@ public abstract class ChooseOriginDestFragmentBase extends SherlockFragment impl
 			@Override
 			public void onItemClick(AdapterView<?> arg0, View arg1, int position, long id)
 			{
-				mSelectedAddressFromPosition = position;
-				mAutoCompleteTextViewToAddress.requestFocus();
+                if(mAutoCompleteTextViewWayPoint.getVisibility()==View.VISIBLE)
+                {
+                    mAutoCompleteTextViewWayPoint.requestFocus();
+                }
+                else
+                {
+                    mAutoCompleteTextViewToAddress.requestFocus();
+                }
 			}			
 		});
+
+        mAutoCompleteTextViewWayPoint.setOnItemClickListener(new OnItemClickListener()
+        {
+            @Override
+            public void onItemClick(AdapterView<?> arg0, View arg1, int position, long id)
+            {
+                mAutoCompleteTextViewToAddress.requestFocus();
+            }
+        });
+
 		mAutoCompleteTextViewToAddress.setOnItemClickListener(new OnItemClickListener()
 		{
 			@Override
 			public void onItemClick(AdapterView<?> arg0, View v, int position, long id)
 			{
-				mSelectedAddressToPosition = position;
-				//mAutoCompleteTextViewToAddress.clearFocus();
-				//mBtnFindRoute.requestFocus();
-				//mTextViewDate.requestFocus();
 				ViewHelper.hideKeyboard(getActivity(), mAutoCompleteTextViewToAddress);
 			}			
 		});
+        mAutoCompleteTextViewToAddress.setOnEditorActionListener(new TextView.OnEditorActionListener()
+        {
+            @Override
+            public boolean onEditorAction(TextView textView, int actionId, KeyEvent keyEvent)
+            {
+                if (actionId == EditorInfo.IME_ACTION_SEARCH || keyEvent.getKeyCode() == KeyEvent.KEYCODE_ENTER)
+                {
+                    mBtnFindRoute.performClick();
+                    return true;
+                }
+                return false;
+            }
+        });
+
+
 		initAutoComplete(mAutoCompleteTextViewFromAddress);
+        initAutoComplete(mAutoCompleteTextViewWayPoint);
 		initAutoComplete(mAutoCompleteTextViewToAddress);
 		
 		mProgressBarToAddress = (ProgressBar) rootView.findViewById(R.id.progressBarToAddress);
+        mProgressBarWaypointAddress = (ProgressBar) rootView.findViewById(R.id.progressBarWaypointAddress);
 		mProgressBarFromAddress = (ProgressBar) rootView.findViewById(R.id.progressBarFromAddress);
 		
 		mBtnFindRoute = rootView.findViewById(R.id.btnFindRoute);
@@ -142,6 +182,13 @@ public abstract class ChooseOriginDestFragmentBase extends SherlockFragment impl
 		RadioButton radioBtnDepartue = (RadioButton)rootView.findViewById(R.id.radio_departue);
 		radioBtnArrival.setOnClickListener(this);
 		radioBtnDepartue.setOnClickListener(this);
+
+        mBtnShowAddressToOptions = (ImageButton)rootView.findViewById(R.id.btnShowAddressToOptions);
+        mBtnShowAddressFromOptions = (ImageButton)rootView.findViewById(R.id.btnShowAddressFromOptions);
+        mBtnShowAddressWayPointOptions = (ImageButton)rootView.findViewById(R.id.btnShowAddressWayPointOptions);
+        mBtnShowAddressToOptions.setOnClickListener(this);
+        mBtnShowAddressFromOptions.setOnClickListener(this);
+        mBtnShowAddressWayPointOptions.setOnClickListener(this);
 		return rootView;
 	}
 	
@@ -183,7 +230,6 @@ public abstract class ChooseOriginDestFragmentBase extends SherlockFragment impl
 					mAutoCompleteTextViewFromAddress.setHint(mAutoCompleteTextViewFromAddress.getText());
 					mAutoCompleteTextViewFromAddress.setText("");
 				}
-				
 			}
 			else if(mAutoCompleteTextViewToAddress==v)
 			{
@@ -194,29 +240,43 @@ public abstract class ChooseOriginDestFragmentBase extends SherlockFragment impl
 					mAutoCompleteTextViewToAddress.setText("");
 				}
 			}
+            else if(mAutoCompleteTextViewWayPoint==v)
+            {
+                String s = mAutoCompleteTextViewWayPoint.getText().toString();
+                if(!TextUtils.isEmpty(s))
+                {
+                    mAutoCompleteTextViewWayPoint.setHint(mAutoCompleteTextViewWayPoint.getText());
+                    mAutoCompleteTextViewWayPoint.setText("");
+                }
+            }
 		}
 	}
 	
 	public void setAddress(String address)
 	{
-		
 		if(mAutoCompleteTextViewToAddress==mFocusedView)
 		{
 			mAutoCompleteTextViewToAddress.setHint(address);
 			mAutoCompleteAdapterTo.getFilter().filter(address);
-			
 		}
-		else
-		{
-			mAutoCompleteTextViewFromAddress.setHint(address);
-			mAutoCompleteAdapterFrom.getFilter().filter(address);	
-			mAutoCompleteTextViewToAddress.requestFocus();
-		}
+        else if(mAutoCompleteTextViewWayPoint==mFocusedView)
+        {
+            mAutoCompleteTextViewWayPoint.setHint(address);
+            mAutoCompleteAdapterWaypoint.getFilter().filter(address);
+            mAutoCompleteTextViewWayPoint.requestFocus();
+        }
+        else
+        {
+            mAutoCompleteTextViewFromAddress.setHint(address);
+            mAutoCompleteAdapterFrom.getFilter().filter(address);
+            mAutoCompleteTextViewToAddress.requestFocus();
+        }
 	}
 
 	@Override
 	public void onClick(View v)
 	{
+
 		if(v.getId()==R.id.btnDate)
 		{
 			DialogFragment newFragment = new DatePickerFragment();
@@ -235,8 +295,119 @@ public abstract class ChooseOriginDestFragmentBase extends SherlockFragment impl
 		{
 			onRadioButtonClicked(v);
 		}
+        else if(v.getId()==R.id.btnShowAddressFromOptions)
+        {
+            showNoticeDialog(LoaderConstants.LOADER_ADDRESS_FROM+"");
+        }
+        else if(v.getId()==R.id.btnShowAddressToOptions)
+        {
+            showNoticeDialog(LoaderConstants.LOADER_ADDRESS_TO+"");
+        }
+        else if(v.getId()==R.id.btnShowAddressWayPointOptions)
+        {
+            showNoticeDialog(LoaderConstants.LOADER_ADDRESS_WAYPOINT+"");
+        }
 		
 	}
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data)
+    {
+        super.onActivityResult(requestCode, requestCode, data);
+        switch (requestCode) {
+            case (LoaderConstants.LOADER_ADDRESS_FROM) :
+                if (resultCode == Activity.RESULT_OK) {
+                    Uri contactData = data.getData();
+
+                }
+                break;
+            case (LoaderConstants.LOADER_ADDRESS_TO) :
+                if (resultCode == Activity.RESULT_OK) {
+                    Uri contactData = data.getData();
+
+                }
+                break;
+            case (LoaderConstants.LOADER_ADDRESS_WAYPOINT) :
+                if (resultCode == Activity.RESULT_OK) {
+                    Uri contactData = data.getData();
+
+                }
+                break;
+        }
+    }
+
+    public void onDialogLocationTypeClick(DialogInterface dialog, int which, String tag)
+    {
+        if(tag.equals(LoaderConstants.LOADER_ADDRESS_FROM+""))
+        {
+            if(which==ChooseDestinationDialog.MY_LOCATION)
+            {
+                mAutoCompleteTextViewFromAddress.requestFocus();
+                ((ChooseOriginDestActivity)getActivity()).findMyLocation();
+            }
+            else if (which==ChooseDestinationDialog.CONTACTS)
+            {
+                openContactsDialog(LoaderConstants.LOADER_ADDRESS_FROM);
+            }
+
+        }
+        else if(tag.equals(LoaderConstants.LOADER_ADDRESS_TO+""))
+        {
+            if(which==ChooseDestinationDialog.MY_LOCATION)
+            {
+                mAutoCompleteTextViewToAddress.requestFocus();
+                ((ChooseOriginDestActivity)getActivity()).findMyLocation();
+            }
+            else if (which==ChooseDestinationDialog.CONTACTS)
+            {
+                openContactsDialog(LoaderConstants.LOADER_ADDRESS_TO);
+            }
+        }
+        else if(tag.equals(LoaderConstants.LOADER_ADDRESS_WAYPOINT+""))
+        {
+            if(which==ChooseDestinationDialog.MY_LOCATION)
+            {
+                mAutoCompleteTextViewWayPoint.requestFocus();
+                ((ChooseOriginDestActivity)getActivity()).findMyLocation();
+            }
+            else if (which==ChooseDestinationDialog.CONTACTS)
+            {
+                openContactsDialog(LoaderConstants.LOADER_ADDRESS_WAYPOINT);
+            }
+        }
+    }
+
+
+    private void openContactsDialog(int requestCode)
+    {
+        Intent intent = new Intent(Intent.ACTION_PICK, ContactsContract.Contacts.CONTENT_URI);
+        intent.setType(ContactsContract.CommonDataKinds.StructuredPostal.CONTENT_TYPE);
+        startActivityForResult(intent, requestCode);
+    }
+
+    private void showNoticeDialog(String tag) {
+        // Create an instance of the dialog fragment and show it
+        ChooseDestinationDialog dialog = new ChooseDestinationDialog();
+        dialog.show(getSherlockActivity().getSupportFragmentManager(), tag);
+    }
+
+    public void onBtnShowWayPointClicked()
+    {
+        if(mAutoCompleteTextViewWayPoint==null)return;
+
+        if(mAutoCompleteTextViewWayPoint.getVisibility()==View.VISIBLE)
+        {
+            mAutoCompleteTextViewWayPoint.setVisibility(View.GONE);
+            mAutoCompleteTextViewToAddress.requestFocus();
+            mBtnShowAddressWayPointOptions.setVisibility(View.GONE);
+        }
+        else
+        {
+            mAutoCompleteTextViewWayPoint.setVisibility(View.VISIBLE);
+            mBtnShowAddressWayPointOptions.setVisibility(View.VISIBLE);
+            mAutoCompleteTextViewWayPoint.requestFocus();
+        }
+
+    }
 	
 	
 	public void onTimeSet(TimePicker view, int hourOfDay, int minute)
@@ -337,6 +508,10 @@ public abstract class ChooseOriginDestFragmentBase extends SherlockFragment impl
 					Log.d(tag, mTag+" autocomplete: "+constraint);
 					//) GROUP BY (").append(AddressProviderMetaData.TableMetaData.address);
 					StringBuilder b = new StringBuilder();
+                    if(loaderId == LoaderConstants.LOADER_ADDRESS_WAYPOINT)
+                    {
+                        b.append(AddressProviderMetaData.TableMetaData.id).append(" NOT NULL AND ");
+                    }
 					b.append(AddressProviderMetaData.TableMetaData.address).append(" LIKE '").append(constraint).append("%') GROUP BY (").append(AddressProviderMetaData.TableMetaData.address);
 					return getActivity().getContentResolver().query(AddressProviderMetaData.TableMetaData.CONTENT_URI, PROJECTION, b.toString(), null, AddressProviderMetaData.TableMetaData.address+" LIMIT "+AddressFetcher.MAX);
 				}
@@ -369,20 +544,7 @@ public abstract class ChooseOriginDestFragmentBase extends SherlockFragment impl
 				oldCursor.close();
 			}
 			getActivity().startManagingCursor(newCursor);
-			
-			Log.d(tag, mTag+" changeCursor");
-			if(newCursor.getCount()==1)
-			{
-				Log.d(tag, mTag+" size is one");
-				if(mLoaderId==LoaderConstants.LOADER_ADDRESS_TO)
-				{		
-					mSelectedAddressToPosition = 0;
-				}
-				else
-				{
-					mSelectedAddressFromPosition = 0;
-				}	
-			}
+
 			
 
 		}

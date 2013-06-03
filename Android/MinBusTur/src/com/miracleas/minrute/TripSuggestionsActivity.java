@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.support.v4.app.NavUtils;
 
 import com.actionbarsherlock.app.ActionBar;
-import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 
@@ -27,7 +26,7 @@ public class TripSuggestionsActivity extends GeofenceActivity implements TripSug
 		
 		if (savedInstanceState == null)
 		{
-			if(servicesConnected())
+			if(isGoogleServiceConnected())
 			{
 				removeSavedGeofences();
 			}
@@ -72,8 +71,21 @@ public class TripSuggestionsActivity extends GeofenceActivity implements TripSug
 	public void onStart()
 	{
 		super.onStart();
-		removeSavedGeofences();
+        if(mBoundVoice)
+        {
+            mServiceVoice.stopVoices();
+        }
+        if(mBoundLocation)
+        {
+            mServiceLocation.stopLocationListening();
+        }
+        if (isGoogleServiceConnected())
+        {
+            removeSavedGeofences();
+        }
 	}
+
+
 	@Override
 	public void onTripSuggestionSelected(String id, int stepCount, TripRequest tripRequest)
 	{

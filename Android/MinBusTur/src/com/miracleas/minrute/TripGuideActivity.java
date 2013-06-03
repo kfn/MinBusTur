@@ -144,7 +144,7 @@ public class TripGuideActivity extends GeofenceActivity implements TripGuideFrag
 	@Override
 	public void onConnectedServiceLocation()
 	{
-		mServiceLocation.startLocationListening();		
+		mServiceLocation.startLocationListening();
 	}
 	
 	public IImageDownloader getIImageDownloader()

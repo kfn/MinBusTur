@@ -122,6 +122,7 @@ public class LocationService extends Service implements LocationListener, Google
 
 	public void startLocationListening()
 	{
+        //mIsLocationStarted = true;
 		if (!mIsLocationStarted)
 		{
 			mLocationClient.connect();

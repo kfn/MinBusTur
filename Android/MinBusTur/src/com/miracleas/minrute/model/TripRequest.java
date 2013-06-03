@@ -22,7 +22,11 @@ public class TripRequest implements Parcelable
 	private String destCoordY;
 	private String destCoordName = "";
 	public String destCoordNameNotEncoded = "";
-	private String viaId;
+
+    public String waypointNameNotEncoded = "";
+    private String viaId;
+
+
 	private String date; //If the date is not set the current date will be used (server time)
 	private String time; //If the time is not set the current time will be used (server time)
 	private int searchForArrival;  // 0 or 1
@@ -37,10 +41,15 @@ public class TripRequest implements Parcelable
 	public boolean isValid()
 	{
 		return (!TextUtils.isEmpty(originId) && !TextUtils.isEmpty(destId)) || (!TextUtils.isEmpty(originCoordX) && !TextUtils.isEmpty(originCoordY)
-				&& !TextUtils.isEmpty(originCoordName) && !TextUtils.isEmpty(destCoordX) && !TextUtils.isEmpty(destCoordY) && !TextUtils.isEmpty(destCoordName));
+				&& !TextUtils.isEmpty(originCoordName) && !TextUtils.isEmpty(destCoordX) && !TextUtils.isEmpty(destCoordY) && !TextUtils.isEmpty(destCoordName) && isValidWayPoint() );
 	}
 	
-	
+
+    public boolean isValidWayPoint()
+    {
+        return (TextUtils.isEmpty(waypointNameNotEncoded) || !TextUtils.isEmpty(viaId)) && (!waypointNameNotEncoded.equals(destCoordNameNotEncoded) && !waypointNameNotEncoded.equals(originCoordNameNotEncoded));
+    }
+
 	public String getOriginId()
 	{
 		return originId;
@@ -258,6 +267,7 @@ public class TripRequest implements Parcelable
 		viaId = in.readString();
 		this.destCoordNameNotEncoded = in.readString();
 		this.originCoordNameNotEncoded = in.readString();
+        this.waypointNameNotEncoded = in.readString();
 	}
 
 	public void writeToParcel(Parcel out, int flags)
@@ -279,6 +289,7 @@ public class TripRequest implements Parcelable
 		out.writeString(this.viaId);
 		out.writeString(this.destCoordNameNotEncoded);
 		out.writeString(this.originCoordNameNotEncoded);
+        out.writeString(this.waypointNameNotEncoded);
 		
 	}
 
@@ -294,4 +305,14 @@ public class TripRequest implements Parcelable
 			return new TripRequest[size];
 		}
 	};
+
+    public void setWayPointId(String id)
+    {
+        this.viaId = id;
+    }
+
+    public String getWayPointId()
+    {
+        return this.viaId;
+    }
 }

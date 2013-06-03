@@ -48,8 +48,9 @@ public class ChooseOriginDestFragment extends ChooseOriginDestFragmentBase
 {
 	public static final String tag = ChooseOriginDestFragment.class.getName();
 	
-	private LoadAddressesFromRun mLoadAddressesFromRun = null;
-	private LoadAddressesToRun mLoadAddressesToRun = null;
+	private LoadAddressesRun mLoadAddressesFromRun = null;
+	private LoadAddressesRun mLoadAddressesToRun = null;
+    private LoadAddressesRun mLoadAddressesWayPointRun = null;
 		
 	protected AddressFetcher mAddressFetcher = null;
 	private TripFetcher mTripFetcher = null;
@@ -72,7 +73,10 @@ public class ChooseOriginDestFragment extends ChooseOriginDestFragmentBase
 		mAutoCompleteAdapterFrom = new AutoCompleteAddressAdapter(getActivity(), null, 0, LoaderConstants.LOADER_ADDRESS_FROM, "FromAdapter");
 		mAutoCompleteTextViewFromAddress.setAdapter(mAutoCompleteAdapterFrom);
 		mAutoCompleteAdapterTo = new AutoCompleteAddressAdapter(getActivity(), null, 0, LoaderConstants.LOADER_ADDRESS_TO, "ToAdapter");
-		mAutoCompleteTextViewToAddress.setAdapter(mAutoCompleteAdapterTo);		
+		mAutoCompleteTextViewToAddress.setAdapter(mAutoCompleteAdapterTo);
+        mAutoCompleteAdapterWaypoint = new AutoCompleteAddressAdapter(getActivity(), null, 0, LoaderConstants.LOADER_ADDRESS_WAYPOINT, "wayPointAdapter");
+        mAutoCompleteTextViewWayPoint.setAdapter(mAutoCompleteAdapterWaypoint);
+
 		return rootView;
 	}
 
@@ -89,8 +93,9 @@ public class ChooseOriginDestFragment extends ChooseOriginDestFragmentBase
 	{
 		super.onCreate(savedInstanceState);
 		mHandler = new Handler();
-		mLoadAddressesFromRun = new LoadAddressesFromRun(null, 0);		
-		mLoadAddressesToRun = new LoadAddressesToRun(null, 0);		
+		mLoadAddressesFromRun = new LoadAddressesRun(null, 0);
+		mLoadAddressesToRun = new LoadAddressesRun(null, 0);
+        mLoadAddressesWayPointRun = new LoadAddressesRun(null, 0);
 		mDataUri = AddressProviderMetaData.TableMetaData.CONTENT_URI;
 		mAddressFetcher = new AddressFetcher(getActivity(), mDataUri);
 	}
@@ -102,30 +107,39 @@ public class ChooseOriginDestFragment extends ChooseOriginDestFragmentBase
 		final String value = s.toString();
 		if (!mItemClicked && value.length() > THRESHOLD)
 		{
-			if (loaderId == LoaderConstants.LOADER_ADDRESS_TO || loaderId == LoaderConstants.LOADER_ADDRESS_FROM)
-			{
-				boolean doAddressSearch = true;
-				if (loaderId == LoaderConstants.LOADER_ADDRESS_TO)
-				{
-					doAddressSearch = !mTripRequest.destCoordNameNotEncoded.equals(value);
-					if(doAddressSearch)
-					{
-						mHandler.removeCallbacks(mLoadAddressesToRun);
-						mLoadAddressesToRun = new LoadAddressesToRun(value, loaderId);
-						mHandler.postDelayed(mLoadAddressesToRun, 1000);
-					}
-					
-				} else
-				{
-					doAddressSearch = !mTripRequest.originCoordNameNotEncoded.equals(value);
-					if(doAddressSearch)
-					{
-						mHandler.removeCallbacks(mLoadAddressesFromRun);
-						mLoadAddressesFromRun = new LoadAddressesFromRun(value, loaderId);
-						mHandler.postDelayed(mLoadAddressesFromRun, 1000);
-					}
-				}
-			} 
+            boolean doAddressSearch = true;
+            if (loaderId == LoaderConstants.LOADER_ADDRESS_TO)
+            {
+                doAddressSearch = !mTripRequest.destCoordNameNotEncoded.equals(value);
+                if(doAddressSearch)
+                {
+                    mHandler.removeCallbacks(mLoadAddressesToRun);
+                    mLoadAddressesToRun = new LoadAddressesRun(value, loaderId);
+                    mHandler.postDelayed(mLoadAddressesToRun, 1000);
+                }
+
+            }
+            else if (loaderId == LoaderConstants.LOADER_ADDRESS_WAYPOINT)
+            {
+                doAddressSearch = !mTripRequest.waypointNameNotEncoded.equals(value);
+                if(doAddressSearch)
+                {
+                    mHandler.removeCallbacks(mLoadAddressesWayPointRun);
+                    mLoadAddressesWayPointRun = new LoadAddressesRun(value, loaderId);
+                    mHandler.postDelayed(mLoadAddressesWayPointRun, 1000);
+                }
+
+            }
+            else
+            {
+                doAddressSearch = !mTripRequest.originCoordNameNotEncoded.equals(value);
+                if(doAddressSearch)
+                {
+                    mHandler.removeCallbacks(mLoadAddressesFromRun);
+                    mLoadAddressesFromRun = new LoadAddressesRun(value, loaderId);
+                    mHandler.postDelayed(mLoadAddressesFromRun, 1000);
+                }
+            }
 		}
 	}
 
@@ -150,6 +164,10 @@ public class ChooseOriginDestFragment extends ChooseOriginDestFragmentBase
 			{
 				mAutoCompleteAdapterTo.runQueryOnBackgroundThread(query);
 			}
+            else if (loaderId == LoaderConstants.LOADER_ADDRESS_WAYPOINT)
+            {
+                mAutoCompleteAdapterWaypoint.runQueryOnBackgroundThread(query);
+            }
 		} 
 		else
 		{
@@ -157,16 +175,23 @@ public class ChooseOriginDestFragment extends ChooseOriginDestFragmentBase
 			{
 				Log.d(tag, "delay lookup for: " + query);
 				mHandler.removeCallbacks(mLoadAddressesToRun);
-				mLoadAddressesToRun = new LoadAddressesToRun(query, loaderId);
+				mLoadAddressesToRun = new LoadAddressesRun(query, loaderId);
 				mHandler.postDelayed(mLoadAddressesToRun, 500);
 			}
-			else if(loaderId==LoaderConstants.LOADER_ADDRESS_TO)
+			else if(loaderId==LoaderConstants.LOADER_ADDRESS_FROM)
 			{
 				Log.d(tag, "delay lookup for: " + query);
 				mHandler.removeCallbacks(mLoadAddressesFromRun);
-				mLoadAddressesFromRun = new LoadAddressesFromRun(query, loaderId);
+				mLoadAddressesFromRun = new LoadAddressesRun(query, loaderId);
 				mHandler.postDelayed(mLoadAddressesFromRun, 500);
 			}
+            else if(loaderId==LoaderConstants.LOADER_ADDRESS_WAYPOINT)
+            {
+                Log.d(tag, "delay lookup for: " + query);
+                mHandler.removeCallbacks(mLoadAddressesWayPointRun);
+                mLoadAddressesWayPointRun = new LoadAddressesRun(query, loaderId);
+                mHandler.postDelayed(mLoadAddressesWayPointRun, 500);
+            }
 			
 		}
 	}
@@ -176,10 +201,19 @@ public class ChooseOriginDestFragment extends ChooseOriginDestFragmentBase
 		if (loaderId == LoaderConstants.LOADER_ADDRESS_FROM)
 		{
 			return mProgressBarFromAddress;
-		} else 
+		}
+        else if(loaderId == LoaderConstants.LOADER_ADDRESS_WAYPOINT)
+        {
+            return mProgressBarWaypointAddress;
+        }
+        else if(loaderId == LoaderConstants.LOADER_ADDRESS_TO)
 		{
 			return mProgressBarToAddress;
 		}
+        else
+        {
+            return null;
+        }
 	}
 
 	private class LoadAddresses extends AsyncTask<String, Void, Void>
@@ -220,69 +254,30 @@ public class ChooseOriginDestFragment extends ChooseOriginDestFragmentBase
 			else if(mLoaderId==LoaderConstants.LOADER_ADDRESS_TO)
 			{
 				mAutoCompleteAdapterTo.getFilter().filter(mAddress);
-			}	
-		}
-	}
-
-	private class LoadAddressesToRun implements Runnable
-	{
-		private final String mQuery;
-		private final int loaderId;
-
-		LoadAddressesToRun(String q, int loaderId)
-		{
-			mQuery = q;
-			this.loaderId = loaderId;
-		}
-
-		@Override
-		public void run()
-		{
-			loadAddress(mQuery, loaderId);
-		}
-	}
-
-
-	private class LoadAddressesFromRun implements Runnable
-	{
-		private final String mQuery;
-		private final int loaderId;
-
-		LoadAddressesFromRun(String q, int loaderId)
-		{
-			mQuery = q;
-			this.loaderId = loaderId;
-		}
-
-		@Override
-		public void run()
-		{
-			loadAddress(mQuery, loaderId);
-		}
-	}
-
-
-	private class LoadTrips extends AsyncTask<String, Void, Void>
-	{
-		@Override
-		protected Void doInBackground(String... params)
-		{
-
-			try
-			{
-				mTripFetcher.tripSearch(mTripRequest);
-			} catch (Exception e)
-			{
-				// TODO Auto-generated catch block
-				e.printStackTrace();
 			}
+            else if(mLoaderId==LoaderConstants.LOADER_ADDRESS_WAYPOINT)
+            {
+                mAutoCompleteAdapterWaypoint.getFilter().filter(mAddress);
+            }
+        }
+	}
 
-			return null;
+
+	private class LoadAddressesRun implements Runnable
+	{
+		private final String mQuery;
+		private final int loaderId;
+
+        LoadAddressesRun(String q, int loaderId)
+		{
+			mQuery = q;
+			this.loaderId = loaderId;
 		}
 
-		protected void onPostExecute(Void result)
+		@Override
+		public void run()
 		{
-			
+			loadAddress(mQuery, loaderId);
 		}
 	}
 
@@ -291,12 +286,13 @@ public class ChooseOriginDestFragment extends ChooseOriginDestFragmentBase
 	{
 		super.onClick(v);
 		if (v.getId() == R.id.btnFindRoute)
-		{		
+		{
 			String fromAddress = getAddress(mAutoCompleteTextViewFromAddress, getString(R.string.startaddress));
 			String toAddress = getAddress(mAutoCompleteTextViewToAddress, getString(R.string.destination_address));
+            String waypointAddress = mAutoCompleteTextViewWayPoint.getVisibility()==View.VISIBLE ? getAddress(mAutoCompleteTextViewWayPoint, getString(R.string.waypoint)) : "";
 			if(!TextUtils.isEmpty(fromAddress) && !TextUtils.isEmpty(toAddress))
 			{
-				onAddressSelected(fromAddress, toAddress);	
+				onAddressSelected(fromAddress, toAddress, waypointAddress);
 			}
 		}
 	}
@@ -322,13 +318,13 @@ public class ChooseOriginDestFragment extends ChooseOriginDestFragmentBase
 	}
 	
 	private AddressSelected mAddressSelected = null;
-	private void onAddressSelected(String originAddress, String destinationAddress)
+	private void onAddressSelected(String originAddress, String destinationAddress, String waypointAddress)
 	{
 		if(mAddressSelected==null || mAddressSelected.getStatus()==AsyncTask.Status.FINISHED)
 		{
 			mTripRequest = new TripRequest();
-			mAddressSelected = new AddressSelected(mSelectedAddressFromPosition, mSelectedAddressToPosition);
-			mAddressSelected.execute(originAddress,destinationAddress);
+			mAddressSelected = new AddressSelected();
+			mAddressSelected.execute(originAddress,destinationAddress, waypointAddress);
 		}
 		else
 		{
@@ -340,27 +336,25 @@ public class ChooseOriginDestFragment extends ChooseOriginDestFragmentBase
 	{
 		private List<AddressSearch> mOriginAddresses;
 		private List<AddressSearch> mDestAddresses;
+        private List<AddressSearch> mWayPointAddresses;
 		private String mOrginAddress = null;
 		private String mDestAddress = null;
+        private String mWayPointAddress = null;
 		private int mSelectedIndexOriginAddress = -1;
 		private int mSelectedDestinationAddress = -1;
-		
-		
-		public AddressSelected(int selectedIndexOriginAddress, int selectedDestinationAddress)
-		{
-			mSelectedIndexOriginAddress = selectedIndexOriginAddress;
-			mSelectedDestinationAddress = selectedDestinationAddress;
-		}
+        private int mSelectedWayPointAddress = -1;
 		
 		@Override
 		protected Void doInBackground(String... params)
 		{
 			mOrginAddress = params[0];
 			mDestAddress = params[1];
-			List<AddressSearch> originAddresses = findAddrees(mOrginAddress);
-			List<AddressSearch> destAddresses = findAddrees(mDestAddress);
+            mWayPointAddress = params[2];
+			List<AddressSearch> originAddresses = findAddrees(mOrginAddress, false);
+			List<AddressSearch> destAddresses = findAddrees(mDestAddress, false);
+            List<AddressSearch> wayPointAddresses = findAddrees(mWayPointAddress, true);
 			
-			if(!originAddresses.isEmpty() && mSelectedIndexOriginAddress!=-1)
+			if(!originAddresses.isEmpty())
 			{
 				mSelectedIndexOriginAddress = findAddressIndex(mOrginAddress, originAddresses);
 				if(mSelectedIndexOriginAddress!=-1)
@@ -373,7 +367,7 @@ public class ChooseOriginDestFragment extends ChooseOriginDestFragmentBase
 				}
 				
 			}
-			if(!destAddresses.isEmpty() && mSelectedDestinationAddress!=-1)
+			if(!destAddresses.isEmpty())
 			{
 				mSelectedDestinationAddress = findAddressIndex(mDestAddress, destAddresses);
 				if(mSelectedDestinationAddress!=-1)
@@ -386,8 +380,19 @@ public class ChooseOriginDestFragment extends ChooseOriginDestFragmentBase
 				}
 				
 			}
+            if(!wayPointAddresses.isEmpty())
+            {
+                mSelectedWayPointAddress = findAddressIndex(mWayPointAddress, wayPointAddresses);
+                if(mSelectedWayPointAddress!=-1)
+                {
+                    AddressSearch via = wayPointAddresses.get(mSelectedWayPointAddress);
+                    mTripRequest.waypointNameNotEncoded = via.address;
+                    mTripRequest.setWayPointId(via.id);
+                }
+            }
 			mOriginAddresses = originAddresses;
 			mDestAddresses = destAddresses;
+            mWayPointAddresses = wayPointAddresses;
 			return null;
 		}
 		
@@ -409,42 +414,50 @@ public class ChooseOriginDestFragment extends ChooseOriginDestFragmentBase
 			return index;
 		}
 		
-		private List<AddressSearch> findAddrees(String address)
+		private List<AddressSearch> findAddrees(String address, boolean onlyStationAndStops)
 		{
 			List<AddressSearch> addresses = new ArrayList<AddressSearch>();
-			ContentResolver cr = getActivity().getContentResolver();
-			Cursor c = null;
-			try
-			{
-				StringBuilder b = new StringBuilder();
-				b.append(AddressProviderMetaData.TableMetaData.address).append(" LIKE '").append(address).append("%') GROUP BY (").append(AddressProviderMetaData.TableMetaData.address);
-							
-				c = cr.query(AddressProviderMetaData.TableMetaData.CONTENT_URI, PROJECTION, b.toString(), null, AddressProviderMetaData.TableMetaData.address);
-				if(c.moveToFirst())
-				{
-					int iAddress = c.getColumnIndex(AddressProviderMetaData.TableMetaData.address);
-					int iY = c.getColumnIndex(AddressProviderMetaData.TableMetaData.Y);
-					int iX = c.getColumnIndex(AddressProviderMetaData.TableMetaData.X);
-					int iType = c.getColumnIndex(AddressProviderMetaData.TableMetaData.type_int);
-					int iId = c.getColumnIndex(AddressProviderMetaData.TableMetaData.id);
-					do{
-						String addr = c.getString(iAddress);
-						String y = c.getString(iY);
-						String x = c.getString(iX);
-						String type = c.getString(iType);
-						String id = c.getString(iId);
-						AddressSearch as = new AddressSearch(id, addr, type, x, y);
-						addresses.add(as);						
-					}while(c.moveToNext());			
-				}
-			}
-			finally
-			{
-				if(c!=null && !c.isClosed())
-				{
-					c.close();
-				}
-			}
+            if(!TextUtils.isEmpty(address))
+            {
+                ContentResolver cr = getActivity().getContentResolver();
+                Cursor c = null;
+                try
+                {
+                    StringBuilder b = new StringBuilder();
+                    if(onlyStationAndStops)
+                    {
+                        b.append(AddressProviderMetaData.TableMetaData.id).append(" NOT NULL AND ");
+                    }
+                    b.append(AddressProviderMetaData.TableMetaData.address).append(" LIKE '").append(address).append("%') GROUP BY (").append(AddressProviderMetaData.TableMetaData.address);
+
+                    c = cr.query(AddressProviderMetaData.TableMetaData.CONTENT_URI, PROJECTION, b.toString(), null, AddressProviderMetaData.TableMetaData.address);
+                    if(c.moveToFirst())
+                    {
+                        int iAddress = c.getColumnIndex(AddressProviderMetaData.TableMetaData.address);
+                        int iY = c.getColumnIndex(AddressProviderMetaData.TableMetaData.Y);
+                        int iX = c.getColumnIndex(AddressProviderMetaData.TableMetaData.X);
+                        int iType = c.getColumnIndex(AddressProviderMetaData.TableMetaData.type_int);
+                        int iId = c.getColumnIndex(AddressProviderMetaData.TableMetaData.id);
+                        do{
+                            String addr = c.getString(iAddress);
+                            String y = c.getString(iY);
+                            String x = c.getString(iX);
+                            String type = c.getString(iType);
+                            String id = c.getString(iId);
+                            AddressSearch as = new AddressSearch(id, addr, type, x, y);
+                            addresses.add(as);
+                        }while(c.moveToNext());
+                    }
+                }
+                finally
+                {
+                    if(c!=null && !c.isClosed())
+                    {
+                        c.close();
+                    }
+                }
+            }
+
 			return addresses;
 		}
 		
@@ -477,6 +490,11 @@ public class ChooseOriginDestFragment extends ChooseOriginDestFragmentBase
             {
                 Toast.makeText(getActivity(), String.format(getString(R.string.trip_request_address_not_valid), getString(R.string.destination_address)), Toast.LENGTH_SHORT).show();
                 validateAddress(mAutoCompleteTextViewToAddress, mAutoCompleteAdapterTo, mDestAddress, mDestAddresses, mSelectedDestinationAddress);
+            }
+            else if(!mTripRequest.isValidWayPoint())
+            {
+                Toast.makeText(getActivity(), String.format(getString(R.string.trip_request_address_not_valid), getString(R.string.waypoint)), Toast.LENGTH_SHORT).show();
+                validateAddress(mAutoCompleteTextViewWayPoint, mAutoCompleteAdapterWaypoint, mWayPointAddress, mWayPointAddresses, mSelectedWayPointAddress);
             }
 			else if(mTripRequest.destCoordNameNotEncoded.equals(mTripRequest.originCoordNameNotEncoded))
 			{

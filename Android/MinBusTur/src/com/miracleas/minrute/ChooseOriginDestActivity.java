@@ -1,5 +1,6 @@
 package com.miracleas.minrute;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.location.Location;
 import android.os.Bundle;
@@ -19,7 +20,7 @@ import com.miracleas.minrute.net.TripFetcher;
 import com.miracleas.minrute.service.TripService;
 
 public class ChooseOriginDestActivity extends GeofenceActivity implements ChooseOriginDestFragment.Callbacks, android.app.DatePickerDialog.OnDateSetListener, android.app.TimePickerDialog.OnTimeSetListener,
-		com.miracleas.minrute.service.LocationService.OnNewLocationReceivedListener, OnNavigationListener
+		com.miracleas.minrute.service.LocationService.OnNewLocationReceivedListener, OnNavigationListener, ChooseDestinationDialog.NoticeDialogListener
 {
 	/**
 	 * The serialization (saved instance state) Bundle key representing the
@@ -27,7 +28,7 @@ public class ChooseOriginDestActivity extends GeofenceActivity implements Choose
 	 */
 	private static final String STATE_SELECTED_NAVIGATION_ITEM = "selected_navigation_item";
 	private MenuItem mLocationItem;
-	private boolean mLoading = false;
+	private boolean mIsLoadingMyLocation = false;
 
 	private ChooseOriginDestFragment mChooseOriginDestFragment = null;
 	private SavedTripsFragment mSavedTripsFragment = null;
@@ -69,7 +70,7 @@ public class ChooseOriginDestActivity extends GeofenceActivity implements Choose
 		if (savedInstanceState.containsKey(STATE_SELECTED_NAVIGATION_ITEM))
 		{
 			getSupportActionBar().setSelectedNavigationItem(savedInstanceState.getInt(STATE_SELECTED_NAVIGATION_ITEM));
-			mLoading = savedInstanceState.getBoolean("loading");
+			mIsLoadingMyLocation = savedInstanceState.getBoolean("loading");
 		}
 	}
 
@@ -78,25 +79,34 @@ public class ChooseOriginDestActivity extends GeofenceActivity implements Choose
 	{
 		// Serialize the current dropdown position.
 		outState.putInt(STATE_SELECTED_NAVIGATION_ITEM, getSupportActionBar().getSelectedNavigationIndex());
-		outState.putBoolean("loading", mLoading);
+		outState.putBoolean("loading", mIsLoadingMyLocation);
 	}
 
 	@Override
 	public void onStart()
 	{
 		super.onStart();
-		if (servicesConnected())
+        if(mBoundVoice)
+        {
+            mServiceVoice.stopVoices();
+        }
+        if(mBoundLocation && !mIsLoadingMyLocation)
+        {
+            mServiceLocation.stopLocationListening();
+        }
+		if (isGoogleServiceConnected())
 		{
 			removeSavedGeofences();
 		}
 
 	}
 
+
 	@Override
 	public boolean onPrepareOptionsMenu(Menu menu)
 	{
 		mLocationItem = menu.findItem(R.id.menu_my_location);
-		if (mLoading)
+		if (mIsLoadingMyLocation)
 		{
 			mLocationItem.setActionView(R.layout.refresh_menuitem);
 		}
@@ -129,13 +139,29 @@ public class ChooseOriginDestActivity extends GeofenceActivity implements Choose
 			finish();
 			return true;
 		case R.id.menu_my_location:
-			refreshData(item);
+			findMyLocation(item);
 			return true;
-
+        case R.id.menu_show_way_point:
+            showHideWayPoint();
+                return true;
 		default:
 			return super.onOptionsItemSelected(item);
 		}
 	}
+
+    private void showHideWayPoint()
+    {
+        getChooseOriginDestFragment().onBtnShowWayPointClicked();
+    }
+
+    public void findMyLocation()
+    {
+        if(mLocationItem!=null)
+        {
+            findMyLocation(mLocationItem);
+        }
+
+    }
 
 	/**
 	 * if not already loading, refresh the data for the selected content
@@ -143,14 +169,14 @@ public class ChooseOriginDestActivity extends GeofenceActivity implements Choose
 	 * 
 	 * @param item
 	 */
-	private void refreshData(MenuItem item)
+	private void findMyLocation(MenuItem item)
 	{
-		if (!mLoading && mBoundLocation)
+		if (!mIsLoadingMyLocation && mBoundLocation)
 		{
 			mServiceLocation.setOnNewLocationReceived(this);
 			mServiceLocation.startLocationListening();
 			mLocationItem = item;
-			mLoading = true;
+			mIsLoadingMyLocation = true;
 			showLoadSpinner();
 
 		}
@@ -160,7 +186,7 @@ public class ChooseOriginDestActivity extends GeofenceActivity implements Choose
 	{
 		if (mLocationItem != null)
 		{
-			if (mLoading)
+			if (mIsLoadingMyLocation)
 			{
 				mLocationItem.setActionView(R.layout.refresh_menuitem);
 			} else
@@ -197,7 +223,7 @@ public class ChooseOriginDestActivity extends GeofenceActivity implements Choose
 			mServiceLocation.geocode(loc);
 		} else
 		{
-			mLoading = false;
+			mIsLoadingMyLocation = false;
 			showLoadSpinner();
 		}
 
@@ -206,7 +232,7 @@ public class ChooseOriginDestActivity extends GeofenceActivity implements Choose
 	@Override
 	public void onAddressGeocoded(String address)
 	{
-		mLoading = false;
+		mIsLoadingMyLocation = false;
 		showLoadSpinner();
 		getChooseOriginDestFragment().setAddress(address);
 		mServiceLocation.setOnNewLocationReceived(null);
@@ -272,4 +298,9 @@ public class ChooseOriginDestActivity extends GeofenceActivity implements Choose
 		getChooseOriginDestFragment().onDateSet(view, year, monthOfYear, dayOfMonth);		
 	}
 
+    @Override
+    public void onDialogLocationTypeClick(DialogInterface dialog, int which, String tag)
+    {
+        getChooseOriginDestFragment().onDialogLocationTypeClick(dialog, which, tag);
+    }
 }

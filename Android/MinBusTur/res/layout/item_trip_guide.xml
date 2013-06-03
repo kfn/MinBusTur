@@ -9,14 +9,23 @@
         android:layout_width="wrap_content"
         android:layout_height="35dp"
         android:gravity="center_vertical"
-        android:text="19:00"
+        android:text="19:00" android:textStyle="bold"
         android:textSize="19sp" />
+
+    <ImageView
+        android:id="@+id/imageViewChecked" android:src="@drawable/indicator_check_mark_light"
+        android:layout_width="wrap_content" android:background="@android:color/transparent"
+        android:layout_height="35dp" android:layout_alignParentRight="true"
+        android:gravity="center_vertical" android:enabled="false"
+         />
+
+
     
     <TextView
         android:id="@+id/textViewTransportType"
         android:layout_width="wrap_content" android:padding="2dp"
         android:layout_height="wrap_content" 
-        android:layout_centerHorizontal="true"
+        android:layout_centerHorizontal="true" android:drawableLeft="@drawable/driving"
         android:drawablePadding="10dp" android:text="BUS"
         android:gravity="center_vertical"
         android:textSize="17sp" android:textStyle="bold"/>
