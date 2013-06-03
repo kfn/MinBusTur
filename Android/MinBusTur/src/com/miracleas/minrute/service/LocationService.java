@@ -154,7 +154,7 @@ public class LocationService extends Service implements LocationListener, Google
 	{
 		if (loc != null)
 		{
-			Log.d(tag, loc.getLatitude() + "," + loc.getLongitude());
+			//Log.d(tag, loc.getLatitude() + "," + loc.getLongitude());
 			if (mOnNewLocationReceived != null)
 			{
 				mOnNewLocationReceived.onNewLocationReceived(loc);

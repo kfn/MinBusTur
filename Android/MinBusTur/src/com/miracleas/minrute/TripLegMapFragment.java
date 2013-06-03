@@ -2,12 +2,20 @@ package com.miracleas.minrute;
 
 import java.text.NumberFormat;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
 import android.annotation.SuppressLint;
+import android.annotation.TargetApi;
 import android.app.Activity;
+import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.Color;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
 import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
@@ -38,20 +46,32 @@ import com.google.android.gms.maps.model.LatLngBounds.Builder;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import com.google.android.gms.maps.model.Polyline;
+import com.google.android.gms.maps.model.PolylineOptions;
+import com.google.maps.android.PolyUtil;
+import com.google.maps.android.SphericalUtil;
 import com.miracleas.minrute.model.TripLeg;
 import com.miracleas.minrute.model.TripLegStop;
+import com.miracleas.minrute.provider.DirectionLegsMetaData;
 import com.miracleas.minrute.provider.TripLegDetailMetaData;
 import com.miracleas.minrute.provider.TripLegDetailStopMetaData;
+import com.miracleas.minrute.service.DirectionsService;
+import com.miracleas.minrute.utils.App;
 
-public class TripLegMapFragment extends SupportMapFragment implements LoaderCallbacks<Cursor>, OnCameraChangeListener, OnMarkerClickListener, OnInfoWindowClickListener
+public class TripLegMapFragment extends SupportMapFragment implements LoaderCallbacks<Cursor>, OnCameraChangeListener, OnMarkerClickListener, OnInfoWindowClickListener, SensorEventListener
 {
-	private TripLeg mLeg = null;
+    private static final double TARGET_OFFSET_METERS = 2d;
+    private TripLeg mLeg = null;
 	private boolean mStartUp = true;
 	private ProgressBar mProgressBar = null;
 	private boolean mIsTwoPane = false;
 	private Location mLocation = null;
+    private SensorManager mSensorManager;
+    private float[] mRotationMatrix = new float[16];
+    private float[] mValues = new float[3];
 
-	private Map<LatLng, LegStop> mMarkers = new HashMap<LatLng, LegStop>();
+
+    private Map<LatLng, LegStop> mMarkers = new HashMap<LatLng, LegStop>();
 	/**
 	 * The columns needed by the cursor adapter
 	 */
@@ -67,12 +87,21 @@ public class TripLegMapFragment extends SupportMapFragment implements LoaderCall
 		TripLegDetailStopMetaData.TableMetaData.TRACK,
 		TripLegDetailStopMetaData.TableMetaData.IS_PART_OF_USER_ROUTE,
 	};
-	
-	public static TripLegMapFragment createInstance(String journeyId, TripLeg leg)
+
+    private static final String[] PROJECTION_DIRECTION = {
+            DirectionLegsMetaData.TableMetaData.OVERVIEW_POLYLINE
+    };
+    private float mAzimuth;
+    private float mTilt;
+
+    public static TripLegMapFragment createInstance(String journeyId, TripLeg leg)
 	{
 		TripLegMapFragment f = new TripLegMapFragment();
 		Bundle args = new Bundle();
-		args.putString(TripLegDetailMetaData.TableMetaData._ID, journeyId);
+        if(!journeyId.equals("-1"))
+        {
+            args.putString(TripLegDetailMetaData.TableMetaData._ID, journeyId);
+        }
 		args.putParcelable(TripLeg.tag, leg);
 		f.setArguments(args);
 		return f;
@@ -111,7 +140,15 @@ public class TripLegMapFragment extends SupportMapFragment implements LoaderCall
 	public void onCreate(Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);
-	}
+        if(savedInstanceState==null)
+        {
+            Intent service = new Intent(getActivity(), DirectionsService.class);
+            TripLeg leg = getArguments().getParcelable(TripLeg.tag);
+            service.putExtra(TripLeg.tag, leg);
+            getActivity().startService(service);
+        }
+
+    }
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
@@ -150,6 +187,7 @@ public class TripLegMapFragment extends SupportMapFragment implements LoaderCall
 					
 					setUpMap(getMap());
 					getActivity().getSupportLoaderManager().initLoader(LoaderConstants.LOADER_TRIP_LEG_STOPS_MAP, getArguments(), TripLegMapFragment.this);
+                    getActivity().getSupportLoaderManager().initLoader(LoaderConstants.LOADER_TRIP_LEG_DIRECTIONS, getArguments(), TripLegMapFragment.this);
 				}
 			});
 		}
@@ -193,13 +231,19 @@ public class TripLegMapFragment extends SupportMapFragment implements LoaderCall
 	{
 		if (map != null)
 		{
+            if(App.SUPPORTS_GINGERBREAD)
+            {
+                mSensorManager = (SensorManager)getActivity().getSystemService(Activity.SENSOR_SERVICE);
+                Sensor vectorSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR);
+                mSensorManager.registerListener(this, vectorSensor, 1600);
+            }
 
-			// Setting an info window adapter allows us to change the both the
+            // Setting an info window adapter allows us to change the both the
 			// contents and look of the
 			// info window.
 			//getMap().setInfoWindowAdapter(new CustomInfoWindowAdapter());
 			map.setOnInfoWindowClickListener(this);
-			
+			map.setOnCameraChangeListener(this);
 			
 			map.setMyLocationEnabled(true);
 			// Setting an info window adapter allows us to change the both the
@@ -216,6 +260,45 @@ public class TripLegMapFragment extends SupportMapFragment implements LoaderCall
 			
 		}
 	}
+
+
+    @TargetApi(Build.VERSION_CODES.GINGERBREAD)
+    @Override
+    public void onSensorChanged(SensorEvent sensorEvent)
+    {
+        Location loc = getMap().getMyLocation();
+
+        if(loc!=null)
+        {
+            LatLng latLng = new LatLng(loc.getLatitude(), loc.getLongitude());
+
+            SensorManager.getRotationMatrixFromVector(mRotationMatrix, sensorEvent.values);
+            SensorManager.getOrientation(mRotationMatrix, mValues);
+            mAzimuth = (float)Math.toDegrees(mValues[0]); //direction north
+            mTilt = (float)Math.toDegrees(mValues[1]); //device tilt
+
+            float clamped = clamp(0f,mTilt,67.5f);
+
+            CameraPosition cameraPosition = CameraPosition.builder().tilt(clamped).
+                    bearing(mAzimuth).
+                    zoom(13 + 5 * (mTilt / 90)).
+                    target(SphericalUtil.computeOffset(latLng, TARGET_OFFSET_METERS, mAzimuth)).
+                    build();
+
+            getMap().moveCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+        }
+
+    }
+
+    private float clamp(float val, float min, float max) {
+        return Math.max(min, Math.min(max, val));
+    }
+
+    @Override
+    public void onAccuracyChanged(Sensor sensor, int i)
+    {
+
+    }
 
 
 	@Override
@@ -267,12 +350,19 @@ public class TripLegMapFragment extends SupportMapFragment implements LoaderCall
 	@Override
 	public Loader<Cursor> onCreateLoader(int id, Bundle args)
 	{
-		if (id == LoaderConstants.LOADER_TRIP_LEG_STOPS_MAP)
-		{			
+		if (id == LoaderConstants.LOADER_TRIP_LEG_STOPS_MAP && args.containsKey(TripLegDetailMetaData.TableMetaData._ID))
+		{
 			String selection = TripLegDetailStopMetaData.TableMetaData.JOURNEY_DETAIL_ID + "=?";
-			String[] selectionArgs = { args.getString(TripLegDetailMetaData.TableMetaData._ID) };			
+			String[] selectionArgs = { args.getString(TripLegDetailMetaData.TableMetaData._ID) };
 			return new CursorLoader(getActivity(), TripLegDetailStopMetaData.TableMetaData.CONTENT_URI, PROJECTION_STOP, selection, selectionArgs, TripLegDetailStopMetaData.TableMetaData.ROUTE_ID_X);
 		}
+        else if (id == LoaderConstants.LOADER_TRIP_LEG_DIRECTIONS && args.containsKey(TripLeg.tag))
+        {
+            TripLeg leg = args.getParcelable(TripLeg.tag);
+            String selection = DirectionLegsMetaData.TableMetaData.TRIP_LEG_ID + "=?";
+            String[] selectionArgs = { leg.id + "" };
+            return new CursorLoader(getActivity(), DirectionLegsMetaData.TableMetaData.CONTENT_URI, PROJECTION_DIRECTION, selection, selectionArgs, null);
+        }
 		return null;
 	}
 
@@ -283,13 +373,35 @@ public class TripLegMapFragment extends SupportMapFragment implements LoaderCall
 		{
 			showToiletsOnMapHelper(cursor);
 		}
+        else if (loader.getId() == LoaderConstants.LOADER_TRIP_LEG_DIRECTIONS && cursor.moveToFirst())
+        {
+            int iPolyLines = cursor.getColumnIndex(DirectionLegsMetaData.TableMetaData.OVERVIEW_POLYLINE);
+            String poly = cursor.getString(iPolyLines);
+            final List<LatLng> decode = PolyUtil.decode(poly);
+            PolylineOptions rute = new PolylineOptions();
+            for (LatLng aDecode : decode)
+            {
+                rute.add(aDecode);
+            }
+            //puntos is an array where the array returned by the decodePoly method are stored
+            rute.color(Color.RED).width(7);
+            Polyline polygon=getMap().addPolyline(rute);
+        }
 	}
 
 	@Override
 	public void onLoaderReset(Loader<Cursor> cursor)
 	{
-		clearMap();
-		mProgressBar.setVisibility(View.VISIBLE);
+        if(cursor.getId() == LoaderConstants.LOADER_TRIP_LEG_STOPS_MAP)
+        {
+            clearMap();
+            mProgressBar.setVisibility(View.VISIBLE);
+        }
+        else if(cursor.getId() == LoaderConstants.LOADER_TRIP_LEG_DIRECTIONS)
+        {
+
+        }
+
 	}
 
 	@Override
@@ -450,6 +562,7 @@ public class TripLegMapFragment extends SupportMapFragment implements LoaderCall
 	public void onDestroy()
 	{
 		super.onDestroy();
+        mSensorManager.unregisterListener(this);
 	}
 
 	public Location getCenterLocation()

@@ -23,7 +23,7 @@ import android.util.Log;
 public class MinBusTurProvider extends ContentProvider
 {
 	public static final String DATABASE_NAME = "minrejseplan";
-	public static final int DATABASE_VERSION = 8;
+	public static final int DATABASE_VERSION = 9;
 	// Logging helper tag. No significance to providers.
 	private static final String tag = MinBusTurProvider.class.getName();
 
@@ -54,6 +54,10 @@ public class MinBusTurProvider extends ContentProvider
 	
 	private static final int INCOMING_GEOFENCE_COLLECTION_URI_INDICATOR = 25;
 	private static final int INCOMING_SINGLE_GEOFENCE_URI_INDICATOR = 26;
+    private static final int INCOMING_DIRECTION_COLLECTION_URI_INDICATOR = 27;
+    private static final int INCOMING_DIRECTION_STEP_COLLECTION_URI_INDICATOR = 28;
+
+
 	
 
 	static
@@ -83,6 +87,7 @@ public class MinBusTurProvider extends ContentProvider
 		
 		sUriMatcher.addURI(GeofenceMetaData.AUTHORITY, GeofenceMetaData.COLLECTION_TYPE, INCOMING_GEOFENCE_COLLECTION_URI_INDICATOR);
 		sUriMatcher.addURI(GeofenceMetaData.AUTHORITY, GeofenceMetaData.COLLECTION_TYPE + "/#", INCOMING_SINGLE_GEOFENCE_URI_INDICATOR);
+        sUriMatcher.addURI(DirectionLegsMetaData.AUTHORITY, DirectionLegsMetaData.COLLECTION_TYPE, INCOMING_DIRECTION_COLLECTION_URI_INDICATOR);
 	}
 
 	/**
@@ -113,7 +118,7 @@ public class MinBusTurProvider extends ContentProvider
 			db.execSQL("CREATE TABLE IF NOT EXISTS " + AddressGPSMetaData.TABLE_NAME + getTableSchemaStart() + AddressGPSMetaData.getTableSchema() + getTableSchemaEnd());
 			
 			db.execSQL("CREATE TABLE IF NOT EXISTS " + GeofenceMetaData.TABLE_NAME + getTableSchemaStart() + GeofenceMetaData.getTableSchema() + getTableSchemaEnd());
-
+            db.execSQL("CREATE TABLE IF NOT EXISTS " + DirectionLegsMetaData.TABLE_NAME + getTableSchemaStart() + DirectionLegsMetaData.getTableSchema() + getTableSchemaEnd());
 			
 		}
 
@@ -144,6 +149,7 @@ public class MinBusTurProvider extends ContentProvider
 			db.execSQL("DROP TABLE IF EXISTS " + GeofenceTransitionMetaData.TABLE_NAME);
 			db.execSQL("DROP TABLE IF EXISTS " + AddressGPSMetaData.TABLE_NAME);
 			db.execSQL("DROP TABLE IF EXISTS " + GeofenceMetaData.TABLE_NAME);
+            db.execSQL("DROP TABLE IF EXISTS " + DirectionLegsMetaData.TABLE_NAME);
 			onCreate(db);
 		}
 	}
@@ -261,10 +267,13 @@ public class MinBusTurProvider extends ContentProvider
 			qb.setTables(GeofenceMetaData.TABLE_NAME);
 			break;
 
-			case INCOMING_SINGLE_GEOFENCE_URI_INDICATOR:
+		case INCOMING_SINGLE_GEOFENCE_URI_INDICATOR:
 			qb.setTables(GeofenceMetaData.TABLE_NAME);
 			qb.appendWhere(GeofenceMetaData.TableMetaData._ID + "=" + uri.getPathSegments().get(1));
 			break;
+        case INCOMING_DIRECTION_COLLECTION_URI_INDICATOR:
+            qb.setTables(DirectionLegsMetaData.TABLE_NAME);
+            break;
 		default:
 			throw new IllegalArgumentException("Unknown URI " + uri);
 		}
@@ -359,6 +368,11 @@ public class MinBusTurProvider extends ContentProvider
 			tbl = GeofenceMetaData.TABLE_NAME;
 			contentUri = GeofenceMetaData.TableMetaData.CONTENT_URI;
 		}
+        else if (sUriMatcher.match(uri) == INCOMING_DIRECTION_COLLECTION_URI_INDICATOR)
+        {
+            tbl = DirectionLegsMetaData.TABLE_NAME;
+            contentUri = DirectionLegsMetaData.TableMetaData.CONTENT_URI;
+        }
 		else
 		{
 			throw new IllegalArgumentException("Unknown URI " + uri);
@@ -457,10 +471,13 @@ public class MinBusTurProvider extends ContentProvider
 			count = db.delete(GeofenceMetaData.TABLE_NAME, where, whereArgs);
 			break;
 
-			case INCOMING_SINGLE_GEOFENCE_URI_INDICATOR:
+		case INCOMING_SINGLE_GEOFENCE_URI_INDICATOR:
 			String rowId6 = uri.getPathSegments().get(1);
 			count = db.delete(GeofenceMetaData.TABLE_NAME, GeofenceMetaData.TableMetaData._ID + "=" + rowId6 + (!TextUtils.isEmpty(where) ? " AND (" + where + ')' : ""), whereArgs);
 			break;
+        case INCOMING_DIRECTION_COLLECTION_URI_INDICATOR:
+            count = db.delete(DirectionLegsMetaData.TABLE_NAME, where, whereArgs);
+            break;
 		default:
 			throw new IllegalArgumentException("Unknown URI " + uri);
 		}
@@ -536,10 +553,13 @@ public class MinBusTurProvider extends ContentProvider
 			count = db.update(GeofenceMetaData.TABLE_NAME, values, where, whereArgs);
 			break;
 
-			case INCOMING_SINGLE_GEOFENCE_URI_INDICATOR:
+		case INCOMING_SINGLE_GEOFENCE_URI_INDICATOR:
 			String rowId6 = uri.getPathSegments().get(1);
 			count = db.update(GeofenceMetaData.TABLE_NAME, values, GeofenceMetaData.TableMetaData._ID + "=" + rowId6 + (!TextUtils.isEmpty(where) ? " AND (" + where + ')' : ""), whereArgs);
 			break;
+        case INCOMING_DIRECTION_COLLECTION_URI_INDICATOR:
+                count = db.update(DirectionLegsMetaData.TABLE_NAME, values, where, whereArgs);
+                break;
 		default:
 			throw new IllegalArgumentException("Unknown URI " + uri);
 		}

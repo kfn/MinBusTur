@@ -582,7 +582,11 @@ public class UpdateVoiceTripService extends Service implements android.speech.tt
 				{
 					name = c.getString(c.getColumnIndex(TripLegDetailStopMetaData.TableMetaData.NAME));
 					Log.d(tag, "getNameOfStopBeforeDestination: "+name);
-				}		
+				}
+                else
+                {
+                    Log.e(tag, "getNameOfStopBeforeDestination could not find stop with id: "+stopId);
+                }
 			}
 			finally
 			{

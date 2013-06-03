@@ -9,6 +9,34 @@
         <option name="packageNamePattern" value="com.miracleas.minrute" />
         <option name="pid" value="" />
       </filter>
+      <filter>
+        <option name="logMessagePattern" value="" />
+        <option name="logTagPattern" value="UpdateVoiceTripService" />
+        <option name="name" value="UpdateVoiceTripService" />
+        <option name="packageNamePattern" value="" />
+        <option name="pid" value="" />
+      </filter>
+      <filter>
+        <option name="logMessagePattern" value="" />
+        <option name="logTagPattern" value="ReceiveTransitionsIntentService" />
+        <option name="name" value="ReceiveTransitionsIntentService" />
+        <option name="packageNamePattern" value="" />
+        <option name="pid" value="" />
+      </filter>
+      <filter>
+        <option name="logMessagePattern" value="" />
+        <option name="logTagPattern" value="TripGuideFragment" />
+        <option name="name" value="TripGuideFragment" />
+        <option name="packageNamePattern" value="" />
+        <option name="pid" value="" />
+      </filter>
+      <filter>
+        <option name="logMessagePattern" value="" />
+        <option name="logTagPattern" value="GeofenceActivity" />
+        <option name="name" value="GeofenceActivity" />
+        <option name="packageNamePattern" value="" />
+        <option name="pid" value="" />
+      </filter>
     </filters>
   </component>
   <component name="AndroidLayoutPreviewToolWindow">
@@ -27,7 +55,7 @@
     <ignored path=".idea/workspace.xml" />
     <file path="/strings.xml" changelist="d19e6e9c-19bc-47ba-bca5-ea755af9a629" time="1370256140396" ignored="false" />
     <file path="/ChooseOriginDestFragmentBase.java" changelist="d19e6e9c-19bc-47ba-bca5-ea755af9a629" time="1370269522761" ignored="false" />
-    <file path="/fragment.java" changelist="d19e6e9c-19bc-47ba-bca5-ea755af9a629" time="1370178051551" ignored="false" />
+    <file path="/fragment.java" changelist="d19e6e9c-19bc-47ba-bca5-ea755af9a629" time="1370285560760" ignored="false" />
     <file path="$PROJECT_DIR$/gen/com/miracleas/minrute/BuildConfig.java" changelist="d19e6e9c-19bc-47ba-bca5-ea755af9a629" time="1370238954513" ignored="false" />
     <file path="$PROJECT_DIR$/../actionbarsherlock/gen/com/actionbarsherlock/BuildConfig.java" changelist="d19e6e9c-19bc-47ba-bca5-ea755af9a629" time="1370195993290" ignored="false" />
     <file path="$PROJECT_DIR$/../google-play-services_lib/gen/com/google/android/gms/BuildConfig.java" changelist="d19e6e9c-19bc-47ba-bca5-ea755af9a629" time="1370195993290" ignored="false" />
@@ -36,7 +64,7 @@
     <file path="/sample.java" changelist="d19e6e9c-19bc-47ba-bca5-ea755af9a629" time="1370196708041" ignored="false" />
     <file path="/a.groovy" changelist="d19e6e9c-19bc-47ba-bca5-ea755af9a629" time="1370196780262" ignored="false" />
     <file path="/a.html" changelist="d19e6e9c-19bc-47ba-bca5-ea755af9a629" time="1370196781925" ignored="false" />
-    <file path="/Dummy.txt" changelist="d19e6e9c-19bc-47ba-bca5-ea755af9a629" time="1370245257154" ignored="false" />
+    <file path="/Dummy.txt" changelist="d19e6e9c-19bc-47ba-bca5-ea755af9a629" time="1370272148720" ignored="false" />
     <file path="/ChooseOriginDestFragment.java" changelist="d19e6e9c-19bc-47ba-bca5-ea755af9a629" time="1370252148204" ignored="false" />
     <file path="/TripLeg.java" changelist="d19e6e9c-19bc-47ba-bca5-ea755af9a629" time="1370198111766" ignored="false" />
     <file path="/Trip.java" changelist="d19e6e9c-19bc-47ba-bca5-ea755af9a629" time="1370197996054" ignored="false" />
@@ -46,16 +74,24 @@
     <file path="/ChooseOriginDestActivity.java" changelist="d19e6e9c-19bc-47ba-bca5-ea755af9a629" time="1370267133869" ignored="false" />
     <file path="/fragment_choose_orign_dest.xml" changelist="d19e6e9c-19bc-47ba-bca5-ea755af9a629" time="1370257728037" ignored="false" />
     <file path="/item_trip_guide.xml" changelist="d19e6e9c-19bc-47ba-bca5-ea755af9a629" time="1370245004037" ignored="false" />
-    <file path="/TripGuideFragment.java" changelist="d19e6e9c-19bc-47ba-bca5-ea755af9a629" time="1370245409536" ignored="false" />
+    <file path="/TripGuideFragment.java" changelist="d19e6e9c-19bc-47ba-bca5-ea755af9a629" time="1370287137784" ignored="false" />
     <file path="/indicator_check_mark_light.xml" changelist="d19e6e9c-19bc-47ba-bca5-ea755af9a629" time="1370244842574" ignored="false" />
-    <file path="/LoaderConstants.java" changelist="d19e6e9c-19bc-47ba-bca5-ea755af9a629" time="1370247449651" ignored="false" />
+    <file path="/LoaderConstants.java" changelist="d19e6e9c-19bc-47ba-bca5-ea755af9a629" time="1370285759809" ignored="false" />
     <file path="/TripRequest.java" changelist="d19e6e9c-19bc-47ba-bca5-ea755af9a629" time="1370251960317" ignored="false" />
     <file path="/TripSuggestionsFragment.java" changelist="d19e6e9c-19bc-47ba-bca5-ea755af9a629" time="1370252043749" ignored="false" />
     <file path="/activity_choose_origin_dest.xml" changelist="d19e6e9c-19bc-47ba-bca5-ea755af9a629" time="1370266458249" ignored="false" />
     <file path="/ChooseDestinationDialog.java" changelist="d19e6e9c-19bc-47ba-bca5-ea755af9a629" time="1370257401920" ignored="false" />
-    <file path="$PROJECT_DIR$/gen/com/miracleas/minrute/R.java" changelist="d19e6e9c-19bc-47ba-bca5-ea755af9a629" time="1370255207291" ignored="false" />
-    <file path="$PROJECT_DIR$/gen/com/miracleas/minrute/Manifest.java" changelist="d19e6e9c-19bc-47ba-bca5-ea755af9a629" time="1370255207291" ignored="false" />
+    <file path="$PROJECT_DIR$/gen/com/miracleas/minrute/R.java" changelist="d19e6e9c-19bc-47ba-bca5-ea755af9a629" time="1370287026233" ignored="false" />
+    <file path="$PROJECT_DIR$/gen/com/miracleas/minrute/Manifest.java" changelist="d19e6e9c-19bc-47ba-bca5-ea755af9a629" time="1370287026233" ignored="false" />
     <file path="/arrays.xml" changelist="d19e6e9c-19bc-47ba-bca5-ea755af9a629" time="1370256183565" ignored="false" />
+    <file path="/UpdateVoiceTripService.java" changelist="d19e6e9c-19bc-47ba-bca5-ea755af9a629" time="1370272497485" ignored="false" />
+    <file path="/TripLegMapFragment.java" changelist="d19e6e9c-19bc-47ba-bca5-ea755af9a629" time="1370287674080" ignored="false" />
+    <file path="/JourneyDetailFetcher.java" changelist="d19e6e9c-19bc-47ba-bca5-ea755af9a629" time="1370281625232" ignored="false" />
+    <file path="/DirectionMetaData.java" changelist="d19e6e9c-19bc-47ba-bca5-ea755af9a629" time="1370285004461" ignored="false" />
+    <file path="/MinBusTurProvider.java" changelist="d19e6e9c-19bc-47ba-bca5-ea755af9a629" time="1370284867379" ignored="false" />
+    <file path="/DirectionsFetcher.java" changelist="d19e6e9c-19bc-47ba-bca5-ea755af9a629" time="1370287833597" ignored="false" />
+    <file path="/DirectionStepsMetaData.java" changelist="d19e6e9c-19bc-47ba-bca5-ea755af9a629" time="1370284746722" ignored="false" />
+    <file path="/DirectionsService.java" changelist="d19e6e9c-19bc-47ba-bca5-ea755af9a629" time="1370285619865" ignored="false" />
     <option name="TRACKING_ENABLED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -71,21 +107,6 @@
   </component>
   <component name="DebuggerManager">
     <line_breakpoints default_suspend_policy="SuspendAll" default_condition_enabled="true">
-      <breakpoint url="file://$PROJECT_DIR$/src/com/miracleas/minrute/ChooseOriginDestFragment.java" line="349" class="com.miracleas.minrute.ChooseOriginDestFragment.AddressSelected" package="com.miracleas.minrute">
-        <option name="ENABLED" value="true" />
-        <option name="LOG_ENABLED" value="false" />
-        <option name="LOG_EXPRESSION_ENABLED" value="false" />
-        <option name="REMOVE_AFTER_HIT" value="false" />
-        <option name="SUSPEND_POLICY" value="SuspendAll" />
-        <option name="SUSPEND" value="true" />
-        <option name="COUNT_FILTER_ENABLED" value="false" />
-        <option name="COUNT_FILTER" value="0" />
-        <option name="CONDITION_ENABLED" value="true" />
-        <option name="CLASS_FILTERS_ENABLED" value="false" />
-        <option name="INSTANCE_FILTERS_ENABLED" value="false" />
-        <option name="CONDITION" value="" />
-        <option name="LOG_MESSAGE" value="" />
-      </breakpoint>
       <breakpoint url="file://$PROJECT_DIR$/src/com/miracleas/minrute/ChooseOriginDestFragment.java" line="465" class="com.miracleas.minrute.ChooseOriginDestFragment.AddressSelected" package="com.miracleas.minrute">
         <option name="ENABLED" value="true" />
         <option name="LOG_ENABLED" value="false" />
@@ -102,81 +123,6 @@
         <option name="LOG_MESSAGE" value="" />
       </breakpoint>
       <breakpoint url="file://$PROJECT_DIR$/src/com/miracleas/minrute/ChooseOriginDestFragment.java" line="520" class="com.miracleas.minrute.ChooseOriginDestFragment.AddressSelected" package="com.miracleas.minrute">
-        <option name="ENABLED" value="true" />
-        <option name="LOG_ENABLED" value="false" />
-        <option name="LOG_EXPRESSION_ENABLED" value="false" />
-        <option name="REMOVE_AFTER_HIT" value="false" />
-        <option name="SUSPEND_POLICY" value="SuspendAll" />
-        <option name="SUSPEND" value="true" />
-        <option name="COUNT_FILTER_ENABLED" value="false" />
-        <option name="COUNT_FILTER" value="0" />
-        <option name="CONDITION_ENABLED" value="true" />
-        <option name="CLASS_FILTERS_ENABLED" value="false" />
-        <option name="INSTANCE_FILTERS_ENABLED" value="false" />
-        <option name="CONDITION" value="" />
-        <option name="LOG_MESSAGE" value="" />
-      </breakpoint>
-      <breakpoint url="file://$PROJECT_DIR$/src/com/miracleas/minrute/model/Trip.java" line="63" class="com.miracleas.minrute.model.Trip" package="com.miracleas.minrute.model">
-        <option name="ENABLED" value="true" />
-        <option name="LOG_ENABLED" value="false" />
-        <option name="LOG_EXPRESSION_ENABLED" value="false" />
-        <option name="REMOVE_AFTER_HIT" value="false" />
-        <option name="SUSPEND_POLICY" value="SuspendAll" />
-        <option name="SUSPEND" value="true" />
-        <option name="COUNT_FILTER_ENABLED" value="false" />
-        <option name="COUNT_FILTER" value="0" />
-        <option name="CONDITION_ENABLED" value="true" />
-        <option name="CLASS_FILTERS_ENABLED" value="false" />
-        <option name="INSTANCE_FILTERS_ENABLED" value="false" />
-        <option name="CONDITION" value="" />
-        <option name="LOG_MESSAGE" value="" />
-      </breakpoint>
-      <breakpoint url="file://$PROJECT_DIR$/src/com/miracleas/minrute/ChooseOriginDestFragment.java" line="289" class="com.miracleas.minrute.ChooseOriginDestFragment" package="com.miracleas.minrute">
-        <option name="ENABLED" value="true" />
-        <option name="LOG_ENABLED" value="false" />
-        <option name="LOG_EXPRESSION_ENABLED" value="false" />
-        <option name="REMOVE_AFTER_HIT" value="false" />
-        <option name="SUSPEND_POLICY" value="SuspendAll" />
-        <option name="SUSPEND" value="true" />
-        <option name="COUNT_FILTER_ENABLED" value="false" />
-        <option name="COUNT_FILTER" value="0" />
-        <option name="CONDITION_ENABLED" value="true" />
-        <option name="CLASS_FILTERS_ENABLED" value="false" />
-        <option name="INSTANCE_FILTERS_ENABLED" value="false" />
-        <option name="CONDITION" value="" />
-        <option name="LOG_MESSAGE" value="" />
-      </breakpoint>
-      <breakpoint url="file://$PROJECT_DIR$/src/com/miracleas/minrute/ChooseOriginDestFragment.java" line="400" class="com.miracleas.minrute.ChooseOriginDestFragment.AddressSelected" package="com.miracleas.minrute">
-        <option name="ENABLED" value="true" />
-        <option name="LOG_ENABLED" value="false" />
-        <option name="LOG_EXPRESSION_ENABLED" value="false" />
-        <option name="REMOVE_AFTER_HIT" value="false" />
-        <option name="SUSPEND_POLICY" value="SuspendAll" />
-        <option name="SUSPEND" value="true" />
-        <option name="COUNT_FILTER_ENABLED" value="false" />
-        <option name="COUNT_FILTER" value="0" />
-        <option name="CONDITION_ENABLED" value="true" />
-        <option name="CLASS_FILTERS_ENABLED" value="false" />
-        <option name="INSTANCE_FILTERS_ENABLED" value="false" />
-        <option name="CONDITION" value="" />
-        <option name="LOG_MESSAGE" value="" />
-      </breakpoint>
-      <breakpoint url="file://$PROJECT_DIR$/src/com/miracleas/minrute/ChooseOriginDestFragment.java" line="482" class="com.miracleas.minrute.ChooseOriginDestFragment.AddressSelected" package="com.miracleas.minrute">
-        <option name="ENABLED" value="true" />
-        <option name="LOG_ENABLED" value="false" />
-        <option name="LOG_EXPRESSION_ENABLED" value="false" />
-        <option name="REMOVE_AFTER_HIT" value="false" />
-        <option name="SUSPEND_POLICY" value="SuspendAll" />
-        <option name="SUSPEND" value="true" />
-        <option name="COUNT_FILTER_ENABLED" value="false" />
-        <option name="COUNT_FILTER" value="0" />
-        <option name="CONDITION_ENABLED" value="true" />
-        <option name="CLASS_FILTERS_ENABLED" value="false" />
-        <option name="INSTANCE_FILTERS_ENABLED" value="false" />
-        <option name="CONDITION" value="" />
-        <option name="LOG_MESSAGE" value="" />
-      </breakpoint>
-      <breakpoint url="file://$PROJECT_DIR$/src/com/miracleas/minrute/ChooseOriginDestFragment.java" line="445" class="com.miracleas.minrute.ChooseOriginDestFragment.AddressSelected" package="com.miracleas.minrute">
         <option name="ENABLED" value="true" />
         <option name="LOG_ENABLED" value="false" />
         <option name="LOG_EXPRESSION_ENABLED" value="false" />
@@ -221,37 +167,7 @@
         <option name="CONDITION" value="" />
         <option name="LOG_MESSAGE" value="" />
       </breakpoint>
-      <breakpoint url="file://$PROJECT_DIR$/src/com/miracleas/minrute/ChooseOriginDestFragmentBase.java" line="317" class="com.miracleas.minrute.ChooseOriginDestFragmentBase" package="com.miracleas.minrute">
-        <option name="ENABLED" value="true" />
-        <option name="LOG_ENABLED" value="false" />
-        <option name="LOG_EXPRESSION_ENABLED" value="false" />
-        <option name="REMOVE_AFTER_HIT" value="false" />
-        <option name="SUSPEND_POLICY" value="SuspendAll" />
-        <option name="SUSPEND" value="true" />
-        <option name="COUNT_FILTER_ENABLED" value="false" />
-        <option name="COUNT_FILTER" value="0" />
-        <option name="CONDITION_ENABLED" value="true" />
-        <option name="CLASS_FILTERS_ENABLED" value="false" />
-        <option name="INSTANCE_FILTERS_ENABLED" value="false" />
-        <option name="CONDITION" value="" />
-        <option name="LOG_MESSAGE" value="" />
-      </breakpoint>
       <breakpoint url="file://$PROJECT_DIR$/src/com/miracleas/minrute/ChooseOriginDestFragmentBase.java" line="360" class="com.miracleas.minrute.ChooseOriginDestFragmentBase.LoadContactAddress" package="com.miracleas.minrute">
-        <option name="ENABLED" value="true" />
-        <option name="LOG_ENABLED" value="false" />
-        <option name="LOG_EXPRESSION_ENABLED" value="false" />
-        <option name="REMOVE_AFTER_HIT" value="false" />
-        <option name="SUSPEND_POLICY" value="SuspendAll" />
-        <option name="SUSPEND" value="true" />
-        <option name="COUNT_FILTER_ENABLED" value="false" />
-        <option name="COUNT_FILTER" value="0" />
-        <option name="CONDITION_ENABLED" value="true" />
-        <option name="CLASS_FILTERS_ENABLED" value="false" />
-        <option name="INSTANCE_FILTERS_ENABLED" value="false" />
-        <option name="CONDITION" value="" />
-        <option name="LOG_MESSAGE" value="" />
-      </breakpoint>
-      <breakpoint url="file://$PROJECT_DIR$/src/com/miracleas/minrute/MinRuteBaseActivity.java" line="143" class="com.miracleas.minrute.MinRuteBaseActivity" package="com.miracleas.minrute">
         <option name="ENABLED" value="true" />
         <option name="LOG_ENABLED" value="false" />
         <option name="LOG_EXPRESSION_ENABLED" value="false" />
@@ -281,8 +197,172 @@
         <option name="CONDITION" value="" />
         <option name="LOG_MESSAGE" value="" />
       </breakpoint>
+      <breakpoint url="file://$PROJECT_DIR$/src/com/miracleas/minrute/TripLegDetailsActivity.java" line="117" class="com.miracleas.minrute.TripLegDetailsActivity" package="com.miracleas.minrute">
+        <option name="ENABLED" value="true" />
+        <option name="LOG_ENABLED" value="false" />
+        <option name="LOG_EXPRESSION_ENABLED" value="false" />
+        <option name="REMOVE_AFTER_HIT" value="false" />
+        <option name="SUSPEND_POLICY" value="SuspendAll" />
+        <option name="SUSPEND" value="true" />
+        <option name="COUNT_FILTER_ENABLED" value="false" />
+        <option name="COUNT_FILTER" value="0" />
+        <option name="CONDITION_ENABLED" value="true" />
+        <option name="CLASS_FILTERS_ENABLED" value="false" />
+        <option name="INSTANCE_FILTERS_ENABLED" value="false" />
+        <option name="CONDITION" value="" />
+        <option name="LOG_MESSAGE" value="" />
+      </breakpoint>
+      <breakpoint url="file://$PROJECT_DIR$/src/com/miracleas/minrute/TripLegDetailsFragment.java" line="63" class="com.miracleas.minrute.TripLegDetailsFragment" package="com.miracleas.minrute">
+        <option name="ENABLED" value="true" />
+        <option name="LOG_ENABLED" value="false" />
+        <option name="LOG_EXPRESSION_ENABLED" value="false" />
+        <option name="REMOVE_AFTER_HIT" value="false" />
+        <option name="SUSPEND_POLICY" value="SuspendAll" />
+        <option name="SUSPEND" value="true" />
+        <option name="COUNT_FILTER_ENABLED" value="false" />
+        <option name="COUNT_FILTER" value="0" />
+        <option name="CONDITION_ENABLED" value="true" />
+        <option name="CLASS_FILTERS_ENABLED" value="false" />
+        <option name="INSTANCE_FILTERS_ENABLED" value="false" />
+        <option name="CONDITION" value="" />
+        <option name="LOG_MESSAGE" value="" />
+      </breakpoint>
+      <breakpoint url="file://$PROJECT_DIR$/src/com/miracleas/minrute/TripLegDetailsFragment.java" line="108" class="com.miracleas.minrute.TripLegDetailsFragment" package="com.miracleas.minrute">
+        <option name="ENABLED" value="true" />
+        <option name="LOG_ENABLED" value="false" />
+        <option name="LOG_EXPRESSION_ENABLED" value="false" />
+        <option name="REMOVE_AFTER_HIT" value="false" />
+        <option name="SUSPEND_POLICY" value="SuspendAll" />
+        <option name="SUSPEND" value="true" />
+        <option name="COUNT_FILTER_ENABLED" value="false" />
+        <option name="COUNT_FILTER" value="0" />
+        <option name="CONDITION_ENABLED" value="true" />
+        <option name="CLASS_FILTERS_ENABLED" value="false" />
+        <option name="INSTANCE_FILTERS_ENABLED" value="false" />
+        <option name="CONDITION" value="" />
+        <option name="LOG_MESSAGE" value="" />
+      </breakpoint>
+      <breakpoint url="file://$PROJECT_DIR$/src/com/miracleas/minrute/TripLegDetailsFragment.java" line="120" class="com.miracleas.minrute.TripLegDetailsFragment" package="com.miracleas.minrute">
+        <option name="ENABLED" value="true" />
+        <option name="LOG_ENABLED" value="false" />
+        <option name="LOG_EXPRESSION_ENABLED" value="false" />
+        <option name="REMOVE_AFTER_HIT" value="false" />
+        <option name="SUSPEND_POLICY" value="SuspendAll" />
+        <option name="SUSPEND" value="true" />
+        <option name="COUNT_FILTER_ENABLED" value="false" />
+        <option name="COUNT_FILTER" value="0" />
+        <option name="CONDITION_ENABLED" value="true" />
+        <option name="CLASS_FILTERS_ENABLED" value="false" />
+        <option name="INSTANCE_FILTERS_ENABLED" value="false" />
+        <option name="CONDITION" value="" />
+        <option name="LOG_MESSAGE" value="" />
+      </breakpoint>
+      <breakpoint url="file://$PROJECT_DIR$/src/com/miracleas/minrute/TripLegDetailsFragment.java" line="141" class="com.miracleas.minrute.TripLegDetailsFragment" package="com.miracleas.minrute">
+        <option name="ENABLED" value="true" />
+        <option name="LOG_ENABLED" value="false" />
+        <option name="LOG_EXPRESSION_ENABLED" value="false" />
+        <option name="REMOVE_AFTER_HIT" value="false" />
+        <option name="SUSPEND_POLICY" value="SuspendAll" />
+        <option name="SUSPEND" value="true" />
+        <option name="COUNT_FILTER_ENABLED" value="false" />
+        <option name="COUNT_FILTER" value="0" />
+        <option name="CONDITION_ENABLED" value="true" />
+        <option name="CLASS_FILTERS_ENABLED" value="false" />
+        <option name="INSTANCE_FILTERS_ENABLED" value="false" />
+        <option name="CONDITION" value="" />
+        <option name="LOG_MESSAGE" value="" />
+      </breakpoint>
+      <breakpoint url="file://$PROJECT_DIR$/src/com/miracleas/minrute/TripGuideFragment.java" line="465" class="com.miracleas.minrute.TripGuideFragment" package="com.miracleas.minrute">
+        <option name="ENABLED" value="true" />
+        <option name="LOG_ENABLED" value="false" />
+        <option name="LOG_EXPRESSION_ENABLED" value="false" />
+        <option name="REMOVE_AFTER_HIT" value="false" />
+        <option name="SUSPEND_POLICY" value="SuspendAll" />
+        <option name="SUSPEND" value="true" />
+        <option name="COUNT_FILTER_ENABLED" value="false" />
+        <option name="COUNT_FILTER" value="0" />
+        <option name="CONDITION_ENABLED" value="true" />
+        <option name="CLASS_FILTERS_ENABLED" value="false" />
+        <option name="INSTANCE_FILTERS_ENABLED" value="false" />
+        <option name="CONDITION" value="" />
+        <option name="LOG_MESSAGE" value="" />
+      </breakpoint>
+      <breakpoint url="file://$PROJECT_DIR$/src/com/miracleas/minrute/service/JourneyDetailsService.java" line="24" class="com.miracleas.minrute.service.JourneyDetailsService" package="com.miracleas.minrute.service">
+        <option name="ENABLED" value="true" />
+        <option name="LOG_ENABLED" value="false" />
+        <option name="LOG_EXPRESSION_ENABLED" value="false" />
+        <option name="REMOVE_AFTER_HIT" value="false" />
+        <option name="SUSPEND_POLICY" value="SuspendAll" />
+        <option name="SUSPEND" value="true" />
+        <option name="COUNT_FILTER_ENABLED" value="false" />
+        <option name="COUNT_FILTER" value="0" />
+        <option name="CONDITION_ENABLED" value="true" />
+        <option name="CLASS_FILTERS_ENABLED" value="false" />
+        <option name="INSTANCE_FILTERS_ENABLED" value="false" />
+        <option name="CONDITION" value="" />
+        <option name="LOG_MESSAGE" value="" />
+      </breakpoint>
+      <breakpoint url="file://$PROJECT_DIR$/src/com/miracleas/minrute/net/JourneyDetailFetcher.java" line="108" class="com.miracleas.minrute.net.JourneyDetailFetcher" package="com.miracleas.minrute.net">
+        <option name="ENABLED" value="true" />
+        <option name="LOG_ENABLED" value="false" />
+        <option name="LOG_EXPRESSION_ENABLED" value="false" />
+        <option name="REMOVE_AFTER_HIT" value="false" />
+        <option name="SUSPEND_POLICY" value="SuspendAll" />
+        <option name="SUSPEND" value="true" />
+        <option name="COUNT_FILTER_ENABLED" value="false" />
+        <option name="COUNT_FILTER" value="0" />
+        <option name="CONDITION_ENABLED" value="true" />
+        <option name="CLASS_FILTERS_ENABLED" value="false" />
+        <option name="INSTANCE_FILTERS_ENABLED" value="false" />
+        <option name="CONDITION" value="" />
+        <option name="LOG_MESSAGE" value="" />
+      </breakpoint>
+      <breakpoint url="file://$PROJECT_DIR$/src/com/miracleas/minrute/net/DirectionsFetcher.java" line="113" class="com.miracleas.minrute.net.DirectionsFetcher" package="com.miracleas.minrute.net">
+        <option name="ENABLED" value="true" />
+        <option name="LOG_ENABLED" value="false" />
+        <option name="LOG_EXPRESSION_ENABLED" value="false" />
+        <option name="REMOVE_AFTER_HIT" value="false" />
+        <option name="SUSPEND_POLICY" value="SuspendAll" />
+        <option name="SUSPEND" value="true" />
+        <option name="COUNT_FILTER_ENABLED" value="false" />
+        <option name="COUNT_FILTER" value="0" />
+        <option name="CONDITION_ENABLED" value="true" />
+        <option name="CLASS_FILTERS_ENABLED" value="false" />
+        <option name="INSTANCE_FILTERS_ENABLED" value="false" />
+        <option name="CONDITION" value="" />
+        <option name="LOG_MESSAGE" value="" />
+      </breakpoint>
+      <breakpoint url="file://$PROJECT_DIR$/src/com/miracleas/minrute/TripLegMapFragment.java" line="371" class="com.miracleas.minrute.TripLegMapFragment" package="com.miracleas.minrute">
+        <option name="ENABLED" value="true" />
+        <option name="LOG_ENABLED" value="false" />
+        <option name="LOG_EXPRESSION_ENABLED" value="false" />
+        <option name="REMOVE_AFTER_HIT" value="false" />
+        <option name="SUSPEND_POLICY" value="SuspendAll" />
+        <option name="SUSPEND" value="true" />
+        <option name="COUNT_FILTER_ENABLED" value="false" />
+        <option name="COUNT_FILTER" value="0" />
+        <option name="CONDITION_ENABLED" value="true" />
+        <option name="CLASS_FILTERS_ENABLED" value="false" />
+        <option name="INSTANCE_FILTERS_ENABLED" value="false" />
+        <option name="CONDITION" value="" />
+        <option name="LOG_MESSAGE" value="" />
+      </breakpoint>
+      <breakpoint url="file://$PROJECT_DIR$/src/com/miracleas/minrute/net/DirectionsFetcher.java" line="74" class="com.miracleas.minrute.net.DirectionsFetcher" package="com.miracleas.minrute.net">
+        <option name="ENABLED" value="true" />
+        <option name="LOG_ENABLED" value="false" />
+        <option name="LOG_EXPRESSION_ENABLED" value="false" />
+        <option name="REMOVE_AFTER_HIT" value="false" />
+        <option name="SUSPEND_POLICY" value="SuspendAll" />
+        <option name="SUSPEND" value="true" />
+        <option name="COUNT_FILTER_ENABLED" value="false" />
+        <option name="COUNT_FILTER" value="0" />
+        <option name="CONDITION_ENABLED" value="true" />
+        <option name="CLASS_FILTERS_ENABLED" value="false" />
+        <option name="INSTANCE_FILTERS_ENABLED" value="false" />
+        <option name="CONDITION" value="" />
+        <option name="LOG_MESSAGE" value="" />
+      </breakpoint>
     </line_breakpoints>
-    <ui_properties default_suspend_policy="SuspendAll" default_condition_enabled="true" />
     <breakpoint_any default_suspend_policy="SuspendAll" default_condition_enabled="true">
       <breakpoint>
         <option name="NOTIFY_CAUGHT" value="true" />
@@ -319,6 +399,7 @@
         <option name="LOG_MESSAGE" value="" />
       </breakpoint>
     </breakpoint_any>
+    <ui_properties default_suspend_policy="SuspendAll" default_condition_enabled="true" />
     <breakpoint_rules />
     <ui_properties />
   </component>
@@ -332,44 +413,44 @@
         <entry file="file://$PROJECT_DIR$/src/com/miracleas/minrute/ChooseOriginDestFragmentBase.java">
           <provider selected="true" editor-type-id="text-editor">
             <state line="317" column="0" selection-start="11403" selection-end="11403" vertical-scroll-proportion="0.0">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="JourneyDetailFetcher.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/com/miracleas/minrute/net/JourneyDetailFetcher.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="86" column="0" selection-start="2537" selection-end="2537" vertical-scroll-proportion="0.0">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="TripGuideFragment.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/com/miracleas/minrute/TripGuideFragment.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="465" column="0" selection-start="17752" selection-end="17752" vertical-scroll-proportion="0.0">
               <folding>
-                <element signature="e#17498#17541#0" expanded="true" />
+                <element signature="e#13441#13492#0" expanded="true" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="MinRuteBaseActivity.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/com/miracleas/minrute/MinRuteBaseActivity.java">
+      <file leaf-file-name="TripLegMapActivity.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/com/miracleas/minrute/TripLegMapActivity.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="143" column="0" selection-start="3649" selection-end="3649" vertical-scroll-proportion="0.0">
+            <state line="19" column="31" selection-start="711" selection-end="729" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="Fragment.class" pinned="false" current="false" current-in-tab="false">
-        <entry file="jar://$PROJECT_DIR$/../actionbarsherlock/libs/android-support-v4.jar!/android/support/v4/app/Fragment.class">
+      <file leaf-file-name="TripLegMapFragment.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/com/miracleas/minrute/TripLegMapFragment.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="140" column="16" selection-start="5398" selection-end="5398" vertical-scroll-proportion="-6.4">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="FragmentActivity.class" pinned="false" current="false" current-in-tab="false">
-        <entry file="jar://$PROJECT_DIR$/../actionbarsherlock/libs/android-support-v4.jar!/android/support/v4/app/FragmentActivity.class">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="28" column="19" selection-start="1121" selection-end="1121" vertical-scroll-proportion="-6.6">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="ChooseOriginDestFragmentContactsBase.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/com/miracleas/minrute/ChooseOriginDestFragmentContactsBase.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="121" column="13" selection-start="4182" selection-end="4182" vertical-scroll-proportion="0.0">
+            <state line="401" column="0" selection-start="13440" selection-end="13440" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
@@ -379,27 +460,46 @@
         <entry file="file://$PROJECT_DIR$/src/com/miracleas/minrute/ChooseOriginDestActivity.java">
           <provider selected="true" editor-type-id="text-editor">
             <state line="154" column="0" selection-start="4874" selection-end="4874" vertical-scroll-proportion="0.0">
-              <folding>
-                <element signature="e#2383#2417#0" expanded="true" />
-                <element signature="e#2419#2453#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="ChooseDestinationDialog.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/com/miracleas/minrute/ChooseDestinationDialog.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="17" column="42" selection-start="500" selection-end="500" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="ChooseOriginDestFragment.java" pinned="false" current="true" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/src/com/miracleas/minrute/ChooseOriginDestFragment.java">
+      <file leaf-file-name="DirectionsService.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/com/miracleas/minrute/service/DirectionsService.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="289" column="0" selection-start="9129" selection-end="9129" vertical-scroll-proportion="0.33195022">
+            <state line="9" column="30" selection-start="262" selection-end="279" vertical-scroll-proportion="0.0">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="DirectionsFetcher.java" pinned="false" current="true" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/src/com/miracleas/minrute/net/DirectionsFetcher.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="85" column="16" selection-start="2870" selection-end="2870" vertical-scroll-proportion="0.7996109">
+              <folding>
+                <element signature="e#3030#3076#0" expanded="true" />
+                <element signature="e#3143#3189#0" expanded="true" />
+                <element signature="e#3256#3302#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="BaseFetcher.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/com/miracleas/minrute/net/BaseFetcher.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="115" column="0" selection-start="3820" selection-end="3820" vertical-scroll-proportion="0.0">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="MinBusTurProvider.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/com/miracleas/minrute/provider/MinBusTurProvider.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="120" column="65" selection-start="8421" selection-end="8421" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
@@ -420,30 +520,30 @@
   <component name="IdeDocumentHistory">
     <option name="changedFiles">
       <list>
-        <option value="$PROJECT_DIR$/res/layout/item_trip_guide.xml" />
-        <option value="$PROJECT_DIR$/src/com/miracleas/minrute/TripGuideActivity.java" />
-        <option value="$PROJECT_DIR$/res/drawable/indicator_check_mark_light.xml" />
-        <option value="$PROJECT_DIR$/src/com/miracleas/minrute/TripGuideFragment.java" />
-        <option value="$PROJECT_DIR$/src/com/miracleas/minrute/LoaderConstants.java" />
-        <option value="$PROJECT_DIR$/src/com/miracleas/minrute/model/TripRequest.java" />
-        <option value="$PROJECT_DIR$/src/com/miracleas/minrute/TripSuggestionsFragment.java" />
-        <option value="$PROJECT_DIR$/src/com/miracleas/minrute/ChooseOriginDestFragment.java" />
-        <option value="$PROJECT_DIR$/res/values/strings.xml" />
-        <option value="$PROJECT_DIR$/res/values/arrays.xml" />
-        <option value="$PROJECT_DIR$/src/com/miracleas/minrute/ChooseDestinationDialog.java" />
-        <option value="$PROJECT_DIR$/res/layout/fragment_choose_orign_dest.xml" />
-        <option value="$PROJECT_DIR$/res/menu/activity_choose_origin_dest.xml" />
-        <option value="$PROJECT_DIR$/src/com/miracleas/minrute/MinRuteBaseActivity.java" />
         <option value="$PROJECT_DIR$/src/com/miracleas/minrute/ChooseOriginDestActivity.java" />
         <option value="$PROJECT_DIR$/src/com/miracleas/minrute/ChooseOriginDestFragmentBase.java" />
+        <option value="$PROJECT_DIR$/src/com/miracleas/minrute/service/LocationService.java" />
+        <option value="$PROJECT_DIR$/src/com/miracleas/minrute/service/UpdateVoiceTripService.java" />
+        <option value="$PROJECT_DIR$/src/com/miracleas/minrute/TripLegDetailsFragment.java" />
+        <option value="$PROJECT_DIR$/src/com/miracleas/minrute/net/JourneyDetailFetcher.java" />
+        <option value="$PROJECT_DIR$/src/com/miracleas/minrute/provider/DirectionMetaData.java" />
+        <option value="$PROJECT_DIR$/src/com/miracleas/minrute/provider/DirectionStepsMetaData.java" />
+        <option value="$PROJECT_DIR$/src/com/miracleas/minrute/provider/DirectionLegsMetaData.java" />
+        <option value="$PROJECT_DIR$/src/com/miracleas/minrute/service/DirectionsService.java" />
+        <option value="$PROJECT_DIR$/src/com/miracleas/minrute/LoaderConstants.java" />
+        <option value="$PROJECT_DIR$/AndroidManifest.xml" />
+        <option value="$PROJECT_DIR$/src/com/miracleas/minrute/TripGuideFragment.java" />
+        <option value="$PROJECT_DIR$/src/com/miracleas/minrute/provider/MinBusTurProvider.java" />
+        <option value="$PROJECT_DIR$/src/com/miracleas/minrute/TripLegMapFragment.java" />
+        <option value="$PROJECT_DIR$/src/com/miracleas/minrute/net/DirectionsFetcher.java" />
       </list>
     </option>
   </component>
   <component name="ProjectFrameBounds">
     <option name="x" value="-4" />
     <option name="y" value="-4" />
-    <option name="width" value="1688" />
-    <option name="height" value="1012" />
+    <option name="width" value="1928" />
+    <option name="height" value="1042" />
   </component>
   <component name="ProjectLevelVcsManager" settingsEditedManually="false">
     <OptionsSetting value="true" id="Add" />
@@ -471,8 +571,8 @@
       <sortByType />
     </navigator>
     <panes>
-      <pane id="Scope" />
       <pane id="PackagesPane" />
+      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <PATH>
@@ -505,6 +605,10 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
+              <option name="myItemId" value="com" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
               <option name="myItemId" value="miracleas" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
@@ -527,7 +631,133 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
+              <option name="myItemId" value="com" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
               <option name="myItemId" value="miracleas" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="minrute" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="service" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="MinBusTur" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="MinBusTur" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="com" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="miracleas" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="minrute" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="provider" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="MinBusTur" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="MinBusTur" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="com" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="miracleas" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="minrute" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="net" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="MinBusTur" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="MinBusTur" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="com" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="miracleas" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="MinBusTur" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="MinBusTur" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="com" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="MinBusTur" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="MinBusTur" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="assets" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -547,7 +777,7 @@
     <property name="recentsLimit" value="5" />
     <property name="options.lastSelected" value="editor.preferences.appearance" />
     <property name="ExportedModule" value="MinBusTur" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/../../../../android/keystores/miracle-release-key.keystore" />
+    <property name="last_opened_file_path" value="F:/android/keystores/miracle-release-key.keystore" />
     <property name="project.structure.side.proportion" value="0.5272306" />
     <property name="DEBUGGABLE_DEVICE" value="0146B5661501300D" />
     <property name="MemberChooser.copyJavadoc" value="false" />
@@ -562,12 +792,17 @@
     <property name="options.splitter.details.proportions" value="0.2" />
   </component>
   <component name="RecentsManager">
+    <key name="CopyClassDialog.RECENTS_KEY">
+      <recent name="com.miracleas.minrute.service" />
+      <recent name="com.miracleas.minrute.provider" />
+      <recent name="com.miracleas.minrute.net" />
+    </key>
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="F:\projects\MinBusTur\Android\MinBusTur\src\com\google\maps\android" />
       <recent name="C:\Users\kfn\Documents\projects\MinBusTur\Android\MinBusTur\res\drawable" />
       <recent name="C:\Users\kfn\Documents\projects\MinBusTur\Android\MinBusTur\res\drawable-xhdpi" />
       <recent name="C:\Users\kfn\Documents\projects\MinBusTur\Android\MinBusTur\res\drawable-mdpi" />
       <recent name="C:\Users\kfn\Documents\projects\MinBusTur\Android\MinBusTur\res\drawable-hdpi" />
-      <recent name="C:\Users\kfn\Documents\projects\MinBusTur\Android\actionbarsherlock\libs" />
     </key>
   </component>
   <component name="RunManager" selected="Android Application.MinBusTur">
@@ -733,31 +968,33 @@
       <workItem from="1370240542439" duration="17537000" />
       <workItem from="1370265869585" duration="1324000" />
       <workItem from="1370268067497" duration="2037000" />
+      <workItem from="1370271827108" duration="1394000" />
+      <workItem from="1370277807546" duration="9614000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="32002000" />
+    <option name="totallyTimeSpent" value="43010000" />
   </component>
   <component name="ToolWindowManager">
-    <frame x="-4" y="-4" width="1688" height="1012" extended-state="6" />
+    <frame x="-4" y="-4" width="1928" height="1042" extended-state="6" />
     <editor active="false" />
     <layout>
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.39838338" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.39732143" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="11" side_tool="true" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="true" content_ui="tabs" />
       <window_info id="Build Variants" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="4" side_tool="true" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
-      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3290993" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
-      <window_info id="Android" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.31408775" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.328125" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
+      <window_info id="Android" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4408482" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.249694" sideWeight="0.6593534" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="SLIDING" type="SLIDING" visible="false" weight="0.4" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.19216646" sideWeight="0.6016166" order="1" side_tool="false" content_ui="combo" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.34064665" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.21878335" sideWeight="0.6026786" order="1" side_tool="false" content_ui="combo" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3404018" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Palette&#9;" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32986537" sideWeight="0.6593534" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Documentation" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="FLOATING" visible="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" x="96" y="96" width="1488" height="812" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
@@ -831,85 +1068,88 @@
     <breakpoint-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/src/com/miracleas/minrute/net/AddressFetcher.java">
+    <entry file="file://$PROJECT_DIR$/src/com/miracleas/minrute/model/TripLeg.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="147" column="70" selection-start="4460" selection-end="4460" vertical-scroll-proportion="2.5858586">
+        <state line="16" column="20" selection-start="381" selection-end="388" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/miracleas/minrute/model/TripRequest.java">
+    <entry file="file://$PROJECT_DIR$/src/com/miracleas/minrute/service/TripService.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="291" column="51" selection-start="6564" selection-end="6564" vertical-scroll-proportion="1.4678899">
+        <state line="7" column="13" selection-start="166" selection-end="166" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/miracleas/minrute/TripSuggestionsFragment.java">
+    <entry file="file://$PROJECT_DIR$/assets/journeyDetail.xml">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="91" column="179" selection-start="3408" selection-end="3408" vertical-scroll-proportion="0.0">
+        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/AndroidManifest.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="153" column="77" selection-start="7024" selection-end="7024" vertical-scroll-proportion="0.702439">
           <folding>
-            <element signature="e#3077#3116#0" expanded="true" />
-            <element signature="e#3288#3331#0" expanded="true" />
-            <element signature="e#5355#5383#0" expanded="true" />
+            <element signature="e#1511#1529#0" expanded="true" />
+            <element signature="e#2443#2491#0" expanded="true" />
+            <element signature="e#3053#3073#0" expanded="true" />
+            <element signature="e#3949#3975#0" expanded="true" />
+            <element signature="e#4371#4398#0" expanded="true" />
+            <element signature="e#4811#4844#0" expanded="true" />
+            <element signature="e#5636#5654#0" expanded="true" />
+            <element signature="e#5816#5834#0" expanded="true" />
+            <element signature="e#5984#6002#0" expanded="true" />
+            <element signature="e#6161#6179#0" expanded="true" />
+            <element signature="e#6335#6353#0" expanded="true" />
+            <element signature="e#6514#6532#0" expanded="true" />
+            <element signature="e#6685#6703#0" expanded="true" />
+            <element signature="e#6866#6884#0" expanded="true" />
+            <element signature="e#7056#7074#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/res/values/strings.xml">
+    <entry file="file://$PROJECT_DIR$/src/com/miracleas/minrute/LoaderConstants.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="25" column="34" selection-start="1351" selection-end="1367" vertical-scroll-proportion="0.0" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/res/values/arrays.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="9" column="12" selection-start="298" selection-end="298" vertical-scroll-proportion="0.26422018" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/miracleas/minrute/ChooseDestinationDialog.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="17" column="42" selection-start="500" selection-end="500" vertical-scroll-proportion="0.0">
+        <state line="22" column="54" selection-start="1020" selection-end="1046" vertical-scroll-proportion="0.5723577">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/res/layout/fragment_choose_orign_dest.xml">
+    <entry file="file://$PROJECT_DIR$/src/com/miracleas/minrute/provider/DirectionLegsMetaData.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="76" column="4" selection-start="3364" selection-end="3364" vertical-scroll-proportion="-10.68" />
-      </provider>
-      <provider editor-type-id="android-designer">
-        <state />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/res/menu/activity_choose_origin_dest.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="11" column="39" selection-start="422" selection-end="422" vertical-scroll-proportion="0.0" />
-      </provider>
-    </entry>
-    <entry file="jar://$PROJECT_DIR$/../actionbarsherlock/libs/android-support-v4.jar!/android/support/v4/app/FragmentActivity.class">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="28" column="19" selection-start="1121" selection-end="1121" vertical-scroll-proportion="-6.6">
+        <state line="6" column="34" selection-start="117" selection-end="138" vertical-scroll-proportion="0.1300813">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="jar://$APPLICATION_HOME_DIR$/sdk/platforms/android-17/android.jar!/android/app/Activity.class">
+    <entry file="file://$PROJECT_DIR$/src/com/miracleas/minrute/TripLegMapActivity.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="8" column="28" selection-start="477" selection-end="477" vertical-scroll-proportion="0.21052632">
+        <state line="19" column="31" selection-start="711" selection-end="729" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="jar://$PROJECT_DIR$/../actionbarsherlock/libs/android-support-v4.jar!/android/support/v4/app/Fragment.class">
+    <entry file="file://$PROJECT_DIR$/src/com/miracleas/minrute/provider/MinBusTurProvider.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="140" column="16" selection-start="5398" selection-end="5398" vertical-scroll-proportion="-6.4">
+        <state line="120" column="65" selection-start="8421" selection-end="8421" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/miracleas/minrute/ChooseOriginDestFragmentContactsBase.java">
+    <entry file="file://$PROJECT_DIR$/src/com/miracleas/minrute/service/DirectionsService.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="121" column="13" selection-start="4182" selection-end="4182" vertical-scroll-proportion="0.0">
+        <state line="9" column="30" selection-start="262" selection-end="279" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/miracleas/minrute/TripLegMapFragment.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="401" column="0" selection-start="13440" selection-end="13440" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
@@ -917,16 +1157,6 @@
     <entry file="file://$PROJECT_DIR$/src/com/miracleas/minrute/ChooseOriginDestActivity.java">
       <provider selected="true" editor-type-id="text-editor">
         <state line="154" column="0" selection-start="4874" selection-end="4874" vertical-scroll-proportion="0.0">
-          <folding>
-            <element signature="e#2383#2417#0" expanded="true" />
-            <element signature="e#2419#2453#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/miracleas/minrute/MinRuteBaseActivity.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="143" column="0" selection-start="3649" selection-end="3649" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
@@ -934,16 +1164,41 @@
     <entry file="file://$PROJECT_DIR$/src/com/miracleas/minrute/ChooseOriginDestFragmentBase.java">
       <provider selected="true" editor-type-id="text-editor">
         <state line="317" column="0" selection-start="11403" selection-end="11403" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/miracleas/minrute/net/JourneyDetailFetcher.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="86" column="0" selection-start="2537" selection-end="2537" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/miracleas/minrute/TripGuideFragment.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="465" column="0" selection-start="17752" selection-end="17752" vertical-scroll-proportion="0.0">
           <folding>
-            <element signature="e#17498#17541#0" expanded="true" />
+            <element signature="e#13441#13492#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/miracleas/minrute/ChooseOriginDestFragment.java">
+    <entry file="file://$PROJECT_DIR$/src/com/miracleas/minrute/net/BaseFetcher.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="289" column="0" selection-start="9129" selection-end="9129" vertical-scroll-proportion="0.33195022">
+        <state line="115" column="0" selection-start="3820" selection-end="3820" vertical-scroll-proportion="0.0">
           <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/miracleas/minrute/net/DirectionsFetcher.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="85" column="16" selection-start="2870" selection-end="2870" vertical-scroll-proportion="0.7996109">
+          <folding>
+            <element signature="e#3030#3076#0" expanded="true" />
+            <element signature="e#3143#3189#0" expanded="true" />
+            <element signature="e#3256#3302#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>

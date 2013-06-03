@@ -92,7 +92,11 @@ public class JourneyDetailFetcher extends BaseFetcher
 			{
 				InputStream input = urlConnection.getInputStream();
 				parse(input);
-			} 
+			}
+            else
+            {
+                throw new Exception(urlConnection.getResponseMessage());
+            }
 		} finally
 		{
 			urlConnection.disconnect();

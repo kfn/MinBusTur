@@ -470,7 +470,14 @@ public class TripGuideFragment extends SherlockListFragment implements LoaderCal
 			getActivity().startService(service);
 			
 			mCallbacks.onTripLegSelected(leg);
-		}	
+		}
+        else
+        {
+            Intent activity = new Intent(getActivity(), TripLegMapActivity.class);
+            activity.putExtra(TripLeg.tag, leg);
+            startActivity(activity);
+
+        }
 	}
 
 	@Override
