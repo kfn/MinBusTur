@@ -24,13 +24,15 @@ public class GeofenceMetaData
 				TableMetaData.LNG + " TEXT," +
 				TableMetaData.RADIUS + " INTEGER," +
 				TableMetaData.TRIP_ID + " TEXT," +
-				TableMetaData.TRANSITION_TYPE + " INTEGER" 
+				TableMetaData.TRANSITION_TYPE + " INTEGER," +
+				TableMetaData.CURRENT_TRANSITION_STATE + " INTEGER" 
 				;
 	}
 
 	// inner class describing columns and their types
 	public static final class TableMetaData implements BaseColumns
 	{
+		
 		
 		private TableMetaData()
 		{
@@ -48,6 +50,7 @@ public class GeofenceMetaData
 		public static final String TRIP_ID = "geoTripId";
 		public static final String RADIUS = "geoRadius";
 		public static final String TRANSITION_TYPE = "transition_type";
+		public static final String CURRENT_TRANSITION_STATE = "current_trans_state";
 	}
 }
 

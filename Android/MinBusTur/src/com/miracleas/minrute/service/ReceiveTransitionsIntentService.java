@@ -134,6 +134,12 @@ public class ReceiveTransitionsIntentService extends IntentService
 					b.withValue(TripLegMetaData.TableMetaData.updated, now);
 					mDbOperations.add(b.build());
 					
+					String selection = GeofenceMetaData.TableMetaData.geofence_id + "=?";
+					String[] selectionArgs = {geofenceId};			
+					b = ContentProviderOperation.newUpdate(GeofenceMetaData.TableMetaData.CONTENT_URI).withSelection(selection, selectionArgs);	
+					b.withValue(GeofenceMetaData.TableMetaData.CURRENT_TRANSITION_STATE, transitionType);
+					mDbOperations.add(b.build());
+					
 					b = ContentProviderOperation.newInsert(GeofenceTransitionMetaData.TableMetaData.CONTENT_URI);	
 					b.withValue(GeofenceTransitionMetaData.TableMetaData.GEOFENCE_ID, geofenceId);
 					b.withValue(GeofenceTransitionMetaData.TableMetaData.GEOFENCE_TRANSITION_TYPE, transitionType);

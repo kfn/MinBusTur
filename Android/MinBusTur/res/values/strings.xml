@@ -27,9 +27,12 @@
     <string name="contacts">Kontaktpersoner</string>
     <string name="location_on_map">Punkt på kortet</string>
     <string name="my_places">Mine steder</string>
-
-
-
+    <string name="confirm_save_trip">Gem rute</string>
+    <string name="enter_title">Indtast titel</string>
+    <string name="enter_title_pls">Indtast venligst en titel</string>
+    <string name="trip_saved">Rute gemt</string>
+    <string name="trip_not_saved">Rute blev ikke gemt</string>
+    <string name="no_saved_trips">Du har ingen gemte ruter</string>
 
 	<string name="trip_request_address_not_valid"><xliff:g ID="address">%1$s</xliff:g> er ikke gyldig</string>
     <string name="trip_request_time_error">Kunne ikke sætte tid, prøv igen</string>

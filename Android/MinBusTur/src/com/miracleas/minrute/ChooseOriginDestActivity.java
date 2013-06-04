@@ -6,6 +6,7 @@ import android.location.Location;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
 import android.widget.ArrayAdapter;
 import android.widget.DatePicker;
 import android.widget.TimePicker;
@@ -20,7 +21,7 @@ import com.miracleas.minrute.net.TripFetcher;
 import com.miracleas.minrute.service.TripService;
 
 public class ChooseOriginDestActivity extends GeofenceActivity implements ChooseOriginDestFragment.Callbacks, android.app.DatePickerDialog.OnDateSetListener, android.app.TimePickerDialog.OnTimeSetListener,
-		com.miracleas.minrute.service.LocationService.OnNewLocationReceivedListener, OnNavigationListener, ChooseDestinationDialog.NoticeDialogListener
+		com.miracleas.minrute.service.LocationService.OnNewLocationReceivedListener, OnNavigationListener, ChooseDestinationDialog.NoticeDialogListener, SavedTripsFragment.Callbacks
 {
 	/**
 	 * The serialization (saved instance state) Bundle key representing the
@@ -42,7 +43,7 @@ public class ChooseOriginDestActivity extends GeofenceActivity implements Choose
 	public void onCreate(Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);
-		//setContentView(R.layout.activity_choose_origin_dest);
+		setContentView(R.layout.activity_main);
 
 		// Set up the action bar.
 		final ActionBar actionBar = getSupportActionBar();
@@ -86,10 +87,7 @@ public class ChooseOriginDestActivity extends GeofenceActivity implements Choose
 	public void onStart()
 	{
 		super.onStart();
-        if(mBoundVoice)
-        {
-            mServiceVoice.stopVoices();
-        }
+
         if(mBoundLocation && !mIsLoadingMyLocation)
         {
             mServiceLocation.stopLocationListening();
@@ -102,53 +100,6 @@ public class ChooseOriginDestActivity extends GeofenceActivity implements Choose
 	}
 
 
-	@Override
-	public boolean onPrepareOptionsMenu(Menu menu)
-	{
-		mLocationItem = menu.findItem(R.id.menu_my_location);
-		if (mIsLoadingMyLocation)
-		{
-			mLocationItem.setActionView(R.layout.refresh_menuitem);
-		}
-		return super.onPrepareOptionsMenu(menu);
-	}
-
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu)
-	{
-		// Inflate the menu; this adds items to the action bar if it is present.
-		getSupportMenuInflater().inflate(R.menu.activity_choose_origin_dest, menu);
-		return true;
-		// return super.onCreateOptionsMenu(menu);
-	}
-
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item)
-	{
-
-		switch (item.getItemId())
-		{
-		case android.R.id.home:
-			// This ID represents the Home or Up button. In the case of this
-			// activity, the Up button is shown. Use NavUtils to allow users
-			// to navigate up one level in the application structure. For
-			// more details, see the Navigation pattern on Android Design:
-			//
-			// http://developer.android.com/design/patterns/navigation.html#up-vs-back
-			//
-			finish();
-			return true;
-		case R.id.menu_my_location:
-			findMyLocation(item);
-			return true;
-        case R.id.menu_show_way_point:
-            showHideWayPoint();
-                return true;
-		default:
-			return super.onOptionsItemSelected(item);
-		}
-	}
-
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data)
     {
@@ -156,17 +107,9 @@ public class ChooseOriginDestActivity extends GeofenceActivity implements Choose
         getChooseOriginDestFragment().onActivityResult(requestCode, resultCode, data);
     }
 
-    private void showHideWayPoint()
-    {
-        getChooseOriginDestFragment().onBtnShowWayPointClicked();
-    }
-
     public void findMyLocation()
     {
-        if(mLocationItem!=null)
-        {
-            findMyLocation(mLocationItem);
-        }
+    	findMyLocation(mLocationItem);
 
     }
 
@@ -182,7 +125,7 @@ public class ChooseOriginDestActivity extends GeofenceActivity implements Choose
 		{
 			mServiceLocation.setOnNewLocationReceived(this);
 			mServiceLocation.startLocationListening();
-			mLocationItem = item;
+			//mLocationItem = item;
 			mIsLoadingMyLocation = true;
 			showLoadSpinner();
 
@@ -248,9 +191,11 @@ public class ChooseOriginDestActivity extends GeofenceActivity implements Choose
 	@Override
 	public void onConnectedServiceVoice()
 	{
+        Log.d(tag, "onConnectedServiceVoice");
 		if (mBoundVoice)
 		{
-			mServiceVoice.stopVoices();
+            Log.d(tag, "stop voice");
+            mServiceVoice.stopVoices();
 		}
 		super.onConnectedServiceVoice();
 	}
@@ -259,7 +204,11 @@ public class ChooseOriginDestActivity extends GeofenceActivity implements Choose
 	{
 		if (mChooseOriginDestFragment == null)
 		{
-			mChooseOriginDestFragment = ChooseOriginDestFragment.createInstance();
+            mChooseOriginDestFragment = (ChooseOriginDestFragment)getSupportFragmentManager().findFragmentByTag(ChooseOriginDestFragment.tag);
+            if(mChooseOriginDestFragment==null)
+            {
+                mChooseOriginDestFragment = ChooseOriginDestFragment.createInstance();
+            }
 		}
 		return mChooseOriginDestFragment;
 	}
@@ -268,7 +217,11 @@ public class ChooseOriginDestActivity extends GeofenceActivity implements Choose
 	{
 		if (mSavedTripsFragment == null)
 		{
-			mSavedTripsFragment = SavedTripsFragment.createInstance();
+            mSavedTripsFragment = (SavedTripsFragment)getSupportFragmentManager().findFragmentByTag(SavedTripsFragment.tag);
+            if(mSavedTripsFragment==null)
+            {
+                mSavedTripsFragment = SavedTripsFragment.createInstance();
+            }
 		}
 		return mSavedTripsFragment;
 	}
@@ -279,16 +232,19 @@ public class ChooseOriginDestActivity extends GeofenceActivity implements Choose
 		// When the given dropdown item is selected, show its contents in the
 		// container view.
 		Fragment fragment = null;
+        String tag = null;
 		if(itemPosition==0)
 		{
 			fragment = getChooseOriginDestFragment();
+            tag = ChooseOriginDestFragment.tag;
 		}
 		else
 		{
 			fragment = getSavedTripsFragment();
+            tag = SavedTripsFragment.tag;
 		}
 		
-		getSupportFragmentManager().beginTransaction().replace(android.R.id.content, fragment).commit();
+		getSupportFragmentManager().beginTransaction().replace(R.id.container, fragment, tag).commit();
 		return true;
 	}
 
@@ -310,4 +266,10 @@ public class ChooseOriginDestActivity extends GeofenceActivity implements Choose
     {
         getChooseOriginDestFragment().onDialogLocationTypeClick(dialog, which, tag);
     }
+
+	@Override
+	public void onSavedTripSelected(TripRequest tripRequest)
+	{
+		onFindTripSuggestion(tripRequest);		
+	}
 }

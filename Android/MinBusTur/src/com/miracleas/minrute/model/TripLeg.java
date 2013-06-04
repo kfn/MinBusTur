@@ -53,7 +53,10 @@ public class TripLeg implements Parcelable
 	public int step = 0;
 	public boolean isOrigin = false;
 	public boolean isDestiation = false;
+	public int transitionType;
 	//---------------
+
+	
 	
 	public TripLeg(Parcel in)
 	{
@@ -66,6 +69,7 @@ public class TripLeg implements Parcelable
 		originTime = in.readString();
 		destTime = in.readString();
 		notes = in.readString();
+		transitionType = in.readInt();
 	}
 	@Override
 	public int describeContents()
@@ -85,6 +89,7 @@ public class TripLeg implements Parcelable
 		dest.writeString(originTime);
 		dest.writeString(destTime);
 		dest.writeString(notes);
+		dest.writeInt(this.transitionType);
 	}
 	public static final Parcelable.Creator<TripLeg> CREATOR = new Parcelable.Creator<TripLeg>()
 	{

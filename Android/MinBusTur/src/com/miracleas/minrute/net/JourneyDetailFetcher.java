@@ -22,6 +22,7 @@ import android.os.RemoteException;
 import android.text.TextUtils;
 import android.util.Log;
 
+import com.miracleas.minrute.R;
 import com.miracleas.minrute.model.JourneyDetail;
 import com.miracleas.minrute.model.TripLeg;
 import com.miracleas.minrute.provider.TripLegDetailMetaData;
@@ -93,9 +94,19 @@ public class JourneyDetailFetcher extends BaseFetcher
 				InputStream input = urlConnection.getInputStream();
 				parse(input);
 			}
-            else
+            else if (repsonseCode == 404)
             {
-                throw new Exception(urlConnection.getResponseMessage());
+                throw new Exception(mContext.getString(R.string.search_failed_404));
+            } else if (repsonseCode == 500)
+            {
+                throw new Exception(mContext.getString(R.string.search_failed_500));
+            } else if (repsonseCode == 503)
+            {
+                throw new Exception(mContext.getString(R.string.search_failed_503));
+            } else
+            {
+                Log.e(tag, "server response: " + repsonseCode);
+                throw new Exception("error");
             }
 		} finally
 		{

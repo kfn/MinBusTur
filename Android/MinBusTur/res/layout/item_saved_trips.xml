@@ -1,0 +1,48 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:tools="http://schemas.android.com/tools"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:padding="4dp"
+              android:orientation="vertical">
+
+    <TextView
+            android:id="@+id/textViewTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textStyle="bold"
+            android:layout_gravity="center_horizontal"
+            android:gravity="center_vertical"
+            android:text="Mor"
+            android:textSize="26sp"
+            android:layout_marginBottom="4dp"/>
+
+    <TextView
+            android:id="@+id/textViewOrigin"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:drawableLeft="@drawable/ic_menu_home"
+            android:gravity="center_vertical"
+            android:text="Fra Skolegade 34"
+            android:textSize="17sp"/>
+
+
+    <TextView
+            android:id="@+id/textViewWaypoint"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:drawableLeft="@drawable/ic_menu_myplaces"
+            android:gravity="center_vertical"
+            android:text="Via Bummergade 4"
+            android:textSize="17sp"/>
+
+    <TextView
+            android:id="@+id/textViewDestination"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:drawableLeft="@drawable/ic_menu_myplaces"
+            android:gravity="center_vertical"
+            android:text="Til Olesgade 4"
+            android:textSize="17sp"/>
+
+</LinearLayout>

@@ -67,7 +67,21 @@ public class AddressToGPSFetcher extends BaseFetcher
 					saveData(AddressGPSMetaData.AUTHORITY);
 				}*/
 
-			} 
+			}
+            else if (repsonseCode == 404)
+            {
+                throw new Exception(mContext.getString(R.string.search_failed_404));
+            } else if (repsonseCode == 500)
+            {
+                throw new Exception(mContext.getString(R.string.search_failed_500));
+            } else if (repsonseCode == 503)
+            {
+                throw new Exception(mContext.getString(R.string.search_failed_503));
+            } else
+            {
+                Log.e(tag, "server response: " + repsonseCode);
+                throw new Exception("error");
+            }
 		} finally
 		{
 			urlConnection.disconnect();

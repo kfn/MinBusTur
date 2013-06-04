@@ -4,16 +4,16 @@ import android.net.Uri;
 import android.provider.BaseColumns;
 
 
-public class DirectionLegsMetaData
+public class DirectionMetaData
 {
 	public static final String PROVIDER_NAME = "MinBusTurProvider";
 	public static final String PACKAGE_NAME = "com.miracleas.minrute.provider.";
 	public static final String AUTHORITY = PACKAGE_NAME + PROVIDER_NAME;
 	public static final String COLLECTION_TYPE = "direction_legs";
 	public static final String ITEM_TYPE = "direction_leg";
-	public static final String TABLE_NAME = DirectionLegsMetaData.COLLECTION_TYPE;
+	public static final String TABLE_NAME = DirectionMetaData.COLLECTION_TYPE;
 
-	private DirectionLegsMetaData()
+	private DirectionMetaData()
 	{
 	}
 

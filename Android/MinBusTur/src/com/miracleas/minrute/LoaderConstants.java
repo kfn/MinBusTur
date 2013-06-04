@@ -15,10 +15,14 @@ public class LoaderConstants
 	public static final int LOADER_TRIP_LEG_STOP_DETAILS = 19;
 	public static final int LOADER_TRIP_LEG_NOTE_DETAILS = 20;
 	public static final int LOADER_TRIP_LEG_STOPS_MAP = 21;
-	public static final int LOAD_GUIDE_VOICE_TRIP = 22;
+
 	public static final int LOADER_TRIP_STOP_DETAILS = 23;
 	public static final int LOADER_TRIP_STOP_IMAGES = 24;
 	public static final int LOADER_STOP_DEPARTURES = 25;
 	public static final int LOADER_COUNT_OF_NOT_UPLOADED_IMAGES = 26;
     public static final int LOADER_TRIP_LEG_DIRECTIONS = 27;
+
+    public static final int LOAD_SAVED_TRIPS = 28;
+    
+    public static final int LOAD_GEOFENCES_ON_MAP = 29;
 }

@@ -1,171 +1,164 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                xmlns:tools="http://schemas.android.com/tools"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:padding="8dp">
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingLeft="4dp"
+    android:paddingRight="4dp" >
 
     <AutoCompleteTextView
-            android:id="@+id/autoCompleteTextViewFrom"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="@string/startaddress"
-            android:layout_toLeftOf="@+id/btnShowAddressFromOptions"
-            android:imeOptions="actionNext"
-            android:singleLine="true"
-            android:textColor="@android:color/black"
-            android:textSize="16sp"/>
+        android:id="@+id/autoCompleteTextViewFrom"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/btnShowAddressFromOptions"
+        android:layout_marginTop="6dp"
+        android:layout_toLeftOf="@+id/btnShowAddressFromOptions"
+        android:hint="@string/startaddress"
+        android:imeOptions="actionNext"
+        android:singleLine="true"
+        android:textColor="@android:color/black"
+        android:textSize="16sp" />
 
     <ProgressBar
-            android:id="@+id/progressBarFromAddress"
-            style="?android:attr/progressBarStyleSmall"
-            android:layout_width="wrap_content"
-            android:layout_alignRight="@+id/autoCompleteTextViewFrom"
-            android:layout_height="wrap_content"
-            android:layout_alignBottom="@+id/autoCompleteTextViewFrom"
-
-            android:layout_marginBottom="10dp"
-            android:layout_marginLeft="18dp"
-            android:layout_marginRight="10dp"
-            android:visibility="gone"/>
+        android:id="@+id/progressBarFromAddress"
+        style="?android:attr/progressBarStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/autoCompleteTextViewFrom"
+        android:layout_alignRight="@+id/autoCompleteTextViewFrom"
+        android:layout_marginBottom="10dp"
+        android:layout_marginLeft="18dp"
+        android:layout_marginRight="10dp"
+        android:visibility="gone" />
 
     <ImageButton
-            android:id="@+id/btnShowAddressFromOptions"
-            android:layout_marginBottom="-2dp"
-            android:layout_width="36dp"
-            android:layout_height="wrap_content" android:layout_alignBottom="@+id/progressBarFromAddress"
-            android:background="@android:color/transparent"
-            android:src="@drawable/spinner_background_holo_light1"
-            android:layout_alignParentRight="true"
-            />
-
+        android:id="@+id/btnShowAddressFromOptions"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_alignParentRight="true"
+        android:src="@drawable/spinner_background_holo_light1" />
 
     <AutoCompleteTextView
-            android:id="@+id/autoCompleteTextViewWayPoint"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_toLeftOf="@+id/btnShowAddressFromOptions"
-            android:layout_below="@+id/autoCompleteTextViewFrom"
-            android:layout_marginTop="14dp"
-            android:visibility="gone"
-            android:hint="@string/waypoint"
-            android:imeOptions="actionNext"
-            android:singleLine="true"
-            android:textSize="16sp"/>
+        android:id="@+id/autoCompleteTextViewWayPoint"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/btnShowAddressWayPointOptions"
+        android:layout_toLeftOf="@+id/btnShowAddressFromOptions"
+        android:hint="@string/waypoint"
+        android:imeOptions="actionNext"
+        android:singleLine="true"
+        android:textSize="16sp"
+        android:visibility="gone" />
 
     <ImageButton
-            android:id="@+id/btnShowAddressWayPointOptions"
-
-            android:layout_width="36dp" android:layout_marginBottom="-2dp"
-            android:layout_height="wrap_content" android:layout_alignBottom="@+id/autoCompleteTextViewWayPoint"
-            android:background="@android:color/transparent" android:visibility="gone"
-            android:src="@drawable/spinner_background_holo_light1"
-            android:layout_alignParentRight="true"
-            />
+        android:id="@+id/btnShowAddressWayPointOptions"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_alignParentRight="true"
+        android:layout_below="@+id/btnShowAddressFromOptions"
+        android:src="@drawable/spinner_background_holo_light1"
+        android:visibility="gone" />
 
     <ProgressBar
-            android:id="@+id/progressBarWaypointAddress"
-            style="?android:attr/progressBarStyleSmall"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignBottom="@+id/autoCompleteTextViewWayPoint"
-            android:layout_marginBottom="10dp"
-            android:layout_marginLeft="18dp"
-            android:layout_alignRight="@+id/autoCompleteTextViewWayPoint"
-            android:layout_marginRight="10dp"
-            android:visibility="gone"/>
+        android:id="@+id/progressBarWaypointAddress"
+        style="?android:attr/progressBarStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/autoCompleteTextViewWayPoint"
+        android:layout_alignRight="@+id/autoCompleteTextViewWayPoint"
+        android:layout_marginBottom="10dp"
+        android:layout_marginLeft="18dp"
+        android:layout_marginRight="10dp"
+        android:visibility="gone" />
 
     <AutoCompleteTextView
-            android:id="@+id/autoCompleteTextViewTo"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_toLeftOf="@+id/btnShowAddressFromOptions"
-            android:layout_below="@+id/autoCompleteTextViewWayPoint"
-            android:layout_marginTop="14dp"
-            android:hint="@string/destination_address"
-            android:imeOptions="actionSearch"
-            android:singleLine="true"
-            android:textSize="16sp"/>
+        android:id="@+id/autoCompleteTextViewTo"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/btnShowAddressToOptions"
+        android:layout_toLeftOf="@+id/btnShowAddressFromOptions"
+        android:hint="@string/destination_address"
+        android:imeOptions="actionSearch"
+        android:singleLine="true"
+        android:textSize="16sp" />
 
     <ImageButton
-            android:id="@+id/btnShowAddressToOptions"
-
-            android:layout_width="36dp" android:layout_marginBottom="-2dp"
-            android:layout_height="wrap_content" android:layout_alignBottom="@+id/autoCompleteTextViewTo"
-            android:background="@android:color/transparent"
-            android:src="@drawable/spinner_background_holo_light1"
-            android:layout_alignParentRight="true"
-            />
+        android:id="@+id/btnShowAddressToOptions"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_alignParentRight="true"
+        android:layout_below="@+id/btnShowAddressWayPointOptions"
+        android:src="@drawable/spinner_background_holo_light1" />
 
     <ProgressBar
-            android:id="@+id/progressBarToAddress"
-            style="?android:attr/progressBarStyleSmall"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignRight="@+id/autoCompleteTextViewTo"
-            android:layout_alignBottom="@+id/autoCompleteTextViewTo"
-
-            android:layout_marginBottom="10dp"
-            android:layout_marginLeft="18dp"
-            android:layout_marginRight="10dp"
-            android:visibility="gone"/>
+        android:id="@+id/progressBarToAddress"
+        style="?android:attr/progressBarStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/autoCompleteTextViewTo"
+        android:layout_alignRight="@+id/autoCompleteTextViewTo"
+        android:layout_marginBottom="10dp"
+        android:layout_marginLeft="18dp"
+        android:layout_marginRight="10dp"
+        android:visibility="gone" />
 
     <LinearLayout
-            android:id="@+id/timeContainers"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" android:layout_marginRight="8dp"
-            android:layout_below="@+id/autoCompleteTextViewTo"
-            android:layout_marginTop="16dp">
+        android:id="@+id/timeContainers"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/autoCompleteTextViewTo"
+        android:layout_marginRight="8dp"
+        android:layout_marginTop="16dp" >
 
         <TextView
-                android:id="@+id/btnDate"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="0.8"
-                android:background="@drawable/spinner_background_holo_light1"
-                android:focusable="true"
-                android:focusableInTouchMode="true"
-                android:textSize="16sp"/>
+            android:id="@+id/btnDate"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.8"
+            android:background="@drawable/spinner_background_holo_light1"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            android:textSize="16sp" />
 
         <TextView
-                android:id="@+id/btnTime"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="0.2"
-                android:background="@drawable/spinner_background_holo_light1"
-                android:textSize="16sp"/>
+            android:id="@+id/btnTime"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.2"
+            android:background="@drawable/spinner_background_holo_light1"
+            android:textSize="16sp" />
     </LinearLayout>
 
     <RadioGroup
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/timeContainers"
+        android:layout_marginTop="30dp"
+        android:orientation="horizontal" >
+
+        <RadioButton
+            android:id="@+id/radio_departue"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/timeContainers"
-            android:layout_marginTop="30dp"
-            android:orientation="horizontal">
+            android:checked="true"
+            android:text="@string/departure1" />
 
         <RadioButton
-                android:id="@+id/radio_departue"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:checked="true"
-                android:text="@string/departure1"/>
-
-        <RadioButton
-                android:id="@+id/radio_arrival"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/arrival"/>
+            android:id="@+id/radio_arrival"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/arrival" />
     </RadioGroup>
 
     <Button
-            android:id="@+id/btnFindRoute"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_below="@+id/timeContainers"
-            android:layout_marginTop="20dp" android:layout_marginRight="8dp"
-            android:drawableLeft="@android:drawable/ic_menu_directions"
-            android:gravity="center"
-            android:text="@string/find_rute"/>
-
+        android:id="@+id/btnFindRoute"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_below="@+id/timeContainers"
+       
+        android:layout_marginTop="20dp"
+        android:drawableLeft="@android:drawable/ic_menu_directions"
+        android:gravity="center"
+        android:text="@string/find_rute" />
 
 </RelativeLayout>

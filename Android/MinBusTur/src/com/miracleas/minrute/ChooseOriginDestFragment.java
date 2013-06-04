@@ -105,7 +105,7 @@ public class ChooseOriginDestFragment extends ChooseOriginDestFragmentBase
 	{
 		Log.d(tag, "textChangedHelper");
 		final String value = s.toString();
-		if (!mItemClicked && value.length() > THRESHOLD)
+		if (!mItemClicked && value.length() > 2)
 		{
             boolean doAddressSearch = true;
             if (loaderId == LoaderConstants.LOADER_ADDRESS_TO)
@@ -196,25 +196,7 @@ public class ChooseOriginDestFragment extends ChooseOriginDestFragmentBase
 		}
 	}
 
-	private ProgressBar getProgressBar(int loaderId)
-	{
-		if (loaderId == LoaderConstants.LOADER_ADDRESS_FROM)
-		{
-			return mProgressBarFromAddress;
-		}
-        else if(loaderId == LoaderConstants.LOADER_ADDRESS_WAYPOINT)
-        {
-            return mProgressBarWaypointAddress;
-        }
-        else if(loaderId == LoaderConstants.LOADER_ADDRESS_TO)
-		{
-			return mProgressBarToAddress;
-		}
-        else
-        {
-            return null;
-        }
-	}
+
 
 	private class LoadAddresses extends AsyncTask<String, Void, Void>
 	{
@@ -288,12 +270,15 @@ public class ChooseOriginDestFragment extends ChooseOriginDestFragmentBase
 		if (v.getId() == R.id.btnFindRoute)
 		{
 			String fromAddress = getAddress(mAutoCompleteTextViewFromAddress, getString(R.string.startaddress));
-			String toAddress = getAddress(mAutoCompleteTextViewToAddress, getString(R.string.destination_address));
-            String waypointAddress = mAutoCompleteTextViewWayPoint.getVisibility()==View.VISIBLE ? getAddress(mAutoCompleteTextViewWayPoint, getString(R.string.waypoint)) : "";
-			if(!TextUtils.isEmpty(fromAddress) && !TextUtils.isEmpty(toAddress))
+			if(!TextUtils.isEmpty(fromAddress))
 			{
-				onAddressSelected(fromAddress, toAddress, waypointAddress);
-			}
+				String toAddress = getAddress(mAutoCompleteTextViewToAddress, getString(R.string.destination_address));
+				if(!TextUtils.isEmpty(toAddress))
+				{
+					String waypointAddress = mAutoCompleteTextViewWayPoint.getVisibility()==View.VISIBLE ? getAddress(mAutoCompleteTextViewWayPoint, getString(R.string.waypoint)) : "";
+					onAddressSelected(fromAddress, toAddress, waypointAddress);
+				}	
+			}			
 		}
 	}
 	
@@ -313,6 +298,7 @@ public class ChooseOriginDestFragment extends ChooseOriginDestFragmentBase
 		if(TextUtils.isEmpty(address))
 		{
 			Toast.makeText(getActivity(), String.format(getString(R.string.trip_request_enter_address), hint), Toast.LENGTH_SHORT).show();
+			ac.requestFocus();
 		}
 		return address;
 	}
@@ -491,7 +477,8 @@ public class ChooseOriginDestFragment extends ChooseOriginDestFragmentBase
                 Toast.makeText(getActivity(), String.format(getString(R.string.trip_request_address_not_valid), getString(R.string.destination_address)), Toast.LENGTH_SHORT).show();
                 validateAddress(mAutoCompleteTextViewToAddress, mAutoCompleteAdapterTo, mDestAddress, mDestAddresses, mSelectedDestinationAddress);
             }
-            else if(!mTripRequest.isValidWayPoint())
+			
+            else if((mWayPointAddresses.isEmpty() && !TextUtils.isEmpty(mWayPointAddress)) || !mTripRequest.isValidWayPoint())
             {
                 Toast.makeText(getActivity(), String.format(getString(R.string.trip_request_address_not_valid), getString(R.string.waypoint)), Toast.LENGTH_SHORT).show();
                 validateAddress(mAutoCompleteTextViewWayPoint, mAutoCompleteAdapterWaypoint, mWayPointAddress, mWayPointAddresses, mSelectedWayPointAddress);

@@ -381,7 +381,7 @@ public abstract class GeofenceActivity extends GoogleServiceActivity implements 
 
 	private void removeGeofences()
 	{
-		if (mCurrentGeofences != null && !mCurrentGeofences.isEmpty() && (mRemoveGeofences == null || mRemoveGeofences.getStatus() == AsyncTask.Status.FINISHED))
+		if ((mRemoveGeofences == null || mRemoveGeofences.getStatus() == AsyncTask.Status.FINISHED))
 		{
 			mRemoveGeofences = new RemoveGeofences();
 			mRemoveGeofences.execute(null, null, null);
@@ -424,11 +424,12 @@ public abstract class GeofenceActivity extends GoogleServiceActivity implements 
 		@Override
 		protected List<String> doInBackground(Boolean... params)
 		{
+			String[] projection = {GeofenceMetaData.TableMetaData.geofence_id};
 			Cursor c = null;
 			List<String> geofenceIds = new ArrayList<String>();
 			try
 			{
-				c = getContentResolver().query(GeofenceMetaData.TableMetaData.CONTENT_URI, null, null, null, null);
+				c = getContentResolver().query(GeofenceMetaData.TableMetaData.CONTENT_URI, projection, null, null, null);
 				if(c.moveToFirst())
 				{
 					int i = c.getColumnIndex(GeofenceMetaData.TableMetaData.geofence_id);

@@ -94,6 +94,8 @@
             android:value="com.miracleas.minrute.TripStopDetailsActivity" />
           </activity>
         <activity android:name=".ChooseDestinationDialog"/>
+        <activity android:name=".ConfirmDialogFragment"/>
+        <activity android:name=".SaveTripDialogFragment"/>
 
 
         <provider

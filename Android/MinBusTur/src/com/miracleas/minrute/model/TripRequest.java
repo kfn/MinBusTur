@@ -38,6 +38,22 @@ public class TripRequest implements Parcelable
 		
 	}
 	
+	public TripRequest(String origin, String waypoint, String destination, String originId, String waypointId, String destinationId, int destLat, 
+			int destLng, int originLat, int originLng, int searchForArrival){
+		
+		this.waypointNameNotEncoded = waypoint;
+		setOriginCoordName(origin);
+		setDestCoordName(destination);
+		setOriginId(originId);
+		setWayPointId(waypointId);
+		setDestId(destinationId);
+		setDestCoordX(destLng+"");
+		setDestCoordY(destLat+"");
+		setOriginCoordY(originLat+"");
+		setOriginCoordX(originLng+"");
+		setSearchForArrival(searchForArrival);
+	}
+	
 	public boolean isValid()
 	{
 		return (!TextUtils.isEmpty(originId) && !TextUtils.isEmpty(destId)) || (!TextUtils.isEmpty(originCoordX) && !TextUtils.isEmpty(originCoordY)

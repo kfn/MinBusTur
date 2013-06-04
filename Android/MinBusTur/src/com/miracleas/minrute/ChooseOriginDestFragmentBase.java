@@ -41,6 +41,9 @@ import android.widget.TimePicker;
 import android.widget.Toast;
 
 import com.actionbarsherlock.app.SherlockFragment;
+import com.actionbarsherlock.view.Menu;
+import com.actionbarsherlock.view.MenuInflater;
+import com.actionbarsherlock.view.MenuItem;
 import com.miracleas.minrute.model.AddressSearch;
 import com.miracleas.minrute.model.TripRequest;
 import com.miracleas.minrute.net.AddressFetcher;
@@ -66,7 +69,7 @@ public abstract class ChooseOriginDestFragmentBase extends SherlockFragment impl
     private ImageButton mBtnShowAddressFromOptions = null;
     private ImageButton mBtnShowAddressWayPointOptions = null;
 
-	protected static final int THRESHOLD = 2;
+	protected static final int THRESHOLD = 1;
 	
 	protected static final String[] PROJECTION = { AddressProviderMetaData.TableMetaData._ID, AddressProviderMetaData.TableMetaData.id, AddressProviderMetaData.TableMetaData.address, AddressProviderMetaData.TableMetaData.Y, AddressProviderMetaData.TableMetaData.X, AddressProviderMetaData.TableMetaData.type_int };
 	protected static final String[] PROJECTION_CONTACTS = new String[] { ContactsContract.Contacts._ID, ContactsContract.Contacts.DISPLAY_NAME };
@@ -92,6 +95,11 @@ public abstract class ChooseOriginDestFragmentBase extends SherlockFragment impl
 	ArrayAdapter<String> adapter;
     String dates[] = { ""};
 
+    public void onCreate(Bundle savedInstanceState)
+    {
+    	super.onCreate(savedInstanceState);
+    	setHasOptionsMenu(true);
+    }
 
     @SuppressLint("NewApi")
 	@Override
@@ -257,19 +265,26 @@ public abstract class ChooseOriginDestFragmentBase extends SherlockFragment impl
 	
 	public void setAddress(String address)
 	{
+		mProgressBarToAddress.setVisibility(View.GONE);
+		mProgressBarWaypointAddress.setVisibility(View.GONE);
+		mProgressBarFromAddress.setVisibility(View.GONE);
+		
 		if(mAutoCompleteTextViewToAddress==mFocusedView)
 		{
+			
 			mAutoCompleteTextViewToAddress.setHint(address);
 			mAutoCompleteAdapterTo.getFilter().filter(address);
 		}
         else if(mAutoCompleteTextViewWayPoint==mFocusedView)
         {
+        	
             mAutoCompleteTextViewWayPoint.setHint(address);
             mAutoCompleteAdapterWaypoint.getFilter().filter(address);
             mAutoCompleteTextViewWayPoint.requestFocus();
         }
         else
         {
+        	
             mAutoCompleteTextViewFromAddress.setHint(address);
             mAutoCompleteAdapterFrom.getFilter().filter(address);
             mAutoCompleteTextViewToAddress.requestFocus();
@@ -301,14 +316,17 @@ public abstract class ChooseOriginDestFragmentBase extends SherlockFragment impl
         else if(v.getId()==R.id.btnShowAddressFromOptions)
         {
             showNoticeDialog(LoaderConstants.LOADER_ADDRESS_FROM+"");
+            mAutoCompleteTextViewFromAddress.requestFocus();
         }
         else if(v.getId()==R.id.btnShowAddressToOptions)
         {
             showNoticeDialog(LoaderConstants.LOADER_ADDRESS_TO+"");
+            mAutoCompleteTextViewToAddress.requestFocus();
         }
         else if(v.getId()==R.id.btnShowAddressWayPointOptions)
         {
             showNoticeDialog(LoaderConstants.LOADER_ADDRESS_WAYPOINT+"");
+            mAutoCompleteTextViewWayPoint.requestFocus();
         }
 		
 	}
@@ -402,6 +420,7 @@ public abstract class ChooseOriginDestFragmentBase extends SherlockFragment impl
             if(which==ChooseDestinationDialog.MY_LOCATION)
             {
                 mAutoCompleteTextViewFromAddress.requestFocus();
+                getProgressBar(LoaderConstants.LOADER_ADDRESS_FROM).setVisibility(View.VISIBLE);
                 ((ChooseOriginDestActivity)getActivity()).findMyLocation();
             }
             else if (which==ChooseDestinationDialog.CONTACTS)
@@ -415,6 +434,7 @@ public abstract class ChooseOriginDestFragmentBase extends SherlockFragment impl
             if(which==ChooseDestinationDialog.MY_LOCATION)
             {
                 mAutoCompleteTextViewToAddress.requestFocus();
+                getProgressBar(LoaderConstants.LOADER_ADDRESS_TO).setVisibility(View.VISIBLE);
                 ((ChooseOriginDestActivity)getActivity()).findMyLocation();
             }
             else if (which==ChooseDestinationDialog.CONTACTS)
@@ -427,6 +447,7 @@ public abstract class ChooseOriginDestFragmentBase extends SherlockFragment impl
             if(which==ChooseDestinationDialog.MY_LOCATION)
             {
                 mAutoCompleteTextViewWayPoint.requestFocus();
+                getProgressBar(LoaderConstants.LOADER_ADDRESS_WAYPOINT).setVisibility(View.VISIBLE);
                 ((ChooseOriginDestActivity)getActivity()).findMyLocation();
             }
             else if (which==ChooseDestinationDialog.CONTACTS)
@@ -558,7 +579,7 @@ public abstract class ChooseOriginDestFragmentBase extends SherlockFragment impl
 					if (constraint == null)
 						return null;
 					constraint = constraint.toString().trim();
-					mEnteredAddress = constraint.toString();
+					mEnteredAddress = constraint.toString().toLowerCase();
 					if(!mPreviousConstraint.equals(constraint))
 					{
 						textChangedHelper(constraint, loaderId);
@@ -623,6 +644,7 @@ public abstract class ChooseOriginDestFragmentBase extends SherlockFragment impl
 		
 		private void makeBoldText(TextView tv, String address)
 		{
+			address = address.toLowerCase();
 			if(address.contains(mEnteredAddress))
 			{
 				final SpannableStringBuilder sb = new SpannableStringBuilder(address);
@@ -737,6 +759,47 @@ public abstract class ChooseOriginDestFragmentBase extends SherlockFragment impl
 			return pos;
 		}
 	}
+	
+	@Override
+	public void onCreateOptionsMenu(Menu menu, MenuInflater inf)
+	{
+		// Inflate the menu; this adds items to the action bar if it is present.
+		inf.inflate(R.menu.activity_choose_origin_dest, menu);
+		
+		// return super.onCreateOptionsMenu(menu);
+	}
 
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item)
+	{
+		switch (item.getItemId())
+		{
+        case R.id.menu_show_way_point:
+        	onBtnShowWayPointClicked();
+                return true;
+		default:
+			return super.onOptionsItemSelected(item);
+		}
+	}
+	
+	protected ProgressBar getProgressBar(int loaderId)
+	{
+		if (loaderId == LoaderConstants.LOADER_ADDRESS_FROM)
+		{
+			return mProgressBarFromAddress;
+		}
+        else if(loaderId == LoaderConstants.LOADER_ADDRESS_WAYPOINT)
+        {
+            return mProgressBarWaypointAddress;
+        }
+        else if(loaderId == LoaderConstants.LOADER_ADDRESS_TO)
+		{
+			return mProgressBarToAddress;
+		}
+        else
+        {
+            return null;
+        }
+	}
 
 }

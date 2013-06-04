@@ -451,7 +451,8 @@ public class TripGuideFragment extends SherlockListFragment implements LoaderCal
 				leg.originName = c.getString(iOriginName);
 				leg.type = c.getString(iType);
 				leg.ref = c.getString(iRef);
-				leg.notes = c.getString(iNotes);				
+				leg.notes = c.getString(iNotes);	
+				leg.transitionType = c.getInt(iGeofenceTransition);
 			}
 			return leg;
 		}

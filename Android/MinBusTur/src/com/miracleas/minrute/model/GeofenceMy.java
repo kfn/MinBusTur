@@ -8,6 +8,7 @@ public class GeofenceMy
 	public double lat;
 	public double lng;
 	public String id;
+	public int currentTransType = 0;
 	
 	public GeofenceMy(String tripId, String id, int radius, int transitionType, double lat, double lng)
 	{

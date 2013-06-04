@@ -1,10 +1,11 @@
 package com.miracleas.minrute;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
-import android.database.Cursor;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -16,7 +17,7 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.actionbarsherlock.app.ActionBar;
-import com.actionbarsherlock.app.SherlockFragmentActivity;
+import com.actionbarsherlock.app.SherlockDialogFragment;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 
@@ -24,16 +25,19 @@ import com.miracleas.imagedownloader.IImageDownloader;
 import com.miracleas.imagedownloader.ImageFetcher;
 import com.miracleas.minrute.model.TripLeg;
 import com.miracleas.minrute.model.TripRequest;
-import com.miracleas.minrute.provider.TripLegDetailMetaData;
+import com.miracleas.minrute.provider.SavedTripMetaData;
 import com.miracleas.minrute.provider.TripLegMetaData;
 import com.miracleas.minrute.provider.TripMetaData;
 import com.miracleas.minrute.utils.MyPrefs;
 
-public class TripGuideActivity extends GeofenceActivity implements TripGuideFragment.Callbacks, IImageDownloader, OnSharedPreferenceChangeListener
+public class TripGuideActivity extends GeofenceActivity implements TripGuideFragment.Callbacks, IImageDownloader, OnSharedPreferenceChangeListener, SaveTripDialogFragment.Callbacks
 {
 	public static final String tag = TripGuideActivity.class.getName();
 	private IImageDownloader mImageLoader = null;
-	private String mAuth = null;
+    private SaveTripTask mSaveTripTask = null;
+
+
+    private String mAuth = null;
 	@Override
 	public void onCreate(Bundle savedInstanceState)
 	{
@@ -93,15 +97,95 @@ public class TripGuideActivity extends GeofenceActivity implements TripGuideFrag
 			//
 			// http://developer.android.com/design/patterns/navigation.html#up-vs-back
 			//
-			//finish();
-			NavUtils.navigateUpFromSameTask(this);
+			finish();
+			//NavUtils.navigateUpFromSameTask(this);
 
 			return true;
+         case R.id.menu_save_trip:
+             showConfirmDialog();
+             return true;
+         case R.id.menu_phone:
+             Intent intent = new Intent(Intent.ACTION_DIAL);
+             startActivity(intent);
+             return true;
 		
 		default:
 			return super.onOptionsItemSelected(item);
 		}
 	}
+
+    private void showConfirmDialog()
+    {
+        SherlockDialogFragment newFragment = SaveTripDialogFragment.newInstance();
+        newFragment.show(getSupportFragmentManager(), "dialog");
+    }
+
+    private void saveTrip(String title)
+    {
+        if(mSaveTripTask==null || mSaveTripTask.getStatus() == AsyncTask.Status.FINISHED)
+        {
+            TripRequest tripRequest = getIntent().getParcelableExtra(TripRequest.tag);
+            mSaveTripTask = new SaveTripTask(title);
+            mSaveTripTask.execute(tripRequest);
+        }
+    }
+
+    @Override
+    public void onOk(String title)
+    {
+        saveTrip(title);
+    }
+
+    @Override
+    public void onCancel()
+    {
+
+    }
+
+    private class SaveTripTask extends AsyncTask<TripRequest, Void, Uri>
+    {
+        private String mTitle = null;
+        private SaveTripTask(String title)
+        {
+            mTitle = title;
+        }
+
+        @Override
+        protected Uri doInBackground(TripRequest... tripRequests)
+        {
+            TripRequest request = tripRequests[0];
+            ContentValues values = new ContentValues();
+            values.put(SavedTripMetaData.TableMetaData.DESTINATION_ADDRESS, request.destCoordNameNotEncoded);
+            values.put(SavedTripMetaData.TableMetaData.ORIGIN_ADDRESS, request.originCoordNameNotEncoded);
+            values.put(SavedTripMetaData.TableMetaData.WAY_POINT_ADDRESS, request.waypointNameNotEncoded);
+            values.put(SavedTripMetaData.TableMetaData.DESTINATION_ID, request.getDestId());
+            values.put(SavedTripMetaData.TableMetaData.ORIGIN_ID, request.getOriginId());
+            values.put(SavedTripMetaData.TableMetaData.WAY_POINT_ID, request.getWayPointId());
+            values.put(SavedTripMetaData.TableMetaData.TITLE, mTitle);
+            values.put(SavedTripMetaData.TableMetaData.DEST_LNG_X, request.getDestCoordX());
+            values.put(SavedTripMetaData.TableMetaData.DESTINATION_LAT_Y, request.getDestCoordY());
+            values.put(SavedTripMetaData.TableMetaData.ORIGIN_LAT_Y, request.getOriginCoordY());
+            values.put(SavedTripMetaData.TableMetaData.ORIGIN_LNG_X, request.getOriginCoordX());
+            values.put(SavedTripMetaData.TableMetaData.SEARCH_FOR_ARRIVAL, request.getSearchForArrival());
+            return getContentResolver().insert(SavedTripMetaData.TableMetaData.CONTENT_URI, values);
+
+        }
+        @Override
+        public void onPostExecute(Uri result)
+        {
+            if(result!=null)
+            {
+                Toast.makeText(TripGuideActivity.this, getString(R.string.trip_saved), Toast.LENGTH_SHORT).show();
+            }
+            else
+            {
+                Toast.makeText(TripGuideActivity.this, getString(R.string.trip_not_saved), Toast.LENGTH_SHORT).show();
+            }
+        }
+
+    }
+
+
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data)
 	{
@@ -290,7 +374,8 @@ public class TripGuideActivity extends GeofenceActivity implements TripGuideFrag
 		if(key.equals(MyPrefs.GOOGLE_DRIVE_AUTH))
 		{
 			setAuthTokenHeader(key);
-		}
-		
+		}		
 	}
+
+
 }

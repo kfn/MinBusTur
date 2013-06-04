@@ -12,7 +12,9 @@ import android.content.ContentProviderOperation;
 import android.content.Context;
 import android.database.Cursor;
 import android.text.format.DateUtils;
+import android.util.Log;
 
+import com.miracleas.minrute.R;
 import com.miracleas.minrute.model.StopDeparture;
 import com.miracleas.minrute.provider.TripLegDetailStopDeparturesMetaData;
 
@@ -76,7 +78,21 @@ public class DepartureBoardFetcher extends BaseFetcher
 				{		
 					saveData(TripLegDetailStopDeparturesMetaData.AUTHORITY);
 				}
-			} 
+			}
+            else if (repsonseCode == 404)
+            {
+                throw new Exception(mContext.getString(R.string.search_failed_404));
+            } else if (repsonseCode == 500)
+            {
+                throw new Exception(mContext.getString(R.string.search_failed_500));
+            } else if (repsonseCode == 503)
+            {
+                throw new Exception(mContext.getString(R.string.search_failed_503));
+            } else
+            {
+                Log.e(tag, "server response: " + repsonseCode);
+                throw new Exception("error");
+            }
 		} finally
 		{
 			urlConnection.disconnect();

@@ -1,6 +1,7 @@
 package com.miracleas.minrute;
 
 import java.text.NumberFormat;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -17,9 +18,9 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.location.Location;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
@@ -31,15 +32,17 @@ import android.view.ViewTreeObserver.OnGlobalLayoutListener;
 import android.widget.FrameLayout;
 import android.widget.ProgressBar;
 
+import com.google.android.gms.location.Geofence;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.GoogleMap.OnCameraChangeListener;
 import com.google.android.gms.maps.GoogleMap.OnInfoWindowClickListener;
 import com.google.android.gms.maps.GoogleMap.OnMarkerClickListener;
-import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
+import com.google.android.gms.maps.model.Circle;
+import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.LatLngBounds.Builder;
@@ -50,9 +53,12 @@ import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.maps.android.PolyUtil;
 import com.google.maps.android.SphericalUtil;
+import com.miracleas.minrute.model.GeofenceMy;
 import com.miracleas.minrute.model.TripLeg;
 import com.miracleas.minrute.model.TripLegStop;
-import com.miracleas.minrute.provider.DirectionLegsMetaData;
+import com.miracleas.minrute.provider.AddressGPSMetaData;
+import com.miracleas.minrute.provider.DirectionMetaData;
+import com.miracleas.minrute.provider.GeofenceMetaData;
 import com.miracleas.minrute.provider.TripLegDetailMetaData;
 import com.miracleas.minrute.provider.TripLegDetailStopMetaData;
 import com.miracleas.minrute.service.DirectionsService;
@@ -70,8 +76,10 @@ public class TripLegMapFragment extends SupportMapFragment implements LoaderCall
     private float[] mRotationMatrix = new float[16];
     private float[] mValues = new float[3];
 
+    private Map<GeofenceMy, Circle> mCiclesMap = new HashMap<GeofenceMy, Circle>();
+    private Map<Marker, LegStop> mMarkers = new HashMap<Marker, LegStop>();
+    private LoadGpsOnAddressesTask mLoadGpsOnAddressesTask = null;
 
-    private Map<LatLng, LegStop> mMarkers = new HashMap<LatLng, LegStop>();
 	/**
 	 * The columns needed by the cursor adapter
 	 */
@@ -89,10 +97,12 @@ public class TripLegMapFragment extends SupportMapFragment implements LoaderCall
 	};
 
     private static final String[] PROJECTION_DIRECTION = {
-            DirectionLegsMetaData.TableMetaData.OVERVIEW_POLYLINE
+            DirectionMetaData.TableMetaData.OVERVIEW_POLYLINE
     };
     private float mAzimuth;
     private float mTilt;
+    
+    private Object mValueAnimator = null;
 
     public static TripLegMapFragment createInstance(String journeyId, TripLeg leg)
 	{
@@ -146,6 +156,8 @@ public class TripLegMapFragment extends SupportMapFragment implements LoaderCall
             TripLeg leg = getArguments().getParcelable(TripLeg.tag);
             service.putExtra(TripLeg.tag, leg);
             getActivity().startService(service);
+            android.animation.ValueAnimator f;
+       
         }
 
     }
@@ -186,8 +198,7 @@ public class TripLegMapFragment extends SupportMapFragment implements LoaderCall
 					}
 					
 					setUpMap(getMap());
-					getActivity().getSupportLoaderManager().initLoader(LoaderConstants.LOADER_TRIP_LEG_STOPS_MAP, getArguments(), TripLegMapFragment.this);
-                    getActivity().getSupportLoaderManager().initLoader(LoaderConstants.LOADER_TRIP_LEG_DIRECTIONS, getArguments(), TripLegMapFragment.this);
+					
 				}
 			});
 		}
@@ -220,6 +231,95 @@ public class TripLegMapFragment extends SupportMapFragment implements LoaderCall
 
 	}
 
+
+    public void onStart()
+    {
+        super.onStart();
+        registerSensor(getMap());
+        startCicleAnimation();
+    }
+
+    public void onStop()
+    {
+        super.onStop();
+        if(mSensorManager!=null)
+        {
+            mSensorManager.unregisterListener(this);
+            mSensorManager = null;
+        }
+        stopCicleAnimation();
+
+    }
+
+    @TargetApi(Build.VERSION_CODES.GINGERBREAD)
+	private void registerSensor(GoogleMap map)
+    {
+
+        if(mLeg!=null && mLeg.transitionType==Geofence.GEOFENCE_TRANSITION_ENTER && map!=null && App.SUPPORTS_GINGERBREAD && mSensorManager==null)
+        {
+            mSensorManager = (SensorManager)getActivity().getSystemService(Activity.SENSOR_SERVICE);
+            Sensor vectorSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR);
+            mSensorManager.registerListener(this, vectorSensor, 1600);
+            map.getUiSettings().setZoomControlsEnabled(false);
+            map.getUiSettings().setZoomGesturesEnabled(false);
+
+        }
+    }
+    
+    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
+	private void initAnimator()
+    {
+    	if(App.SUPPORTS_HONEYCOMB_MR1)
+    	{
+    		mValueAnimator = android.animation.ValueAnimator.ofFloat(0f, 1f);
+    		((android.animation.ValueAnimator)mValueAnimator).setDuration(1400);
+    		((android.animation.ValueAnimator)mValueAnimator).setRepeatCount(android.animation.ValueAnimator.INFINITE);
+    	}	 
+    }
+    
+    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
+	private void startCicleAnimation()
+    {
+        if(App.SUPPORTS_GINGERBREAD && mValueAnimator!=null)
+        {
+        	((android.animation.ValueAnimator)mValueAnimator).start();
+        }
+    }
+    
+    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
+	private void stopCicleAnimation()
+    {
+        if(App.SUPPORTS_GINGERBREAD && mValueAnimator!=null)
+        {
+        	((android.animation.ValueAnimator)mValueAnimator).cancel();
+        }
+    }
+    
+    @TargetApi(Build.VERSION_CODES.HONEYCOMB_MR1)
+	private void showCircleAnimation()
+    {    	
+    	if(App.SUPPORTS_HONEYCOMB_MR1)
+    	{
+    		android.animation.ValueAnimator ani = (android.animation.ValueAnimator)mValueAnimator;   		
+        	ani.addUpdateListener(new android.animation.ValueAnimator.AnimatorUpdateListener()
+        	{		
+    			@Override
+        		public void onAnimationUpdate(android.animation.ValueAnimator valueAnimator)
+        		{
+        			float animatedFraction = valueAnimator.getAnimatedFraction();
+        			for(GeofenceMy g : mCiclesMap.keySet())
+        			{
+        				Circle c = mCiclesMap.get(g);
+        				c.setRadius(animatedFraction * g.radius);
+            			c.setStrokeWidth(1 + animatedFraction * 7);
+        			}	
+        		}
+        	});
+        	startCicleAnimation();
+    	}
+    	
+    }
+
 	/**
 	 * This is where we can add markers or lines, add listeners or move the
 	 * camera.
@@ -230,21 +330,13 @@ public class TripLegMapFragment extends SupportMapFragment implements LoaderCall
 	protected void setUpMap(GoogleMap map)
 	{
 		if (map != null)
-		{
-            if(App.SUPPORTS_GINGERBREAD)
-            {
-                mSensorManager = (SensorManager)getActivity().getSystemService(Activity.SENSOR_SERVICE);
-                Sensor vectorSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR);
-                mSensorManager.registerListener(this, vectorSensor, 1600);
-            }
-
+		{           
+            initAnimator();
             // Setting an info window adapter allows us to change the both the
 			// contents and look of the
 			// info window.
 			//getMap().setInfoWindowAdapter(new CustomInfoWindowAdapter());
 			map.setOnInfoWindowClickListener(this);
-			map.setOnCameraChangeListener(this);
-			
 			map.setMyLocationEnabled(true);
 			// Setting an info window adapter allows us to change the both the
 			// contents and look of the
@@ -257,7 +349,12 @@ public class TripLegMapFragment extends SupportMapFragment implements LoaderCall
 			{
 				showPosition(loc.getLatitude(), loc.getLongitude());
 			}
+			showOriginDest();
+			registerSensor(map);
 			
+			getActivity().getSupportLoaderManager().initLoader(LoaderConstants.LOADER_TRIP_LEG_STOPS_MAP, getArguments(), TripLegMapFragment.this);
+            getActivity().getSupportLoaderManager().initLoader(LoaderConstants.LOADER_TRIP_LEG_DIRECTIONS, getArguments(), TripLegMapFragment.this);
+            getActivity().getSupportLoaderManager().initLoader(LoaderConstants.LOAD_GEOFENCES_ON_MAP, getArguments(), TripLegMapFragment.this);
 		}
 	}
 
@@ -266,6 +363,7 @@ public class TripLegMapFragment extends SupportMapFragment implements LoaderCall
     @Override
     public void onSensorChanged(SensorEvent sensorEvent)
     {
+        if(getMap()==null)return;
         Location loc = getMap().getMyLocation();
 
         if(loc!=null)
@@ -281,7 +379,7 @@ public class TripLegMapFragment extends SupportMapFragment implements LoaderCall
 
             CameraPosition cameraPosition = CameraPosition.builder().tilt(clamped).
                     bearing(mAzimuth).
-                    zoom(13 + 5 * (mTilt / 90)).
+                    zoom(19 + 4 * (mTilt / 90)).
                     target(SphericalUtil.computeOffset(latLng, TARGET_OFFSET_METERS, mAzimuth)).
                     build();
 
@@ -304,9 +402,9 @@ public class TripLegMapFragment extends SupportMapFragment implements LoaderCall
 	@Override
 	public boolean onMarkerClick(final Marker marker)
 	{
-		LatLng pos = marker.getPosition();
 
-		LegStop wrap = mMarkers.get(pos);
+
+		LegStop wrap = mMarkers.get(marker);
 		if (wrap != null)
 		{
 
@@ -336,7 +434,7 @@ public class TripLegMapFragment extends SupportMapFragment implements LoaderCall
 	@Override
 	public void onInfoWindowClick(Marker marker)
 	{
-		LegStop wrap = mMarkers.get(marker.getPosition());
+		LegStop wrap = mMarkers.get(marker);
 		TripLegStop stop = new TripLegStop(wrap.latitude+"", wrap.longitude+"", marker.getSnippet(), wrap.dbId);
 		mCallbacks.onStopSelected(stop, mLeg);
 	}
@@ -359,9 +457,16 @@ public class TripLegMapFragment extends SupportMapFragment implements LoaderCall
         else if (id == LoaderConstants.LOADER_TRIP_LEG_DIRECTIONS && args.containsKey(TripLeg.tag))
         {
             TripLeg leg = args.getParcelable(TripLeg.tag);
-            String selection = DirectionLegsMetaData.TableMetaData.TRIP_LEG_ID + "=?";
+            String selection = DirectionMetaData.TableMetaData.TRIP_LEG_ID + "=?";
             String[] selectionArgs = { leg.id + "" };
-            return new CursorLoader(getActivity(), DirectionLegsMetaData.TableMetaData.CONTENT_URI, PROJECTION_DIRECTION, selection, selectionArgs, null);
+            return new CursorLoader(getActivity(), DirectionMetaData.TableMetaData.CONTENT_URI, PROJECTION_DIRECTION, selection, selectionArgs, null);
+        }
+        else if (id == LoaderConstants.LOAD_GEOFENCES_ON_MAP && args.containsKey(TripLeg.tag))
+        {
+            TripLeg leg = args.getParcelable(TripLeg.tag);
+            String selection = GeofenceMetaData.TableMetaData.TRIP_ID + "=?";			      
+            String[] selectionArgs = { leg.tripId + "" };
+            return new CursorLoader(getActivity(), GeofenceMetaData.TableMetaData.CONTENT_URI, null, selection, selectionArgs, null);
         }
 		return null;
 	}
@@ -371,23 +476,78 @@ public class TripLegMapFragment extends SupportMapFragment implements LoaderCall
 	{
 		if (loader.getId() == LoaderConstants.LOADER_TRIP_LEG_STOPS_MAP)
 		{
-			showToiletsOnMapHelper(cursor);
+			showStopsOnMap(cursor);
 		}
         else if (loader.getId() == LoaderConstants.LOADER_TRIP_LEG_DIRECTIONS && cursor.moveToFirst())
         {
-            int iPolyLines = cursor.getColumnIndex(DirectionLegsMetaData.TableMetaData.OVERVIEW_POLYLINE);
+            int iPolyLines = cursor.getColumnIndex(DirectionMetaData.TableMetaData.OVERVIEW_POLYLINE);
             String poly = cursor.getString(iPolyLines);
             final List<LatLng> decode = PolyUtil.decode(poly);
             PolylineOptions rute = new PolylineOptions();
+            Builder bounds = LatLngBounds.builder();
             for (LatLng aDecode : decode)
             {
+            	bounds.include(aDecode);
                 rute.add(aDecode);
             }
             //puntos is an array where the array returned by the decodePoly method are stored
             rute.color(Color.RED).width(7);
-            Polyline polygon=getMap().addPolyline(rute);
+            getMap().addPolyline(rute);
+            
+            if(!decode.isEmpty() && mLeg!=null && mLeg.transitionType!=Geofence.GEOFENCE_TRANSITION_ENTER)
+            {
+            	if(decode.isEmpty())
+            	{
+            		showOriginDest();
+            	}
+            	else
+            	{
+            		LatLngBounds latLngBounds = bounds.build();            	
+    				getMap().moveCamera(CameraUpdateFactory.newLatLngBounds(latLngBounds, 100));
+            	}
+            	
+            }
+
+        }
+        else if (loader.getId() == LoaderConstants.LOAD_GEOFENCES_ON_MAP)
+        {
+        	displayGeofences(cursor);
         }
 	}
+	
+	private void displayGeofences(Cursor c)
+	{
+		if(c.moveToFirst())
+		{
+			int color = Color.argb(95, 223, 212, 251);
+			GoogleMap map = getMap();
+			TripLeg leg = getArguments().getParcelable(TripLeg.tag);
+			int iId = c.getColumnIndex(GeofenceMetaData.TableMetaData.geofence_id);
+			int iLat = c.getColumnIndex(GeofenceMetaData.TableMetaData.LAT);
+			int iLng = c.getColumnIndex(GeofenceMetaData.TableMetaData.LNG);
+			int iRadius = c.getColumnIndex(GeofenceMetaData.TableMetaData.RADIUS);
+			int iTransType = c.getColumnIndex(GeofenceMetaData.TableMetaData.TRANSITION_TYPE);
+			int iCurrentTransType = c.getColumnIndex(GeofenceMetaData.TableMetaData.CURRENT_TRANSITION_STATE);
+			do{
+				GeofenceMy g = new GeofenceMy(leg.tripId, c.getString(iId), c.getInt(iRadius), c.getInt(iTransType), c.getDouble(iLat),
+						c.getDouble(iLng));
+				g.currentTransType = c.getInt(iCurrentTransType);
+				
+				CircleOptions options = new CircleOptions()
+			     .center(new LatLng(g.lat, g.lng))
+			     .radius(g.radius)			     
+			     .strokeColor(color)
+			     .strokeWidth(3f)
+			     ;
+			
+				Circle circle = map.addCircle(options);				
+				mCiclesMap.put(g, circle);
+			}while(c.moveToNext());
+			//showCircleAnimation();
+		}
+	}
+ 
+
 
 	@Override
 	public void onLoaderReset(Loader<Cursor> cursor)
@@ -399,7 +559,11 @@ public class TripLegMapFragment extends SupportMapFragment implements LoaderCall
         }
         else if(cursor.getId() == LoaderConstants.LOADER_TRIP_LEG_DIRECTIONS)
         {
-
+        	
+        }
+        else if (cursor.getId() == LoaderConstants.LOAD_GEOFENCES_ON_MAP)
+        {
+        	removeGeofenceCircles();
         }
 
 	}
@@ -412,7 +576,7 @@ public class TripLegMapFragment extends SupportMapFragment implements LoaderCall
 
 
 
-	private void showToiletsOnMapHelper(final Cursor data)
+	private void showStopsOnMap(final Cursor data)
 	{
 		clearMap();
 		if (getMap() != null && data.moveToFirst())
@@ -479,7 +643,7 @@ public class TripLegMapFragment extends SupportMapFragment implements LoaderCall
 
 					MarkerOptions marker = new MarkerOptions().position(current.latLng).title(time).snippet(address).icon(BitmapDescriptorFactory.fromResource(iconRes));
 					Marker addedMarker = getMap().addMarker(marker);
-					mMarkers.put(addedMarker.getPosition(), current);
+					mMarkers.put(addedMarker, current);
 					if(isPartOfUsersRoute)
 					{
 						bounds.include(addedMarker.getPosition());
@@ -505,7 +669,7 @@ public class TripLegMapFragment extends SupportMapFragment implements LoaderCall
 				}
 
 				LatLngBounds latLngBounds = bounds.build();
-				getMap().animateCamera(CameraUpdateFactory.newLatLngBounds(latLngBounds, 100));
+				getMap().moveCamera(CameraUpdateFactory.newLatLngBounds(latLngBounds, 100));
 			}
 			
 		}
@@ -554,16 +718,25 @@ public class TripLegMapFragment extends SupportMapFragment implements LoaderCall
 		{
 			return;
 		}
-		getMap().clear();
-		mMarkers.clear();
+
+        for(Marker m : mMarkers.keySet())
+        {
+            m.remove();
+        }
+        mMarkers.clear();
 		mProgressBar.setVisibility(View.VISIBLE);
 	}
-
-	public void onDestroy()
+	
+	private void removeGeofenceCircles()
 	{
-		super.onDestroy();
-        mSensorManager.unregisterListener(this);
+		for(GeofenceMy g : mCiclesMap.keySet())
+		{
+			Circle c = mCiclesMap.get(g);
+			c.remove();
+		}
+		mCiclesMap.clear();
 	}
+
 
 	public Location getCenterLocation()
 	{
@@ -657,5 +830,69 @@ public class TripLegMapFragment extends SupportMapFragment implements LoaderCall
 	{
 		this.mLocation = location;
 	}
+	
+	private void showOriginDest()
+	{
+		if(mLoadGpsOnAddressesTask==null || mLoadGpsOnAddressesTask.getStatus()==AsyncTask.Status.FINISHED)
+		{
+			mLoadGpsOnAddressesTask = new LoadGpsOnAddressesTask();
+			mLoadGpsOnAddressesTask.execute(mLeg);
+		}
+	}
+	
+	private class LoadGpsOnAddressesTask extends AsyncTask<TripLeg, Void, List<LatLng>>	
+	{
+
+		@Override
+		protected List<LatLng> doInBackground(TripLeg... params)
+		{
+			TripLeg leg = params[0];
+			List<LatLng> list = new ArrayList<LatLng>(2);
+			list.add(getLatLng(leg.originName));
+			list.add(getLatLng(leg.destName));
+			return list;
+		}
 		
+		private LatLng getLatLng(String address)
+		{
+			LatLng latlng = null;
+			String[] projection = {AddressGPSMetaData.TableMetaData.LATITUDE_Y, AddressGPSMetaData.TableMetaData.LONGITUDE_X};
+			Cursor c = null;
+			try
+			{
+				String selection = AddressGPSMetaData.TableMetaData.ADDRESS + "=?";
+				String[] selectionArgs = {address};
+				c = getActivity().getContentResolver().query(AddressGPSMetaData.TableMetaData.CONTENT_URI, projection, selection, selectionArgs, AddressGPSMetaData.TableMetaData.ADDRESS+ " LIMIT 1");
+				if(c.moveToFirst())
+				{
+					double lat = (double)(c.getInt(c.getColumnIndex(AddressGPSMetaData.TableMetaData.LATITUDE_Y)) / 1000000d);
+					double lng = (double)(c.getInt(c.getColumnIndex(AddressGPSMetaData.TableMetaData.LONGITUDE_X)) / 1000000d);
+					latlng = new LatLng(lat, lng);
+				}
+			}
+			finally
+			{
+				c.close();
+			}
+			
+			return latlng;
+		}
+		
+		public void onPostExecute(List<LatLng> result)
+		{
+			Builder bounds = LatLngBounds.builder();
+			for(LatLng latlng : result)
+			{
+				if(latlng!=null)
+				{
+					bounds.include(latlng);
+				}
+			}
+			if(!result.isEmpty())
+			{				
+				getMap().moveCamera(CameraUpdateFactory.newLatLngBounds(bounds.build(), 100));				
+			}			
+		}
+		
+	}
 }

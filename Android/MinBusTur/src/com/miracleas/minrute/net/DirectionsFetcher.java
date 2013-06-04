@@ -8,8 +8,8 @@ import android.util.Log;
 
 import com.miracleas.minrute.R;
 import com.miracleas.minrute.model.TripLeg;
-import com.miracleas.minrute.provider.AddressProviderMetaData;
-import com.miracleas.minrute.provider.DirectionLegsMetaData;
+import com.miracleas.minrute.provider.AddressGPSMetaData;
+import com.miracleas.minrute.provider.DirectionMetaData;
 
 import org.apache.http.protocol.HTTP;
 import org.json.JSONArray;
@@ -20,12 +20,11 @@ import org.xmlpull.v1.XmlPullParserException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
-import java.net.URLEncoder;
 
 public class DirectionsFetcher extends BaseFetcher
 {
 	public static final String tag = DirectionsFetcher.class.getName();
-	private static final String[] PROJECTION = {DirectionLegsMetaData.TableMetaData._ID};
+	private static final String[] PROJECTION = {DirectionMetaData.TableMetaData._ID};
 	private String sort = null;
 	private String selection;
 	public static final String URL = "https://maps.googleapis.com/maps/api/directions/json?sensor=true&mode=walking&";
@@ -33,13 +32,17 @@ public class DirectionsFetcher extends BaseFetcher
 
 	private TripLeg mTripLeg = null;
 	private long mUpdated = 0;
+    private double originLat;
+    private double originLng;
+    private double destLat;
+    private double destLng;
 
 	public DirectionsFetcher(Context c, TripLeg leg)
 	{
 		super(c, null);
         mTripLeg = leg;
-		sort = DirectionLegsMetaData.TableMetaData._ID +" LIMIT 1";
-		selection = DirectionLegsMetaData.TableMetaData.END_ADDRESS + "=? AND "+ DirectionLegsMetaData.TableMetaData.START_ADDRESS + ">=?";
+		sort = DirectionMetaData.TableMetaData._ID +" LIMIT 1";
+		selection = DirectionMetaData.TableMetaData.END_ADDRESS + "=? AND "+ DirectionMetaData.TableMetaData.START_ADDRESS + ">=?";
 		mUpdated = System.currentTimeMillis();
 	}
 	
@@ -52,8 +55,12 @@ public class DirectionsFetcher extends BaseFetcher
         {
             long updated = System.currentTimeMillis() - DateUtils.WEEK_IN_MILLIS;
             String[] selectionArgs = {mTripLeg.originName, mTripLeg.destName};
-            cursor = mContentResolver.query(DirectionLegsMetaData.TableMetaData.CONTENT_URI, PROJECTION, selection, selectionArgs, sort);
+            cursor = mContentResolver.query(DirectionMetaData.TableMetaData.CONTENT_URI, PROJECTION, selection, selectionArgs, sort);
             hasCachedResult = cursor.getCount()>0;
+            if(!hasCachedResult)
+            {
+                mContentResolver.delete(DirectionMetaData.TableMetaData.CONTENT_URI, selection, selectionArgs);
+            }
         }
         finally
         {
@@ -62,9 +69,15 @@ public class DirectionsFetcher extends BaseFetcher
                 cursor.close();
             }
         }
+
         if(!hasCachedResult)
         {
-            fetchDirections();
+            fetchGPSchoords();
+            if(originLat!=0d && destLat!=0d)
+            {
+                fetchDirections();
+            }
+
         }
 	}
 		
@@ -73,8 +86,10 @@ public class DirectionsFetcher extends BaseFetcher
 	private void fetchDirections() throws Exception
 	{
         StringBuilder b = new StringBuilder(URL);
-        b.append("origin=").append(URLEncoder.encode(mTripLeg.originName, HTTP.ISO_8859_1)).append("&").append("destination=").append(URLEncoder.encode(mTripLeg.destName, HTTP.ISO_8859_1));
-		HttpURLConnection urlConnection = initHttpURLConnection(b.toString());
+        b.append("origin=").append(originLat).append(",").append(originLng).append("&").append("destination=").append(destLat).append(",").append(destLng);
+        String url = b.toString();
+        Log.d(tag, url);
+		HttpURLConnection urlConnection = initHttpURLConnection(url);
 		try
 		{
 			int repsonseCode = urlConnection.getResponseCode();
@@ -85,7 +100,7 @@ public class DirectionsFetcher extends BaseFetcher
 				parse(input);
 				if (!mDbOperations.isEmpty())
 				{					
-					saveData(DirectionLegsMetaData.AUTHORITY);
+					saveData(DirectionMetaData.AUTHORITY);
 				}
 
 			} else if (repsonseCode == 404)
@@ -125,11 +140,58 @@ public class DirectionsFetcher extends BaseFetcher
 	
 	private void saveLocation(String polyline)
 	{
-		ContentProviderOperation.Builder b = ContentProviderOperation.newInsert(DirectionLegsMetaData.TableMetaData.CONTENT_URI);
-		b.withValue(DirectionLegsMetaData.TableMetaData.END_ADDRESS, mTripLeg.destName);
-        b.withValue(DirectionLegsMetaData.TableMetaData.OVERVIEW_POLYLINE, polyline);
-        b.withValue(DirectionLegsMetaData.TableMetaData.START_ADDRESS, mTripLeg.originName);
-        b.withValue(DirectionLegsMetaData.TableMetaData.TRIP_LEG_ID, mTripLeg.id);
+		ContentProviderOperation.Builder b = ContentProviderOperation.newInsert(DirectionMetaData.TableMetaData.CONTENT_URI);
+		b.withValue(DirectionMetaData.TableMetaData.END_ADDRESS, mTripLeg.destName);
+        b.withValue(DirectionMetaData.TableMetaData.OVERVIEW_POLYLINE, polyline);
+        b.withValue(DirectionMetaData.TableMetaData.START_ADDRESS, mTripLeg.originName);
+        b.withValue(DirectionMetaData.TableMetaData.TRIP_LEG_ID, mTripLeg.id);
 		mDbOperations.add(b.build());
 	}
+
+    private void fetchGPSchoords()
+    {
+        Cursor c = null;
+        try
+        {
+            String[] projection = {AddressGPSMetaData.TableMetaData.LATITUDE_Y, AddressGPSMetaData.TableMetaData.LONGITUDE_X, AddressGPSMetaData.TableMetaData.ADDRESS};
+            String selection = AddressGPSMetaData.TableMetaData.ADDRESS + "=? OR "+AddressGPSMetaData.TableMetaData.ADDRESS + "=?";
+            String[] selectionArgs = {mTripLeg.originName, mTripLeg.destName};
+            c = mContentResolver.query(AddressGPSMetaData.TableMetaData.CONTENT_URI, projection, selection, selectionArgs, AddressGPSMetaData.TableMetaData.ADDRESS + " LIMIT 2");
+            if(c.moveToFirst())
+            {
+                int iLat = c.getColumnIndex(AddressGPSMetaData.TableMetaData.LATITUDE_Y);
+                int iLng = c.getColumnIndex(AddressGPSMetaData.TableMetaData.LONGITUDE_X);
+                int iAddress = c.getColumnIndex(AddressGPSMetaData.TableMetaData.ADDRESS);
+                do
+                {
+                    String address = c.getString(iAddress);
+                    double lat = (double)(c.getInt(iLat) / 1000000d);
+                    double lng = (double)(c.getInt(iLng) / 1000000d);
+                    if(isOrigin(address))
+                    {
+                        originLat = lat;
+                        originLng = lng;
+                    }
+                    else
+                    {
+                        destLat = lat;
+                        destLng = lng;
+                    }
+                }
+                while(c.moveToNext());
+            }
+        }
+        finally
+        {
+            if(c!=null)
+            {
+                c.close();
+            }
+        }
+    }
+
+    private boolean isOrigin(String address)
+    {
+        return address.equals(mTripLeg.originName);
+    }
 }
