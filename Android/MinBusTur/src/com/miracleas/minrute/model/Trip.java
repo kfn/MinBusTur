@@ -109,6 +109,11 @@ public class Trip
             transportChanges++;
             durationBoat = durationBoat + leg.getCalculatedDuration();
         }
+		else if(leg.type.equals(TripLeg.TYPE_S_TRAIN))
+		{
+			transportChanges++;
+			durationTrain = durationTrain + leg.getCalculatedDuration();
+		}
 	}
 	
 	public long getTotalDuration()

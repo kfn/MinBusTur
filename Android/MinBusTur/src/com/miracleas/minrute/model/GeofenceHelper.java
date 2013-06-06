@@ -16,6 +16,7 @@ public class GeofenceHelper
 	public static final String LEG_ID_WITH_STOP_ID = "legIdStopId";
 	public static final String LEG_ID = "lgId";
 	public static final String DELIMITER = "-";
+	public static final int FAKE_STOP_ID = Integer.MAX_VALUE;
 
 	public static Geofence toGeofence(String id, int transitionType, double lat, double lng, float radius, long expirationDuration)
 	{
@@ -58,38 +59,5 @@ public class GeofenceHelper
 		}
 	}
 
-	public static int getRadius(String typeOfTransport)
-	{
-		int radius = 10;
-		if (typeOfTransport.equals(TripLeg.TYPE_WALK))
-		{
-			radius = 50;
-		} else if (typeOfTransport.equals(TripLeg.TYPE_BUS))
-		{
-			radius = 120;
-		} else if (typeOfTransport.equals(TripLeg.TYPE_EXB))
-		{
-			radius = 120;
-		} else if (typeOfTransport.equals(TripLeg.TYPE_IC))
-		{
-			radius = 160;
-		} else if (typeOfTransport.equals(TripLeg.TYPE_LYN))
-		{
-			radius = 180;
-		} else if (typeOfTransport.equals(TripLeg.TYPE_REG))
-		{
-			radius = 180;
-		} else if (typeOfTransport.equals(TripLeg.TYPE_TB))
-		{
-			radius = 180;
-		} else if (typeOfTransport.equals(TripLeg.TYPE_TRAIN))
-		{
-			radius = 180;
-		}
-        else if (typeOfTransport.equals(TripLeg.TYPE_BOAT))
-        {
-            radius = 280;
-        }
-		return radius;
-	}
+
 }

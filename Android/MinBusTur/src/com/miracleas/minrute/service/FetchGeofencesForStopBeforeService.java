@@ -151,7 +151,7 @@ public class FetchGeofencesForStopBeforeService extends IntentService
 
 		if (geofenceId != null)
 		{
-			int radius = GeofenceHelper.getRadius(stop.transportType);
+			int radius = TripLeg.getRadius(stop.transportType);
 			double lat = (double) Integer.parseInt(stop.lat) / 1000000d;
 			double lng = (double) Integer.parseInt(stop.lng) / 1000000d;
 			GeofenceMy geo = new GeofenceMy(tripId, geofenceId, radius, Geofence.GEOFENCE_TRANSITION_ENTER, lat, lng);			

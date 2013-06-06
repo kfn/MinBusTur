@@ -2,6 +2,7 @@ package com.miracleas.minrute;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
@@ -30,7 +31,7 @@ import com.miracleas.minrute.provider.TripLegMetaData;
 import com.miracleas.minrute.provider.TripMetaData;
 import com.miracleas.minrute.utils.MyPrefs;
 
-public class TripGuideActivity extends GeofenceActivity implements TripGuideFragment.Callbacks, IImageDownloader, OnSharedPreferenceChangeListener, SaveTripDialogFragment.Callbacks
+public class TripGuideActivity extends GeofenceActivity implements TripGuideFragment.Callbacks, IImageDownloader, OnSharedPreferenceChangeListener, SaveTripDialogFragment.Callbacks, ChooseLegItemActionDialog.LegItemActionDialogListener
 {
 	public static final String tag = TripGuideActivity.class.getName();
 	private IImageDownloader mImageLoader = null;
@@ -375,6 +376,16 @@ public class TripGuideActivity extends GeofenceActivity implements TripGuideFrag
 		{
 			setAuthTokenHeader(key);
 		}		
+	}
+
+	@Override
+	public void onLegItemActionClick(DialogInterface dialog, int which, long itemId)
+	{
+		ChooseLegItemActionDialog.LegItemActionDialogListener f = (ChooseLegItemActionDialog.LegItemActionDialogListener)getSupportFragmentManager().findFragmentById(R.id.fragmentTripGuideContainer);
+		if(f!=null)
+		{
+			f.onLegItemActionClick(dialog, which, itemId);
+		}
 	}
 
 

@@ -22,19 +22,25 @@ public class VoiceStateWalk extends VoiceState
 		String text = "";
 		if(!mLeg.isDestiation)
 		{
-			long departue = mLeg.departureTime - System.currentTimeMillis();
-			String strDuration = mDateHelper.getDurationLabel(departue, true);
-			
-			if(mLeg.isOrigin)
+			if(!mLeg.isOrigin)
 			{
-				text = String.format(mContext.getString(R.string.voice_departure_walk), strDuration);
+				text = startUsingTransport();
 			}
 			else
 			{
-				text = String.format(mContext.getString(R.string.voice_start_using_transport_walk), strDuration, mLeg.destName);
+				long departue = mLeg.departureTime - System.currentTimeMillis();
+				String strDuration = mDateHelper.getDurationLabel(departue, true);
+				
+				if(mLeg.isOrigin)
+				{
+					text = String.format(mContext.getString(R.string.voice_departure_walk), strDuration);
+				}
+				else
+				{
+					text = String.format(mContext.getString(R.string.voice_start_using_transport_walk), strDuration, mLeg.destName);
+				}
 			}
 		}
-		
 		return text;		
 	}
 
@@ -126,6 +132,12 @@ public class VoiceStateWalk extends VoiceState
 			text = String.format(mContext.getString(R.string.reached_destination), mLeg.originName.split(",")[0]);
 		}
 		return text;
+	}
+
+	@Override
+	public boolean startDepartureHandler()
+	{
+		return mLeg.isOrigin;
 	}
 
 }

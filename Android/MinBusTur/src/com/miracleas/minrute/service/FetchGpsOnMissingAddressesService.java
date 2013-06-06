@@ -20,6 +20,7 @@ import android.util.Log;
 import com.google.android.gms.location.Geofence;
 import com.miracleas.minrute.model.GeofenceHelper;
 import com.miracleas.minrute.model.GeofenceMy;
+import com.miracleas.minrute.model.TripLeg;
 import com.miracleas.minrute.model.TripRequest;
 import com.miracleas.minrute.net.AddressToGPSFetcher;
 import com.miracleas.minrute.provider.AddressGPSMetaData;
@@ -389,7 +390,7 @@ public class FetchGpsOnMissingAddressesService extends IntentService
 					{
 						Log.d(tag, address);
 						String typeOfTransport = c.getString(iType);
-						int radius = GeofenceHelper.getRadius(typeOfTransport);
+						int radius = TripLeg.getRadius(typeOfTransport);
 						double lat = (double) latd / 1000000d;
 						double lng = (double) lngd / 1000000d;
 						int id = c.getInt(iId);

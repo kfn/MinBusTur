@@ -27,6 +27,7 @@ public class TripLeg implements Parcelable
 	public static final String TYPE_EXB = "EXB";
 	public static final String TYPE_TB = "TB";
     public static final String TYPE_BOAT = "F";
+    public static final String TYPE_S_TRAIN = "S";
 	
 	
 	public String tripId;
@@ -227,12 +228,16 @@ public class TripLeg implements Parcelable
         {
             icon = R.drawable.driving;
         }
+        else if(type.equals(TripLeg.TYPE_S_TRAIN))
+        {
+            icon = R.drawable.driving;
+        }
 		return icon;
 	}
 	
 	public static boolean isTrain(String type)
 	{
-		return (type.equals(TripLeg.TYPE_REG) || type.equals(TripLeg.TYPE_LYN) || type.equals(TripLeg.TYPE_TRAIN) || type.equals(TripLeg.TYPE_IC));
+		return (type.equals(TripLeg.TYPE_REG) || type.equals(TripLeg.TYPE_LYN) || type.equals(TripLeg.TYPE_TRAIN) || type.equals(TripLeg.TYPE_IC) || type.equals(TripLeg.TYPE_S_TRAIN) );
 	}
 	
 	public boolean isWalk()
@@ -248,6 +253,45 @@ public class TripLeg implements Parcelable
 	public boolean isBus()
 	{
 		return (type.equals(TripLeg.TYPE_BUS) || type.equals(TripLeg.TYPE_EXB) || type.equals(TripLeg.TYPE_TB));
+	}
+	
+	public static int getRadius(String typeOfTransport)
+	{
+		int radius = 10;
+		if (typeOfTransport.equals(TripLeg.TYPE_WALK))
+		{
+			radius = 50;
+		} else if (typeOfTransport.equals(TripLeg.TYPE_BUS))
+		{
+			radius = 120;
+		} else if (typeOfTransport.equals(TripLeg.TYPE_EXB))
+		{
+			radius = 120;
+		} else if (typeOfTransport.equals(TripLeg.TYPE_IC))
+		{
+			radius = 160;
+		} else if (typeOfTransport.equals(TripLeg.TYPE_LYN))
+		{
+			radius = 180;
+		} else if (typeOfTransport.equals(TripLeg.TYPE_REG))
+		{
+			radius = 180;
+		} else if (typeOfTransport.equals(TripLeg.TYPE_TB))
+		{
+			radius = 180;
+		} else if (typeOfTransport.equals(TripLeg.TYPE_TRAIN))
+		{
+			radius = 180;
+		}
+        else if (typeOfTransport.equals(TripLeg.TYPE_S_TRAIN))
+        {
+            radius = 180;
+        }
+        else if (typeOfTransport.equals(TripLeg.TYPE_BOAT))
+        {
+            radius = 280;
+        }
+		return radius;
 	}
 
 }

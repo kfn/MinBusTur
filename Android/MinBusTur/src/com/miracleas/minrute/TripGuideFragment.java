@@ -4,14 +4,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 import android.app.Activity;
+import android.content.ContentProviderOperation;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.OperationApplicationException;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.RemoteException;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
@@ -21,9 +25,11 @@ import android.text.format.DateUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnLongClickListener;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.CheckBox;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -37,13 +43,14 @@ import com.miracleas.minrute.model.TripLeg;
 import com.miracleas.minrute.model.TripRequest;
 import com.miracleas.minrute.provider.AddressGPSMetaData;
 import com.miracleas.minrute.provider.GeofenceMetaData;
+import com.miracleas.minrute.provider.GeofenceTransitionMetaData;
 import com.miracleas.minrute.provider.StopImagesMetaData;
 import com.miracleas.minrute.provider.TripLegMetaData;
 import com.miracleas.minrute.provider.TripMetaData;
 import com.miracleas.minrute.service.FetchGeofencesForStopBeforeService;
 import com.miracleas.minrute.service.JourneyDetailsService;
 
-public class TripGuideFragment extends SherlockListFragment implements LoaderCallbacks<Cursor>, OnItemClickListener, com.miracleas.minrute.service.UpdateVoiceTripService.OnVoiceServiceReadyListener
+public class TripGuideFragment extends SherlockListFragment implements LoaderCallbacks<Cursor>, OnItemClickListener, com.miracleas.minrute.service.VoiceTripService.OnVoiceServiceReadyListener, OnItemLongClickListener, ChooseLegItemActionDialog.LegItemActionDialogListener
 {
 	//"t."+TripLegMetaData.TableMetaData._ID
 	private static final String[] PROJECTION = { "t."+TripLegMetaData.TableMetaData._ID, TripLegMetaData.TableMetaData.DEST_DATE, TripLegMetaData.TableMetaData.DEST_NAME, TripLegMetaData.TableMetaData.DEST_ROUTE_ID, TripLegMetaData.TableMetaData.DEST_TIME,
@@ -57,7 +64,7 @@ public class TripGuideFragment extends SherlockListFragment implements LoaderCal
 
 	private IImageDownloader mIImageDownloader = null;
 	private TripAdapter mTripAdapter = null;
-	
+	private CreateGeofenceTransition mCreateGeofenceTransition = null;
 	
 	public static final String tag = TripGuideFragment.class.getName();
 
@@ -105,6 +112,7 @@ public class TripGuideFragment extends SherlockListFragment implements LoaderCal
 		super.onActivityCreated(savedInstanceState);
 		mTripAdapter = new TripAdapter(getActivity(), null, 0);
 		getListView().setOnItemClickListener(this);
+		getListView().setOnItemLongClickListener(this);
 		setListAdapter(mTripAdapter);
 		getLoaderManager().initLoader(LoaderConstants.LOAD_TRIP_LEGS, getArguments(), this);
 		getLoaderManager().initLoader(LoaderConstants.LOAD_HAS_ALL_ADDRESS_GPSES, getArguments(), this);
@@ -480,6 +488,94 @@ public class TripGuideFragment extends SherlockListFragment implements LoaderCal
 
         }
 	}
+	
+
+	@Override
+	public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id)
+	{
+		showChooseLegItemActionDialog(id);
+		return true;
+	}
+	
+    private void showChooseLegItemActionDialog(long legId) {
+        // Create an instance of the dialog fragment and show it
+    	ChooseLegItemActionDialog dialog = new ChooseLegItemActionDialog();
+        Bundle args = new Bundle();
+        args.putLong(TripLegMetaData.TableMetaData._ID, legId);
+        dialog.setArguments(args);
+        dialog.show(getSherlockActivity().getSupportFragmentManager(), tag);
+    }
+	@Override
+	public void onLegItemActionClick(DialogInterface dialog, int which, long legId)
+	{
+		String geofenceId = null;
+		if(which == ChooseLegItemActionDialog.I_AM_HERE)
+		{
+			geofenceId = GeofenceHelper.LEG_ID + GeofenceHelper.DELIMITER + legId;			
+		}
+		else if(which==ChooseLegItemActionDialog.AT_STOP_BEFORE_LEG_DESTINATION)
+		{
+			geofenceId = GeofenceHelper.LEG_ID_WITH_STOP_ID + GeofenceHelper.DELIMITER + legId + GeofenceHelper.DELIMITER + GeofenceHelper.FAKE_STOP_ID;
+		}
+		if(geofenceId!=null && (mCreateGeofenceTransition==null || mCreateGeofenceTransition.getStatus()==AsyncTask.Status.FINISHED))
+		{
+			mCreateGeofenceTransition = new CreateGeofenceTransition();
+			mCreateGeofenceTransition.execute(legId+"", geofenceId);
+		}
+	}
+	
+	private class CreateGeofenceTransition extends AsyncTask<String, Void, Void>
+	{
+		
+		@Override
+		protected Void doInBackground(String... params)
+		{
+			String legId = params[0];
+			String geofenceId = params[1];
+			int transitionType = Geofence.GEOFENCE_TRANSITION_ENTER;						
+			updateGeofenceState(legId, geofenceId, transitionType);
+			return null;
+		}	
+		
+		private void updateGeofenceState(String legId, String geofenceId, int transitionType)
+		{
+			long now = System.currentTimeMillis();
+			ArrayList<ContentProviderOperation> mDbOperations = new ArrayList<ContentProviderOperation>(3);
+			Uri uri = Uri.withAppendedPath(TripLegMetaData.TableMetaData.CONTENT_URI, legId);
+			ContentProviderOperation.Builder b = ContentProviderOperation.newUpdate(uri);	
+			b.withValue(TripLegMetaData.TableMetaData.GEOFENCE_EVENT_ID, transitionType);
+			b.withValue(TripLegMetaData.TableMetaData.updated, now);
+			mDbOperations.add(b.build());
+			
+			String selection = GeofenceMetaData.TableMetaData.geofence_id + "=?";
+			String[] selectionArgs = {geofenceId};			
+			b = ContentProviderOperation.newUpdate(GeofenceMetaData.TableMetaData.CONTENT_URI).withSelection(selection, selectionArgs);	
+			b.withValue(GeofenceMetaData.TableMetaData.CURRENT_TRANSITION_STATE, transitionType);
+			mDbOperations.add(b.build());
+			
+			b = ContentProviderOperation.newInsert(GeofenceTransitionMetaData.TableMetaData.CONTENT_URI);	
+			b.withValue(GeofenceTransitionMetaData.TableMetaData.GEOFENCE_ID, geofenceId);
+			b.withValue(GeofenceTransitionMetaData.TableMetaData.GEOFENCE_TRANSITION_TYPE, transitionType);
+			b.withValue(GeofenceTransitionMetaData.TableMetaData.updated, now);
+			mDbOperations.add(b.build());
+			
+			try
+			{
+				int count = getActivity().getContentResolver().applyBatch(TripLegMetaData.AUTHORITY, mDbOperations).length;
+				Log.d(tag, "applyBatch: "+count);
+				Uri uriImage = Uri.withAppendedPath(TripLegMetaData.TableMetaData.CONTENT_URI, StopImagesMetaData.TABLE_NAME);
+				getActivity().getContentResolver().notifyChange(uriImage, null);
+			} catch (RemoteException e)
+			{
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (OperationApplicationException e)
+			{
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+	}
 
 	@Override
 	public void onAttach(Activity activity)
@@ -561,4 +657,7 @@ public class TripGuideFragment extends SherlockListFragment implements LoaderCal
 	{
 		//((MinRuteBaseActivity) getActivity()).mServiceVoice.startDepartureTimer();
 	}
+
+
+
 }

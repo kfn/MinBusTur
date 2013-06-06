@@ -2,7 +2,7 @@ package com.miracleas.minrute;
 
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.miracleas.minrute.service.LocationService;
-import com.miracleas.minrute.service.UpdateVoiceTripService;
+import com.miracleas.minrute.service.VoiceTripService;
 import com.miracleas.minrute.utils.App;
 
 import android.content.ComponentName;
@@ -16,7 +16,7 @@ import android.speech.tts.TextToSpeech;
 
 public abstract class MinRuteBaseActivity extends SherlockFragmentActivity
 {
-	protected UpdateVoiceTripService mServiceVoice = null;
+	protected VoiceTripService mServiceVoice = null;
 	protected boolean mBoundVoice = false;
 	protected boolean mSupportVoice = false;
 	
@@ -47,7 +47,7 @@ public abstract class MinRuteBaseActivity extends SherlockFragmentActivity
 
 	private void connectToVoiceService()
 	{
-		Intent intent = new Intent(this, UpdateVoiceTripService.class);
+		Intent intent = new Intent(this, VoiceTripService.class);
 		bindService(intent, mConnectionVoice, Context.BIND_AUTO_CREATE);
 	}
 	private void connectToLocationService()
@@ -84,7 +84,7 @@ public abstract class MinRuteBaseActivity extends SherlockFragmentActivity
 		{
 			// We've bound to LocalService, cast the IBinder and get
 			// LocalService instance
-			UpdateVoiceTripService.LocalBinder binder = (UpdateVoiceTripService.LocalBinder) service;
+			VoiceTripService.LocalBinder binder = (VoiceTripService.LocalBinder) service;
 			mServiceVoice = binder.getService();
 			mBoundVoice = true;
 			onConnectedServiceVoice();

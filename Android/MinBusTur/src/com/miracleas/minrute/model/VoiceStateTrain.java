@@ -26,10 +26,15 @@ public class VoiceStateTrain extends VoiceState
 	@Override
 	public String startUsingTransport()
 	{
-		long duration = mLeg.getDuration();
-		String destName = mLeg.destName;
-		String strDuration = mDateHelper.getDurationLabel(duration, false);
-		String text = String.format(mContext.getString(R.string.voice_start_using_transport_train), mLeg.name, strDuration);
+		String text = "";
+		if(!mLeg.isDestiation)
+		{
+			long duration = mLeg.getDuration();
+			String destName = mLeg.destName;
+			String strDuration = mDateHelper.getDurationLabel(duration, false);
+			text = String.format(mContext.getString(R.string.voice_start_using_transport_train), mLeg.name, strDuration);
+		}
+		
 		return text;			
 	}
 
@@ -63,6 +68,13 @@ public class VoiceStateTrain extends VoiceState
 			text = String.format(mContext.getString(R.string.reached_destination), mLeg.originName.split(",")[0]);
 		}
 		return text;
+	}
+
+	@Override
+	public boolean startDepartureHandler()
+	{
+		// TODO Auto-generated method stub
+		return !mLeg.isDestiation;
 	}
 
 }

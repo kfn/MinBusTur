@@ -57,6 +57,15 @@ public class TripStopDetailsActivity extends PhotoGoogleDriveActivity implements
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_toilet_details);
 
+		Intent intent = getIntent();	
+		mTripLegStop = intent.getParcelableExtra(TripLegStop.tag);
+		mTripLeg = intent.getParcelableExtra(TripLeg.tag);		
+		
+		if(mTripLegStop == null || mTripLeg == null)
+		{
+			throw new ClassCastException("TripLegStop.tag and TripLeg.tag most be included in intent Extras");
+		}
+		
 		// Set up the action bar.
 		final ActionBar actionBar = getSupportActionBar();
 		actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
@@ -93,9 +102,8 @@ public class TripStopDetailsActivity extends PhotoGoogleDriveActivity implements
 			// this tab is selected.
 			actionBar.addTab(actionBar.newTab().setText(mSectionsPagerAdapter.getPageTitle(i)).setTabListener(this));
 		}
-		Intent intent = getIntent();
-		mTripLegStop = intent.getParcelableExtra(TripLegStop.tag);
-		mTripLeg = intent.getParcelableExtra(TripLeg.tag);		
+		
+		
 	}
 
 	@Override

@@ -315,17 +315,17 @@ public abstract class ChooseOriginDestFragmentBase extends SherlockFragment impl
 		}
         else if(v.getId()==R.id.btnShowAddressFromOptions)
         {
-            showNoticeDialog(LoaderConstants.LOADER_ADDRESS_FROM+"");
+            showChooseLocationDialog(LoaderConstants.LOADER_ADDRESS_FROM+"");
             mAutoCompleteTextViewFromAddress.requestFocus();
         }
         else if(v.getId()==R.id.btnShowAddressToOptions)
         {
-            showNoticeDialog(LoaderConstants.LOADER_ADDRESS_TO+"");
+            showChooseLocationDialog(LoaderConstants.LOADER_ADDRESS_TO+"");
             mAutoCompleteTextViewToAddress.requestFocus();
         }
         else if(v.getId()==R.id.btnShowAddressWayPointOptions)
         {
-            showNoticeDialog(LoaderConstants.LOADER_ADDRESS_WAYPOINT+"");
+            showChooseLocationDialog(LoaderConstants.LOADER_ADDRESS_WAYPOINT+"");
             mAutoCompleteTextViewWayPoint.requestFocus();
         }
 		
@@ -465,7 +465,7 @@ public abstract class ChooseOriginDestFragmentBase extends SherlockFragment impl
         startActivityForResult(intent, requestCode);
     }
 
-    private void showNoticeDialog(String tag) {
+    private void showChooseLocationDialog(String tag) {
         // Create an instance of the dialog fragment and show it
         ChooseDestinationDialog dialog = new ChooseDestinationDialog();
         dialog.show(getSherlockActivity().getSupportFragmentManager(), tag);

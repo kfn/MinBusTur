@@ -40,9 +40,9 @@ import android.text.TextUtils;
 import android.text.format.DateUtils;
 import android.util.Log;
 
-public class UpdateVoiceTripService extends Service implements android.speech.tts.TextToSpeech.OnInitListener
+public class VoiceTripService extends Service implements android.speech.tts.TextToSpeech.OnInitListener
 {
-	public static final String tag = UpdateVoiceTripService.class.getName();
+	public static final String tag = VoiceTripService.class.getName();
 	private Handler handler;
 	private final IBinder mBinder = new LocalBinder();
 	private DateHelper mDateHelper = null;
@@ -55,8 +55,6 @@ public class UpdateVoiceTripService extends Service implements android.speech.tt
 	private VoiceState mCurrentVoiceState = null;
 	private WakeLock wl;
 	
-	private static String[] projectionTripLegTrans = {TripLegMetaData.TableMetaData._ID, TripLegMetaData.TableMetaData.ORIGIN_NAME,TripLegMetaData.TableMetaData.GEOFENCE_EVENT_ID,  TripLegMetaData.TableMetaData.TYPE, TripLegMetaData.TableMetaData.STEP_NUMBER, TripLegMetaData.TableMetaData.updated};
-
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId)
 	{
@@ -79,19 +77,23 @@ public class UpdateVoiceTripService extends Service implements android.speech.tt
 	 */
 	public class LocalBinder extends Binder
 	{
-		public UpdateVoiceTripService getService()
+		public VoiceTripService getService()
 		{
 			// Return this instance of LocalService so clients can call public
 			// methods
-			return UpdateVoiceTripService.this;
+			return VoiceTripService.this;
 		}
 	}
 	
 	private void startWakelock()
 	{
-		PowerManager pm = (PowerManager)getSystemService(Context.POWER_SERVICE);
-	    wl = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK , tag);
-	    wl.acquire();
+		if(wl==null)
+		{
+			PowerManager pm = (PowerManager)getSystemService(Context.POWER_SERVICE);
+		    wl = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK , tag);
+		    wl.acquire();
+		}
+		
 	}
 	
 	private void stopWakeLock()
@@ -242,16 +244,19 @@ public class UpdateVoiceTripService extends Service implements android.speech.tt
 				long departues = departues();
 				if(departues<=VoiceState.THIRTY_SECONDS && departues >= VoiceState.ONE_MINUTE_MINUS)
 				{
-					mCurrentVoiceState.startUsingTransport();
+					Log.d(tag, "startDepartureTimer canceled, startUsingTransport");
+					playVoice(mCurrentVoiceState.startUsingTransport());
 				}
 				else if(departues>VoiceState.THIRTY_SECONDS)
 				{
 					long delay = startDepartureHandlerin();
 					if(delay >= VoiceState.THIRTY_SECONDS)
 					{
+						Log.d(tag, "playVoice without delay; departuresIn");
 						playVoice(mCurrentVoiceState.departuresIn());
+						delay = delay + VoiceState.THIRTY_SECONDS;
 					}
-					
+					Log.d(tag, "playVoice delayed with: "+(delay / DateUtils.SECOND_IN_MILLIS));
 					handler = new Handler();
 					handler.postDelayed(new Runnable()
 					{
@@ -259,10 +264,11 @@ public class UpdateVoiceTripService extends Service implements android.speech.tt
 						@Override
 						public void run()
 						{
-							playDepartureVoice();
+							if(handler!=null)
+								playDepartureVoice();
 							
 						}
-					}, startDepartureHandlerin());
+					}, delay);
 				}
 			}			
 		}
@@ -270,10 +276,13 @@ public class UpdateVoiceTripService extends Service implements android.speech.tt
 	
 	private void playDepartureVoice()
 	{
+		
+		
 		long departues = departues();
 		if(departues<=VoiceState.THIRTY_SECONDS && departues >= VoiceState.ONE_MINUTE_MINUS)
 		{
-			mCurrentVoiceState.startUsingTransport();
+			Log.d(tag, "playDepartureVoice because it is 30 secs or less");
+			playVoice(mCurrentVoiceState.startUsingTransport());
 		}
 		else if(departues > VoiceState.ONE_MINUTE_MINUS)
 		{
@@ -286,15 +295,16 @@ public class UpdateVoiceTripService extends Service implements android.speech.tt
 			}				
 			else if(tick!=Long.MIN_VALUE)
 			{
-				
+				Log.d(tag, "tick: playDepartureVoice");
 				playVoice(mCurrentVoiceState.departuresIn());	
 				Log.d(tag, "start in "+(tick/DateUtils.SECOND_IN_MILLIS)+" secs");
 				if(handler==null)
 				{
-					startDepartureTimer();
+					Log.d(tag, "handler is null. stop.");					
 				}
 				else
 				{
+					Log.d(tag, "postDelayed");
 					handler.postDelayed(runnableDeparture, tick);
 				}
 			}		
@@ -309,11 +319,11 @@ public class UpdateVoiceTripService extends Service implements android.speech.tt
 	{
 		Calendar c = Calendar.getInstance();
 		int milliseconds = c.get(Calendar.MILLISECOND);
-		long seconds = c.get(Calendar.SECOND);
+		long seconds = 10 - (c.get(Calendar.SECOND) / 10);
 		Log.d(tag, "milliseconds: "+milliseconds);
 		Log.d(tag, "seconds1: "+seconds);
 		
-		seconds = (59 - seconds) * DateUtils.SECOND_IN_MILLIS;
+		//seconds = (59 - seconds) * DateUtils.SECOND_IN_MILLIS;
 		Log.d(tag, "seconds2: "+seconds/DateUtils.SECOND_IN_MILLIS);
 		return (seconds - milliseconds);
 	}
@@ -339,21 +349,36 @@ public class UpdateVoiceTripService extends Service implements android.speech.tt
 			mCurrentVoiceState = null;
 			if(leg.isWalk())
 			{
-				mCurrentVoiceState = new VoiceStateWalk(UpdateVoiceTripService.this, leg);
+				mCurrentVoiceState = new VoiceStateWalk(VoiceTripService.this, leg);
 			}
 			else if(leg.isTrain())
 			{
-				mCurrentVoiceState = new VoiceStateTrain(UpdateVoiceTripService.this, leg);
+				mCurrentVoiceState = new VoiceStateTrain(VoiceTripService.this, leg);
 			}
 			else if(leg.isBus())
 			{
-				mCurrentVoiceState = new VoiceStateBus(UpdateVoiceTripService.this, leg);
+				mCurrentVoiceState = new VoiceStateBus(VoiceTripService.this, leg);
 			}
 			if(mCurrentVoiceState!=null)
 			{
 				playVoice(mCurrentVoiceState.nameOfDestination());
-				startDepartureTimer();
+				if(mCurrentVoiceState.startDepartureHandler())
+				{
+					Log.d(tag, "startDepartureHandler: true");
+					startDepartureTimer();
+				}
+				else
+				{
+					Log.d(tag, "startDepartureHandler: false");
+					playVoice(mCurrentVoiceState.startUsingTransport());
+					
+				}
+				
 			}			
+		}
+		else if(mCurrentStep>=mLegs.size())
+		{
+			stopVoices();
 		}
 	}
 	
@@ -367,14 +392,17 @@ public class UpdateVoiceTripService extends Service implements android.speech.tt
 	{
 		if(mCurrentVoiceState!=null)
 		{
+			Log.d(tag, "playStartTripLegNow");
 			playVoice(mCurrentVoiceState.startUsingTransport());
 		}
 	}
 
 	public void stopDepartureHandler()
 	{
+		
 		if (handler != null)
 		{
+			Log.d(tag, "stopDepartureHandler");
 			handler.removeCallbacks(runnableDeparture);
 			handler = null;
 		}
@@ -388,17 +416,6 @@ public class UpdateVoiceTripService extends Service implements android.speech.tt
 	public void setTripId(String tripId)
 	{
 		this.mTripId = tripId;
-	}
-	
-	
-	private void updateDepartureVoice()
-	{
-		//long departures =  mLegs.get(mCurrentStep).departureTime - System.currentTimeMillis();
-		//String str = String.format(getString(R.string.voice_departure), mDateHelper.getDurationLabel(departures, true));
-		if(mCurrentVoiceState!=null)
-		{
-			playVoice(mCurrentVoiceState.departuresIn());	
-		}	
 	}
 
 	private LoadTripLegsTask mLoadDepartueTask = null;
@@ -546,8 +563,7 @@ public class UpdateVoiceTripService extends Service implements android.speech.tt
 					String geofenceId = c.getString(c.getColumnIndex(GeofenceTransitionMetaData.TableMetaData.GEOFENCE_ID));
 					Log.d(tag, "getTripLegIdTransition: "+geofenceId);
 					if(geofenceId.contains(GeofenceHelper.LEG_ID))
-					{
-						
+					{						
 						String[] temp = geofenceId.split(GeofenceHelper.DELIMITER);
 						legId = Integer.parseInt(temp[1]);
 					}
@@ -572,6 +588,11 @@ public class UpdateVoiceTripService extends Service implements android.speech.tt
 		private String getNameOfStopBeforeDestination(int stopId)
 		{
 			String name = "";
+			if(stopId == GeofenceHelper.FAKE_STOP_ID)
+			{
+				return getString(R.string.fake_stop_name);	
+			}
+
 			Cursor c = null;
 			try
 			{

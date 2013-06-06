@@ -23,6 +23,9 @@ import com.google.android.gms.location.LocationClient.OnAddGeofencesResultListen
 import com.google.android.gms.location.LocationClient.OnRemoveGeofencesResultListener;
 import com.google.android.gms.location.LocationStatusCodes;
 import com.miracleas.minrute.provider.GeofenceMetaData;
+import com.miracleas.minrute.provider.GeofenceTransitionMetaData;
+import com.miracleas.minrute.provider.TripLegMetaData;
+import com.miracleas.minrute.provider.TripMetaData;
 import com.miracleas.minrute.service.ReceiveTransitionsIntentService;
 import com.miracleas.minrute.service.RemoveGeofencesService;
 
@@ -395,6 +398,9 @@ public abstract class GeofenceActivity extends GoogleServiceActivity implements 
 		{
 			ContentResolver cr = getContentResolver();
 			cr.delete(GeofenceMetaData.TableMetaData.CONTENT_URI, null, null);	
+			cr.delete(GeofenceTransitionMetaData.TableMetaData.CONTENT_URI, null, null);	
+			//cr.delete(TripMetaData.TableMetaData.CONTENT_URI, null, null);	
+			//cr.delete(TripLegMetaData.TableMetaData.CONTENT_URI, null, null);	
 			return null;
 		}
 

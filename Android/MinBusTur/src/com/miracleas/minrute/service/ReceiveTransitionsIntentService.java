@@ -143,7 +143,7 @@ public class ReceiveTransitionsIntentService extends IntentService
 					b = ContentProviderOperation.newInsert(GeofenceTransitionMetaData.TableMetaData.CONTENT_URI);	
 					b.withValue(GeofenceTransitionMetaData.TableMetaData.GEOFENCE_ID, geofenceId);
 					b.withValue(GeofenceTransitionMetaData.TableMetaData.GEOFENCE_TRANSITION_TYPE, transitionType);
-					b.withValue(GeofenceTransitionMetaData.TableMetaData.updated, System.currentTimeMillis());
+					b.withValue(GeofenceTransitionMetaData.TableMetaData.updated, now);
 					mDbOperations.add(b.build());
 				}
 			}

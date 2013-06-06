@@ -39,6 +39,7 @@ public abstract class VoiceState
 	public abstract String startUsingNextTransportIn();
 	public abstract String leaveTransportIn(String nameOfLocBeforeDest);
 	public abstract String nameOfDestination();
+	public abstract boolean startDepartureHandler();
 	
 	public long getTickTime(long currentTime)
 	{
