@@ -1,0 +1,12 @@
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <!--
+         A 'parent' preference, which enables/disables child preferences (below)
+         when checked/unchecked.
+    -->
+    <CheckBoxPreference
+        android:defaultValue="true" android:summary="@string/pref_images_summary"
+        android:key="@string/pref_images_turn_on_key"
+        android:title="@string/pref_images_turn_on" />
+
+</PreferenceScreen>

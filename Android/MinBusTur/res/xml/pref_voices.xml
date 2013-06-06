@@ -1,0 +1,35 @@
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <!--
+         A 'parent' preference, which enables/disables child preferences (below)
+         when checked/unchecked.
+    -->
+    <CheckBoxPreference
+        android:defaultValue="true" android:summary="@string/pref_voice_summary"
+        android:key="@string/pref_voice_language_turn_on_key"
+        android:title="@string/pref_voice_language_turn_on" />
+
+    <!-- Allows the user to choose a language in the 'language' category. -->
+    <!-- NOTE: This preference will be enabled only when the checkbox above is checked. -->
+    <!-- NOTE: language's summary should be set to its value by the activity code. -->
+    
+    <ListPreference
+        android:defaultValue="@string/pref_voice_language_danish_key"
+        android:entries="@array/pref_voice_language_keys"
+        android:entryValues="@array/pref_voice_language_values"
+        android:key="@string/pref_voice_language_key"
+        android:negativeButtonText="@null" android:dependency="@string/pref_voice_language_turn_on_key"
+        android:positiveButtonText="@null"
+        android:title="@string/pref_voice_language_title" />
+    
+    <CheckBoxPreference android:dependency="@string/pref_voice_language_turn_on_key"
+        android:defaultValue="true" android:summary="@string/pref_voice_departure_summary"
+        android:key="@string/pref_voice_departure_key"
+        android:title="@string/pref_voice_departure_title" />
+    
+    <CheckBoxPreference android:dependency="@string/pref_voice_language_turn_on_key"
+        android:defaultValue="true" android:summary="@string/pref_voice_arrival_before_last_stop_summary"
+        android:key="@string/pref_voice_arrival_before_last_stop_key"
+        android:title="@string/pref_voice_arrival_before_last_stop_title" />
+
+</PreferenceScreen>

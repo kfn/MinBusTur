@@ -1,0 +1,48 @@
+<resources>
+
+    <!-- Strings related to Settings -->
+
+	<string-array name="pref_voice_language_keys" >
+        <item>@string/danish</item>
+        <item>@string/english</item>
+    </string-array>
+    
+	<string name="pref_header_voices">Stemmer</string>
+	<string name="pref_header_images">Billeder</string>
+	<string name="pref_voice_language_key">language_key</string>
+	<string name="pref_voice_language_title">Stemmesprog</string>
+	<string name="pref_voice_language_turn_on">Slå stemmehjælp til</string>
+	<string name="pref_voice_language_turn_on_key">pref_voice_language_turn_on_key</string>
+	<string name="pref_voice_language_danish_key">da_DK</string>
+	<string name="pref_voice_language_english_key">en_US</string>
+	<string name="pref_voice_language_turn_on_key">pref_voice_language_turn_on_key</string>
+	<string name="pref_voice_summary">Få stemmehjælp når du er igang med en rute. Vær opmærksom på at dette vil bruge mere batteri. Sørg altid for at afslut programmet når du er færdig med en rute, da stemmefunktionen er aktiv, selv når du slukker for skærmen.</string>
+	
+	<string name="pref_voice_departure_title">Afgang</string>
+	<string name="pref_voice_departure_summary">Fortæl mig om hvornår jeg skal gå, hvornår bus/tog kører</string>
+	<string name="pref_voice_departure_key">pref_voice_departure_key</string>
+	
+	
+	<string name="pref_voice_arrival_before_last_stop_title">Næstsidste stop</string>
+	<string name="pref_voice_arrival_before_last_stop_summary">Fortæl mig hvornår jeg er ved næstsidste stop i bussen eller toget</string>
+	<string name="pref_voice_arrival_before_last_stop_key">pref_voice_arrival_before_last_stop_key</string>
+	
+	
+	<string name="pref_images_summary">Vis billeder af adresser</string>
+	<string name="pref_images_turn_on_key">pref_images_turn_on_key</string>
+    <string name="pref_images_turn_on">Vis billeder</string>  
+	
+	
+	
+	<string name="danish">Dansk</string>
+	<string name="english">Engelsk</string>
+	
+    
+    <string-array name="pref_voice_language_values" >
+        <item>@string/pref_voice_language_danish_key</item>
+        <item>@string/pref_voice_language_english_key</item>
+    </string-array>
+
+
+
+</resources>

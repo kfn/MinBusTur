@@ -5,4 +5,7 @@
         <item>@string/current_location</item>
         <item>@string/contacts</item>
     </string-array>
+    
+
+    
 </resources>

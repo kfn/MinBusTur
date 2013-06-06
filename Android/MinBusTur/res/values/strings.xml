@@ -2,6 +2,7 @@
 <resources  xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
 
     <string name="app_name">MinRute</string>
+    <string name="menu_settings">Indstillinger</string>
     <string name="geocoding_service_not_available">Geocoding er ikke tilgængeligt</string>
     <string name="find_rute">Find rute</string>
 
@@ -91,6 +92,7 @@
 	<string name="uploading_finished">Billeder uploaded</string>
 	
 	<string name="my_location">Min placering</string>
+	
 
 
 </resources>

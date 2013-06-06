@@ -82,6 +82,41 @@ public class ChooseOriginDestActivity extends GeofenceActivity implements Choose
 		outState.putInt(STATE_SELECTED_NAVIGATION_ITEM, getSupportActionBar().getSelectedNavigationIndex());
 		outState.putBoolean("loading", mIsLoadingMyLocation);
 	}
+	
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu)
+	{
+		// Inflate the menu; this adds items to the action bar if it is present.
+		getSupportMenuInflater().inflate(R.menu.main, menu);
+		return super.onCreateOptionsMenu(menu);
+	}
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item)
+	{
+
+		switch (item.getItemId())
+		{
+		case android.R.id.home:
+			// This ID represents the Home or Up button. In the case of this
+			// activity, the Up button is shown. Use NavUtils to allow users
+			// to navigate up one level in the application structure. For
+			// more details, see the Navigation pattern on Android Design:
+			//
+			// http://developer.android.com/design/patterns/navigation.html#up-vs-back
+			//
+			finish();
+			//NavUtils.navigateUpFromSameTask(this);
+
+			return true;
+         case R.id.menu_settings:
+             Intent intent = new Intent(this, SettingsActivity.class);
+             startActivity(intent);
+             return true;
+		
+		default:
+			return super.onOptionsItemSelected(item);
+		}
+	}
 
 	@Override
 	public void onStart()

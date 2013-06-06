@@ -266,7 +266,7 @@ public abstract class GeofenceActivity extends GoogleServiceActivity implements 
 			 * Report errors here. You can log the error using Log.e() or update
 			 * the UI.
 			 */
-			Log.e(tag, "adding the geofences failed");
+			Log.e(tag, "adding the geofences failed, statusCode: "+statusCode);
 			Toast.makeText(this, "adding the geofences failed", Toast.LENGTH_SHORT).show();
 		}
 		// Turn off the in progress flag and disconnect the client
