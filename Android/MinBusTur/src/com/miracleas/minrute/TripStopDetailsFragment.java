@@ -73,11 +73,12 @@ public class TripStopDetailsFragment extends SherlockFragment implements LoaderC
 	@Override
 	public Loader<Cursor> onCreateLoader(int id, Bundle args)
 	{
-		if (id == LoaderConstants.LOADER_TRIP_STOP_DETAILS)
+		TripLegStop stop = args.getParcelable(TripLegStop.tag);
+		
+		if (stop.id!=-1 && id == LoaderConstants.LOADER_TRIP_STOP_DETAILS)
 		{
 			String selection = null;
 			String[] selectionArgs = null;		
-			TripLegStop stop = args.getParcelable(TripLegStop.tag);
 			Uri uri =  Uri.withAppendedPath(TripLegDetailStopMetaData.TableMetaData.CONTENT_URI, stop.id + "");
 			return new CursorLoader(getActivity(), uri, null, selection, selectionArgs, null);
 		}

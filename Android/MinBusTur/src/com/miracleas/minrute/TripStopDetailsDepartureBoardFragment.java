@@ -103,9 +103,9 @@ public class TripStopDetailsDepartureBoardFragment extends SherlockFragment impl
 	@Override
 	public Loader<Cursor> onCreateLoader(int id, Bundle args)
 	{		
-		if(id==LoaderConstants.LOADER_STOP_DEPARTURES)
-		{
-			TripLegStop stop = args.getParcelable(TripLegStop.tag);
+		TripLegStop stop = args.getParcelable(TripLegStop.tag);
+		if(stop.id!=-1 && id==LoaderConstants.LOADER_STOP_DEPARTURES)
+		{	
 			String selection = TripLegDetailStopDeparturesMetaData.TableMetaData.STOP_ID + "=?";
 			String[] selectionArgs = {stop.id + ""};
 			return new CursorLoader(getActivity(), TripLegDetailStopDeparturesMetaData.TableMetaData.CONTENT_URI, PROJECTION_DEPARTURE, selection, selectionArgs, null);

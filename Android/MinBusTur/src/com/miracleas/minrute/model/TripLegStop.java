@@ -10,7 +10,7 @@ public class TripLegStop implements Parcelable
 	public String lat;
 	public String lng;
 	public String name;
-	public int id;
+	public int id = -1;
 	public int legId;
 	
 	public boolean isFirst = false;

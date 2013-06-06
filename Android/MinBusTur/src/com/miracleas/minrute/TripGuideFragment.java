@@ -37,9 +37,14 @@ import android.widget.TextView;
 
 import com.actionbarsherlock.app.SherlockListFragment;
 import com.google.android.gms.location.Geofence;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
+import com.google.android.gms.maps.model.LatLngBounds.Builder;
 import com.miracleas.imagedownloader.IImageDownloader;
 import com.miracleas.minrute.model.GeofenceHelper;
 import com.miracleas.minrute.model.TripLeg;
+import com.miracleas.minrute.model.TripLegStop;
 import com.miracleas.minrute.model.TripRequest;
 import com.miracleas.minrute.provider.AddressGPSMetaData;
 import com.miracleas.minrute.provider.GeofenceMetaData;
@@ -65,6 +70,7 @@ public class TripGuideFragment extends SherlockListFragment implements LoaderCal
 	private IImageDownloader mIImageDownloader = null;
 	private TripAdapter mTripAdapter = null;
 	private CreateGeofenceTransition mCreateGeofenceTransition = null;
+	private LoadGpsOnAddressesTask mLoadGpsOnAddressesTask;
 	
 	public static final String tag = TripGuideFragment.class.getName();
 
@@ -489,24 +495,27 @@ public class TripGuideFragment extends SherlockListFragment implements LoaderCal
         }
 	}
 	
+	
+	
 
 	@Override
 	public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id)
 	{
-		showChooseLegItemActionDialog(id);
+		showChooseLegItemActionDialog(id, position);
 		return true;
 	}
 	
-    private void showChooseLegItemActionDialog(long legId) {
+    private void showChooseLegItemActionDialog(long legId, int position) {
         // Create an instance of the dialog fragment and show it
     	ChooseLegItemActionDialog dialog = new ChooseLegItemActionDialog();
         Bundle args = new Bundle();
         args.putLong(TripLegMetaData.TableMetaData._ID, legId);
+        args.putInt(ChooseLegItemActionDialog.POSITION, position);
         dialog.setArguments(args);
         dialog.show(getSherlockActivity().getSupportFragmentManager(), tag);
     }
 	@Override
-	public void onLegItemActionClick(DialogInterface dialog, int which, long legId)
+	public void onLegItemActionClick(DialogInterface dialog, int which, long legId, int listPosition)
 	{
 		String geofenceId = null;
 		if(which == ChooseLegItemActionDialog.I_AM_HERE)
@@ -516,6 +525,13 @@ public class TripGuideFragment extends SherlockListFragment implements LoaderCal
 		else if(which==ChooseLegItemActionDialog.AT_STOP_BEFORE_LEG_DESTINATION)
 		{
 			geofenceId = GeofenceHelper.LEG_ID_WITH_STOP_ID + GeofenceHelper.DELIMITER + legId + GeofenceHelper.DELIMITER + GeofenceHelper.FAKE_STOP_ID;
+		}
+		else if(which==ChooseLegItemActionDialog.STOP_DETAILS)
+		{
+			TripLeg leg = mTripAdapter.getTripLeg(listPosition);
+			leg.id = (int)legId;
+			leg.tripId = getArguments().getString(TripMetaData.TableMetaData._ID);
+			loadGpsOnAddressAndShowStopDetails(leg);
 		}
 		if(geofenceId!=null && (mCreateGeofenceTransition==null || mCreateGeofenceTransition.getStatus()==AsyncTask.Status.FINISHED))
 		{
@@ -658,6 +674,65 @@ public class TripGuideFragment extends SherlockListFragment implements LoaderCal
 		//((MinRuteBaseActivity) getActivity()).mServiceVoice.startDepartureTimer();
 	}
 
-
-
+	
+	private void loadGpsOnAddressAndShowStopDetails(TripLeg leg)
+	{
+		if(mLoadGpsOnAddressesTask==null || mLoadGpsOnAddressesTask.getStatus()==AsyncTask.Status.FINISHED)
+		{
+			mLoadGpsOnAddressesTask = new LoadGpsOnAddressesTask();
+			mLoadGpsOnAddressesTask.execute(leg);
+		}
+	}
+	
+	private class LoadGpsOnAddressesTask extends AsyncTask<TripLeg, Void, TripLegStop>	
+	{
+		private TripLeg mLeg = null;
+		@Override
+		protected TripLegStop doInBackground(TripLeg... params)
+		{
+			TripLeg leg = params[0];
+			mLeg = leg;
+			return getLatLng(leg.originName);
+		}
+		
+		private TripLegStop getLatLng(String address)
+		{
+			TripLegStop latlng = null;
+			String[] projection = {AddressGPSMetaData.TableMetaData.LATITUDE_Y, AddressGPSMetaData.TableMetaData.LONGITUDE_X};
+			Cursor c = null;
+			try
+			{
+				String selection = AddressGPSMetaData.TableMetaData.ADDRESS + "=?";
+				String[] selectionArgs = {address};
+				c = getActivity().getContentResolver().query(AddressGPSMetaData.TableMetaData.CONTENT_URI, projection, selection, selectionArgs, AddressGPSMetaData.TableMetaData.ADDRESS+ " LIMIT 1");
+				if(c.moveToFirst())
+				{
+					//double lat = (double)(c.getInt(c.getColumnIndex(AddressGPSMetaData.TableMetaData.LATITUDE_Y)) / 1000000d);
+					//double lng = (double)(c.getInt(c.getColumnIndex(AddressGPSMetaData.TableMetaData.LONGITUDE_X)) / 1000000d);
+					String lat = c.getString(c.getColumnIndex(AddressGPSMetaData.TableMetaData.LATITUDE_Y));
+					String lng = c.getString(c.getColumnIndex(AddressGPSMetaData.TableMetaData.LONGITUDE_X));
+					latlng = new TripLegStop(lat, lng, address, -1);
+					
+				}
+			}
+			finally
+			{
+				c.close();
+			}
+			
+			return latlng;
+		}
+		@Override
+		public void onPostExecute(TripLegStop result)
+		{
+			if(result!=null)
+			{
+				Intent intent = new Intent(getActivity(), TripStopDetailsActivity.class);
+				intent.putExtra(TripLegStop.tag, result);
+				intent.putExtra(TripLeg.tag, mLeg);
+				startActivity(intent);
+			}
+		}
+		
+	}
 }

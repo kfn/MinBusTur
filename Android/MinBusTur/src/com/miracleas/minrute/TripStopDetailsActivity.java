@@ -94,14 +94,23 @@ public class TripStopDetailsActivity extends PhotoGoogleDriveActivity implements
 		});
 
 		// For each of the sections in the app, add a tab to the action bar.
-		for (int i = 0; i < mSectionsPagerAdapter.getCount(); i++)
+		int count = mSectionsPagerAdapter.getCount();
+		if(count==1)
 		{
-			// Create a tab with text corresponding to the page title defined by
-			// the adapter. Also specify this Activity object, which implements
-			// the TabListener interface, as the callback (listener) for when
-			// this tab is selected.
-			actionBar.addTab(actionBar.newTab().setText(mSectionsPagerAdapter.getPageTitle(i)).setTabListener(this));
+			actionBar.addTab(actionBar.newTab().setText(mSectionsPagerAdapter.getPageTitle(1)).setTabListener(this));
 		}
+		else
+		{
+			for (int i = 0; i < mSectionsPagerAdapter.getCount(); i++)
+			{
+				// Create a tab with text corresponding to the page title defined by
+				// the adapter. Also specify this Activity object, which implements
+				// the TabListener interface, as the callback (listener) for when
+				// this tab is selected.
+				actionBar.addTab(actionBar.newTab().setText(mSectionsPagerAdapter.getPageTitle(i)).setTabListener(this));
+			}
+		}
+		
 		
 		
 	}
@@ -203,27 +212,37 @@ public class TripStopDetailsActivity extends PhotoGoogleDriveActivity implements
 			// Return a DummySectionFragment (defined as a static inner class
 			// below) with the page number as its lone argument.
 			Fragment fragment = null;
-			if (position == 0)
-			{
-				
-				String id = getIntent().getStringExtra(TripLegDetailStopMetaData.TableMetaData._ID);
-				fragment = TripStopDetailsFragment.createInstance(mTripLegStop, mTripLeg);
-			}
-			else if (position == 1)
+			
+			int count = getCount();
+			if(count==1)
 			{
 				fragment = TripStopDetailsImagesFragment.createInstance(mTripLegStop, mTripLeg);
 			}
-			else if (position == 2)
+			else
 			{
-				fragment = TripStopDetailsDepartureBoardFragment.createInstance(mTripLegStop, mTripLeg);
-			} 
+				if (position == 0)
+				{
+					
+					//String id = getIntent().getStringExtra(TripLegDetailStopMetaData.TableMetaData._ID);
+					fragment = TripStopDetailsFragment.createInstance(mTripLegStop, mTripLeg);
+				}
+				else if (position == 1)
+				{
+					fragment = TripStopDetailsImagesFragment.createInstance(mTripLegStop, mTripLeg);
+				}
+				else if (position == 2)
+				{
+					fragment = TripStopDetailsDepartureBoardFragment.createInstance(mTripLegStop, mTripLeg);
+				} 
+			}
+			
 			return fragment;
 		}
 
 		@Override
 		public int getCount()
 		{
-			return 3;
+			return mTripLegStop.id == -1 ? 1 : 3;
 		}
 
 		@Override

@@ -95,6 +95,6 @@
 	<string name="leg_item_action_title">Vælg rutetrinhandling</string>
 	<string name="leg_item_action_i_am_here">Jeg er her</string>
 	<string name="leg_item_action_i_am_at_stop_before_dest">Jeg er ved stoppet før destination</string>
-	<string name="leg_item_action_stop_details">Se stopdetaljer</string>
+	<string name="leg_item_action_stop_details">Tilføj billeder</string>
 
 </resources>

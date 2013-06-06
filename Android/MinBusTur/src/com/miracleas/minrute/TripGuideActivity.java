@@ -379,13 +379,14 @@ public class TripGuideActivity extends GeofenceActivity implements TripGuideFrag
 	}
 
 	@Override
-	public void onLegItemActionClick(DialogInterface dialog, int which, long itemId)
+	public void onLegItemActionClick(DialogInterface dialog, int which, long itemId, int listPosition)
 	{
 		ChooseLegItemActionDialog.LegItemActionDialogListener f = (ChooseLegItemActionDialog.LegItemActionDialogListener)getSupportFragmentManager().findFragmentById(R.id.fragmentTripGuideContainer);
 		if(f!=null)
 		{
-			f.onLegItemActionClick(dialog, which, itemId);
+			f.onLegItemActionClick(dialog, which, itemId, listPosition);
 		}
+		
 	}
 
 

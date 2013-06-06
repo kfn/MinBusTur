@@ -17,14 +17,15 @@ public class ChooseLegItemActionDialog extends DialogFragment
     public static final int I_AM_HERE = 0;
     public static final int AT_STOP_BEFORE_LEG_DESTINATION = 1;
     public static final int STOP_DETAILS = 2;
+	public static final String POSITION = "ARG_POSITION";
     
     private LegItemActionDialogListener mListener;
     public void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
-        if(getArguments()==null || !getArguments().containsKey(TripLegMetaData.TableMetaData._ID))
+        if(getArguments()==null || !getArguments().containsKey(TripLegMetaData.TableMetaData._ID) || !getArguments().containsKey(POSITION))
         {
-        	throw new ClassCastException("Arguments most contain TripLegMetaData.TableMetaData._ID key");
+        	throw new ClassCastException("Arguments most contain TripLegMetaData.TableMetaData._ID and POSITION key");
         }
     }
 
@@ -32,6 +33,7 @@ public class ChooseLegItemActionDialog extends DialogFragment
     public Dialog onCreateDialog(Bundle savedInstanceState) {
     	
     	final long legId = getArguments().getLong(TripLegMetaData.TableMetaData._ID);
+    	final int listPosition = getArguments().getInt(POSITION);
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setTitle(R.string.leg_item_action_title)
         .setItems(R.array.leg_item_actions, new DialogInterface.OnClickListener()
@@ -40,7 +42,7 @@ public class ChooseLegItemActionDialog extends DialogFragment
             {
                 // The 'which' argument contains the index position
                 // of the selected item
-                mListener.onLegItemActionClick(dialog, which, legId);
+                mListener.onLegItemActionClick(dialog, which, legId, listPosition);
 
             }
         });
@@ -64,7 +66,7 @@ public class ChooseLegItemActionDialog extends DialogFragment
 
 
     public interface LegItemActionDialogListener {
-        public void onLegItemActionClick(DialogInterface dialog, int which, long itemId);
+        public void onLegItemActionClick(DialogInterface dialog, int which, long itemId, int listPosition);
 
     }
 
