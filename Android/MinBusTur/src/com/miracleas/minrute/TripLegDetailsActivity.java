@@ -147,4 +147,11 @@ public class TripLegDetailsActivity extends GeofenceActivity implements TripLegD
 		mLegId = legId;
 		mTransportType = transportType;
 	}
+
+	@Override
+	protected void onServerResponse(boolean success)
+	{
+		// TODO Auto-generated method stub
+		
+	}
 }

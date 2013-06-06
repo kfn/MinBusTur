@@ -28,7 +28,7 @@ public abstract class GoogleServiceActivity extends MinRuteBaseActivity implemen
 	
 	
 	@Override
-	protected void onStart()
+	public void onStart()
 	{
 		super.onStart();
 		if (isGoogleServiceConnected())

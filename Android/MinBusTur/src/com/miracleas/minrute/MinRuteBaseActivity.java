@@ -1,17 +1,23 @@
 package com.miracleas.minrute;
 
 import com.actionbarsherlock.app.SherlockFragmentActivity;
+import com.miracleas.minrute.net.BaseFetcher;
 import com.miracleas.minrute.service.LocationService;
 import com.miracleas.minrute.service.VoiceTripService;
 import com.miracleas.minrute.utils.App;
 
+import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.speech.tts.TextToSpeech;
+import android.support.v4.content.LocalBroadcastManager;
+import android.text.TextUtils;
+import android.widget.Toast;
 
 
 public abstract class MinRuteBaseActivity extends SherlockFragmentActivity
@@ -160,4 +166,49 @@ public abstract class MinRuteBaseActivity extends SherlockFragmentActivity
 		}
 	}
 	
+	public void onStart()
+	{
+		super.onStart();
+		registerBroadcast();
+	}
+	
+	public void onStop()
+	{
+		super.onStop();
+		unregisterBroadcast();
+	}
+	
+	private void registerBroadcast()
+	{
+		LocalBroadcastManager r = LocalBroadcastManager.getInstance(this);
+		IntentFilter filter = new IntentFilter();
+		filter.addAction(BaseFetcher.BROADCAST_SERVER_RESPONSE_ACTION);
+		r.registerReceiver(mServerReceiver, filter);
+	}
+	
+	private void unregisterBroadcast()
+	{
+		LocalBroadcastManager r = LocalBroadcastManager.getInstance(this);
+		r.unregisterReceiver(mServerReceiver);
+	}
+	
+	private BroadcastReceiver mServerReceiver = new BroadcastReceiver(){
+
+		@Override
+		public void onReceive(Context context, Intent intent)
+		{
+			String action = intent.getAction();
+			if(action.equals(BaseFetcher.BROADCAST_SERVER_RESPONSE_ACTION))
+			{
+				String msg = intent.getStringExtra(BaseFetcher.BROADCAST_MSG);
+				boolean success = intent.getBooleanExtra(BaseFetcher.BROADCAST_MSG_SUCCESS_BOOLEAN, false);
+				onServerResponse(success);
+				if(!TextUtils.isEmpty(msg))
+				{
+					Toast.makeText(MinRuteBaseActivity.this,msg, Toast.LENGTH_SHORT).show();
+				}
+			}
+			
+		}};
+	protected abstract void onServerResponse(boolean success);
 }

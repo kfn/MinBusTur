@@ -108,6 +108,13 @@ public class TripLegMapActivity extends MinRuteBaseActivity implements TripLegMa
 		
 	}
 
+	@Override
+	protected void onServerResponse(boolean success)
+	{
+		// TODO Auto-generated method stub
+		
+	}
+
 
 
 

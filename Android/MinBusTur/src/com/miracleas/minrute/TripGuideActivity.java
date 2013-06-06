@@ -389,5 +389,12 @@ public class TripGuideActivity extends GeofenceActivity implements TripGuideFrag
 		
 	}
 
+	@Override
+	protected void onServerResponse(boolean success)
+	{
+		// TODO Auto-generated method stub
+		
+	}
+
 
 }

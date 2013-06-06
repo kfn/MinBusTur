@@ -113,8 +113,7 @@ public class TripStopDetailsImagesFragment extends LocaleImageHandlerFragment im
         mImageThumbSpacing = getResources().getDimensionPixelSize(R.dimen.image_thumbnail_spacing);
        
         initUploadServiceBroadcastReceiver();
-		getSherlockActivity().getSupportLoaderManager().initLoader(LoaderConstants.LOADER_TRIP_STOP_IMAGES, getArguments(), this);
-		getSherlockActivity().getSupportLoaderManager().initLoader(LoaderConstants.LOADER_COUNT_OF_NOT_UPLOADED_IMAGES, getArguments(), this);
+		
 	}
 
 	@Override
@@ -173,6 +172,8 @@ public class TripStopDetailsImagesFragment extends LocaleImageHandlerFragment im
 						}
 					}
 				}
+				getSherlockActivity().getSupportLoaderManager().initLoader(LoaderConstants.LOADER_TRIP_STOP_IMAGES, getArguments(), TripStopDetailsImagesFragment.this);
+				getSherlockActivity().getSupportLoaderManager().initLoader(LoaderConstants.LOADER_COUNT_OF_NOT_UPLOADED_IMAGES, getArguments(), TripStopDetailsImagesFragment.this);
 			}
 		});
 		mBtnTakePicture = (Button)v.findViewById(R.id.btnAddPicture);

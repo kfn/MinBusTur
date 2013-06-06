@@ -307,4 +307,11 @@ public class ChooseOriginDestActivity extends GeofenceActivity implements Choose
 	{
 		onFindTripSuggestion(tripRequest);		
 	}
+
+	@Override
+	protected void onServerResponse(boolean success)
+	{
+		// TODO Auto-generated method stub
+		
+	}
 }

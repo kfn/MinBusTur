@@ -489,4 +489,11 @@ public class PhotoGoogleDriveActivity extends MinRuteBaseActivity implements IIm
 		// TODO Auto-generated method stub
 		
 	}
+
+	@Override
+	protected void onServerResponse(boolean success)
+	{
+		// TODO Auto-generated method stub
+		
+	}
 }

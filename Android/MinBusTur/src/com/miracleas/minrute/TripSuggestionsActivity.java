@@ -115,4 +115,14 @@ public class TripSuggestionsActivity extends GeofenceActivity implements TripSug
 		}
 		super.onConnectedServiceVoice();		
 	}
+
+	@Override
+	protected void onServerResponse(boolean success)
+	{
+		if(!success)
+		{
+			finish();	
+		}
+			
+	}
 }
