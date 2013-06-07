@@ -15,8 +15,10 @@ import android.content.ContentProviderOperation;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
 import android.net.Uri;
 import android.text.TextUtils;
+import android.text.format.DateUtils;
 import android.util.Log;
 
 import com.miracleas.minrute.R;
@@ -24,6 +26,7 @@ import com.miracleas.minrute.model.Trip;
 import com.miracleas.minrute.model.TripLeg;
 import com.miracleas.minrute.model.TripLocation;
 import com.miracleas.minrute.model.TripRequest;
+import com.miracleas.minrute.provider.AddressProviderMetaData;
 import com.miracleas.minrute.provider.StopImagesMetaData;
 import com.miracleas.minrute.provider.TripLegMetaData;
 import com.miracleas.minrute.provider.TripMetaData;
@@ -52,10 +55,54 @@ public class TripFetcher extends BaseFetcher
 	@Override
 	void doWork() throws Exception
 	{
-		if(mTripRequest!=null)
+		if(mTripRequest!=null && !isCached())
 		{
 			tripSearch(mTripRequest);
 		}		
+	}
+	
+	private String getWayPointQuery()
+	{
+		if(TextUtils.isEmpty(mTripRequest.waypointNameNotEncoded))
+		{
+			return " IS NULL";
+		}
+		else
+		{
+			return "='"+mTripRequest.waypointNameNotEncoded+"'";
+		}
+	}
+	
+	private boolean isCached()
+	{		
+		boolean hasCachedResult = false;
+		Cursor cursor = null;
+		try
+		{	
+			String[] projection = {TripMetaData.TableMetaData._ID};
+			
+			StringBuilder b = new StringBuilder();
+			b.append(TripMetaData.TableMetaData.ORIGIN_ADDRESS).append("=? AND ").append(TripMetaData.TableMetaData.DEST_ADDRESS)
+			.append("=? AND ").append(TripMetaData.TableMetaData.DATE)
+			.append("=? AND ").append(TripMetaData.TableMetaData.TIME).append("=? AND ")
+			.append(TripMetaData.TableMetaData.SEARCH_FOR_ARRIVAL).append("=? AND ")
+			.append(TripMetaData.TableMetaData.WAY_POINT_ADDRESS).append(getWayPointQuery());
+			
+			
+			String[] selectionArgs = {mTripRequest.originCoordNameNotEncoded, mTripRequest.destCoordNameNotEncoded,
+					mTripRequest.getDate(), mTripRequest.getTime(), mTripRequest.getSearchForArrival()+""};
+			
+			cursor = mContentResolver.query(TripMetaData.TableMetaData.CONTENT_URI, projection, b.toString(), selectionArgs, TripMetaData.TableMetaData._ID + " LIMIT 1");
+			hasCachedResult = cursor.getCount()>0;
+		}
+		finally
+		{
+			if(cursor!=null && !cursor.isClosed())
+			{
+				cursor.close();
+			}
+		}		
+		return hasCachedResult;
 	}
 
 	public void tripSearch(TripRequest tripRequest) throws Exception
@@ -97,7 +144,7 @@ public class TripFetcher extends BaseFetcher
 			if (repsonseCode == HttpURLConnection.HTTP_OK)
 			{
 				mUpdated = System.currentTimeMillis();		
-				mDateHelper = new DateHelper(mContext);
+				mDateHelper = new DateHelper(mContext, null);
 				InputStream input = urlConnection.getInputStream();
 				parse(input);
 				if (!mDbOperations.isEmpty())
@@ -275,6 +322,17 @@ public class TripFetcher extends BaseFetcher
 		b.withValue(TripMetaData.TableMetaData.DEPATURES_TIME_LONG, departures);
 		b.withValue(TripMetaData.TableMetaData.ARRIVAL_TIME, t.getArrivalTime());
 		b.withValue(TripMetaData.TableMetaData.TRANSPORT_CHANGES, t.getTransportChanges());
+		
+		b.withValue(TripMetaData.TableMetaData.ORIGIN_ADDRESS, mTripRequest.originCoordNameNotEncoded);
+		if(!TextUtils.isEmpty(mTripRequest.waypointNameNotEncoded))
+		{
+			b.withValue(TripMetaData.TableMetaData.WAY_POINT_ADDRESS, mTripRequest.waypointNameNotEncoded);
+		}
+		
+		b.withValue(TripMetaData.TableMetaData.DEST_ADDRESS, mTripRequest.destCoordNameNotEncoded);
+		b.withValue(TripMetaData.TableMetaData.DATE, mTripRequest.getDate());
+		b.withValue(TripMetaData.TableMetaData.TIME, mTripRequest.getTime());
+		b.withValue(TripMetaData.TableMetaData.SEARCH_FOR_ARRIVAL, mTripRequest.getSearchForArrival());
 		//b.withValue(TripMetaData.TableMetaData.DURATION_BUS, mDateHelper.getDurationLabel(t.getDurationBus(), false));
 		//b.withValue(TripMetaData.TableMetaData.DURATION_TRAIN, mDateHelper.getDurationLabel(t.getDurationTrain(), false));
 		//b.withValue(TripMetaData.TableMetaData.DURATION_WALK, mDateHelper.getDurationLabel(t.getDurationWalk(), false));

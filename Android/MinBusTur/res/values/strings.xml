@@ -5,6 +5,9 @@
     <string name="menu_settings">Indstillinger</string>
     <string name="geocoding_service_not_available">Geocoding er ikke tilgængeligt</string>
     <string name="find_rute">Find rute</string>
+    <string name="voice_is_not_installed">Stemmesupport er ikke installeret</string>
+    <string name="confirm_install_voice">Vil du installere stemmesupport?</string>
+    <string name="installed_voice">Slå stemmesupport er slået til</string>
 
     <string name="create_route">Opret rute</string>
     <string name="route_creation">Ruteoprettelse</string>
@@ -90,11 +93,19 @@
 	<string name="upload_pictures">Upload billeder</string>
 	<string name="uploading_pictures">Gemmer billeder på Google Drive</string>
 	<string name="uploading_finished">Billeder uploaded</string>
+	<string name="deleting_picture">Sletter billede</string>
+	<string name="menu_delete_image">Slet billede</string>
+	<string name="confirm_delete_image">Vil du slette billedet?</string>
 	
 	<string name="my_location">Min placering</string>
 	<string name="leg_item_action_title">Vælg rutetrinhandling</string>
 	<string name="leg_item_action_i_am_here">Jeg er her</string>
 	<string name="leg_item_action_i_am_at_stop_before_dest">Jeg er ved stoppet før destination</string>
 	<string name="leg_item_action_stop_details">Tilføj billeder</string>
+	
+	<string name="pref_images_big_key">pref_images_big_key</string>
+	<string name="pref_images_big_title">Vis store billeder</string>
+	
+	
 
 </resources>

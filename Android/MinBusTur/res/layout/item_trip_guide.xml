@@ -39,7 +39,7 @@
     <ImageView
         android:id="@+id/imageViewThumb"
         android:layout_width="match_parent"
-        android:layout_height="90dp"
+        android:layout_height="@dimen/item_trip_guide_img_height_big"
         android:layout_below="@+id/textViewTime"
         android:background="@color/black_transparent"
         android:scaleType="centerCrop"

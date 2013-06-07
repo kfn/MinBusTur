@@ -4,10 +4,12 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
+import java.util.ResourceBundle;
 
 import com.miracleas.minrute.R;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.text.format.DateUtils;
 
 public class DateHelper
@@ -17,12 +19,22 @@ public class DateHelper
 	public static SimpleDateFormat formatterTime = new SimpleDateFormat("HH:mm", Locale.getDefault());
 	public static SimpleDateFormat formatterDateRejseplanen = new SimpleDateFormat("dd.MM.yy", Locale.getDefault());
 
-	private Context c = null;
+	//private Context c = null;
 	private boolean mVoice = false;
+	private Resources mDefaultResources;
 
-	public DateHelper(Context c)
+	public DateHelper(Context c, Resources bundle)
 	{
-		this.c = c;
+		//this.c = c;
+		if(bundle==null)
+		{
+			mDefaultResources = c.getResources();
+		}
+		else
+		{
+			mDefaultResources = bundle;
+			
+		}
 	}
 
 	public static Calendar parseToCalendar(String date, SimpleDateFormat format) throws java.text.ParseException
@@ -69,10 +81,11 @@ public class DateHelper
 	{
 		
 	}
-	
+
 	
 	public String getDurationLabel(long time, boolean isTripTime)
 	{		
+		
 		StringBuilder b = new StringBuilder();
 		boolean inFuture = time >=0;
 		if(!inFuture)
@@ -123,7 +136,7 @@ public class DateHelper
 				{
 					if(tempHours>0)
 					{
-						b.append(" ").append(c.getString(R.string.voice_and)).append(" ");
+						b.append(" ").append(mDefaultResources.getString(R.string.voice_and)).append(" ");
 					}
 					String minutes = getMintues(tempMinutes);
 					b.append(tempMinutes).append(" ").append(minutes);
@@ -133,7 +146,7 @@ public class DateHelper
 				{
 					if(tempMinutes>0 || tempHours>0)
 					{
-						b.append(" ").append(c.getString(R.string.voice_and)).append(" ");
+						b.append(" ").append(mDefaultResources.getString(R.string.voice_and)).append(" ");
 					}
 					String seconds = getSeconds(tempSecs);
 					b.append(tempSecs).append(" ").append(seconds);
@@ -146,11 +159,11 @@ public class DateHelper
 			{
 				if(mVoice)
 				{
-					b.append(c.getString(R.string.voice_departure_now));
+					b.append(mDefaultResources.getString(R.string.voice_departure_now));
 				}
 				else
 				{
-					b.append(c.getString(R.string.voice_departure));
+					b.append(mDefaultResources.getString(R.string.voice_departure));
 				}
 				
 			}
@@ -171,22 +184,22 @@ public class DateHelper
 		{
 			if(mVoice)
 			{
-				s = c.getString(R.string.voice_days_one);
+				s = mDefaultResources.getString(R.string.voice_days_one);
 			}
 			else
 			{
-				s = c.getString(R.string.days_one);
+				s = mDefaultResources.getString(R.string.days_one);
 			}
 		}
 		else
 		{
 			if(mVoice)
 			{
-				s = c.getString(R.string.voice_days_more);
+				s = mDefaultResources.getString(R.string.voice_days_more);
 			}
 			else
 			{
-				s = c.getString(R.string.days);
+				s = mDefaultResources.getString(R.string.days);
 			}
 		}
 		return s;
@@ -198,22 +211,22 @@ public class DateHelper
 		{
 			if(mVoice)
 			{
-				s = c.getString(R.string.voice_hours_one);
+				s = mDefaultResources.getString(R.string.voice_hours_one);
 			}
 			else
 			{
-				s = c.getString(R.string.hours_one);
+				s = mDefaultResources.getString(R.string.hours_one);
 			}
 		}
 		else
 		{
 			if(mVoice)
 			{
-				s = c.getString(R.string.voice_hours_more);
+				s = mDefaultResources.getString(R.string.voice_hours_more);
 			}
 			else
 			{
-				s = c.getString(R.string.hours);
+				s = mDefaultResources.getString(R.string.hours);
 			}
 		}
 		return s;
@@ -226,22 +239,22 @@ public class DateHelper
 		{
 			if(mVoice)
 			{
-				s = c.getString(R.string.voice_minutes_one);
+				s = mDefaultResources.getString(R.string.voice_minutes_one);
 			}
 			else
 			{
-				s = c.getString(R.string.minutes_one);
+				s = mDefaultResources.getString(R.string.minutes_one);
 			}
 		}
 		else
 		{
 			if(mVoice)
 			{
-				s = c.getString(R.string.voice_minutes_more);
+				s = mDefaultResources.getString(R.string.voice_minutes_more);
 			}
 			else
 			{
-				s = c.getString(R.string.minutes);
+				s = mDefaultResources.getString(R.string.minutes);
 			}
 		}
 		return s;
@@ -254,22 +267,22 @@ public class DateHelper
 		{
 			if(mVoice)
 			{
-				s = c.getString(R.string.voice_seconds_one);
+				s = mDefaultResources.getString(R.string.voice_seconds_one);
 			}
 			else
 			{
-				s = c.getString(R.string.seconds_one);
+				s = mDefaultResources.getString(R.string.seconds_one);
 			}
 		}
 		else
 		{
 			if(mVoice)
 			{
-				s = c.getString(R.string.voice_seconds_more);
+				s = mDefaultResources.getString(R.string.voice_seconds_more);
 			}
 			else
 			{
-				s = c.getString(R.string.seconds);
+				s = mDefaultResources.getString(R.string.seconds);
 			}
 		}
 		return s;

@@ -33,6 +33,7 @@ import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.CheckBox;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.actionbarsherlock.app.SherlockListFragment;
@@ -300,6 +301,7 @@ public class TripGuideFragment extends SherlockListFragment implements LoaderCal
 		private int iRtTrack =  -1;
 		private int iDestTrack =  -1;
 		private int iUrl =  -1;
+		private boolean mShowImage = true;
 
 		private LayoutInflater mInf = null;
 
@@ -307,6 +309,7 @@ public class TripGuideFragment extends SherlockListFragment implements LoaderCal
 		{
 			super(context, c, flags);
 			mInf = LayoutInflater.from(context);
+			mShowImage = SettingsActivity.isImagesOn(getActivity());
 		}
 
 		@Override
@@ -332,7 +335,7 @@ public class TripGuideFragment extends SherlockListFragment implements LoaderCal
 			String originName =  cursor.getString(iOriginName);
 			String destName =  cursor.getString(iDestName);
 			
-			if(TextUtils.isEmpty(url))
+			if(!mShowImage || TextUtils.isEmpty(url))
 			{
 				imageViewThumb.setVisibility(View.GONE);
 				imageViewThumb.setImageResource(R.drawable.empty_photo);
@@ -416,7 +419,23 @@ public class TripGuideFragment extends SherlockListFragment implements LoaderCal
 		@Override
 		public View newView(Context context, Cursor cursor, ViewGroup parent)
 		{
-			return mInf.inflate(R.layout.item_trip_guide, null);
+			View v = mInf.inflate(R.layout.item_trip_guide, null);
+			
+			if(SettingsActivity.isImagesOn(getActivity()))
+			{
+				if(!SettingsActivity.isImagesBigOn(getActivity()))
+				{
+					RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, getResources().getDimensionPixelSize(R.dimen.item_trip_guide_img_height));
+					params.addRule(RelativeLayout.BELOW, R.id.textViewTime);
+					v.findViewById(R.id.imageViewThumb).setLayoutParams(params);
+				}
+			}
+			else
+			{
+				v.findViewById(R.id.imageViewThumb).setVisibility(View.GONE);
+			}
+			
+			return v;
 		}
 
 		public Cursor swapCursor(Cursor newCursor)
@@ -522,10 +541,10 @@ public class TripGuideFragment extends SherlockListFragment implements LoaderCal
 		{
 			geofenceId = GeofenceHelper.LEG_ID + GeofenceHelper.DELIMITER + legId;			
 		}
-		else if(which==ChooseLegItemActionDialog.AT_STOP_BEFORE_LEG_DESTINATION)
+		/*else if(which==ChooseLegItemActionDialog.AT_STOP_BEFORE_LEG_DESTINATION)
 		{
 			geofenceId = GeofenceHelper.LEG_ID_WITH_STOP_ID + GeofenceHelper.DELIMITER + legId + GeofenceHelper.DELIMITER + GeofenceHelper.FAKE_STOP_ID;
-		}
+		}*/
 		else if(which==ChooseLegItemActionDialog.STOP_DETAILS)
 		{
 			TripLeg leg = mTripAdapter.getTripLeg(listPosition);

@@ -24,10 +24,10 @@ import java.net.HttpURLConnection;
 public class DirectionsFetcher extends BaseFetcher
 {
 	public static final String tag = DirectionsFetcher.class.getName();
-	private static final String[] PROJECTION = {DirectionMetaData.TableMetaData._ID};
+	private static final String[] PROJECTION = {DirectionMetaData.TableMetaData.updated};
 	private String sort = null;
-	private String selection;
-	public static final String URL = "https://maps.googleapis.com/maps/api/directions/json?sensor=true&mode=walking&";
+	
+	public static final String URL = "https://maps.googleapis.com/maps/api/directions/json?sensor=true&";
 	public static final int MAX = 40;
 
 	private TripLeg mTripLeg = null;
@@ -42,7 +42,7 @@ public class DirectionsFetcher extends BaseFetcher
 		super(c, null);
         mTripLeg = leg;
 		sort = DirectionMetaData.TableMetaData._ID +" LIMIT 1";
-		selection = DirectionMetaData.TableMetaData.END_ADDRESS + "=? AND "+ DirectionMetaData.TableMetaData.START_ADDRESS + ">=?";
+		
 		mUpdated = System.currentTimeMillis();
 	}
 	
@@ -53,8 +53,10 @@ public class DirectionsFetcher extends BaseFetcher
         Cursor cursor = null;
         try
         {
-            long updated = System.currentTimeMillis() - DateUtils.WEEK_IN_MILLIS;
-            String[] selectionArgs = {mTripLeg.originName, mTripLeg.destName};
+        	String selection = DirectionMetaData.TableMetaData.END_ADDRESS + "=? AND "+ DirectionMetaData.TableMetaData.START_ADDRESS + ">=? AND "
+        			+DirectionMetaData.TableMetaData.DIRECTION_MODE + "=? AND "+DirectionMetaData.TableMetaData.updated + ">=?";
+            long updated = System.currentTimeMillis() - DateUtils.WEEK_IN_MILLIS * 4;
+            String[] selectionArgs = {mTripLeg.originName, mTripLeg.destName, getMode(mTripLeg), updated + ""};
             cursor = mContentResolver.query(DirectionMetaData.TableMetaData.CONTENT_URI, PROJECTION, selection, selectionArgs, sort);
             hasCachedResult = cursor.getCount()>0;
             if(!hasCachedResult)
@@ -81,12 +83,23 @@ public class DirectionsFetcher extends BaseFetcher
         }
 	}
 		
-
+	public static String getMode(TripLeg leg)
+	{
+		if(leg.isWalk())
+		{
+			return "walking";
+		}
+		else
+		{
+			return "transit";
+		}
+	}
 
 	private void fetchDirections() throws Exception
 	{
         StringBuilder b = new StringBuilder(URL);
         b.append("origin=").append(originLat).append(",").append(originLng).append("&").append("destination=").append(destLat).append(",").append(destLng);
+        b.append("&mode=").append(getMode(mTripLeg));
         String url = b.toString();
         Log.d(tag, url);
 		HttpURLConnection urlConnection = initHttpURLConnection(url);
@@ -134,17 +147,18 @@ public class DirectionsFetcher extends BaseFetcher
             JSONObject route = routes.getJSONObject(0);
             JSONObject overviewPolyline = route.getJSONObject("overview_polyline");
             String polyline = overviewPolyline.getString("points");
-            saveLocation(polyline);
+            saveDirection(polyline);
         }
 	}
 	
-	private void saveLocation(String polyline)
+	private void saveDirection(String polyline)
 	{
 		ContentProviderOperation.Builder b = ContentProviderOperation.newInsert(DirectionMetaData.TableMetaData.CONTENT_URI);
 		b.withValue(DirectionMetaData.TableMetaData.END_ADDRESS, mTripLeg.destName);
         b.withValue(DirectionMetaData.TableMetaData.OVERVIEW_POLYLINE, polyline);
         b.withValue(DirectionMetaData.TableMetaData.START_ADDRESS, mTripLeg.originName);
         b.withValue(DirectionMetaData.TableMetaData.TRIP_LEG_ID, mTripLeg.id);
+        b.withValue(DirectionMetaData.TableMetaData.DIRECTION_MODE, getMode(mTripLeg));
 		mDbOperations.add(b.build());
 	}
 

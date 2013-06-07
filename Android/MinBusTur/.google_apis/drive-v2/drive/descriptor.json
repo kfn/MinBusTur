@@ -15,29 +15,29 @@
   "name": "drive", 
   "files": [
     {
-      "downloadUrl": "/downloads/drive/v2/76/java/1.14.2-beta/google-api-services-drive-v2-rev76-1.14.2-beta.jar", 
-      "path": "google-api-services-drive-v2-rev76-1.14.2-beta.jar", 
+      "downloadUrl": "/downloads/drive/v2/77/java/1.14.2-beta/google-api-services-drive-v2-rev77-1.14.2-beta.jar", 
+      "path": "google-api-services-drive-v2-rev77-1.14.2-beta.jar", 
       "type": "binary", 
-      "timestamp": "2013-05-23 08:45"
+      "timestamp": "2013-06-03 08:35"
     }, 
     {
-      "downloadUrl": "/downloads/drive/v2/76/java/1.14.2-beta/google-api-services-drive-v2-rev76-1.14.2-beta-javadoc.jar", 
-      "path": "google-api-services-drive-v2-rev76-1.14.2-beta-javadoc.jar", 
+      "downloadUrl": "/downloads/drive/v2/77/java/1.14.2-beta/google-api-services-drive-v2-rev77-1.14.2-beta-javadoc.jar", 
+      "path": "google-api-services-drive-v2-rev77-1.14.2-beta-javadoc.jar", 
       "type": "documentation", 
-      "timestamp": "2013-05-23 08:45"
+      "timestamp": "2013-06-03 08:35"
     }, 
     {
-      "downloadUrl": "/downloads/drive/v2/76/java/1.14.2-beta/google-api-services-drive-v2-rev76-1.14.2-beta-sources.jar", 
-      "path": "google-api-services-drive-v2-rev76-1.14.2-beta-sources.jar", 
+      "downloadUrl": "/downloads/drive/v2/77/java/1.14.2-beta/google-api-services-drive-v2-rev77-1.14.2-beta-sources.jar", 
+      "path": "google-api-services-drive-v2-rev77-1.14.2-beta-sources.jar", 
       "type": "source", 
-      "timestamp": "2013-05-23 08:45"
+      "timestamp": "2013-06-03 08:34"
     }, 
     {
-      "path": "google-api-services-drive-v2-rev76-1.14.2-beta.jar.properties", 
+      "path": "google-api-services-drive-v2-rev77-1.14.2-beta.jar.properties", 
       "type": "android.properties"
     }
   ], 
-  "revision": 76, 
+  "revision": 77, 
   "language": "java", 
   "language_version": "1.14.2-beta", 
   "dependencies": [

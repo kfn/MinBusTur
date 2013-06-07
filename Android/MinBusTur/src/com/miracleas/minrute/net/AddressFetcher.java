@@ -59,6 +59,7 @@ public class AddressFetcher extends BaseFetcher
 			String[] selectionArgs = {mSearchTerm, updated+""};
 			cursor = mContentResolver.query(AddressProviderMetaData.TableMetaData.CONTENT_URI, PROJECTION, selection, selectionArgs, sort);
 			hasCachedResult = cursor.getCount()>0;
+			//TO-DO lav clean up af old data
 		}
 		finally
 		{

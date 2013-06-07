@@ -15,8 +15,8 @@ import android.support.v4.app.DialogFragment;
 public class ChooseLegItemActionDialog extends DialogFragment
 {
     public static final int I_AM_HERE = 0;
-    public static final int AT_STOP_BEFORE_LEG_DESTINATION = 1;
-    public static final int STOP_DETAILS = 2;
+    //public static final int AT_STOP_BEFORE_LEG_DESTINATION = 1;
+    public static final int STOP_DETAILS = 1;
 	public static final String POSITION = "ARG_POSITION";
     
     private LegItemActionDialogListener mListener;

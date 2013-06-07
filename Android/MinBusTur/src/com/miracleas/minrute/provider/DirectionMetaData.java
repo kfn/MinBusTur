@@ -26,13 +26,15 @@ public class DirectionMetaData
 				+ TableMetaData.START_ADDRESS + " TEXT,"
 				+ TableMetaData.updated + " LONG,"
                 + TableMetaData.TRIP_LEG_ID + " INTEGER,"
-                + TableMetaData.OVERVIEW_POLYLINE + " TEXT"
+                + TableMetaData.OVERVIEW_POLYLINE + " TEXT,"
+                 + TableMetaData.DIRECTION_MODE + " TEXT"
 				;
 	}
 
 	// inner class describing columns and their types
 	public static final class TableMetaData implements BaseColumns
 	{
+		
 		
 		
 		private TableMetaData()
@@ -51,6 +53,7 @@ public class DirectionMetaData
         public static final String updated = "updated";
         public static final String TRIP_LEG_ID = "trip_leg_id";
         public static final String OVERVIEW_POLYLINE = "overview_polyline";
+        public static final String DIRECTION_MODE = "direction_mode";
 
 
 	}

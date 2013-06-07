@@ -1,8 +1,11 @@
 package com.miracleas.minrute.model;
 
+import java.util.ResourceBundle;
+
 import com.miracleas.minrute.R;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.os.Handler;
 import android.text.format.DateUtils;
 import android.util.Log;
@@ -11,10 +14,11 @@ public class VoiceStateWalk extends VoiceState
 {
 	public static final String tag = VoiceStateWalk.class.getName();
 	
-	public VoiceStateWalk(Context context, TripLeg leg)
+	public VoiceStateWalk(Context context, TripLeg leg, Resources defaultResources)
 	{
-		super(context, leg);
+		super(context, leg, defaultResources);
 	}
+	
 
 	@Override
 	public String departuresIn()
@@ -33,11 +37,11 @@ public class VoiceStateWalk extends VoiceState
 				
 				if(mLeg.isOrigin)
 				{
-					text = String.format(mContext.getString(R.string.voice_departure_walk), strDuration);
+					text = String.format(mDefaultResources.getString(R.string.voice_departure_walk), strDuration);
 				}
 				else
 				{
-					text = String.format(mContext.getString(R.string.voice_start_using_transport_walk), strDuration, mLeg.destName);
+					text = String.format(mDefaultResources.getString(R.string.voice_start_using_transport_walk), strDuration, mLeg.destName);
 				}
 			}
 		}
@@ -53,7 +57,7 @@ public class VoiceStateWalk extends VoiceState
 			long duration = mLeg.getDuration();
 			String destName = mLeg.destName;
 			String strDuration = mDateHelper.getDurationLabel(duration, false);
-			text = String.format(mContext.getString(R.string.voice_start_using_transport_walk), strDuration, destName);
+			text = String.format(mDefaultResources.getString(R.string.voice_start_using_transport_walk), strDuration, destName);
 		}
 		
 		return text;			
@@ -129,7 +133,7 @@ public class VoiceStateWalk extends VoiceState
 		}
 		else
 		{
-			text = String.format(mContext.getString(R.string.reached_destination), mLeg.originName.split(",")[0]);
+			text = String.format(mDefaultResources.getString(R.string.reached_destination), mLeg.originName.split(",")[0]);
 		}
 		return text;
 	}

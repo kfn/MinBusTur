@@ -2,8 +2,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingLeft="4dp"
-    android:paddingRight="4dp" >
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin">
 
     <AutoCompleteTextView
         android:id="@+id/autoCompleteTextViewFrom"
@@ -16,6 +18,7 @@
         android:imeOptions="actionNext"
         android:singleLine="true"
         android:textColor="@android:color/black"
+        
         android:textSize="16sp" />
 
     <ProgressBar
@@ -46,6 +49,7 @@
         android:hint="@string/waypoint"
         android:imeOptions="actionNext"
         android:singleLine="true"
+        android:textColor="@android:color/black"
         android:textSize="16sp"
         android:visibility="gone" />
 
@@ -79,6 +83,7 @@
         android:hint="@string/destination_address"
         android:imeOptions="actionSearch"
         android:singleLine="true"
+        android:textColor="@android:color/black"
         android:textSize="16sp" />
 
     <ImageButton
@@ -113,7 +118,7 @@
             android:id="@+id/btnDate"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="0.8"
+            android:layout_weight="0.7"
             android:background="@drawable/spinner_background_holo_light1"
             android:focusable="true"
             android:focusableInTouchMode="true"
@@ -123,12 +128,12 @@
             android:id="@+id/btnTime"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="0.2"
+            android:layout_weight="0.3"
             android:background="@drawable/spinner_background_holo_light1"
             android:textSize="16sp" />
     </LinearLayout>
 
-    <RadioGroup
+    <RadioGroup android:id="@+id/radioGroup"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/timeContainers"
@@ -149,14 +154,13 @@
             android:text="@string/arrival" />
     </RadioGroup>
 
-    <Button
+    <Button android:layout_below="@+id/radioGroup"
         android:id="@+id/btnFindRoute"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
-        android:layout_below="@+id/timeContainers"
-       
-        android:layout_marginTop="20dp"
+        
+        
         android:drawableLeft="@android:drawable/ic_menu_directions"
         android:gravity="center"
         android:text="@string/find_rute" />

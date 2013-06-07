@@ -89,11 +89,6 @@ public abstract class ChooseOriginDestFragmentBase extends SherlockFragment impl
 	protected TextView mTextViewDate = null;
 	protected TextView mTextViewTime = null;
 	protected ImageButton mBtnShowWaypoint = null;
-	
-
-	
-	ArrayAdapter<String> adapter;
-    String dates[] = { ""};
 
     public void onCreate(Bundle savedInstanceState)
     {
@@ -125,6 +120,8 @@ public abstract class ChooseOriginDestFragmentBase extends SherlockFragment impl
 		mTextViewTime.setText(getTimeFormat(c));
 		mTripRequest.setTime(DateHelper.convertDateToString(c, DateHelper.formatterTime));
 		mTripRequest.setDate(DateHelper.convertDateToString(c, DateHelper.formatterDateRejseplanen));
+		
+		
 		
 		mAutoCompleteTextViewFromAddress = (AutoCompleteTextView) rootView.findViewById(R.id.autoCompleteTextViewFrom);
         mAutoCompleteTextViewWayPoint = (AutoCompleteTextView) rootView.findViewById(R.id.autoCompleteTextViewWayPoint);

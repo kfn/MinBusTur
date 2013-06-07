@@ -8,6 +8,7 @@ import java.util.Locale;
 
 import android.accounts.AccountManager;
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
@@ -15,6 +16,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
@@ -28,6 +30,9 @@ import android.widget.Toast;
 
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.google.android.gms.auth.GoogleAuthException;
+import com.google.android.gms.auth.GooglePlayServicesAvailabilityException;
+import com.google.android.gms.auth.UserRecoverableAuthException;
+import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.api.client.extensions.android.http.AndroidHttp;
 import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
 import com.google.api.client.googleapis.extensions.android.gms.auth.UserRecoverableAuthIOException;
@@ -53,12 +58,13 @@ public class PhotoGoogleDriveActivity extends MinRuteBaseActivity implements IIm
 	private static final String LAT = "lat";
 	private static final String LNG = "lng";
 	private String mAccountName = null;
-	
+
 	static final int REQUEST_ACCOUNT_PICKER = 1;
 	static final int REQUEST_AUTHORIZATION = 2;
+	private static final int MY_ACTIVITYS_AUTH_REQUEST_CODE = 4;
 	static final int CAPTURE_IMAGE = 3;
 	static final String AUTH_TOKEN = "AUTH_TOKEN";
-	
+
 	private IImageDownloader mImageLoader = null;
 	private static final String CACHE_DIR = IImageDownloader.CACHE_DIR;
 	private static Uri fileUri;
@@ -86,45 +92,14 @@ public class PhotoGoogleDriveActivity extends MinRuteBaseActivity implements IIm
 			if (resultCode == RESULT_OK && data != null && data.getExtras() != null)
 			{
 				mAccountName = data.getStringExtra(AccountManager.KEY_ACCOUNT_NAME);
-				if (mAccountName != null)
-				{
-					credential.setSelectedAccountName(mAccountName);
-					service = getDriveService(credential);
-					
-					new Thread()
-					{
-						public void run()
-						{
-							try
-							{
-								String authToken = credential.getToken();
-								if(!TextUtils.isEmpty(authToken))
-								{
-									saveAuthToken(authToken);
-								}
-								
-								setAuthTokenHeader(authToken);
-							} catch (IOException e)
-							{
-								// TODO Auto-generated catch block
-								e.printStackTrace();
-							} catch (GoogleAuthException e)
-							{
-								// TODO Auto-generated catch block
-								e.printStackTrace();
-							}
-						}
-					}.start();
-
-					startUploadServiceHelper();
-				}
+				getAndUseAuthTokenInAsyncTask(mAccountName);
 			}
 			break;
 		case REQUEST_AUTHORIZATION:
 			if (resultCode == Activity.RESULT_OK)
 			{
-				//saveFileToDrive();
-				//saveFileToDb();
+				// saveFileToDrive();
+				// saveFileToDb();
 			} else
 			{
 				startActivityForResult(credential.newChooseAccountIntent(), REQUEST_ACCOUNT_PICKER);
@@ -133,13 +108,94 @@ public class PhotoGoogleDriveActivity extends MinRuteBaseActivity implements IIm
 		case CAPTURE_IMAGE:
 			if (resultCode == Activity.RESULT_OK)
 			{
-				//saveFileToDrive();
+				// saveFileToDrive();
 				saveFileToDb();
 			}
+			break;
+		case MY_ACTIVITYS_AUTH_REQUEST_CODE:
+			if (resultCode == RESULT_OK) {
+	               getAndUseAuthTokenInAsyncTask(mAccountName);
+	           }
+
 		}
 	}
 
+	// Example of how to use AsyncTask to call blocking code on a background
+	// thread.
+	private void getAndUseAuthTokenInAsyncTask(String accountName)
+	{
+		LoadDriveAuthTask mLoadDriveAuthTask = new LoadDriveAuthTask();
+		mLoadDriveAuthTask.execute(accountName);
+	}
 
+	private class LoadDriveAuthTask extends AsyncTask<String, Void, Void>
+	{
+		private Dialog mAlert;
+		private boolean mStartService = false;
+
+		@Override
+		protected Void doInBackground(String... params)
+		{
+			String accountName = params[0];
+			getAndUseAuthTokenBlocking(accountName);
+			return null;
+		}
+
+		public void onPostExecute(Void result)
+		{
+			if (mAlert != null)
+			{
+				mAlert.show();
+			}
+			if(mStartService)
+			{
+				startUploadServiceHelper();
+			}
+		}
+
+		private void getAndUseAuthTokenBlocking(String accountName)
+		{
+
+			credential.setSelectedAccountName(accountName);
+			service = getDriveService(credential);
+
+			try
+			{
+				String authToken = credential.getToken();
+				if (!TextUtils.isEmpty(authToken))
+				{
+					saveAuthToken(authToken, accountName);
+				}
+
+				setAuthTokenHeader(authToken);
+				mStartService = true;
+				
+			} catch (GooglePlayServicesAvailabilityException playEx)
+			{
+				mAlert = GooglePlayServicesUtil.getErrorDialog(playEx.getConnectionStatusCode(), PhotoGoogleDriveActivity.this, MY_ACTIVITYS_AUTH_REQUEST_CODE);
+
+			} catch (UserRecoverableAuthException userAuthEx)
+			{
+				// Start the user recoverable action using the intent
+				// returned
+				// by
+				// getIntent()
+				startActivityForResult(userAuthEx.getIntent(), MY_ACTIVITYS_AUTH_REQUEST_CODE);
+				return;
+			} catch (IOException e)
+			{
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (GoogleAuthException e)
+			{
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				// GoogleAuthUtil.invalidateToken(Context, String)(context,
+				// token);
+			}
+
+		}
+	}
 
 	private void startCameraIntent()
 	{
@@ -192,7 +248,6 @@ public class PhotoGoogleDriveActivity extends MinRuteBaseActivity implements IIm
 	{
 		Thread t = new Thread(new Runnable()
 		{
-			
 
 			@Override
 			public void run()
@@ -438,10 +493,11 @@ public class PhotoGoogleDriveActivity extends MinRuteBaseActivity implements IIm
 
 	}
 
-	public void saveAuthToken(String authToken)
+	public void saveAuthToken(String authToken, String accountName)
 	{
 		mAuth = authToken;
 		MyPrefs.setString(this, MyPrefs.GOOGLE_DRIVE_AUTH, authToken);
+		MyPrefs.setString(this, AccountManager.KEY_ACCOUNT_NAME, accountName);
 	}
 
 	public String getAuthToken()
@@ -452,48 +508,45 @@ public class PhotoGoogleDriveActivity extends MinRuteBaseActivity implements IIm
 		}
 		return mAuth;
 	}
-	
+
 	public void startUploadService()
 	{
-		if(service==null || TextUtils.isEmpty(mAccountName))
+		if (service == null || TextUtils.isEmpty(mAccountName))
 		{
 			credential = GoogleAccountCredential.usingOAuth2(PhotoGoogleDriveActivity.this, DriveScopes.DRIVE);
 			startActivityForResult(credential.newChooseAccountIntent(), REQUEST_ACCOUNT_PICKER);
-		}
-		else
+		} else
 		{
 			startUploadServiceHelper();
 		}
 	}
-	
+
 	private void startUploadServiceHelper()
 	{
-		if(!TextUtils.isEmpty(mAccountName))
+		if (!TextUtils.isEmpty(mAccountName))
 		{
 			Toast.makeText(this, getString(R.string.uploading_pictures), Toast.LENGTH_LONG).show();
 			Intent service = new Intent(this, UploadImagesService.class);
 			service.putExtra(AccountManager.KEY_ACCOUNT_NAME, mAccountName);
 			startService(service);
-		}
-		else
+		} else
 		{
 			Toast.makeText(this, "Account mangler", Toast.LENGTH_LONG).show();
 		}
-		
-	}
 
+	}
 
 	@Override
 	public void onConnectedServiceLocation()
 	{
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	protected void onServerResponse(boolean success)
 	{
 		// TODO Auto-generated method stub
-		
+
 	}
 }

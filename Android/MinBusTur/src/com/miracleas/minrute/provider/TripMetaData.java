@@ -31,6 +31,14 @@ public class TripMetaData
 				+ TableMetaData.DURATION_BUS + " TEXT,"
 				+ TableMetaData.DURATION_TRAIN + " TEXT,"
 				+ TableMetaData.ARRIVAL_TIME + " TEXT,"
+				
+				+ TableMetaData.ORIGIN_ADDRESS + " TEXT,"
+				+ TableMetaData.DEST_ADDRESS + " TEXT,"
+				+ TableMetaData.WAY_POINT_ADDRESS + " TEXT,"
+				+ TableMetaData.DATE + " TEXT,"
+				+ TableMetaData.TIME + " TEXT,"
+				+ TableMetaData.SEARCH_FOR_ARRIVAL + " TEXT,"
+				
 				+ TableMetaData.HAS_ALL_ADDRESS_GPSES + " INTEGER DEFAULT 0,"
 				+ TableMetaData.updated + " LONG"
 				;
@@ -39,11 +47,6 @@ public class TripMetaData
 	// inner class describing columns and their types
 	public static final class TableMetaData implements BaseColumns
 	{
-		
-
-		
-		
-		
 		private TableMetaData()
 		{
 		}
@@ -67,6 +70,13 @@ public class TripMetaData
 		public static final String updated = "updated";
 		public static final String DEPATURES_TIME_LONG = "departures_time_long";
 		public static final String HAS_ALL_ADDRESS_GPSES = "has_all_address_gpses";
+		
+		public static final String SEARCH_FOR_ARRIVAL = "search_for_arrival";
+		public static final String TIME = "the_time";
+		public static final String DATE = "the_date";
+		public static final String WAY_POINT_ADDRESS = "waypoint_address";
+		public static final String DEST_ADDRESS = "dest_address";
+		public static final String ORIGIN_ADDRESS = "origin_address";
 
 	}
 }

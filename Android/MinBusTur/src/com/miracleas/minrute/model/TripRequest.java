@@ -60,6 +60,24 @@ public class TripRequest implements Parcelable
 				&& !TextUtils.isEmpty(originCoordName) && !TextUtils.isEmpty(destCoordX) && !TextUtils.isEmpty(destCoordY) && !TextUtils.isEmpty(destCoordName) && isValidWayPoint() );
 	}
 	
+	public void clearAddresses()
+	{
+		originId = "";
+		originCoordX = "";
+		originCoordY = "";
+		originCoordName = "";
+		originCoordNameNotEncoded = "";
+		destId = "";
+		destCoordX = "";
+		destCoordY = "";
+		destCoordName = "";
+		destCoordNameNotEncoded = "";
+
+	    waypointNameNotEncoded = "";
+	    viaId = "";
+
+	}
+	
 
     public boolean isValidWayPoint()
     {

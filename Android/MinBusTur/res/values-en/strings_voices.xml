@@ -1,21 +1,42 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources  xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
 
-  
+    <string name="voice_is_on">Hello</string>
     
-    <string name="voice_enter">You are approaching a stop</string>
-    <string name="voice_exit">You have left a stop</string>
+    <string name="voice_enter">You are at</string>
+    <string name="voice_exit">You have left</string>
+    
+     <string name="voice_and">and</string>
     <string name="voice_seconds_more">seconds</string>
     <string name="voice_seconds_one">second</string>
     <string name="voice_minutes_more">minutes</string>
-    <string name="voice_minutes_one">minute</string>
+    <string name="voice_minutes_one">minut</string>
     <string name="voice_hours_more">hours</string>
     <string name="voice_hours_one">hour</string>
     <string name="voice_days_more">days</string>
     <string name="voice_days_one">day</string>
-    <string name="voice_departure">departures in <xliff:g ID="time_label">%1$s</xliff:g></string>
-    <string name="voice_departure_now">right now</string>
-    <string name="voice_departured">Time is out</string>
+    <string name="voice_departure">Departures in <xliff:g ID="time_label">%1$s</xliff:g></string>
+    <string name="voice_departure_now">Right now</string>
+    <string name="voice_departured">Time is up</string>
+    
+    <string name="voice_departure_walk">You should walk in <xliff:g ID="time">%1$s</xliff:g></string>
+   
+    <string name="voice_departure_train">Train departures in <xliff:g ID="time">%1$s</xliff:g></string>
+    <string name="voice_departure_bus">Bus arrives in <xliff:g ID="time">%1$s</xliff:g></string>
+    
+    <string name="voice_start_using_transport_walk">You must now walk in <xliff:g ID="time_label">%1$s</xliff:g> to <xliff:g ID="dest_name">%2$s</xliff:g></string>   
+    <string name="voice_start_using_transport_bus">Take <xliff:g ID="bus_name">%1$s</xliff:g> now. Transport duration is <xliff:g ID="time">%2$s</xliff:g></string> 
+    <string name="voice_start_using_transport_train">Take the train <xliff:g ID="train_name">%1$s</xliff:g> now. Transport duration is <xliff:g ID="time">%2$s</xliff:g></string> 
+    
+    <string name="voice_start_using_next_transport_in_bus">You should take <xliff:g ID="bus_name">%1$s</xliff:g> in <xliff:g ID="time">%2$s</xliff:g> to <xliff:g ID="dest_name">%3$s</xliff:g></string>   
+    <string name="voice_start_using_next_transport_in_train">You should take the train <xliff:g ID="train_name">%1$s</xliff:g> in <xliff:g ID="time">%2$s</xliff:g> to <xliff:g ID="dest_name">%3$s</xliff:g></string>
+    
+    <string name="voice_leave_next_stop_bus">At next stop. Leave the bus</string>
+    <string name="voice_leave_next_stop_train">At next stop. Leave the train</string>
+    
+    <string name="voice_arrives_in">At next stop. Leave the vechical</string>
+    
+     <string name="reached_destination">You have arrived to <xliff:g ID="location">%1$s</xliff:g></string>
     
     
 </resources>

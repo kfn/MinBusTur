@@ -6,6 +6,7 @@ import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.content.res.Configuration;
 import android.os.Build;
 import android.os.Bundle;
@@ -74,6 +75,8 @@ public class SettingsActivity extends SherlockPreferenceActivity
 			return super.onOptionsItemSelected(item);
 		}
 	}
+	
+
 
 	/**
 	 * Shows the simplified settings UI if the device configuration if the
@@ -245,7 +248,7 @@ public class SettingsActivity extends SherlockPreferenceActivity
 			// to their values. When their values change, their summaries are
 			// updated to reflect the new value, per the Android Design
 			// guidelines.
-			bindPreferenceSummaryToValue(findPreference("notifications_new_message_ringtone"));
+			bindPreferenceSummaryToValue(findPreference(getString(R.string.pref_voice_on_key)));
 		}
 	}
 
@@ -266,17 +269,56 @@ public class SettingsActivity extends SherlockPreferenceActivity
 			// to their values. When their values change, their summaries are
 			// updated to reflect the new value, per the Android Design
 			// guidelines.
-			bindPreferenceSummaryToValue(findPreference(getString(R.string.pref_voice_language_key)));
+			bindPreferenceSummaryToValue(findPreference(getString(R.string.pref_images_turn_on_key)));
 		}
 	}
 	
-	public static boolean isVibrateOn(Context c, SharedPreferences sharedPref)
+	public static boolean isVoiceOn(Context c)
 	{
-		return sharedPref.getBoolean(c.getString(R.string.pref_voice_language_turn_on_key), true);
+		return PreferenceManager.getDefaultSharedPreferences(c).getBoolean(c.getString(R.string.pref_voice_on_key), true);
 	}
 	
-	public static boolean isNotificationOn(Context c, SharedPreferences sharedPref)
+	public static void setIsVoiceOn(Context c, boolean value)
 	{
-		return sharedPref.getBoolean(c.getString(R.string.pref_images_turn_on_key), true);
+		Editor e =  PreferenceManager.getDefaultSharedPreferences(c).edit();
+		e.putBoolean(c.getString(R.string.pref_voice_on_key), value);
+		e.commit();
+	}
+	
+	public static boolean isVoiceDepartureOn(Context c)
+	{
+		return PreferenceManager.getDefaultSharedPreferences(c).getBoolean(c.getString(R.string.pref_voice_departure_key), true);
+	}
+	
+	public static boolean isVoiceStopBeforeArrivalOn(Context c)
+	{
+		return PreferenceManager.getDefaultSharedPreferences(c).getBoolean(c.getString(R.string.pref_voice_arrival_before_last_stop_key), true);
+	}
+	
+	public static boolean isImagesOn(Context c)
+	{
+		return PreferenceManager.getDefaultSharedPreferences(c).getBoolean(c.getString(R.string.pref_images_turn_on_key), true);
+	}
+	
+	public static boolean isImagesBigOn(Context c)
+	{
+		return PreferenceManager.getDefaultSharedPreferences(c).getBoolean(c.getString(R.string.pref_images_big_key), false);
+	}
+	
+	public static String getSelectedLanguage(Context c)
+	{
+		return PreferenceManager.getDefaultSharedPreferences(c).getString(c.getString(R.string.pref_voice_language_key), c.getString(R.string.pref_voice_language_danish_key));
+	}
+	
+	public static void setLanguage(Context c, String value)
+	{
+		Editor e =  PreferenceManager.getDefaultSharedPreferences(c).edit();
+		e.putString(c.getString(R.string.pref_voice_language_key), value);
+		e.commit();
+	}
+	
+	public static SharedPreferences getSharedPreferences(Context c)
+	{
+		return  PreferenceManager.getDefaultSharedPreferences(c);
 	}
 }

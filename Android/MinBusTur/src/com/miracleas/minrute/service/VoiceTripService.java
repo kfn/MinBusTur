@@ -4,11 +4,13 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
+import java.util.ResourceBundle;
 import java.util.Timer;
 import java.util.TimerTask;
 
 import com.google.android.gms.location.Geofence;
 import com.miracleas.minrute.R;
+import com.miracleas.minrute.SettingsActivity;
 import com.miracleas.minrute.model.GeofenceHelper;
 import com.miracleas.minrute.model.TripLeg;
 import com.miracleas.minrute.model.VoiceState;
@@ -26,6 +28,11 @@ import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
+import android.content.res.AssetManager;
+import android.content.res.Configuration;
+import android.content.res.Resources;
 import android.database.ContentObserver;
 import android.database.Cursor;
 import android.net.Uri;
@@ -38,9 +45,10 @@ import android.os.PowerManager.WakeLock;
 import android.speech.tts.TextToSpeech;
 import android.text.TextUtils;
 import android.text.format.DateUtils;
+import android.util.DisplayMetrics;
 import android.util.Log;
 
-public class VoiceTripService extends Service implements android.speech.tts.TextToSpeech.OnInitListener
+public class VoiceTripService extends Service implements android.speech.tts.TextToSpeech.OnInitListener, OnSharedPreferenceChangeListener
 {
 	public static final String tag = VoiceTripService.class.getName();
 	private Handler handler;
@@ -54,6 +62,11 @@ public class VoiceTripService extends Service implements android.speech.tts.Text
 	private int mCurrentStep = -1;
 	private VoiceState mCurrentVoiceState = null;
 	private WakeLock wl;
+	private Resources mDefaultResources;
+	
+	private boolean mIsVoiceOn = true;
+	private boolean mIsVoiceDepartureOn = true;
+	private boolean mIsVoiceStopBeforeDestOn = true;
 	
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId)
@@ -109,7 +122,9 @@ public class VoiceTripService extends Service implements android.speech.tts.Text
 	public void onCreate()
 	{
 		super.onCreate();
-		mDateHelper = new DateHelper(this);
+		initLanguage();
+		getVoiceSettings();
+		mDateHelper = new DateHelper(this, mDefaultResources);
 		mDateHelper.setVoice(true);
 		mTransistionObserver = new TransistionObserver(handler);
 		//startWakelock();
@@ -136,17 +151,46 @@ public class VoiceTripService extends Service implements android.speech.tts.Text
 		Log.d(tag, "onDestroy");
 
 	}
+	
+	private void initLanguage()
+	{
+		String lan = SettingsActivity.getSelectedLanguage(this);
+		Locale locale = new Locale(lan);
+	    
+		Resources standardResources = getResources();
+		AssetManager assets = standardResources.getAssets();
+		DisplayMetrics metrics = standardResources.getDisplayMetrics();
+		Configuration config = new Configuration(standardResources.getConfiguration());
+		config.locale = locale;
+		mDefaultResources = new Resources(assets, metrics, config);
+		mDefaultResources.updateConfiguration(config, null);
+		//mDefaultResources.getString(R.string.voice_start_using_next_transport_in_bus);
+		
+		
+		//mDefaultResources = ResourceBundle.getBundle("com.miracleas.minrute", Locale.ENGLISH);
+		
+	}
 	/**
 	 * initializes the speech service
 	 */
 	public void startTextToSpeech()
 	{
+		getVoiceSettings();
+		
+		
 		Log.d(tag, "startTextToSpeech");
-		if(mTts==null)
+		if(mTts==null && mIsVoiceOn)
 		{
 			// success, create the TTS instance
 			mTts = new TextToSpeech(this, this);
 		}		
+	}
+	
+	private void getVoiceSettings()
+	{
+		mIsVoiceDepartureOn = SettingsActivity.isVoiceDepartureOn(this);
+		mIsVoiceStopBeforeDestOn = SettingsActivity.isVoiceStopBeforeArrivalOn(this);
+		mIsVoiceOn = SettingsActivity.isVoiceOn(this);
 	}
 	
 	@Override
@@ -155,10 +199,14 @@ public class VoiceTripService extends Service implements android.speech.tts.Text
 		Log.d(tag, "onInit");
 		if(status==TextToSpeech.SUCCESS)
 		{
-			Locale locale = Locale.getDefault();
-			if(mTts.isLanguageAvailable(locale)==android.speech.tts.TextToSpeech.LANG_AVAILABLE)
+			String da = getString(R.string.pref_voice_language_danish_key);
+			String lan = SettingsActivity.getSelectedLanguage(this);
+			boolean isDanish = da.equals(lan);
+			
+			Locale locale = new Locale(lan);
+			if(isDanish && mTts.isLanguageAvailable(locale)==android.speech.tts.TextToSpeech.LANG_AVAILABLE)
 			{
-				mTts.setLanguage(locale);
+				mTts.setLanguage(locale);				
 				mTts.setSpeechRate(0.3f);
 				//((mTts.setLanguage(Locale.US);
 			}
@@ -167,7 +215,7 @@ public class VoiceTripService extends Service implements android.speech.tts.Text
 				mTts.setLanguage(Locale.US);
 			}
 			
-			//mTts.speak(getString(R.string.voice_is_on), TextToSpeech.QUEUE_ADD, null);	
+			mTts.speak(mDefaultResources.getString(R.string.voice_is_on), TextToSpeech.QUEUE_ADD, null);	
 		}
 	}
 	/**
@@ -187,25 +235,28 @@ public class VoiceTripService extends Service implements android.speech.tts.Text
 			Log.d(tag, "LoadDepartueTask");
 			mLoadDepartueTask = new LoadTripLegsTask();
 			mLoadDepartueTask.execute(null, null, null);
-		}
-		
+		}		
 	}
 	
 	public void playVoice(String voice)
 	{
-		Log.d(tag, "playVoice: "+voice);
-		if(voice!=null && isVoiceInitialized())
+		if(mIsVoiceOn)
 		{
-			
-			mTts.speak(voice, TextToSpeech.QUEUE_ADD, null);
-			mTextToSpeak = null;
+			Log.d(tag, "playVoice: "+voice);
+			if(voice!=null && isVoiceInitialized())
+			{
+				
+				mTts.speak(voice, TextToSpeech.QUEUE_ADD, null);
+				mTextToSpeak = null;
+			}
+			else
+			{
+				Log.e(tag, "Voice is not ready");
+				mTextToSpeak = voice;
+				//startTextToSpeech();
+			}
 		}
-		else
-		{
-			Log.e(tag, "Voice is not ready");
-			mTextToSpeak = voice;
-			//startTextToSpeech();
-		}
+		
 	}
 	
 	public void stopVoices()
@@ -235,8 +286,10 @@ public class VoiceTripService extends Service implements android.speech.tts.Text
 
 	private void startDepartureTimer()
 	{
+		getVoiceSettings();
+		
 		Log.d(tag, "startDepartureTimer");
-		if (mTripId != null)
+		if ((mIsVoiceOn && mIsVoiceDepartureOn) && mTripId != null)
 		{
 			if (handler == null)
 			{
@@ -264,7 +317,7 @@ public class VoiceTripService extends Service implements android.speech.tts.Text
 						@Override
 						public void run()
 						{
-							if(handler!=null)
+							if(handler!=null && (mIsVoiceOn && mIsVoiceDepartureOn))
 								playDepartureVoice();
 							
 						}
@@ -272,47 +325,55 @@ public class VoiceTripService extends Service implements android.speech.tts.Text
 				}
 			}			
 		}
+		else
+		{
+			Log.d(tag, "startDepartureTimer: did not start");
+		}
 	}
 	
 	private void playDepartureVoice()
 	{
-		
-		
-		long departues = departues();
-		if(departues<=VoiceState.THIRTY_SECONDS && departues >= VoiceState.ONE_MINUTE_MINUS)
+		getVoiceSettings();
+		if(mIsVoiceOn && mIsVoiceDepartureOn)
 		{
-			Log.d(tag, "playDepartureVoice because it is 30 secs or less");
-			playVoice(mCurrentVoiceState.startUsingTransport());
-		}
-		else if(departues > VoiceState.ONE_MINUTE_MINUS)
-		{
-			long tick = mCurrentVoiceState.getTickTime(Calendar.getInstance().getTimeInMillis());
-			if(tick<=0)
+			long departues = departues();
+			if(departues<=VoiceState.THIRTY_SECONDS && departues >= VoiceState.ONE_MINUTE_MINUS)
 			{
-				playStartTripLegNow();
-				stopDepartureHandler();
-				
-			}				
-			else if(tick!=Long.MIN_VALUE)
+				Log.d(tag, "playDepartureVoice because it is 30 secs or less");
+				playVoice(mCurrentVoiceState.startUsingTransport());
+			}
+			else if(departues > VoiceState.ONE_MINUTE_MINUS)
 			{
-				Log.d(tag, "tick: playDepartureVoice");
-				playVoice(mCurrentVoiceState.departuresIn());	
-				Log.d(tag, "start in "+(tick/DateUtils.SECOND_IN_MILLIS)+" secs");
-				if(handler==null)
+				long tick = mCurrentVoiceState.getTickTime(Calendar.getInstance().getTimeInMillis());
+				if(tick<=0)
 				{
-					Log.d(tag, "handler is null. stop.");					
-				}
+					playStartTripLegNow();
+					stopDepartureHandler();
+					
+				}				
+				else if(tick!=Long.MIN_VALUE)
+				{
+					Log.d(tag, "tick: playDepartureVoice");
+					playVoice(mCurrentVoiceState.departuresIn());	
+					Log.d(tag, "start in "+(tick/DateUtils.SECOND_IN_MILLIS)+" secs");
+					if(handler==null)
+					{
+						Log.d(tag, "handler is null. stop.");					
+					}
+					else
+					{
+						Log.d(tag, "postDelayed");
+						handler.postDelayed(runnableDeparture, tick);
+					}
+				}		
 				else
 				{
-					Log.d(tag, "postDelayed");
-					handler.postDelayed(runnableDeparture, tick);
+					stopDepartureHandler();
 				}
-			}		
-			else
-			{
-				stopDepartureHandler();
 			}
 		}
+		
+		
 	}
 	
 	private long startDepartureHandlerin()
@@ -349,15 +410,15 @@ public class VoiceTripService extends Service implements android.speech.tts.Text
 			mCurrentVoiceState = null;
 			if(leg.isWalk())
 			{
-				mCurrentVoiceState = new VoiceStateWalk(VoiceTripService.this, leg);
+				mCurrentVoiceState = new VoiceStateWalk(VoiceTripService.this, leg, mDefaultResources);
 			}
 			else if(leg.isTrain())
 			{
-				mCurrentVoiceState = new VoiceStateTrain(VoiceTripService.this, leg);
+				mCurrentVoiceState = new VoiceStateTrain(VoiceTripService.this, leg, mDefaultResources);
 			}
 			else if(leg.isBus())
 			{
-				mCurrentVoiceState = new VoiceStateBus(VoiceTripService.this, leg);
+				mCurrentVoiceState = new VoiceStateBus(VoiceTripService.this, leg, mDefaultResources);
 			}
 			if(mCurrentVoiceState!=null)
 			{
@@ -590,7 +651,7 @@ public class VoiceTripService extends Service implements android.speech.tts.Text
 			String name = "";
 			if(stopId == GeofenceHelper.FAKE_STOP_ID)
 			{
-				return getString(R.string.fake_stop_name);	
+				return mDefaultResources.getString(R.string.fake_stop_name);	
 			}
 
 			Cursor c = null;
@@ -641,7 +702,7 @@ public class VoiceTripService extends Service implements android.speech.tts.Text
 		@Override
 		public void onPostExecute(Integer newIndex)
 		{
-			if(!TextUtils.isEmpty(mNameOfLocationBeforeDest))
+			if(!TextUtils.isEmpty(mNameOfLocationBeforeDest) && mIsVoiceStopBeforeDestOn)
 			{
 				stopDepartureHandler();
 				playVoice(mCurrentVoiceState.leaveTransportIn(mNameOfLocationBeforeDest));
@@ -653,5 +714,24 @@ public class VoiceTripService extends Service implements android.speech.tts.Text
 			}	
 
 		}
+	}
+	/**
+	 * virker ikke
+	 */
+	@Override
+	public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key)
+	{
+		if(key.equals(getString(R.string.pref_voice_on_key)))
+		{
+			mIsVoiceOn = sharedPreferences.getBoolean(key, true);
+		}
+		else if(key.equals(getString(R.string.pref_voice_arrival_before_last_stop_key)))
+		{
+			mIsVoiceStopBeforeDestOn = sharedPreferences.getBoolean(key, true);
+		}
+		else if(key.equals(getString(R.string.pref_voice_departure_key)))
+		{
+			mIsVoiceDepartureOn = sharedPreferences.getBoolean(key, true);
+		}		
 	}
 }

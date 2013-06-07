@@ -2,11 +2,17 @@
 
     <!--
          A 'parent' preference, which enables/disables child preferences (below)
-         when checked/unchecked.
+         when checked/unchecked.
     -->
     <CheckBoxPreference
-        android:defaultValue="true" android:summary="@string/pref_images_summary"
+        android:defaultValue="true"
         android:key="@string/pref_images_turn_on_key"
+        android:summary="@string/pref_images_summary"
         android:title="@string/pref_images_turn_on" />
+    <CheckBoxPreference
+        android:defaultValue="true"
+        android:dependency="@string/pref_images_turn_on_key"
+        android:key="@string/pref_images_big_key"
+        android:title="@string/pref_images_big_title" />
 
 </PreferenceScreen>

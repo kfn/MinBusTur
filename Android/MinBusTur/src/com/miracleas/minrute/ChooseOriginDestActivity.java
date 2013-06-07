@@ -314,4 +314,18 @@ public class ChooseOriginDestActivity extends GeofenceActivity implements Choose
 		// TODO Auto-generated method stub
 		
 	}
+	@Override
+	protected void showDialogInstallVoiceSupport()
+	{
+		SettingsActivity.setIsVoiceOn(this, false);
+		ConfirmDialogFragment dialog = ConfirmDialogFragment.newInstance(R.string.confirm_install_voice);
+		dialog.show(getSupportFragmentManager(), "ConfirmVoiceInstall");
+	}
+	
+	@Override
+    public void doPositiveClick()
+    {
+		SettingsActivity.setLanguage(this, getString(R.string.pref_voice_language_english_key));
+		showDialogInstallVoiceSupportHelper();
+    }
 }

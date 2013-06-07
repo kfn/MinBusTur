@@ -8,7 +8,7 @@
     
     <string-array  name="leg_item_actions" >
         <item>@string/leg_item_action_i_am_here</item>
-        <item>@string/leg_item_action_i_am_at_stop_before_dest</item>
+        
         <item>@string/leg_item_action_stop_details</item>
     </string-array>
     

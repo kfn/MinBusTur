@@ -6,6 +6,7 @@ import com.miracleas.minrute.service.LocationService;
 import com.miracleas.minrute.service.VoiceTripService;
 import com.miracleas.minrute.utils.App;
 
+import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
@@ -20,7 +21,7 @@ import android.text.TextUtils;
 import android.widget.Toast;
 
 
-public abstract class MinRuteBaseActivity extends SherlockFragmentActivity
+public abstract class MinRuteBaseActivity extends SherlockFragmentActivity implements ConfirmDialogFragment.Callbacks
 {
 	protected VoiceTripService mServiceVoice = null;
 	protected boolean mBoundVoice = false;
@@ -28,6 +29,8 @@ public abstract class MinRuteBaseActivity extends SherlockFragmentActivity
 	
 	protected LocationService mServiceLocation = null;
 	protected boolean mBoundLocation = false;
+	
+	public static final int INSTALL_VOICE_SUPPORT = 9922;
 	
 	
 	@Override
@@ -157,11 +160,14 @@ public abstract class MinRuteBaseActivity extends SherlockFragmentActivity
 				
 			} else
 			{
-				onVoiceSupportCheckFinished(false);
-				// missing data, install it
-				Intent installIntent = new Intent();
-				installIntent.setAction(TextToSpeech.Engine.ACTION_INSTALL_TTS_DATA);
-				startActivity(installIntent);
+				showDialogInstallVoiceSupport();
+			}
+		}
+		else if(requestCode == INSTALL_VOICE_SUPPORT)
+		{
+			if(resultCode == Activity.RESULT_OK)
+			{
+				Toast.makeText(this, R.string.installed_voice, Toast.LENGTH_SHORT).show();
 			}
 		}
 	}
@@ -211,4 +217,34 @@ public abstract class MinRuteBaseActivity extends SherlockFragmentActivity
 			
 		}};
 	protected abstract void onServerResponse(boolean success);
+	/**
+	 * default implementation does nothing.
+	 */
+	protected void showDialogInstallVoiceSupport()
+	{
+		
+	}
+	/**
+	 * redirects user to Google Play Voice support download
+	 */
+	protected void showDialogInstallVoiceSupportHelper()
+	{
+		
+		//Toast.makeText(this, R.string.voice_is_not_installed, Toast.LENGTH_SHORT).show();
+		onVoiceSupportCheckFinished(false);
+		// missing data, install it
+		Intent installIntent = new Intent();
+		installIntent.setAction(TextToSpeech.Engine.ACTION_INSTALL_TTS_DATA);
+		startActivityForResult(installIntent, INSTALL_VOICE_SUPPORT);
+	}
+	
+	@Override
+    public void doPositiveClick()
+    {
+    }
+
+    @Override
+    public void doNegativeClick()
+    {
+    }
 }

@@ -25,6 +25,7 @@ public class StopImagesMetaData
 				+ TableMetaData.FILE_ID + " TEXT,"
 				+ TableMetaData.UPLOADED + " INTEGER INTEGER DEFAULT 0,"
 				+ TableMetaData.IS_UPLOADING + " INTEGER DEFAULT 0,"
+				+ TableMetaData.DELETED + " INTEGER INTEGER DEFAULT 0,"
 				+ TableMetaData.FILE_LOCALE_PATH + " TEXT,"
 				+ TableMetaData.FILE_TITLE + " TEXT,"
 				+ TableMetaData.FILE_MIME_TYPE + " TEXT,"
@@ -58,6 +59,8 @@ public class StopImagesMetaData
 		public static final String LNG = "lng";
 		public static final String FILE_ID = "file_id";
 		public static final String UPLOADED = "uploaded";
+		public static final String DELETED = "deleted";
+		
 		public static final String IS_UPLOADING = "is_uploading";
 		public static final String FILE_MIME_TYPE = "mime_type";
 		public static final String FILE_TITLE = "file_title";

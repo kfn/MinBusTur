@@ -1,17 +1,20 @@
 package com.miracleas.minrute.model;
 
+import java.util.ResourceBundle;
+
 import com.miracleas.minrute.R;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.text.format.DateUtils;
 import android.util.Log;
 
 public class VoiceStateTrain extends VoiceState
 {
 	public static final String tag = VoiceStateTrain.class.getName();
-	public VoiceStateTrain(Context context, TripLeg leg)
+	public VoiceStateTrain(Context context, TripLeg leg, Resources defaultResources)
 	{
-		super(context, leg);
+		super(context, leg, defaultResources);
 	}
 
 	@Override
@@ -19,7 +22,7 @@ public class VoiceStateTrain extends VoiceState
 	{		
 		long departue = mLeg.departureTime - System.currentTimeMillis();
 		String strDuration = mDateHelper.getDurationLabel(departue, true);
-		String text = String.format(mContext.getString(R.string.voice_departure_train), strDuration);
+		String text = String.format(mDefaultResources.getString(R.string.voice_departure_train), strDuration);
 		return text;		
 	}
 
@@ -32,7 +35,7 @@ public class VoiceStateTrain extends VoiceState
 			long duration = mLeg.getDuration();
 			String destName = mLeg.destName;
 			String strDuration = mDateHelper.getDurationLabel(duration, false);
-			text = String.format(mContext.getString(R.string.voice_start_using_transport_train), mLeg.name, strDuration);
+			text = String.format(mDefaultResources.getString(R.string.voice_start_using_transport_train), mLeg.name, strDuration);
 		}
 		
 		return text;			
@@ -44,14 +47,14 @@ public class VoiceStateTrain extends VoiceState
 		long departue = mLeg.departureTime - System.currentTimeMillis();
 		String strDuration = mDateHelper.getDurationLabel(departue, true);
 		String transportName = mLeg.name;		
-		String text = String.format(mContext.getString(R.string.voice_start_using_next_transport_in_train), transportName, strDuration, mLeg.destName);
+		String text = String.format(mDefaultResources.getString(R.string.voice_start_using_next_transport_in_train), transportName, strDuration, mLeg.destName);
 		return text;	
 	}
 	
 	@Override
 	public String leaveTransportIn(String nameOfLocBeforeDest)
 	{
-		String s = mContext.getString(R.string.voice_leave_next_stop_train);
+		String s = mDefaultResources.getString(R.string.voice_leave_next_stop_train);
 		return s;
 	}
 	
@@ -65,7 +68,7 @@ public class VoiceStateTrain extends VoiceState
 		}
 		else
 		{
-			text = String.format(mContext.getString(R.string.reached_destination), mLeg.originName.split(",")[0]);
+			text = String.format(mDefaultResources.getString(R.string.reached_destination), mLeg.originName.split(",")[0]);
 		}
 		return text;
 	}

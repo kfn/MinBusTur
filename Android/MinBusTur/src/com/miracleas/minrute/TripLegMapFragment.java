@@ -56,6 +56,7 @@ import com.google.maps.android.SphericalUtil;
 import com.miracleas.minrute.model.GeofenceMy;
 import com.miracleas.minrute.model.TripLeg;
 import com.miracleas.minrute.model.TripLegStop;
+import com.miracleas.minrute.net.DirectionsFetcher;
 import com.miracleas.minrute.provider.AddressGPSMetaData;
 import com.miracleas.minrute.provider.DirectionMetaData;
 import com.miracleas.minrute.provider.GeofenceMetaData;
@@ -363,7 +364,7 @@ public class TripLegMapFragment extends SupportMapFragment implements LoaderCall
     @Override
     public void onSensorChanged(SensorEvent sensorEvent)
     {
-        if(getMap()==null)return;
+        if(getMap()==null && !getMap().isMyLocationEnabled())return;
         Location loc = getMap().getMyLocation();
 
         if(loc!=null)
@@ -457,8 +458,8 @@ public class TripLegMapFragment extends SupportMapFragment implements LoaderCall
         else if (id == LoaderConstants.LOADER_TRIP_LEG_DIRECTIONS && args.containsKey(TripLeg.tag))
         {
             TripLeg leg = args.getParcelable(TripLeg.tag);
-            String selection = DirectionMetaData.TableMetaData.TRIP_LEG_ID + "=?";
-            String[] selectionArgs = { leg.id + "" };
+            String selection = DirectionMetaData.TableMetaData.TRIP_LEG_ID + "=? AND "+DirectionMetaData.TableMetaData.DIRECTION_MODE + "=?";
+            String[] selectionArgs = { leg.id + "" , DirectionsFetcher.getMode(leg)};
             return new CursorLoader(getActivity(), DirectionMetaData.TableMetaData.CONTENT_URI, PROJECTION_DIRECTION, selection, selectionArgs, null);
         }
         else if (id == LoaderConstants.LOAD_GEOFENCES_ON_MAP && args.containsKey(TripLeg.tag))
@@ -519,7 +520,7 @@ public class TripLegMapFragment extends SupportMapFragment implements LoaderCall
 	{
 		if(c.moveToFirst())
 		{
-			int color = Color.argb(95, 223, 212, 251);
+			int color = Color.rgb(223, 212, 251);
 			GoogleMap map = getMap();
 			TripLeg leg = getArguments().getParcelable(TripLeg.tag);
 			int iId = c.getColumnIndex(GeofenceMetaData.TableMetaData.geofence_id);

@@ -23,7 +23,7 @@ import java.util.ArrayList;
 public class MinBusTurProvider extends ContentProvider
 {
     public static final String DATABASE_NAME = "minrejseplan";
-    public static final int DATABASE_VERSION = 11;
+    public static final int DATABASE_VERSION = 14;
     // Logging helper tag. No significance to providers.
     private static final String tag = MinBusTurProvider.class.getName();
 

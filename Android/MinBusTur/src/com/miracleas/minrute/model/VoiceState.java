@@ -1,6 +1,9 @@
 package com.miracleas.minrute.model;
 
+import java.util.ResourceBundle;
+
 import android.content.Context;
+import android.content.res.Resources;
 import android.text.format.DateUtils;
 import android.util.Log;
 
@@ -25,11 +28,13 @@ public abstract class VoiceState
 	protected TripLeg mLeg = null;
 	protected DateHelper mDateHelper = null;
 	protected Context mContext = null;
+	protected Resources mDefaultResources;
 	
-	public VoiceState(Context context, TripLeg leg)
+	public VoiceState(Context context, TripLeg leg, Resources defaultResources)
 	{
 		mLeg = leg;
-		mDateHelper = new DateHelper(context);
+		mDefaultResources = defaultResources;
+		mDateHelper = new DateHelper(context, defaultResources);
 		mDateHelper.setVoice(true);
 		mContext = context;
 	}

@@ -53,7 +53,7 @@ public class ChooseOriginDestFragment extends ChooseOriginDestFragmentBase
     private LoadAddressesRun mLoadAddressesWayPointRun = null;
 		
 	protected AddressFetcher mAddressFetcher = null;
-	private TripFetcher mTripFetcher = null;
+	
 	private boolean mItemClicked = false;
 	
 
@@ -308,7 +308,7 @@ public class ChooseOriginDestFragment extends ChooseOriginDestFragmentBase
 	{
 		if(mAddressSelected==null || mAddressSelected.getStatus()==AsyncTask.Status.FINISHED)
 		{
-			mTripRequest = new TripRequest();
+			mTripRequest.clearAddresses();
 			mAddressSelected = new AddressSelected();
 			mAddressSelected.execute(originAddress,destinationAddress, waypointAddress);
 		}
@@ -456,8 +456,25 @@ public class ChooseOriginDestFragment extends ChooseOriginDestFragmentBase
 			}
 			if(address.contains(" "))
 			{
+				int pos = 0;
+				boolean found = false;
 				String[] temp = address.split(" ");
-				address = temp[0];
+				for(int i = 0; i < temp.length && !found; i++)
+				{
+					String s = temp[i];
+					if(TextUtils.isDigitsOnly(s))
+					{
+						found = true;
+						pos = i;
+					}
+					
+				}
+				StringBuilder b = new StringBuilder();
+				for(int i = 0; i <= pos; i++)
+				{
+					b.append(temp[i]).append(" ");					
+				}
+				address = b.toString();
 			}
 			
 			

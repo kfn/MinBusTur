@@ -11,11 +11,11 @@
 	<string name="pref_header_images">Billeder</string>
 	<string name="pref_voice_language_key">language_key</string>
 	<string name="pref_voice_language_title">Stemmesprog</string>
-	<string name="pref_voice_language_turn_on">Slå stemmehjælp til</string>
-	<string name="pref_voice_language_turn_on_key">pref_voice_language_turn_on_key</string>
+	<string name="pref_voice_on_title">Slå stemmehjælp til</string>
+	<string name="pref_voice_on_key">pref_voice_on_key</string>
 	<string name="pref_voice_language_danish_key">da_DK</string>
 	<string name="pref_voice_language_english_key">en_US</string>
-	<string name="pref_voice_language_turn_on_key">pref_voice_language_turn_on_key</string>
+	
 	<string name="pref_voice_summary">Få stemmehjælp når du er igang med en rute. Vær opmærksom på at dette vil bruge mere batteri. Sørg altid for at afslut programmet når du er færdig med en rute, da stemmefunktionen er aktiv, selv når du slukker for skærmen.</string>
 	
 	<string name="pref_voice_departure_title">Afgang</string>

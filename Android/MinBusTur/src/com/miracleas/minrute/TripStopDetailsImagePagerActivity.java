@@ -16,9 +16,14 @@
 
 package com.miracleas.minrute;
 
+import android.accounts.AccountManager;
 import android.annotation.TargetApi;
 import android.app.ActionBar;
+import android.content.ContentResolver;
+import android.content.ContentValues;
+import android.content.Intent;
 import android.database.Cursor;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -30,12 +35,14 @@ import android.support.v4.app.NavUtils;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v4.view.ViewPager;
+import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.WindowManager.LayoutParams;
 
 import com.actionbarsherlock.app.SherlockFragmentActivity;
+import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 import com.miracleas.camera.PhotoGoogleDriveActivity;
 import com.miracleas.imagedownloader.IImageDownloader;
@@ -48,8 +55,10 @@ import com.miracleas.minrute.model.TripLeg;
 import com.miracleas.minrute.model.TripLegStop;
 import com.miracleas.minrute.provider.StopImagesMetaData;
 import com.miracleas.minrute.provider.TripLegDetailStopMetaData;
+import com.miracleas.minrute.service.DeleteImagesService;
+import com.miracleas.minrute.utils.MyPrefs;
 
-public class TripStopDetailsImagePagerActivity extends PhotoGoogleDriveActivity implements OnClickListener, LoaderCallbacks<Cursor>
+public class TripStopDetailsImagePagerActivity extends PhotoGoogleDriveActivity implements OnClickListener, LoaderCallbacks<Cursor>, ConfirmDialogFragment.Callbacks
 {
 	private static final String CACHE_DIR = "images";
 	public static final String EXTRA_IMAGE_POSITION = "extra_image";
@@ -68,6 +77,8 @@ public class TripStopDetailsImagePagerActivity extends PhotoGoogleDriveActivity 
 	private IImageDownloader mImageLoader = null;
 	private ImagePagerAdapter mAdapter;
 	private ViewPager mPager;
+	private SetImageDeletedTask mSetImageDeletedTask = null;
+	
 
 	@TargetApi(11)
 	@Override
@@ -128,7 +139,13 @@ public class TripStopDetailsImagePagerActivity extends PhotoGoogleDriveActivity 
 
 		getSupportLoaderManager().restartLoader(LOAD_TOILET_IMAGES, getIntent().getExtras(), this);
 	}
-
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu)
+	{
+		// Inflate the menu; this adds items to the action bar if it is present.
+		getSupportMenuInflater().inflate(R.menu.activity_tripstopdetailsimagepager, menu);
+		return super.onCreateOptionsMenu(menu);
+	}
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item)
 	{
@@ -139,8 +156,57 @@ public class TripStopDetailsImagePagerActivity extends PhotoGoogleDriveActivity 
 			//NavUtils.navigateUpFromSameTask(this, );
 			NavUtils.navigateUpTo(this, getIntent());
 			return true;
+		case R.id.menu_delete:
+			if(mAdapter.getCount()>0)
+			{
+				ConfirmDialogFragment dialog = ConfirmDialogFragment.newInstance(R.string.confirm_delete_image);
+				 dialog.show(getSupportFragmentManager(), "ConfirmDialogFragment");
+			}
+			
+			return true;
 		}
 		return super.onOptionsItemSelected(item);
+	}
+	
+	public void onDestroy()
+	{
+		super.onDestroy();
+		String accountName = MyPrefs.getString(this, AccountManager.KEY_ACCOUNT_NAME, null);
+		if(!TextUtils.isEmpty(accountName))
+		{
+			Intent service = new Intent(this, DeleteImagesService.class);
+			service.putExtra(AccountManager.KEY_ACCOUNT_NAME, accountName);
+			startService(service);
+		}
+		
+	}
+	
+	private void setDeleted()
+	{
+		if(mSetImageDeletedTask==null || mSetImageDeletedTask.getStatus()==AsyncTask.Status.FINISHED)
+		{
+			mSetImageDeletedTask = new SetImageDeletedTask();
+			String url = mAdapter.getUrl(mPager.getCurrentItem());
+			mSetImageDeletedTask.execute(url);
+		}
+	}
+	
+	private class SetImageDeletedTask extends AsyncTask<String, Void, Void>
+	{
+
+		@Override
+		protected Void doInBackground(String... params)
+		{
+			String url = params[0];
+			ContentResolver cr = getContentResolver();
+			ContentValues values = new ContentValues();
+			values.put(StopImagesMetaData.TableMetaData.DELETED, "1");
+			String where = StopImagesMetaData.TableMetaData.URL + "=?";
+			String[] selectionArgs = {url};
+			cr.update(StopImagesMetaData.TableMetaData.CONTENT_URI, values, where, selectionArgs);
+			return null;
+		}
+		
 	}
 
 	/**
@@ -169,6 +235,11 @@ public class TripStopDetailsImagePagerActivity extends PhotoGoogleDriveActivity 
 		public Fragment getItem(int position)
 		{
 			return TripStopDetailsImagePagerFragmentItem.newInstance(mImages[position]);
+		}
+		
+		public String getUrl(int position)
+		{
+			return mImages[position].url;
 		}
 	}
 
@@ -260,6 +331,18 @@ public class TripStopDetailsImagePagerActivity extends PhotoGoogleDriveActivity 
 
 		}
 
+	}
+	@Override
+	public void doPositiveClick()
+	{
+		setDeleted();
+		
+	}
+	@Override
+	public void doNegativeClick()
+	{
+		// TODO Auto-generated method stub
+		
 	}
 
 }

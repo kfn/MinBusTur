@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.google.android.gms.location.Geofence;
+import com.miracleas.minrute.SettingsActivity;
 import com.miracleas.minrute.model.GeofenceHelper;
 import com.miracleas.minrute.model.GeofenceMy;
 import com.miracleas.minrute.model.TripLeg;
@@ -77,7 +78,11 @@ public class FetchGeofencesForStopBeforeService extends IntentService
 		String tripId = intent.getStringExtra(TRIP_ID);
 		if (!TextUtils.isEmpty(tripId))
 		{
-			findTripLegStopsBeforeDestination(tripId, intent);
+			if(SettingsActivity.isVoiceOn(this) && SettingsActivity.isVoiceStopBeforeArrivalOn(this))
+			{
+				findTripLegStopsBeforeDestination(tripId, intent);
+			}
+			
 			findGPSOnTripLegOriginAddresses(tripId, intent);
 		}
 	}
