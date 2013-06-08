@@ -68,6 +68,9 @@ public class VoiceTripService extends Service implements android.speech.tts.Text
 	private boolean mIsVoiceDepartureOn = true;
 	private boolean mIsVoiceStopBeforeDestOn = true;
 	
+	private boolean mIsInitialized = false;
+	private boolean mIsDanish = false;
+	
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId)
 	{
@@ -122,12 +125,10 @@ public class VoiceTripService extends Service implements android.speech.tts.Text
 	public void onCreate()
 	{
 		super.onCreate();
-		initLanguage();
+		initLanguageResources();
 		getVoiceSettings();
-		mDateHelper = new DateHelper(this, mDefaultResources);
-		mDateHelper.setVoice(true);
 		mTransistionObserver = new TransistionObserver(handler);
-		//startWakelock();
+		SettingsActivity.getSharedPreferences(this).registerOnSharedPreferenceChangeListener(this);	   
 		Log.d(tag, "onCreate");
 	}
 
@@ -147,12 +148,12 @@ public class VoiceTripService extends Service implements android.speech.tts.Text
 		
 		getContentResolver().unregisterContentObserver(
 				mTransistionObserver);
-		
+		SettingsActivity.getSharedPreferences(this).unregisterOnSharedPreferenceChangeListener(this);
 		Log.d(tag, "onDestroy");
 
 	}
 	
-	private void initLanguage()
+	private void initLanguageResources()
 	{
 		String lan = SettingsActivity.getSelectedLanguage(this);
 		Locale locale = new Locale(lan);
@@ -165,8 +166,12 @@ public class VoiceTripService extends Service implements android.speech.tts.Text
 		mDefaultResources = new Resources(assets, metrics, config);
 		mDefaultResources.updateConfiguration(config, null);
 		//mDefaultResources.getString(R.string.voice_start_using_next_transport_in_bus);
-		
-		
+		mDateHelper = new DateHelper(this, mDefaultResources);
+		mDateHelper.setVoice(true);
+		if(mCurrentVoiceState!=null)
+		{
+			mCurrentVoiceState.setRessource(mDefaultResources);
+		}
 		//mDefaultResources = ResourceBundle.getBundle("com.miracleas.minrute", Locale.ENGLISH);
 		
 	}
@@ -175,14 +180,11 @@ public class VoiceTripService extends Service implements android.speech.tts.Text
 	 */
 	public void startTextToSpeech()
 	{
-		getVoiceSettings();
-		
-		
 		Log.d(tag, "startTextToSpeech");
 		if(mTts==null && mIsVoiceOn)
 		{
 			// success, create the TTS instance
-			mTts = new TextToSpeech(this, this);
+			mTts = new TextToSpeech(this, this);			
 		}		
 	}
 	
@@ -199,6 +201,17 @@ public class VoiceTripService extends Service implements android.speech.tts.Text
 		Log.d(tag, "onInit");
 		if(status==TextToSpeech.SUCCESS)
 		{
+			mIsInitialized = true;
+			setVoiceLanguage();			
+			mTts.speak(mDefaultResources.getString(R.string.voice_is_on), TextToSpeech.QUEUE_ADD, null);	
+		}
+	}
+	
+	
+	private void setVoiceLanguage()
+	{
+		if(mIsInitialized)
+		{
 			String da = getString(R.string.pref_voice_language_danish_key);
 			String lan = SettingsActivity.getSelectedLanguage(this);
 			boolean isDanish = da.equals(lan);
@@ -206,18 +219,25 @@ public class VoiceTripService extends Service implements android.speech.tts.Text
 			Locale locale = new Locale(lan);
 			if(isDanish && mTts.isLanguageAvailable(locale)==android.speech.tts.TextToSpeech.LANG_AVAILABLE)
 			{
+				mIsDanish = true;
 				mTts.setLanguage(locale);				
 				mTts.setSpeechRate(0.3f);
 				//((mTts.setLanguage(Locale.US);
 			}
 			else
 			{
+				mIsDanish = false;
 				mTts.setLanguage(Locale.US);
 			}
 			
-			mTts.speak(mDefaultResources.getString(R.string.voice_is_on), TextToSpeech.QUEUE_ADD, null);	
+			if(mCurrentVoiceState!=null)
+			{
+				mCurrentVoiceState.setIsDanish(mIsDanish);
+			}
 		}
+		
 	}
+	
 	/**
 	 * sets the id for the current trip that needs voice support
 	 * invokes OnVoiceServiceReadyListener.onVoiceServiceReady()
@@ -285,9 +305,7 @@ public class VoiceTripService extends Service implements android.speech.tts.Text
 	
 
 	private void startDepartureTimer()
-	{
-		getVoiceSettings();
-		
+	{		
 		Log.d(tag, "startDepartureTimer");
 		if ((mIsVoiceOn && mIsVoiceDepartureOn) && mTripId != null)
 		{
@@ -410,15 +428,15 @@ public class VoiceTripService extends Service implements android.speech.tts.Text
 			mCurrentVoiceState = null;
 			if(leg.isWalk())
 			{
-				mCurrentVoiceState = new VoiceStateWalk(VoiceTripService.this, leg, mDefaultResources);
+				mCurrentVoiceState = new VoiceStateWalk(VoiceTripService.this, leg, mDefaultResources, mIsDanish);
 			}
 			else if(leg.isTrain())
 			{
-				mCurrentVoiceState = new VoiceStateTrain(VoiceTripService.this, leg, mDefaultResources);
+				mCurrentVoiceState = new VoiceStateTrain(VoiceTripService.this, leg, mDefaultResources, mIsDanish);
 			}
 			else if(leg.isBus())
 			{
-				mCurrentVoiceState = new VoiceStateBus(VoiceTripService.this, leg, mDefaultResources);
+				mCurrentVoiceState = new VoiceStateBus(VoiceTripService.this, leg, mDefaultResources, mIsDanish);
 			}
 			if(mCurrentVoiceState!=null)
 			{
@@ -732,6 +750,11 @@ public class VoiceTripService extends Service implements android.speech.tts.Text
 		else if(key.equals(getString(R.string.pref_voice_departure_key)))
 		{
 			mIsVoiceDepartureOn = sharedPreferences.getBoolean(key, true);
-		}		
+		}	
+		else if(key.equals(getString(R.string.pref_voice_language_key)))
+		{
+			initLanguageResources();
+			setVoiceLanguage();	
+		}	
 	}
 }

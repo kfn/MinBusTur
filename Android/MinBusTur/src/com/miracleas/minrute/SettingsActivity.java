@@ -3,13 +3,17 @@ package com.miracleas.minrute;
 import java.util.List;
 
 import android.annotation.TargetApi;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
+import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.content.res.Configuration;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
@@ -21,6 +25,8 @@ import android.support.v4.app.NavUtils;
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.SherlockPreferenceActivity;
 import com.actionbarsherlock.view.MenuItem;
+import com.miracleas.minrute.service.LocationService;
+import com.miracleas.minrute.service.VoiceTripService;
 
 /**
  * A {@link PreferenceActivity} that presents a set of application settings. On
@@ -33,7 +39,7 @@ import com.actionbarsherlock.view.MenuItem;
  * href="http://developer.android.com/guide/topics/ui/settings.html">Settings
  * API Guide</a> for more information on developing a Settings UI.
  */
-public class SettingsActivity extends SherlockPreferenceActivity
+public class SettingsActivity extends SherlockPreferenceActivity implements OnSharedPreferenceChangeListener
 {
 	/**
 	 * Determines whether to always show the simplified settings UI, where
@@ -44,6 +50,13 @@ public class SettingsActivity extends SherlockPreferenceActivity
 	private static final boolean ALWAYS_SIMPLE_PREFS = false;
 	public static final int REQUEST_CODE = 123;
 	public static final int RESULT_CODE = 124;
+	
+	protected VoiceTripService mServiceVoice = null;
+	protected boolean mBoundVoice = false;
+	protected boolean mSupportVoice = false;
+	
+	protected LocationService mServiceLocation = null;
+	protected boolean mBoundLocation = false;
 
 	@Override
 	protected void onPostCreate(Bundle savedInstanceState)
@@ -61,6 +74,75 @@ public class SettingsActivity extends SherlockPreferenceActivity
         bar.setHomeButtonEnabled(true);
         bar.setDisplayHomeAsUpEnabled(true);
         setResult(RESULT_CODE, getIntent());
+        
+        connectToLocationService();
+		connectToVoiceService();
+	}
+	
+	private void connectToVoiceService()
+	{
+		Intent intent = new Intent(this, VoiceTripService.class);
+		bindService(intent, mConnectionVoice, Context.BIND_AUTO_CREATE);
+	}
+	private void connectToLocationService()
+	{
+		Intent intent = new Intent(this, LocationService.class);
+		bindService(intent, mConnectionLocation, Context.BIND_AUTO_CREATE);
+	}
+	
+	private ServiceConnection mConnectionLocation = new ServiceConnection()
+	{
+		@Override
+		public void onServiceConnected(ComponentName className, IBinder service)
+		{
+			// We've bound to LocalService, cast the IBinder and get
+			// LocalService instance
+			LocationService.LocalBinder binder = (LocationService.LocalBinder) service;
+			mServiceLocation = binder.getService();
+			mBoundLocation = true;
+			
+		}
+
+		@Override
+		public void onServiceDisconnected(ComponentName arg0)
+		{
+			mBoundLocation = false;
+		}
+	};
+	
+	
+	private ServiceConnection mConnectionVoice = new ServiceConnection()
+	{
+		@Override
+		public void onServiceConnected(ComponentName className, IBinder service)
+		{
+			// We've bound to LocalService, cast the IBinder and get
+			// LocalService instance
+			VoiceTripService.LocalBinder binder = (VoiceTripService.LocalBinder) service;
+			mServiceVoice = binder.getService();
+			mBoundVoice = true;
+		}
+
+		@Override
+		public void onServiceDisconnected(ComponentName arg0)
+		{
+			mBoundVoice = false;
+		}
+	};
+	@Override
+	public void onDestroy()
+	{
+		super.onDestroy();
+		if (mBoundVoice)
+		{
+			unbindService(mConnectionVoice);
+			mBoundVoice = false;
+		}
+		if (mBoundLocation)
+		{
+			unbindService(mConnectionLocation);
+			mBoundLocation = false;
+		}
 	}
 	
 	@Override
@@ -320,5 +402,25 @@ public class SettingsActivity extends SherlockPreferenceActivity
 	public static SharedPreferences getSharedPreferences(Context c)
 	{
 		return  PreferenceManager.getDefaultSharedPreferences(c);
+	}
+	
+	/**
+	 * virker ikke
+	 */
+	@Override
+	public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key)
+	{
+		if(key.equals(getString(R.string.pref_voice_on_key)))
+		{
+			
+		}
+		else if(key.equals(getString(R.string.pref_voice_arrival_before_last_stop_key)))
+		{
+			
+		}
+		else if(key.equals(getString(R.string.pref_voice_departure_key)))
+		{
+			
+		}		
 	}
 }

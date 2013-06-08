@@ -22,7 +22,7 @@
     <string name="voice_departure_walk">Du skal gå om <xliff:g ID="time">%1$s</xliff:g></string>
    
     <string name="voice_departure_train">Toget kører om <xliff:g ID="time">%1$s</xliff:g></string>
-    <string name="voice_departure_bus">Bussen kommer om <xliff:g ID="time">%1$s</xliff:g></string>
+    <string name="voice_departure_bus"><xliff:g ID="bus_name">%1$s</xliff:g> kommer om <xliff:g ID="time">%2$s</xliff:g></string>
     
     <string name="voice_start_using_transport_walk">Du skal nu gå i <xliff:g ID="time_label">%1$s</xliff:g> til <xliff:g ID="dest_name">%2$s</xliff:g></string>   
     <string name="voice_start_using_transport_bus">Tag <xliff:g ID="bus_name">%1$s</xliff:g> nu. Transporttid er <xliff:g ID="time">%2$s</xliff:g></string> 

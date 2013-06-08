@@ -42,6 +42,7 @@ import com.miracleas.minrute.net.AddressFetcher;
 import com.miracleas.minrute.net.TripFetcher;
 import com.miracleas.minrute.provider.AddressProviderMetaData;
 import com.miracleas.minrute.service.TripService;
+import com.miracleas.minrute.utils.MyPrefs;
 import com.miracleas.minrute.utils.ViewHelper;
 
 public class ChooseOriginDestFragment extends ChooseOriginDestFragmentBase
@@ -77,7 +78,43 @@ public class ChooseOriginDestFragment extends ChooseOriginDestFragmentBase
         mAutoCompleteAdapterWaypoint = new AutoCompleteAddressAdapter(getActivity(), null, 0, LoaderConstants.LOADER_ADDRESS_WAYPOINT, "wayPointAdapter");
         mAutoCompleteTextViewWayPoint.setAdapter(mAutoCompleteAdapterWaypoint);
 
+        if(savedInstanceState!=null)
+        {
+        	String fromText = savedInstanceState.getString("mAutoCompleteTextViewFromAddressText");
+        	String fromHint = savedInstanceState.getString("mAutoCompleteTextViewFromAddressHint", getString(R.string.startaddress));
+        	String toText = savedInstanceState.getString("mAutoCompleteTextViewToAddressText");
+        	String toHint = savedInstanceState.getString("mAutoCompleteTextViewToAddressHint", getString(R.string.destination_address));
+        	String waypointText = savedInstanceState.getString("mAutoCompleteTextViewWayPointText");
+        	String waypointHint = savedInstanceState.getString("mAutoCompleteTextViewWayPointHint", getString(R.string.waypoint));
+        	mAutoCompleteTextViewFromAddress.setText(fromText);
+        	mAutoCompleteTextViewFromAddress.setHint(fromHint);
+        	mAutoCompleteTextViewToAddress.setText(toText);
+        	mAutoCompleteTextViewToAddress.setHint(toHint);
+        	mAutoCompleteTextViewWayPoint.setText(waypointText);
+        	mAutoCompleteTextViewWayPoint.setHint(waypointHint);
+        }
+        else
+        {
+        	
+        	String fromHint = MyPrefs.getString(getActivity(), MyPrefs.FROM_ADDRESS, getString(R.string.startaddress));  	
+        	String toHint = MyPrefs.getString(getActivity(), MyPrefs.TO_ADDRESS, getString(R.string.destination_address));     	
+        	String wayHint = MyPrefs.getString(getActivity(), MyPrefs.WAYPOINT_ADDRESS, getString(R.string.waypoint));    
+        	mAutoCompleteTextViewFromAddress.setHint(fromHint);
+        	mAutoCompleteTextViewToAddress.setHint(toHint);
+        	mAutoCompleteTextViewWayPoint.setHint(wayHint);
+        }
+        
 		return rootView;
+	}
+	public void onSaveInstanceState(Bundle outState)
+	{
+		super.onSaveInstanceState(outState);
+		outState.putString("mAutoCompleteTextViewFromAddressText", mAutoCompleteTextViewFromAddress.getText().toString());
+		outState.putString("mAutoCompleteTextViewFromAddressHint", mAutoCompleteTextViewFromAddress.getHint().toString());
+		outState.putString("mAutoCompleteTextViewToAddressText", mAutoCompleteTextViewToAddress.getText().toString());
+		outState.putString("mAutoCompleteTextViewToAddressHint", mAutoCompleteTextViewToAddress.getHint().toString());
+		outState.putString("mAutoCompleteTextViewWayPointText", mAutoCompleteTextViewWayPoint.getText().toString());
+		outState.putString("mAutoCompleteTextViewWayPointHint", mAutoCompleteTextViewWayPoint.getHint().toString());
 	}
 
 	/**
@@ -92,6 +129,9 @@ public class ChooseOriginDestFragment extends ChooseOriginDestFragmentBase
 	public void onCreate(Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);
+
+		
+		
 		mHandler = new Handler();
 		mLoadAddressesFromRun = new LoadAddressesRun(null, 0);
 		mLoadAddressesToRun = new LoadAddressesRun(null, 0);
@@ -99,6 +139,8 @@ public class ChooseOriginDestFragment extends ChooseOriginDestFragmentBase
 		mDataUri = AddressProviderMetaData.TableMetaData.CONTENT_URI;
 		mAddressFetcher = new AddressFetcher(getActivity(), mDataUri);
 	}
+	
+
 
 	@Override
 	public void textChangedHelper(CharSequence s, int loaderId)
@@ -275,8 +317,21 @@ public class ChooseOriginDestFragment extends ChooseOriginDestFragmentBase
 				String toAddress = getAddress(mAutoCompleteTextViewToAddress, getString(R.string.destination_address));
 				if(!TextUtils.isEmpty(toAddress))
 				{
-					String waypointAddress = mAutoCompleteTextViewWayPoint.getVisibility()==View.VISIBLE ? getAddress(mAutoCompleteTextViewWayPoint, getString(R.string.waypoint)) : "";
-					onAddressSelected(fromAddress, toAddress, waypointAddress);
+					String waypointAddress = "";
+					if(mAutoCompleteTextViewWayPoint.getVisibility()==View.VISIBLE)
+					{
+						waypointAddress = getAddress(mAutoCompleteTextViewWayPoint, getString(R.string.waypoint));
+					}
+					
+					if((mAutoCompleteTextViewWayPoint.getVisibility()==View.VISIBLE && !TextUtils.isEmpty(waypointAddress)) || (mAutoCompleteTextViewWayPoint.getVisibility()==View.GONE && TextUtils.isEmpty(waypointAddress)))
+					{
+						mAutoCompleteTextViewFromAddress.setHint(fromAddress);
+			        	mAutoCompleteTextViewToAddress.setHint(toAddress);
+			        	mAutoCompleteTextViewWayPoint.setHint(TextUtils.isEmpty(waypointAddress) ? getString(R.string.waypoint) : waypointAddress);
+						onAddressSelected(fromAddress, toAddress, waypointAddress);
+					}
+					
+					
 				}	
 			}			
 		}
@@ -379,6 +434,7 @@ public class ChooseOriginDestFragment extends ChooseOriginDestFragmentBase
 			mOriginAddresses = originAddresses;
 			mDestAddresses = destAddresses;
             mWayPointAddresses = wayPointAddresses;
+            saveAddresses();
 			return null;
 		}
 		
@@ -443,42 +499,68 @@ public class ChooseOriginDestFragment extends ChooseOriginDestFragmentBase
                     }
                 }
             }
-
+            
 			return addresses;
 		}
 		
 		private String getNewSearchAddress(String address)
 		{
-			if(address.contains(","))
+			String[] temp = address.split("[,\\s\\-:\\?]");
+			
+			boolean found = false;			
+			int houseNumber = -1;
+			String zipCode = null;
+			for(int i = 0; i < temp.length && !found; i++)
 			{
-				String[] temp = address.split(",");
-				address = temp[0];
-			}
-			if(address.contains(" "))
-			{
-				int pos = 0;
-				boolean found = false;
-				String[] temp = address.split(" ");
-				for(int i = 0; i < temp.length && !found; i++)
-				{
-					String s = temp[i];
-					if(TextUtils.isDigitsOnly(s))
-					{
-						found = true;
-						pos = i;
-					}
-					
+				String s = temp[i];
+				if(houseNumber==-1 && TextUtils.isDigitsOnly(s))
+				{						
+					houseNumber = i;
 				}
+				else if(houseNumber>0 && TextUtils.isDigitsOnly(s) && s.length()==4)
+				{						
+					zipCode = s;
+					found = true;
+				}
+				
+			}
+			
+			if(houseNumber!=-1)
+			{
 				StringBuilder b = new StringBuilder();
-				for(int i = 0; i <= pos; i++)
+				for(int i = 0; i <= houseNumber; i++)
 				{
-					b.append(temp[i]).append(" ");					
+					b.append(temp[i]);
+					if(i!=houseNumber)
+					{
+						b.append(" ");
+					}
+										
+				}
+				if(!TextUtils.isEmpty(zipCode))
+				{
+					b.append(", ").append(zipCode);
 				}
 				address = b.toString();
+			}
+			else if(temp.length>0)
+			{
+				address = temp[0];
 			}
 			
 			
 			return address;
+		}
+		
+		private void saveAddresses()
+		{
+			MyPrefs.setString(getActivity(), MyPrefs.FROM_ADDRESS, mOrginAddress);
+			MyPrefs.setString(getActivity(), MyPrefs.TO_ADDRESS, mDestAddress);
+			if(!TextUtils.isEmpty(mWayPointAddress))
+			{
+				MyPrefs.setString(getActivity(), MyPrefs.WAYPOINT_ADDRESS, mWayPointAddress);
+			}
+			
 		}
 
 		protected void onPostExecute(Void result)
@@ -497,7 +579,7 @@ public class ChooseOriginDestFragment extends ChooseOriginDestFragmentBase
 			
             else if((mWayPointAddresses.isEmpty() && !TextUtils.isEmpty(mWayPointAddress)) || !mTripRequest.isValidWayPoint())
             {
-                Toast.makeText(getActivity(), String.format(getString(R.string.trip_request_address_not_valid), getString(R.string.waypoint)), Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(), R.string.waypoint_most_be_stop_or_station, Toast.LENGTH_LONG).show();
                 validateAddress(mAutoCompleteTextViewWayPoint, mAutoCompleteAdapterWaypoint, mWayPointAddress, mWayPointAddresses, mSelectedWayPointAddress);
             }
 			else if(mTripRequest.destCoordNameNotEncoded.equals(mTripRequest.originCoordNameNotEncoded))

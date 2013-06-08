@@ -7,6 +7,9 @@ public class MyPrefs
 {
 	public static final String PREFS_NAME = "minrute_prefs";
 	public static final String GOOGLE_DRIVE_AUTH = "GOOGLE_DRIVE_AUTH";
+	public static final String FROM_ADDRESS = "from_address";
+	public static final String TO_ADDRESS = "to_address";
+	public static final String WAYPOINT_ADDRESS = "waypoint_address";
 	
 	public static void setIntValue(Context context, String key, int value)
 	{

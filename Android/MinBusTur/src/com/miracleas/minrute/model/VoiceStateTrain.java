@@ -12,9 +12,9 @@ import android.util.Log;
 public class VoiceStateTrain extends VoiceState
 {
 	public static final String tag = VoiceStateTrain.class.getName();
-	public VoiceStateTrain(Context context, TripLeg leg, Resources defaultResources)
+	public VoiceStateTrain(Context context, TripLeg leg, Resources defaultResources, boolean isDanish)
 	{
-		super(context, leg, defaultResources);
+		super(context, leg, defaultResources, isDanish);
 	}
 
 	@Override
@@ -46,8 +46,17 @@ public class VoiceStateTrain extends VoiceState
 	{
 		long departue = mLeg.departureTime - System.currentTimeMillis();
 		String strDuration = mDateHelper.getDurationLabel(departue, true);
-		String transportName = mLeg.name;		
-		String text = String.format(mDefaultResources.getString(R.string.voice_start_using_next_transport_in_train), transportName, strDuration, mLeg.destName);
+		String transportName = mLeg.name;	
+		String destName = null;
+		if(mIsDanish)
+		{
+			destName = mLeg.destName;
+		}
+		else
+		{
+			destName = mDefaultResources.getString(R.string.voice_the_next_stop);
+		}
+		String text = String.format(mDefaultResources.getString(R.string.voice_start_using_next_transport_in_train), transportName, strDuration, destName);
 		return text;	
 	}
 	
@@ -56,21 +65,6 @@ public class VoiceStateTrain extends VoiceState
 	{
 		String s = mDefaultResources.getString(R.string.voice_leave_next_stop_train);
 		return s;
-	}
-	
-	@Override
-	public String nameOfDestination()
-	{
-		String text = "";
-		if(!mLeg.isDestiation)
-		{
-			text = mLeg.originName.split(",")[0];
-		}
-		else
-		{
-			text = String.format(mDefaultResources.getString(R.string.reached_destination), mLeg.originName.split(",")[0]);
-		}
-		return text;
 	}
 
 	@Override

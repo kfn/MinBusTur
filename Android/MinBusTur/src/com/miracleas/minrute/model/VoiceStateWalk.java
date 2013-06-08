@@ -14,9 +14,9 @@ public class VoiceStateWalk extends VoiceState
 {
 	public static final String tag = VoiceStateWalk.class.getName();
 	
-	public VoiceStateWalk(Context context, TripLeg leg, Resources defaultResources)
+	public VoiceStateWalk(Context context, TripLeg leg, Resources defaultResources, boolean isDanish)
 	{
-		super(context, leg, defaultResources);
+		super(context, leg, defaultResources, isDanish);
 	}
 	
 
@@ -41,7 +41,16 @@ public class VoiceStateWalk extends VoiceState
 				}
 				else
 				{
-					text = String.format(mDefaultResources.getString(R.string.voice_start_using_transport_walk), strDuration, mLeg.destName);
+					String destName = null;
+					if(mIsDanish)
+					{
+						destName = mLeg.destName;
+					}
+					else
+					{
+						destName = mDefaultResources.getString(R.string.voice_the_next_stop);
+					}
+					text = String.format(mDefaultResources.getString(R.string.voice_start_using_transport_walk), strDuration, destName);
 				}
 			}
 		}
@@ -55,7 +64,16 @@ public class VoiceStateWalk extends VoiceState
 		if(!mLeg.isDestiation)
 		{
 			long duration = mLeg.getDuration();
-			String destName = mLeg.destName;
+			String destName = null;
+			if(mIsDanish)
+			{
+				destName = mLeg.destName;
+			}
+			else
+			{
+				destName = mDefaultResources.getString(R.string.voice_the_next_stop);
+			}
+			
 			String strDuration = mDateHelper.getDurationLabel(duration, false);
 			text = String.format(mDefaultResources.getString(R.string.voice_start_using_transport_walk), strDuration, destName);
 		}
@@ -123,20 +141,7 @@ public class VoiceStateWalk extends VoiceState
 		return tick;
 	}*/
 	
-	@Override
-	public String nameOfDestination()
-	{
-		String text = "";
-		if(!mLeg.isDestiation)
-		{
-			text = mLeg.originName.split(",")[0];
-		}
-		else
-		{
-			text = String.format(mDefaultResources.getString(R.string.reached_destination), mLeg.originName.split(",")[0]);
-		}
-		return text;
-	}
+
 
 	@Override
 	public boolean startDepartureHandler()

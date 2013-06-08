@@ -157,6 +157,8 @@ public abstract class ChooseOriginDestFragmentBase extends SherlockFragment impl
 			@Override
 			public void onItemClick(AdapterView<?> arg0, View v, int position, long id)
 			{
+				mAutoCompleteTextViewToAddress.setHint(mAutoCompleteTextViewToAddress.getText());
+				mAutoCompleteTextViewToAddress.setText("");
 				ViewHelper.hideKeyboard(getActivity(), mAutoCompleteTextViewToAddress);
 			}			
 		});
@@ -390,22 +392,22 @@ public abstract class ChooseOriginDestFragmentBase extends SherlockFragment impl
                     c.close();
             }
 
-            return address;
+            return address.replace("\n", " ");
         }
 
         protected void onPostExecute(String address)
         {
             if (loaderId == LoaderConstants.LOADER_ADDRESS_FROM)
             {
-                mAutoCompleteTextViewFromAddress.setText(address);
+                mAutoCompleteTextViewFromAddress.setHint(address);
             }
             else if (loaderId == LoaderConstants.LOADER_ADDRESS_TO)
             {
-                mAutoCompleteTextViewToAddress.setText(address);
+                mAutoCompleteTextViewToAddress.setHint(address);
             }
             else if (loaderId == LoaderConstants.LOADER_ADDRESS_WAYPOINT)
             {
-                mAutoCompleteTextViewWayPoint.setText(address);
+                mAutoCompleteTextViewWayPoint.setHint(address);
             }
         }
     }
@@ -417,6 +419,8 @@ public abstract class ChooseOriginDestFragmentBase extends SherlockFragment impl
             if(which==ChooseDestinationDialog.MY_LOCATION)
             {
                 mAutoCompleteTextViewFromAddress.requestFocus();
+                mAutoCompleteTextViewFromAddress.setHint(getString(R.string.wait_for_location));
+                mAutoCompleteTextViewFromAddress.setText("");
                 getProgressBar(LoaderConstants.LOADER_ADDRESS_FROM).setVisibility(View.VISIBLE);
                 ((ChooseOriginDestActivity)getActivity()).findMyLocation();
             }
@@ -431,6 +435,8 @@ public abstract class ChooseOriginDestFragmentBase extends SherlockFragment impl
             if(which==ChooseDestinationDialog.MY_LOCATION)
             {
                 mAutoCompleteTextViewToAddress.requestFocus();
+                mAutoCompleteTextViewToAddress.setHint(getString(R.string.wait_for_location));
+                mAutoCompleteTextViewToAddress.setText("");
                 getProgressBar(LoaderConstants.LOADER_ADDRESS_TO).setVisibility(View.VISIBLE);
                 ((ChooseOriginDestActivity)getActivity()).findMyLocation();
             }
@@ -444,6 +450,8 @@ public abstract class ChooseOriginDestFragmentBase extends SherlockFragment impl
             if(which==ChooseDestinationDialog.MY_LOCATION)
             {
                 mAutoCompleteTextViewWayPoint.requestFocus();
+                mAutoCompleteTextViewWayPoint.setHint(getString(R.string.wait_for_location));
+                mAutoCompleteTextViewWayPoint.setText("");
                 getProgressBar(LoaderConstants.LOADER_ADDRESS_WAYPOINT).setVisibility(View.VISIBLE);
                 ((ChooseOriginDestActivity)getActivity()).findMyLocation();
             }

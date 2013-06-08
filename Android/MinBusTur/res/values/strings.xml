@@ -24,10 +24,12 @@
 	<string name="destination_address">Slutpunkt</string>
     <string name="waypoint">Via stop/station</string>
     <string name="menu_show_waypoint">Vis/skjul viapunkt</string>
+    <string name="waypoint_most_be_stop_or_station">Viapunkt skal være et stoppested eller en station</string>
     <string name="dialog_choose_location">Vælg placering</string>
 	<string name="fake_stop_name">Stop før ankomst</string>
 
     <string name="current_location">Aktuel Placering</string>
+    <string name="wait_for_location">Vent venligst..</string>
     <string name="contacts">Kontaktpersoner</string>
     <string name="location_on_map">Punkt på kortet</string>
     <string name="my_places">Mine steder</string>
