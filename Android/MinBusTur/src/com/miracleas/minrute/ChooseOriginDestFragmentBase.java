@@ -399,14 +399,17 @@ public abstract class ChooseOriginDestFragmentBase extends SherlockFragment impl
         {
             if (loaderId == LoaderConstants.LOADER_ADDRESS_FROM)
             {
+            	mAutoCompleteTextViewFromAddress.setText("");
                 mAutoCompleteTextViewFromAddress.setHint(address);
             }
             else if (loaderId == LoaderConstants.LOADER_ADDRESS_TO)
             {
+            	mAutoCompleteTextViewToAddress.setText("");
                 mAutoCompleteTextViewToAddress.setHint(address);
             }
             else if (loaderId == LoaderConstants.LOADER_ADDRESS_WAYPOINT)
             {
+            	mAutoCompleteTextViewWayPoint.setText("");
                 mAutoCompleteTextViewWayPoint.setHint(address);
             }
         }
