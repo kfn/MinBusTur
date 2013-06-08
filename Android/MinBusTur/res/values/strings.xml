@@ -3,6 +3,7 @@
 
     <string name="app_name">MinRute</string>
     <string name="menu_settings">Indstillinger</string>
+    <string name="alle_e">é</string>
     <string name="geocoding_service_not_available">Geocoding er ikke tilgængeligt</string>
     <string name="find_rute">Find rute</string>
     <string name="voice_is_not_installed">Stemmesupport er ikke installeret</string>

@@ -392,7 +392,7 @@ public abstract class ChooseOriginDestFragmentBase extends SherlockFragment impl
                     c.close();
             }
 
-            return address.replace("\n", " ");
+            return address.replace("\n", " ").replace(getString(R.string.alle_e), "e");
         }
 
         protected void onPostExecute(String address)
