@@ -43,8 +43,8 @@
     <AutoCompleteTextView
         android:id="@+id/autoCompleteTextViewWayPoint"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/btnShowAddressWayPointOptions"
+        android:layout_height="wrap_content" android:layout_below="@+id/btnShowAddressFromOptions"
+        android:layout_marginTop="10dp"
         android:layout_toLeftOf="@+id/btnShowAddressFromOptions"
         android:hint="@string/waypoint"
         android:imeOptions="actionNext"
@@ -53,14 +53,7 @@
         android:textSize="16sp"
         android:visibility="gone" />
 
-    <ImageButton
-        android:id="@+id/btnShowAddressWayPointOptions"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
-        android:layout_alignParentRight="true"
-        android:layout_below="@+id/btnShowAddressFromOptions"
-        android:src="@drawable/spinner_background_holo_light1"
-        android:visibility="gone" />
+    
 
     <ProgressBar
         android:id="@+id/progressBarWaypointAddress"
@@ -91,7 +84,7 @@
         android:layout_width="48dp"
         android:layout_height="48dp"
         android:layout_alignParentRight="true"
-        android:layout_below="@+id/btnShowAddressWayPointOptions"
+        android:layout_below="@+id/autoCompleteTextViewWayPoint"
         android:src="@drawable/spinner_background_holo_light1" />
 
     <ProgressBar

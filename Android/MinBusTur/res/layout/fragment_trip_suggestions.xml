@@ -1,4 +1,4 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -14,12 +14,31 @@
         android:id="@+id/border"
         android:layout_width="match_parent"
         android:layout_height="1dp"
+        android:layout_below="@+id/textViewOriginDestNames"
         android:layout_marginBottom="4dp"
         android:background="@color/abs__background_holo_light" />
+
+    <ImageButton
+        android:id="@+id/btnEarlyDepartures"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_below="@+id/border"
+        android:src="@drawable/ic_find_previous_holo_light" />
 
     <ListView
         android:id="@android:id/list"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        android:layout_below="@+id/border" />
 
-</LinearLayout>
+    <ImageButton
+        android:id="@+id/btnLaterDepartures"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginBottom="4dp"
+        android:src="@drawable/ic_find_next_holo_light" />
+
+</RelativeLayout>

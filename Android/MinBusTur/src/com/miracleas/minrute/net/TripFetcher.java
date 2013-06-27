@@ -41,7 +41,9 @@ public class TripFetcher extends BaseFetcher
 	private StringBuilder b = new StringBuilder();
 	private DateHelper mDateHelper = null;
 	private TripRequest mTripRequest = null;
+	private boolean mDeleteOldData = true;
 	public static final String TRIP_REQUEST = "TRIP_REQUEST";
+	public static final String REQUEST_DELETE_OLD_DATA = "REQUEST_DELETE_OLD_DATA";
 	
 	private boolean mFoundDestination = false;
 	
@@ -51,6 +53,7 @@ public class TripFetcher extends BaseFetcher
 		mUpdated = System.currentTimeMillis();
 		mUriNotify = notifyUri;
 		mTripRequest = intent.getParcelableExtra(TripFetcher.TRIP_REQUEST);
+		mDeleteOldData = intent.getBooleanExtra(REQUEST_DELETE_OLD_DATA, true);
 	}
 	@Override
 	void doWork() throws Exception
@@ -107,7 +110,11 @@ public class TripFetcher extends BaseFetcher
 
 	public void tripSearch(TripRequest tripRequest) throws Exception
 	{
-		deleteOldTrips();
+		if(mDeleteOldData)
+		{
+			deleteOldTrips();
+		}
+		
 		b = new StringBuilder();
 		if(TextUtils.isEmpty(tripRequest.getOriginId()))
 		{

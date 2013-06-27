@@ -67,7 +67,7 @@ public abstract class ChooseOriginDestFragmentBase extends SherlockFragment impl
 
     private ImageButton mBtnShowAddressToOptions = null;
     private ImageButton mBtnShowAddressFromOptions = null;
-    private ImageButton mBtnShowAddressWayPointOptions = null;
+    //private ImageButton mBtnShowAddressWayPointOptions = null;
 
 	protected static final int THRESHOLD = 1;
 	
@@ -195,10 +195,10 @@ public abstract class ChooseOriginDestFragmentBase extends SherlockFragment impl
 
         mBtnShowAddressToOptions = (ImageButton)rootView.findViewById(R.id.btnShowAddressToOptions);
         mBtnShowAddressFromOptions = (ImageButton)rootView.findViewById(R.id.btnShowAddressFromOptions);
-        mBtnShowAddressWayPointOptions = (ImageButton)rootView.findViewById(R.id.btnShowAddressWayPointOptions);
+        //mBtnShowAddressWayPointOptions = (ImageButton)rootView.findViewById(R.id.btnShowAddressWayPointOptions);
         mBtnShowAddressToOptions.setOnClickListener(this);
         mBtnShowAddressFromOptions.setOnClickListener(this);
-        mBtnShowAddressWayPointOptions.setOnClickListener(this);
+        //mBtnShowAddressWayPointOptions.setOnClickListener(this);
 		return rootView;
 	}
 	
@@ -322,11 +322,11 @@ public abstract class ChooseOriginDestFragmentBase extends SherlockFragment impl
             showChooseLocationDialog(LoaderConstants.LOADER_ADDRESS_TO+"");
             mAutoCompleteTextViewToAddress.requestFocus();
         }
-        else if(v.getId()==R.id.btnShowAddressWayPointOptions)
+        /*else if(v.getId()==R.id.btnShowAddressWayPointOptions)
         {
             showChooseLocationDialog(LoaderConstants.LOADER_ADDRESS_WAYPOINT+"");
             mAutoCompleteTextViewWayPoint.requestFocus();
-        }
+        }*/
 		
 	}
     @Override
@@ -487,12 +487,12 @@ public abstract class ChooseOriginDestFragmentBase extends SherlockFragment impl
         {
             mAutoCompleteTextViewWayPoint.setVisibility(View.GONE);
             mAutoCompleteTextViewToAddress.requestFocus();
-            mBtnShowAddressWayPointOptions.setVisibility(View.GONE);
+            //mBtnShowAddressWayPointOptions.setVisibility(View.GONE);
         }
         else
         {
             mAutoCompleteTextViewWayPoint.setVisibility(View.VISIBLE);
-            mBtnShowAddressWayPointOptions.setVisibility(View.VISIBLE);
+            //mBtnShowAddressWayPointOptions.setVisibility(View.VISIBLE);
             mAutoCompleteTextViewWayPoint.requestFocus();
         }
 

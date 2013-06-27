@@ -14,7 +14,7 @@
       <root url="jar://$PROJECT_DIR$/libs/google-api-client-android-1.14.1-beta.jar!/" />
       <root url="jar://$PROJECT_DIR$/libs/jackson-core-asl-1.9.11.jar!/" />
       <root url="jar://$PROJECT_DIR$/libs/google-http-client-gson-1.14.1-beta.jar!/" />
-      <root url="jar://$PROJECT_DIR$/libs/google-api-services-drive-v2-rev76-1.14.2-beta.jar!/" />
+      <root url="jar://$PROJECT_DIR$/libs/google-api-services-drive-v2-rev77-1.14.2-beta.jar!/" />
     </CLASSES>
     <JAVADOC />
     <SOURCES />

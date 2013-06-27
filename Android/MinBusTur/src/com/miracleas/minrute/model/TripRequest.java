@@ -2,8 +2,12 @@ package com.miracleas.minrute.model;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.text.ParseException;
+import java.util.Calendar;
 
 import org.apache.http.protocol.HTTP;
+
+import com.miracleas.minrute.utils.DateHelper;
 
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -244,6 +248,21 @@ public class TripRequest implements Parcelable
 	{
 		this.time = time;
 	}
+	
+	public Calendar getCalendar()
+	{
+		Calendar c = null;
+		try
+		{
+			c = DateHelper.parseToCalendar(date + " " + time, DateHelper.formatter);
+		} catch (ParseException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return c;
+	}
+	
 	public int getSearchForArrival()
 	{
 		return searchForArrival;

@@ -1,7 +1,10 @@
 package com.miracleas.minrute;
 
+import java.util.Calendar;
+
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
@@ -11,23 +14,28 @@ import android.support.v4.widget.CursorAdapter;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.FrameLayout;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.actionbarsherlock.app.SherlockFragment;
 import com.actionbarsherlock.app.SherlockListFragment;
 
 import com.miracleas.minrute.model.TripRequest;
+import com.miracleas.minrute.net.TripFetcher;
 import com.miracleas.minrute.provider.TripMetaData;
 import com.miracleas.minrute.provider.TripMetaData.TableMetaData;
+import com.miracleas.minrute.service.TripService;
 
-public class TripSuggestionsFragment extends SherlockFragment implements LoaderCallbacks<Cursor>, OnItemClickListener
+public class TripSuggestionsFragment extends SherlockFragment implements LoaderCallbacks<Cursor>, OnItemClickListener, OnClickListener
 {
 	private static final String[] PROJECTION = { TripMetaData.TableMetaData._ID, 
 				TableMetaData.DURATION_LABEL,
@@ -47,6 +55,8 @@ public class TripSuggestionsFragment extends SherlockFragment implements LoaderC
 	private ListView mListView = null;
 	private View mLoadingView = null;
 	private TextView mTextViewOriginDestNames = null;
+	private ImageButton mBtnEarlyDepartures;
+	private ImageButton mBtnLaterDepartures;
 	
 	public static TripSuggestionsFragment createInstance(TripRequest tripRequest)
 	{
@@ -71,6 +81,10 @@ public class TripSuggestionsFragment extends SherlockFragment implements LoaderC
 		View v = inflater.inflate(R.layout.fragment_trip_suggestions, container, false);
 		mListView = (ListView)v.findViewById(android.R.id.list);
 		mTextViewOriginDestNames = (TextView)v.findViewById(R.id.textViewOriginDestNames);
+		mBtnEarlyDepartures = (ImageButton)v.findViewById(R.id.btnEarlyDepartures);
+		mBtnLaterDepartures = (ImageButton)v.findViewById(R.id.btnLaterDepartures);
+		mBtnEarlyDepartures.setOnClickListener(this);
+		mBtnLaterDepartures.setOnClickListener(this);
 		setEmptyView(LayoutInflater.from(getActivity()).inflate(R.layout.empty_list_view_waiting, null));
 		return v;
 		
@@ -272,6 +286,44 @@ public class TripSuggestionsFragment extends SherlockFragment implements LoaderC
 		mLoadingView.setLayoutParams(params);
 		((ViewGroup) mListView.getParent()).addView(mLoadingView);
 		mListView.setEmptyView(mLoadingView);
+	}
+
+	@Override
+	public void onClick(View v)
+	{
+		TripRequest tripRequest = getArguments().getParcelable(TripRequest.tag);
+		Calendar c = tripRequest.getCalendar();
+		if(v.getId()==R.id.btnEarlyDepartures)
+		{
+			if(c!=null)
+			{
+				c.add(Calendar.MINUTE, -30);
+				fetchMoreSuggestions(tripRequest);
+			}
+		}
+		else if(v.getId()==R.id.btnLaterDepartures)
+		{
+			if(c!=null)
+			{
+				c.add(Calendar.MINUTE, 30);
+				fetchMoreSuggestions(tripRequest);
+			}
+		}
+		
+	}
+	
+	private void fetchMoreSuggestions(TripRequest tripRequest)
+	{
+		if (tripRequest.isValid())
+		{
+			Intent service = new Intent(getActivity(), TripService.class);
+			service.putExtra(TripFetcher.TRIP_REQUEST, tripRequest);
+			service.putExtra(TripFetcher.REQUEST_DELETE_OLD_DATA, false);
+			getActivity().startService(service);
+		} else
+		{
+			Toast.makeText(getActivity(), "Not valid", Toast.LENGTH_SHORT).show();
+		}
 	}
 
 }
