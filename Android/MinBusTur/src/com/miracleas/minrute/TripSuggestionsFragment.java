@@ -180,8 +180,8 @@ public class TripSuggestionsFragment extends SherlockFragment implements LoaderC
 			TextView textViewArrivalAt = (TextView)v.findViewById(R.id.textViewArrivalValue);			
 			TextView textViewTransport = (TextView)v.findViewById(R.id.textViewTransport);			
 			
-			textViewDepatureTime.setText(cursor.getString(iDepatureTime) + cursor.getString(iDateStart));
-			textViewArrivalAt.setText(cursor.getString(iArrivalTime) + cursor.getString(iDateEnd));
+			textViewDepatureTime.setText(cursor.getString(iDepatureTime) + " " + cursor.getString(iDateStart));
+			textViewArrivalAt.setText(cursor.getString(iArrivalTime)+ " " + cursor.getString(iDateEnd));
 			
 			textViewDuration.setText(String.format(getString(R.string.duration), cursor.getString(iDuration)));
 					
