@@ -5,6 +5,8 @@ import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URLEncoder;
+import java.text.ParseException;
+import java.util.Calendar;
 
 import org.apache.http.protocol.HTTP;
 import org.xmlpull.v1.XmlPullParser;
@@ -19,6 +21,7 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.text.TextUtils;
 import android.text.format.DateUtils;
+import android.text.format.Time;
 import android.util.Log;
 
 import com.miracleas.minrute.R;
@@ -61,7 +64,11 @@ public class TripFetcher extends BaseFetcher
 		if(mTripRequest!=null && !isCached())
 		{
 			tripSearch(mTripRequest);
-		}		
+		}	
+		else if(!mDeleteOldData)
+		{
+			mContentResolver.notifyChange(TripMetaData.TableMetaData.CONTENT_URI, null);
+		}
 	}
 	
 	private String getWayPointQuery()
@@ -157,7 +164,7 @@ public class TripFetcher extends BaseFetcher
 				if (!mDbOperations.isEmpty())
 				{					
 					saveData(TripLegMetaData.AUTHORITY);
-					exportDatabase();
+					//exportDatabase();
 				}
 			}
             else if (repsonseCode == 404)
@@ -325,6 +332,33 @@ public class TripFetcher extends BaseFetcher
 		b.withValue(TripMetaData.TableMetaData.LEG_COUNT, t.getLegCount());
 		b.withValue(TripMetaData.TableMetaData.LEG_NAMES, t.getNames());
 		b.withValue(TripMetaData.TableMetaData.LEG_TYPES, t.getTypes());
+		
+		
+		String strDate =  mTripRequest.getDate();
+		String strEndDate = mTripRequest.getDate();
+		
+		String strDepTime = t.getDepatureTime();
+		Time tiStart = getTime(strDepTime);
+		String strArrTime = t.getArrivalTime();
+		Time tiEnd = getTime(strArrTime);
+		if(tiStart.after(tiEnd))
+		{
+			try
+			{
+				Calendar cal = DateHelper.parseToCalendar(strDate, DateHelper.formatterDateRejseplanen);
+				cal.add(Calendar.DAY_OF_MONTH, 1);
+				strEndDate = DateHelper.convertCalendarToString(cal, DateHelper.formatterDateRejseplanen);
+			} catch (ParseException e)
+			{
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		b.withValue(TripMetaData.TableMetaData.DATE, strDate);
+		b.withValue(TripMetaData.TableMetaData.DATE_END_FORMATTED, strEndDate);
+		b.withValue(TripMetaData.TableMetaData.DATE_START_FORMATTED, strDate); //dobbelt
+		b.withValue(TripMetaData.TableMetaData.TIME, mTripRequest.getTime());
+		
 		b.withValue(TripMetaData.TableMetaData.DEPATURE_TIME, t.getDepatureTime());
 		b.withValue(TripMetaData.TableMetaData.DEPATURES_TIME_LONG, departures);
 		b.withValue(TripMetaData.TableMetaData.ARRIVAL_TIME, t.getArrivalTime());
@@ -337,8 +371,7 @@ public class TripFetcher extends BaseFetcher
 		}
 		
 		b.withValue(TripMetaData.TableMetaData.DEST_ADDRESS, mTripRequest.destCoordNameNotEncoded);
-		b.withValue(TripMetaData.TableMetaData.DATE, mTripRequest.getDate());
-		b.withValue(TripMetaData.TableMetaData.TIME, mTripRequest.getTime());
+		
 		b.withValue(TripMetaData.TableMetaData.SEARCH_FOR_ARRIVAL, mTripRequest.getSearchForArrival());
 		//b.withValue(TripMetaData.TableMetaData.DURATION_BUS, mDateHelper.getDurationLabel(t.getDurationBus(), false));
 		//b.withValue(TripMetaData.TableMetaData.DURATION_TRAIN, mDateHelper.getDurationLabel(t.getDurationTrain(), false));
@@ -353,6 +386,17 @@ public class TripFetcher extends BaseFetcher
 		b.withValue(TripVoiceMetaData.TableMetaData.DEPARTURES_IN, mDateHelper.getDurationLabel(departures, true));
 		mDbOperations.add(b.build());
 		mDateHelper.setVoice(false);*/
+	}
+	
+	private Time getTime(String strDepTime)
+	{
+		//String strDepTime = t.getDepatureTime();
+		String[] temp = strDepTime.split(":");
+		
+		Time ti = new Time();
+		ti.hour = Integer.parseInt(temp[0]);
+		ti.minute = Integer.parseInt(temp[1]);
+		return ti;
 	}
 	
 	private void saveLeg(TripLeg leg, int stepNumber)

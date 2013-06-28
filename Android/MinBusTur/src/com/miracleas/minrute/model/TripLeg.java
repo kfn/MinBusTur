@@ -143,7 +143,7 @@ public class TripLeg implements Parcelable
 	{
 		b = new StringBuilder();
 		TimeUtils.formatDuration(duration, b);
-		Log.d("TripLeg", b.toString());
+		//Log.d("TripLeg", b.toString());
 		return b.toString();
 	}
 	

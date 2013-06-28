@@ -11,7 +11,7 @@
         android:drawableLeft="@drawable/ic_menu_home"
         android:gravity="center_vertical"
         android:text="Afgang:"
-        android:textSize="19sp" />
+        android:textSize="17sp" />
 
     <TextView
         android:id="@+id/textViewDepatureValue"
@@ -22,7 +22,7 @@
         android:layout_marginBottom="2dp"
         android:gravity="center_vertical"
         android:text="16:11"
-        android:textSize="19sp"
+        android:textSize="17sp"
         android:textStyle="bold" />
 
     <TextView
@@ -33,7 +33,7 @@
         android:drawableLeft="@drawable/ic_menu_myplaces"
         android:gravity="center_vertical"
         android:text="Ankomst:"
-        android:textSize="19sp" />
+        android:textSize="17sp" />
 
     <TextView
         android:id="@+id/textViewArrivalValue"
@@ -46,7 +46,7 @@
         android:layout_toRightOf="@+id/textViewArrivalLabel"
         android:gravity="center_vertical"
         android:text="Ank. 17:11"
-        android:textSize="19sp"
+        android:textSize="17sp"
         android:textStyle="bold" />
 
     <TextView
@@ -58,7 +58,7 @@
         android:drawableLeft="@drawable/ic_menu_info_details"
         android:gravity="center_vertical"
         android:text="Bus 15, IC3400"
-        android:textSize="19sp" />
+        android:textSize="17sp" />
 
     <TextView
         android:id="@+id/textViewDuration"
@@ -69,6 +69,6 @@
         android:drawableLeft="@drawable/ic_menu_recent_history"
         android:gravity="center_vertical"
         android:text="@string/duration"
-        android:textSize="19sp" />
+        android:textSize="17sp" />
 
 </RelativeLayout>

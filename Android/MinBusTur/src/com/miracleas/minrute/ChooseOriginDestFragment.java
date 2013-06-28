@@ -244,6 +244,7 @@ public class ChooseOriginDestFragment extends ChooseOriginDestFragmentBase
 	{
 		private int mLoaderId = 0;
 		private String mAddress = null;
+		private String mMsg = null;
 
 		LoadAddresses(int loaderId)
 		{
@@ -258,9 +259,13 @@ public class ChooseOriginDestFragment extends ChooseOriginDestFragmentBase
 			{
 
 				mAddressFetcher.performGeocode(params[0]); // mDataUri
+			}catch (java.net.SocketTimeoutException e)
+			{
+				mMsg = e.getMessage();
+				e.printStackTrace();
 			} catch (Exception e)
 			{
-				// TODO Auto-generated catch block
+				mMsg = e.getMessage();
 				e.printStackTrace();
 			}
 
@@ -283,6 +288,11 @@ public class ChooseOriginDestFragment extends ChooseOriginDestFragmentBase
             {
                 mAutoCompleteAdapterWaypoint.getFilter().filter(mAddress);
             }
+			
+			if(!TextUtils.isEmpty(mMsg))
+			{
+				Toast.makeText(getActivity(), mMsg, Toast.LENGTH_LONG).show();
+			}
         }
 	}
 

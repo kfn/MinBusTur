@@ -31,7 +31,8 @@ public class TripMetaData
 				+ TableMetaData.DURATION_BUS + " TEXT,"
 				+ TableMetaData.DURATION_TRAIN + " TEXT,"
 				+ TableMetaData.ARRIVAL_TIME + " TEXT,"
-				
+				+ TableMetaData.DATE_START_FORMATTED + " TEXT,"
+				+ TableMetaData.DATE_END_FORMATTED + " TEXT,"
 				+ TableMetaData.ORIGIN_ADDRESS + " TEXT,"
 				+ TableMetaData.DEST_ADDRESS + " TEXT,"
 				+ TableMetaData.WAY_POINT_ADDRESS + " TEXT,"
@@ -74,6 +75,8 @@ public class TripMetaData
 		public static final String SEARCH_FOR_ARRIVAL = "search_for_arrival";
 		public static final String TIME = "the_time";
 		public static final String DATE = "the_date";
+		public static final String DATE_START_FORMATTED = "date_start_formatted";
+		public static final String DATE_END_FORMATTED = "date_end_formatted";
 		public static final String WAY_POINT_ADDRESS = "waypoint_address";
 		public static final String DEST_ADDRESS = "dest_address";
 		public static final String ORIGIN_ADDRESS = "origin_address";

@@ -23,7 +23,7 @@ import java.util.ArrayList;
 public class MinBusTurProvider extends ContentProvider
 {
     public static final String DATABASE_NAME = "minrejseplan";
-    public static final int DATABASE_VERSION = 14;
+    public static final int DATABASE_VERSION = 15;
     // Logging helper tag. No significance to providers.
     private static final String tag = MinBusTurProvider.class.getName();
 
@@ -194,6 +194,8 @@ public class MinBusTurProvider extends ContentProvider
                 break;
             case INCOMING_TRIP_COLLECTION_URI_INDICATOR:
                 qb.setTables(TripMetaData.TABLE_NAME);
+                groupBy = TripMetaData.TableMetaData.DEPATURES_TIME_LONG+","+TripMetaData.TableMetaData.LEG_TYPES;
+                //qb.setDistinct(true);
                 break;
 
             case INCOMING_SINGLE_TRIP_URI_INDICATOR:

@@ -249,6 +249,12 @@ public class TripRequest implements Parcelable
 		this.time = time;
 	}
 	
+	public void setDateTime(Calendar c)
+	{
+		setDate(DateHelper.convertDateToString(c, DateHelper.formatterDateRejseplanen));
+		setTime(DateHelper.convertDateToString(c, DateHelper.formatterTime));
+	}
+	
 	public Calendar getCalendar()
 	{
 		Calendar c = null;
