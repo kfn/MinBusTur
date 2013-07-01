@@ -62,7 +62,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/textViewOriginName"
         android:layout_marginTop="4dp"
-        android:drawablePadding="10dp"
+        android:drawablePadding="10dp" android:visibility="gone"
         android:gravity="center_vertical"
         android:text="Skolegade 5, 8000 Aarhus C"
         android:textSize="17sp" />

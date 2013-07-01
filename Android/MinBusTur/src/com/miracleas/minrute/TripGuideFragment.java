@@ -347,8 +347,8 @@ public class TripGuideFragment extends SherlockListFragment implements LoaderCal
 			}
 			
 			
-			textViewOriginName.setText(originName); //.setText(String.format(getString(R.string.from), originName));
-			textViewDestName.setText(destName); //.setText(String.format(getString(R.string.to), destName));
+			textViewOriginName.setText(TripRequest.getFormattedAddress(originName)); //.setText(String.format(getString(R.string.from), originName));
+			textViewDestName.setText(TripRequest.getFormattedAddress(destName)); //.setText(String.format(getString(R.string.to), destName));
 			textViewTime.setText(originTime);
 			
 			if (originLocationType.equals("ADR"))
@@ -405,13 +405,13 @@ public class TripGuideFragment extends SherlockListFragment implements LoaderCal
 			{
 				textViewNotes.setVisibility(View.GONE);
 				textViewTransportType.setVisibility(View.GONE);
-				textViewDestName.setVisibility(View.GONE);
+				//textViewDestName.setVisibility(View.GONE);
 			} 
 			else
 			{
 				textViewNotes.setVisibility(View.VISIBLE);
 				textViewTransportType.setVisibility(View.VISIBLE);
-				textViewDestName.setVisibility(View.VISIBLE);
+				//textViewDestName.setVisibility(View.VISIBLE);
 			}		
 			
 		}

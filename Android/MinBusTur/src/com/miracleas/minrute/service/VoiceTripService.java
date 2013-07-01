@@ -203,7 +203,7 @@ public class VoiceTripService extends Service implements android.speech.tts.Text
 		{
 			mIsInitialized = true;
 			setVoiceLanguage();			
-			mTts.speak(mDefaultResources.getString(R.string.voice_is_on), TextToSpeech.QUEUE_ADD, null);	
+			//mTts.speak(mDefaultResources.getString(R.string.voice_is_on), TextToSpeech.QUEUE_ADD, null);	
 		}
 	}
 	
@@ -562,7 +562,7 @@ public class VoiceTripService extends Service implements android.speech.tts.Text
 			mLegs = result;
 			if(result.size()>0)
 			{
-				changeState(0);
+				//changeState(0);
 				mOnVoiceServiceReadyListener.onVoiceServiceReady();
 				mOnVoiceServiceReadyListener = null;
 				

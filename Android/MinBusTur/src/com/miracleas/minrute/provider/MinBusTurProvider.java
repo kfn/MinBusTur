@@ -194,7 +194,7 @@ public class MinBusTurProvider extends ContentProvider
                 break;
             case INCOMING_TRIP_COLLECTION_URI_INDICATOR:
                 qb.setTables(TripMetaData.TABLE_NAME);
-                groupBy = TripMetaData.TableMetaData.DEPATURES_TIME_LONG+","+TripMetaData.TableMetaData.LEG_TYPES;
+                groupBy = TripMetaData.TableMetaData.DEPATURE_TIME+","+TripMetaData.TableMetaData.LEG_TYPES;
                 //qb.setDistinct(true);
                 break;
 

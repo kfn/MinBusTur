@@ -326,7 +326,7 @@ public class TripFetcher extends BaseFetcher
 		Uri uri = Uri.withAppendedPath(TripMetaData.TableMetaData.CONTENT_URI, t.id);
 		ContentProviderOperation.Builder b = ContentProviderOperation.newUpdate(uri);
 		long duration = t.getTotalDuration();
-		long departures = t.getDepatureTimeLong();
+		//long departures = t.getDepatureTimeLong();
 		b.withValue(TripMetaData.TableMetaData.DURATION, duration);
 		b.withValue(TripMetaData.TableMetaData.DURATION_LABEL, mDateHelper.getDurationLabel(duration, false));
 		b.withValue(TripMetaData.TableMetaData.LEG_COUNT, t.getLegCount());
@@ -360,7 +360,7 @@ public class TripFetcher extends BaseFetcher
 		b.withValue(TripMetaData.TableMetaData.TIME, mTripRequest.getTime());
 		
 		b.withValue(TripMetaData.TableMetaData.DEPATURE_TIME, t.getDepatureTime());
-		b.withValue(TripMetaData.TableMetaData.DEPATURES_TIME_LONG, departures);
+		//b.withValue(TripMetaData.TableMetaData.DEPATURES_TIME_LONG, departures);
 		b.withValue(TripMetaData.TableMetaData.ARRIVAL_TIME, t.getArrivalTime());
 		b.withValue(TripMetaData.TableMetaData.TRANSPORT_CHANGES, t.getTransportChanges());
 		

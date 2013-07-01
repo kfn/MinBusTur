@@ -54,6 +54,8 @@ public class TripLegDetailsFragment extends SherlockListFragment implements Load
 	};
 
 	private TripAdapter mTripAdapter = null;
+	private TextView mTextViewOrigin = null;
+	private TextView mTextViewDestination = null;
 	private TextView mTextViewJourneyName = null;
 	private long journeyDetailId;
 	private TripLeg mTripLeg = null;
@@ -91,6 +93,8 @@ public class TripLegDetailsFragment extends SherlockListFragment implements Load
 		frame.addView(listView);
 		mTextViewJourneyName = (TextView)rootView.findViewById(R.id.textViewJourneyName);
 		mTextViewJourneyTimes = (TextView)rootView.findViewById(R.id.textViewJourneyTimes);
+		mTextViewOrigin = (TextView)rootView.findViewById(R.id.textViewOrigin);
+		mTextViewDestination = (TextView)rootView.findViewById(R.id.textViewDestination);
 		//String locationName = getArguments().getString(TripLegMetaData.TableMetaData.ORIGIN_NAME);
 		mTextViewJourneyTimes.setText(mTripLeg.originTime + "-"+mTripLeg.destTime);
 		return rootView;
@@ -126,8 +130,8 @@ public class TripLegDetailsFragment extends SherlockListFragment implements Load
 		}
 		else if(id==LoaderConstants.LOADER_TRIP_LEG_STOP_DETAILS)
 		{
-			String selection = TripLegDetailStopMetaData.TableMetaData.JOURNEY_DETAIL_ID + "=?";
-			String[] selectionArgs = {args.getLong(TripLegDetailMetaData.TableMetaData._ID)+""};
+			String selection = TripLegDetailStopMetaData.TableMetaData.JOURNEY_DETAIL_ID + "=? AND "+TripLegDetailStopMetaData.TableMetaData.IS_PART_OF_USER_ROUTE + "=?";;
+			String[] selectionArgs = {args.getLong(TripLegDetailMetaData.TableMetaData._ID)+"", "1"};
 			return new CursorLoader(getActivity(), TripLegDetailStopMetaData.TableMetaData.CONTENT_URI, PROJECTION_STOP, selection, selectionArgs, null);
 		}
 
@@ -150,7 +154,9 @@ public class TripLegDetailsFragment extends SherlockListFragment implements Load
 
 			mCallbacks.setJourneyDetailId(journeyDetailId, legId, transportType);
 			String name = newCursor.getString(newCursor.getColumnIndex(TripLegDetailMetaData.TableMetaData.NAME));
-			mTextViewJourneyName.setText(name+"\n"+mTripLeg.originName+"-"+mTripLeg.destName);
+			mTextViewJourneyName.setText(String.format(getString(R.string.tripleg_details_with), name));
+			mTextViewOrigin.setText(String.format(getString(R.string.tripleg_details_from), mTripLeg.getFormattedOriginAddress()));
+			mTextViewDestination.setText(String.format(getString(R.string.tripleg_details_to), mTripLeg.getFormattedDestAddress()));
 			String type = newCursor.getString(newCursor.getColumnIndex(TripLegDetailMetaData.TableMetaData.TYPE));
 			int iconRes = TripLeg.getIcon(type);
 			mTextViewJourneyName.setCompoundDrawablesWithIntrinsicBounds(iconRes, 0, 0, 0);

@@ -47,6 +47,10 @@
 	<string name="from_origin_to_dest">Fra <xliff:g ID="address">%1$s</xliff:g>\nTil <xliff:g ID="address">%2$s</xliff:g></string>
     <string name="from_origin_via_to_dest">Fra <xliff:g ID="address">%1$s</xliff:g>\nVia <xliff:g ID="address">%2$s</xliff:g>\nTil <xliff:g ID="address">%3$s</xliff:g></string>
     
+    <string name="tripleg_details_with">Med <xliff:g ID="transport">%1$s</xliff:g></string>
+    <string name="tripleg_details_from">Fra <xliff:g ID="address">%1$s</xliff:g></string>
+    <string name="tripleg_details_to">Til <xliff:g ID="address">%1$s</xliff:g></string>
+    
     <string name="action_settings">Settings</string>
     <string name="title_section1">Ny rute</string>
     <string name="title_section2">Gemte ruter</string>
@@ -76,7 +80,7 @@
     <string name="departure">Afgang: <xliff:g ID="time_label">%1$s</xliff:g></string>
     <string name="parenthese_value">(<xliff:g ID="time_label">%1$s</xliff:g>)</string>
     <string name="arrival_within">Ankomst: <xliff:g ID="time_label">%1$s</xliff:g></string>
-    <string name="duration">Varighed: <xliff:g ID="time_label">%1$s</xliff:g></string>
+    <string name="duration"><xliff:g ID="time_label">%1$s</xliff:g></string>
 	<string name="from">Fra <xliff:g ID="address">%1$s</xliff:g></string>
 	<string name="to">Til <xliff:g ID="address">%1$s</xliff:g></string>
 	<string name="transport_type_and_track_number"><xliff:g ID="transport_type">%1$s</xliff:g>, spor <xliff:g ID="track_number">%2$s</xliff:g></string>

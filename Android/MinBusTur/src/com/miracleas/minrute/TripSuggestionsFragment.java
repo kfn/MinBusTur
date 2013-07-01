@@ -104,11 +104,11 @@ public class TripSuggestionsFragment extends SherlockFragment implements LoaderC
 		TripRequest tripRequest = getArguments().getParcelable(TripRequest.tag);
         if(TextUtils.isEmpty(tripRequest.waypointNameNotEncoded))
         {
-            mTextViewOriginDestNames.setText(String.format(getString(R.string.from_origin_to_dest), tripRequest.originCoordNameNotEncoded, tripRequest.destCoordNameNotEncoded));
+            mTextViewOriginDestNames.setText(String.format(getString(R.string.from_origin_to_dest), tripRequest.getFormattedOriginAddress(), tripRequest.getFormattedDestAddress()));
         }
         else
         {
-            mTextViewOriginDestNames.setText(String.format(getString(R.string.from_origin_via_to_dest), tripRequest.originCoordNameNotEncoded, tripRequest.waypointNameNotEncoded, tripRequest.destCoordNameNotEncoded));
+            mTextViewOriginDestNames.setText(String.format(getString(R.string.from_origin_via_to_dest), tripRequest.getFormattedOriginAddress(), tripRequest.getFormattedWaypointAddress(), tripRequest.getFormattedDestAddress()));
         }
 
 		
@@ -127,7 +127,7 @@ public class TripSuggestionsFragment extends SherlockFragment implements LoaderC
 	{		
 		//StringBuilder b = new StringBuilder();
 		//b.append(" GROUP BY ").append(TripMetaData.TableMetaData.TIME).append(", ");
-		return new CursorLoader(getActivity(), TripMetaData.TableMetaData.CONTENT_URI, PROJECTION, null, null, TripMetaData.TableMetaData.DEPATURES_TIME_LONG+","+TripMetaData.TableMetaData.DURATION);
+		return new CursorLoader(getActivity(), TripMetaData.TableMetaData.CONTENT_URI, PROJECTION, null, null, TripMetaData.TableMetaData.DEPATURE_TIME+","+TripMetaData.TableMetaData.DURATION);
 	}
 
 
@@ -176,14 +176,19 @@ public class TripSuggestionsFragment extends SherlockFragment implements LoaderC
 		public void bindView(View v, Context context, Cursor cursor)
 		{			
 			TextView textViewDepatureTime = (TextView)v.findViewById(R.id.textViewDepatureValue);
+			TextView textViewDepatureDate = (TextView)v.findViewById(R.id.textViewDepatureDateValue);
 			TextView textViewDuration = (TextView)v.findViewById(R.id.textViewDuration);
-			TextView textViewArrivalAt = (TextView)v.findViewById(R.id.textViewArrivalValue);			
+			TextView textViewArrivalAt = (TextView)v.findViewById(R.id.textViewArrivalValue);	
+			TextView textViewArrivalDate = (TextView)v.findViewById(R.id.textViewArrivalDateValue);
 			TextView textViewTransport = (TextView)v.findViewById(R.id.textViewTransport);			
 			
-			textViewDepatureTime.setText(cursor.getString(iDepatureTime) + " " + cursor.getString(iDateStart));
-			textViewArrivalAt.setText(cursor.getString(iArrivalTime)+ " " + cursor.getString(iDateEnd));
+			textViewDepatureTime.setText(cursor.getString(iDepatureTime));
+			textViewDepatureDate.setText(cursor.getString(iDateStart));
+			textViewArrivalAt.setText(cursor.getString(iArrivalTime));
+			textViewArrivalDate.setText(cursor.getString(iDateEnd));
 			
 			textViewDuration.setText(String.format(getString(R.string.duration), cursor.getString(iDuration)));
+			
 					
 			textViewTransport.setText(cursor.getString(iLegNames));	
 		}
@@ -207,7 +212,7 @@ public class TripSuggestionsFragment extends SherlockFragment implements LoaderC
 				iDepatureTime = newCursor.getColumnIndex(TripMetaData.TableMetaData.DEPATURE_TIME);
 				iDepatureDate = newCursor.getColumnIndex(TripMetaData.TableMetaData.DATE);
 				
-				iArrivalTime = newCursor.getColumnIndex(TripMetaData.TableMetaData.ARRIVAL_TIME);					
+								
 				iDurationBus = newCursor.getColumnIndex(TripMetaData.TableMetaData.DURATION_BUS);
 				iDurationWalk = newCursor.getColumnIndex(TripMetaData.TableMetaData.DURATION_WALK);
 				iDurationTrain = newCursor.getColumnIndex(TripMetaData.TableMetaData.DURATION_TRAIN);
@@ -327,26 +332,28 @@ public class TripSuggestionsFragment extends SherlockFragment implements LoaderC
 	public void onClick(View v)
 	{
 		TripRequest tripRequest = getArguments().getParcelable(TripRequest.tag);
-		Calendar c = null;
+		Calendar c = tripRequest.getCalendar();
 		if(v.getId()==R.id.btnEarlyDepartures)
 		{
-			c = mTripAdapter.getCalendar(0);
-			if(c!=null)
+			Calendar firstResult = mTripAdapter.getCalendar(0);
+			if(firstResult.compareTo(c) < 0)
 			{
-				c.add(Calendar.MINUTE, -30);
-				tripRequest.setDateTime(c);
-				fetchMoreSuggestions(tripRequest);
+				c = firstResult;
 			}
+			c.add(Calendar.MINUTE, -30);
+			tripRequest.setDateTime(c);
+			fetchMoreSuggestions(tripRequest);
 		}
 		else if(v.getId()==R.id.btnLaterDepartures)
 		{
-			c = mTripAdapter.getCalendar(mTripAdapter.getCount()-1);
-			if(c!=null)
+			Calendar lastResult = mTripAdapter.getCalendar(mTripAdapter.getCount()-1);
+			if(lastResult.compareTo(c) > 0)
 			{
-				c.add(Calendar.MINUTE, 30);
-				tripRequest.setDateTime(c);
-				fetchMoreSuggestions(tripRequest);
+				c = lastResult;
 			}
+			c.add(Calendar.MINUTE, 30);
+			tripRequest.setDateTime(c);
+			fetchMoreSuggestions(tripRequest);
 		}
 		
 	}

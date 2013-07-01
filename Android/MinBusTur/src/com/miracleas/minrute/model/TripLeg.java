@@ -177,6 +177,32 @@ public class TripLeg implements Parcelable
 		return s;
 	}
 	
+	public String getFormattedOriginAddress()
+	{
+		String[] temp = originName.split(",");
+		if(temp.length>1)
+		{
+			return temp[0]+", "+temp[1];
+		}
+		else
+		{
+			return temp[0];
+		}
+	}
+	
+	public String getFormattedDestAddress()
+	{
+		String[] temp = destName.split(",");
+		if(temp.length>1)
+		{
+			return temp[0]+", "+temp[1];
+		}
+		else
+		{
+			return temp[0];
+		}
+	}
+	
 	private Time getTime(String text)
 	{
 		int pos = text.charAt(':');

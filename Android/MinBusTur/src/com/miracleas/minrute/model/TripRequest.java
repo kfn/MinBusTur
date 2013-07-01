@@ -369,6 +369,35 @@ public class TripRequest implements Parcelable
     {
         this.viaId = id;
     }
+    
+	
+	public String getFormattedOriginAddress()
+	{
+		return getFormattedAddress(originCoordNameNotEncoded);
+	}
+	
+	public static String getFormattedAddress(String address)
+	{
+		String[] temp = address.split(",");
+		if(temp.length>1)
+		{
+			return temp[0]+", "+temp[1];
+		}
+		else
+		{
+			return temp[0];
+		}
+	}
+    
+	public String getFormattedDestAddress()
+	{
+		return getFormattedAddress(destCoordNameNotEncoded);
+	}
+	
+	public String getFormattedWaypointAddress()
+	{
+		return getFormattedAddress(waypointNameNotEncoded);
+	}
 
     public String getWayPointId()
     {
