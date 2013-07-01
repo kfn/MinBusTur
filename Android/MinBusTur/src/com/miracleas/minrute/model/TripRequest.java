@@ -381,7 +381,7 @@ public class TripRequest implements Parcelable
 		String[] temp = address.split(",");
 		if(temp.length>1)
 		{
-			return temp[0]+", "+temp[1];
+			return temp[0]+","+temp[1];
 		}
 		else
 		{

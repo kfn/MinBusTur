@@ -10,7 +10,7 @@
         android:layout_height="wrap_content"
         android:drawableLeft="@drawable/ic_menu_home"
         android:gravity="center_vertical"
-        android:text="Afgang:"
+        
         android:textSize="17sp" />
 
     <TextView
@@ -21,7 +21,7 @@
         android:layout_alignLeft="@+id/textViewArrivalValue"
         android:layout_marginBottom="4dp"
         android:gravity="center_vertical"
-        android:text="16:11"
+       
         android:textSize="17sp"
         android:textStyle="bold" />
     
@@ -33,7 +33,7 @@
         android:layout_toRightOf="@+id/textViewDepatureValue"
         android:layout_marginBottom="1dp"
         android:gravity="center_vertical"
-        android:text="Fredag" android:layout_marginLeft="6dp"
+       android:layout_marginLeft="6dp"
         android:textSize="12sp"
         android:textStyle="normal" />
 
@@ -44,7 +44,7 @@
         android:layout_below="@+id/textViewDepatureLabel"
         android:drawableLeft="@drawable/ic_menu_myplaces"
         android:gravity="center_vertical"
-        android:text="Ankomst:"
+        
         android:textSize="17sp" />
 
     <TextView
@@ -57,7 +57,7 @@
         android:layout_marginLeft="10dp"
         android:layout_toRightOf="@+id/textViewArrivalLabel"
         android:gravity="center_vertical"
-        android:text="Ank. 17:11"
+        
         android:textSize="17sp"
         android:textStyle="bold" />
     
@@ -69,7 +69,7 @@
         android:layout_toRightOf="@+id/textViewArrivalValue"
         android:layout_marginBottom="7dp"
         android:gravity="center_vertical"
-        android:text="Fredag" android:layout_marginLeft="6dp"
+        android:layout_marginLeft="6dp"
         android:textSize="12sp"
         android:textStyle="normal" />
 
@@ -81,7 +81,7 @@
         android:layout_marginTop="4dp"
         android:drawableLeft="@drawable/ic_menu_info_details"
         android:gravity="center_vertical"
-        android:text="Bus 15, IC3400"
+        
         android:textSize="17sp" />
 
     <TextView

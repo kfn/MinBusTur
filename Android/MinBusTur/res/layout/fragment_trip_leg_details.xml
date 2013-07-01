@@ -1,44 +1,46 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     android:padding="8dp" >
 
     <TextView
         android:id="@+id/textViewJourneyName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="4dp" android:text="Med Bus 3"
-        android:gravity="center_vertical" />
+        android:layout_marginBottom="4dp"
+        android:text="Med Bus 3" />
 
     <TextView
         android:id="@+id/textViewOrigin"
-        android:layout_width="wrap_content" android:text="Fra Sigynsvej 45"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/textViewJourneyName"
         android:layout_marginBottom="4dp"
-        android:gravity="center_vertical" />
+        android:text="Fra Sigynsvej 45" />
 
     <TextView
         android:id="@+id/textViewDestination"
-        android:layout_width="wrap_content" android:text="Til Asavej 5"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/textViewOrigin"
         android:layout_marginBottom="4dp"
-        android:gravity="center_vertical" />
+        
+        android:text="Til Asavej 5" />
 
     <TextView
         android:id="@+id/textViewJourneyTimes"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
-        android:gravity="center_vertical" />
+        android:visibility="gone" />
 
     <View
         android:id="@+id/border"
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:layout_below="@+id/textViewJourneyName"
+        android:layout_below="@+id/textViewDestination"
         android:layout_marginBottom="4dp"
         android:layout_marginTop="4dp"
         android:background="@color/abs__background_holo_light" />
@@ -50,4 +52,4 @@
         android:layout_below="@+id/border"
         android:layout_marginTop="6dp" />
 
-</RelativeLayout>
+</LinearLayout>

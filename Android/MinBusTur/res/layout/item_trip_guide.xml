@@ -4,30 +4,31 @@
     android:layout_height="match_parent"
     android:paddingTop="4dp" >
 
+    <ImageView
+        android:id="@+id/imageViewThumb"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/item_trip_guide_img_height_big"
+        android:background="@color/black_transparent"
+        android:scaleType="centerCrop"
+        android:src="@drawable/empty_photo" />
+
     <TextView
         android:id="@+id/textViewTime"
         android:layout_width="wrap_content"
         android:layout_height="35dp"
+        android:layout_below="@+id/imageViewThumb"
         android:gravity="center_vertical"
         android:text="19:00"
-        android:textSize="19sp"
+        android:textSize="19sp" android:layout_marginLeft="12dp"
         android:textStyle="bold" />
-
-    <ImageView
-        android:id="@+id/imageViewChecked"
-        android:layout_width="wrap_content"
-        android:layout_height="35dp"
-        android:layout_alignParentRight="true"
-        android:background="@android:color/transparent"
-        android:enabled="false"
-        android:gravity="center_vertical"
-        android:src="@drawable/indicator_check_mark_light" />
 
     <TextView
         android:id="@+id/textViewTransportType"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_below="@+id/imageViewThumb"
         android:layout_centerHorizontal="true"
+        android:layout_marginLeft="14dp"
         android:drawableLeft="@drawable/driving"
         android:drawablePadding="10dp"
         android:gravity="center_vertical"
@@ -37,19 +38,22 @@
         android:textStyle="bold" />
 
     <ImageView
-        android:id="@+id/imageViewThumb"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/item_trip_guide_img_height_big"
-        android:layout_below="@+id/textViewTime"
-        android:background="@color/black_transparent"
-        android:scaleType="centerCrop"
-        android:src="@drawable/empty_photo" />
+        android:id="@+id/imageViewChecked"
+        android:layout_width="wrap_content"
+        android:layout_height="35dp"
+        android:layout_alignParentRight="true"
+        android:layout_below="@+id/imageViewThumb"
+        android:background="@android:color/transparent"
+        android:enabled="false"
+        android:gravity="center_vertical"
+        android:src="@drawable/indicator_check_mark_light" />
 
     <TextView
         android:id="@+id/textViewOriginName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/imageViewThumb"
+        android:layout_below="@+id/textViewTransportType"
+        android:layout_marginLeft="12dp"
         android:layout_marginTop="4dp"
         android:drawablePadding="10dp"
         android:gravity="center_vertical"
@@ -62,10 +66,11 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/textViewOriginName"
         android:layout_marginTop="4dp"
-        android:drawablePadding="10dp" android:visibility="gone"
+        android:drawablePadding="10dp"
         android:gravity="center_vertical"
         android:text="Skolegade 5, 8000 Aarhus C"
-        android:textSize="17sp" />
+        android:textSize="17sp"
+        android:visibility="gone" />
 
     <TextView
         android:id="@+id/textViewNotes"

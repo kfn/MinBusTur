@@ -347,16 +347,16 @@ public class TripGuideFragment extends SherlockListFragment implements LoaderCal
 			}
 			
 			
-			textViewOriginName.setText(TripRequest.getFormattedAddress(originName)); //.setText(String.format(getString(R.string.from), originName));
+			textViewOriginName.setText(String.format(getString(R.string.tripleg_details_from), TripRequest.getFormattedAddress(originName))); //.setText(String.format(getString(R.string.from), originName));
 			textViewDestName.setText(TripRequest.getFormattedAddress(destName)); //.setText(String.format(getString(R.string.to), destName));
 			textViewTime.setText(originTime);
 			
 			if (originLocationType.equals("ADR"))
 			{
-				textViewOriginName.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_menu_home, 0, 0, 0);
+				//textViewOriginName.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_menu_home, 0, 0, 0);
 			} else if (originLocationType.equals("ST"))
 			{
-				textViewOriginName.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_menu_myplaces, 0, 0, 0);
+				//textViewOriginName.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_menu_myplaces, 0, 0, 0);
 			}
 			if (destLocationType.equals("ADR"))
 			{

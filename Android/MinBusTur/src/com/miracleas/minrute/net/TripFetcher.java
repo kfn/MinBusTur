@@ -315,6 +315,7 @@ public class TripFetcher extends BaseFetcher
 	{
 		ContentValues values = new ContentValues();
 		values.put(TripMetaData.TableMetaData.DURATION, 0l);
+		values.put(TripMetaData.TableMetaData.DURATION_LABEL, "");
 		Uri uri = mContentResolver.insert(TripMetaData.TableMetaData.CONTENT_URI, values);
 		Trip t = new Trip();
 		t.id = uri.getLastPathSegment();

@@ -10,6 +10,7 @@
     <string name="confirm_install_voice">Vil du installere stemmesupport?</string>
     <string name="installed_voice">Slå stemmesupport er slået til</string>
 
+   
     <string name="create_route">Opret rute</string>
     <string name="route_creation">Ruteoprettelse</string>
     <string name="trip_suggestions">Ruteforslag</string>

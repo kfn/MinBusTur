@@ -180,17 +180,24 @@ public class TripSuggestionsFragment extends SherlockFragment implements LoaderC
 			TextView textViewDuration = (TextView)v.findViewById(R.id.textViewDuration);
 			TextView textViewArrivalAt = (TextView)v.findViewById(R.id.textViewArrivalValue);	
 			TextView textViewArrivalDate = (TextView)v.findViewById(R.id.textViewArrivalDateValue);
-			TextView textViewTransport = (TextView)v.findViewById(R.id.textViewTransport);			
+			TextView textViewTransport = (TextView)v.findViewById(R.id.textViewTransport);	
 			
-			textViewDepatureTime.setText(cursor.getString(iDepatureTime));
-			textViewDepatureDate.setText(cursor.getString(iDateStart));
-			textViewArrivalAt.setText(cursor.getString(iArrivalTime));
-			textViewArrivalDate.setText(cursor.getString(iDateEnd));
+			String duration = cursor.getString(iDuration);
 			
-			textViewDuration.setText(String.format(getString(R.string.duration), cursor.getString(iDuration)));
+			if(TextUtils.isEmpty(duration))
+			{
+				//textViewTransport.setText(R.string.waiting);
+			}
+			else
+			{
+				textViewDepatureTime.setText(cursor.getString(iDepatureTime));
+				textViewDepatureDate.setText(cursor.getString(iDateStart));
+				textViewArrivalAt.setText(cursor.getString(iArrivalTime));
+				textViewArrivalDate.setText(cursor.getString(iDateEnd));				
+				textViewDuration.setText(String.format(getString(R.string.duration), duration));									
+				textViewTransport.setText(cursor.getString(iLegNames));	
+			}
 			
-					
-			textViewTransport.setText(cursor.getString(iLegNames));	
 		}
 
 		@Override
